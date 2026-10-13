@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { Path } from '$app/types';
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
 	import { formatShortDate } from '#lib/i18n/date.js';
+	import { localized } from '#lib/i18n/links.js';
 	import { text } from '#lib/tools/i18n.js';
 	import { getQuestionnaire } from '#lib/tools/registry.js';
 	import ToolHeader from '#lib/tools/_shared/ToolHeader.svelte';
@@ -11,8 +11,10 @@
 	let { data }: PageProps = $props();
 
 	const questionnaire = $derived(getQuestionnaire(data.tool.slug));
-	const startHref = $derived(resolve(`/werkzeuge/${data.tool.slug}/neu` as Path));
-	const loginHref = $derived(resolve(`/auth/login?next=${encodeURIComponent(startHref)}` as Path));
+	const startHref = $derived(resolve(localized(`/werkzeuge/${data.tool.slug}/neu`)));
+	const loginHref = $derived(
+		resolve(localized(`/auth/login?next=${encodeURIComponent(startHref)}`))
+	);
 
 	function verdictLabel(verdict: string | null): string {
 		if (verdict === 'positive') return m.verdict_positive_short();
@@ -60,7 +62,7 @@
 					{#each data.runs as run (run.id)}
 						<tr>
 							<td>
-								<a href={resolve(`/werkzeuge/${data.tool.slug}/${run.id}` as Path)}>
+								<a href={resolve(localized(`/werkzeuge/${data.tool.slug}/${run.id}`))}>
 									{formatShortDate(run.createdAt.toISOString(), data.locale)}
 								</a>
 							</td>

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { Path } from '$app/types';
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
 	import { formatLongDate } from '#lib/i18n/date.js';
+	import { localized } from '#lib/i18n/links.js';
 	import { text } from '#lib/tools/i18n.js';
 	import Citation from '#lib/tools/_shared/Citation.svelte';
 	import ToolHeader from '#lib/tools/_shared/ToolHeader.svelte';
@@ -66,8 +66,8 @@
 
 <div class="actions no-print">
 	<button type="button" onclick={() => window.print()}>{m.run_print()}</button>
-	<a href={resolve(`/werkzeuge/${data.tool.slug}/neu` as Path)}>{m.run_again()}</a>
-	<a href={resolve(`/werkzeuge/${data.tool.slug}` as Path)}>{m.run_back()}</a>
+	<a href={resolve(localized(`/werkzeuge/${data.tool.slug}/neu`))}>{m.run_again()}</a>
+	<a href={resolve(localized(`/werkzeuge/${data.tool.slug}`))}>{m.run_back()}</a>
 </div>
 
 <style>

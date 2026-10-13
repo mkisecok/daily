@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { Path } from '$app/types';
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
+	import { localized } from '#lib/i18n/links.js';
 	import { categories, toolsByCategory } from '#lib/tools/registry.js';
 	import { text } from '#lib/tools/i18n.js';
 	import type { ToolCategory } from '#lib/tools/types.js';
@@ -38,7 +38,7 @@
 						{#if tool.status === 'planned'}
 							<span class="title">{text(tool.name)}</span>
 						{:else}
-							<a class="title" href={resolve(`/werkzeuge/${tool.slug}` as Path)}
+							<a class="title" href={resolve(localized(`/werkzeuge/${tool.slug}`))}
 								>{text(tool.name)}</a
 							>
 						{/if}

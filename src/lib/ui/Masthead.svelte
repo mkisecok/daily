@@ -4,10 +4,10 @@
 	sign-in state. A hairline below, nothing else.
 -->
 <script lang="ts">
-	import type { Path } from '$app/types';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { m } from '#lib/paraglide/messages.js';
+	import { localized } from '#lib/i18n/links.js';
 	import type { ThemeSetting } from '#lib/theme.js';
 	import Wordmark from './Wordmark.svelte';
 	import LangSwitch from './LangSwitch.svelte';
@@ -21,31 +21,34 @@
 		user: { displayName: string } | null;
 	} = $props();
 
+	/** `route` is the route id prefix that marks the item as current. */
 	const items = $derived([
-		{ href: resolve('/nachrichten'), label: m.nav_feed() },
-		{ href: resolve('/werkzeuge'), label: m.nav_tools() },
-		{ href: resolve('/normen'), label: m.nav_norms() },
-		{ href: resolve('/(app)/notizen'), label: m.nav_notes() }
+		{ href: resolve(localized('/nachrichten')), route: '/nachrichten', label: m.nav_feed() },
+		{ href: resolve(localized('/werkzeuge')), route: '/werkzeuge', label: m.nav_tools() },
+		{ href: resolve(localized('/normen')), route: '/normen', label: m.nav_norms() },
+		{ href: resolve(localized('/notizen')), route: '/(app)/notizen', label: m.nav_notes() }
 	]);
 
 	const loginHref = $derived(
-		resolve(`/auth/login?next=${encodeURIComponent(page.url.pathname)}` as Path)
+		resolve(localized(`/auth/login?next=${encodeURIComponent(page.url.pathname)}`))
 	);
 
-	function isCurrent(href: string): boolean {
-		return page.url.pathname === href || page.url.pathname.startsWith(href + '/');
+	/** Route ids are identical on server and client, unlike resolved hrefs. */
+	function isCurrent(route: string): boolean {
+		const id = page.route.id ?? '';
+		return id === route || id.startsWith(route + '/') || id.startsWith('/(app)' + route);
 	}
 </script>
 
 <header class="masthead no-print">
 	<div class="page inner">
-		<a class="home" href={resolve('/')}>
+		<a class="home" href={resolve(localized('/'))}>
 			<Wordmark />
 			<span class="tagline">{m.site_tagline()}</span>
 		</a>
 		<nav aria-label={m.nav_label()}>
-			{#each items as item (item.href)}
-				<a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+			{#each items as item (item.route)}
+				<a href={item.href} aria-current={isCurrent(item.route) ? 'page' : undefined}>
 					{item.label}
 				</a>
 			{/each}

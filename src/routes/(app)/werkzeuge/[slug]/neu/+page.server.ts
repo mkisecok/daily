@@ -2,6 +2,7 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import { db } from '#lib/server/db/index.js';
 import { toolRuns } from '#lib/server/db/schema.js';
 import { getActiveOrganisationId } from '#lib/server/org.js';
+import { localizeHref } from '#lib/paraglide/runtime.js';
 import { getQuestionnaire, getTool } from '#lib/tools/registry.js';
 import type { Answers, YesNoAnswer } from '#lib/tools/types.js';
 import type { Actions, PageServerLoad } from './$types';
@@ -55,6 +56,6 @@ export const actions: Actions = {
 			})
 			.returning({ id: toolRuns.id });
 
-		redirect(303, `/werkzeuge/${tool.slug}/${run.id}`);
+		redirect(303, localizeHref(`/werkzeuge/${tool.slug}/${run.id}`));
 	}
 };

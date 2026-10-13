@@ -5,14 +5,15 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
+	import { localized } from '#lib/i18n/links.js';
 </script>
 
 <footer class="footer no-print">
 	<div class="page inner">
 		<span class="eyebrow">Daily · {m.site_tagline()}</span>
 		<nav aria-label={m.footer_label()}>
-			<a href={resolve('/impressum')}>{m.footer_imprint()}</a>
-			<a href={resolve('/datenschutz')}>{m.footer_privacy()}</a>
+			<a href={resolve(localized('/impressum'))}>{m.footer_imprint()}</a>
+			<a href={resolve(localized('/datenschutz'))}>{m.footer_privacy()}</a>
 		</nav>
 		<span class="note">{m.footer_disclaimer()}</span>
 	</div>

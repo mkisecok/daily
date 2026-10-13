@@ -6,6 +6,7 @@
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import { m } from '#lib/paraglide/messages.js';
 	import { formatLongDate } from '#lib/i18n/date.js';
+	import { localized } from '#lib/i18n/links.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -57,7 +58,7 @@
 		}
 		if (!('vor' in params)) search.delete('vor');
 		const query = search.toString();
-		return `/nachrichten${query ? `?${query}` : ''}` as Path;
+		return localized(`/nachrichten${query ? `?${query}` : ''}`);
 	}
 
 	function time(iso: string): string {

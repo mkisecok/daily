@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
+	import { localized } from '#lib/i18n/links.js';
 	import DateLine from '#lib/ui/DateLine.svelte';
 	import Wordmark from '#lib/ui/Wordmark.svelte';
 	import type { PageProps } from './$types';
@@ -12,21 +13,21 @@
 			numeral: 'I.',
 			title: m.landing_read_title(),
 			body: m.landing_read_body(),
-			href: resolve('/nachrichten'),
+			href: resolve(localized('/nachrichten')),
 			link: m.nav_feed()
 		},
 		{
 			numeral: 'II.',
 			title: m.landing_note_title(),
 			body: m.landing_note_body(),
-			href: resolve('/(app)/notizen'),
+			href: resolve(localized('/notizen')),
 			link: m.nav_notes()
 		},
 		{
 			numeral: 'III.',
 			title: m.landing_work_title(),
 			body: m.landing_work_body(),
-			href: resolve('/werkzeuge'),
+			href: resolve(localized('/werkzeuge')),
 			link: m.nav_tools()
 		}
 	]);
