@@ -3,6 +3,9 @@
 A daily workplace for data protection officers, AI officers and auditors working under the
 GDPR (DSGVO) and the EU AI Act (KI-VO). German first, English included.
 
+**Public preview:** https://mkisecok.github.io/daily/ (static build, rebuilt four times a day
+with fresh news; sign-in, notes and saved assessments are switched off there).
+
 - **Nachrichten** – news from the EDPB, CJEU, BfDI, DSK, state authorities and the legal press,
   tagged by regulation and kind. Title, excerpt and link only; the text stays with the source.
 - **Werkzeuge** – tools that turn one legal duty into a documented, citable result. Available:
