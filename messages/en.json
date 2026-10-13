@@ -34,7 +34,6 @@
 	"status_beta": "Beta",
 	"status_planned": "Planned",
 	"tool_start": "Start assessment",
-	"tool_start_login": "Sign in and start",
 	"tool_runs": "Previous runs",
 	"tool_runs_empty": "No run saved yet.",
 	"col_date": "Date",
@@ -77,5 +76,11 @@
 	"region_de": "Germany",
 	"region_land": "States",
 	"bookmark_add": "Bookmark",
-	"bookmark_remove": "Bookmarked"
+	"bookmark_remove": "Bookmarked",
+	"tool_save": "Assess and save",
+	"tool_save_login": "Sign in to save results",
+	"form_check": "Evaluate",
+	"check_not_saved": "This result is not saved. With an account, assessments are stored with date and catalog version.",
+	"check_edit": "Change answers",
+	"check_noscript": "The evaluation runs in your browser and needs JavaScript."
 }

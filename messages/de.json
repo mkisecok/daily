@@ -34,7 +34,6 @@
 	"status_beta": "Beta",
 	"status_planned": "Geplant",
 	"tool_start": "Prüfung beginnen",
-	"tool_start_login": "Anmelden und Prüfung beginnen",
 	"tool_runs": "Bisherige Durchläufe",
 	"tool_runs_empty": "Noch kein Durchlauf gespeichert.",
 	"col_date": "Datum",
@@ -77,5 +76,11 @@
 	"region_de": "Deutschland",
 	"region_land": "Länder",
 	"bookmark_add": "Merken",
-	"bookmark_remove": "Gemerkt"
+	"bookmark_remove": "Gemerkt",
+	"tool_save": "Prüfen und speichern",
+	"tool_save_login": "Anmelden, um Ergebnisse zu speichern",
+	"form_check": "Auswerten",
+	"check_not_saved": "Dieses Ergebnis wird nicht gespeichert. Mit einem Konto werden Prüfungen mit Datum und Katalogversion abgelegt.",
+	"check_edit": "Antworten ändern",
+	"check_noscript": "Die Auswertung läuft im Browser und benötigt JavaScript."
 }
