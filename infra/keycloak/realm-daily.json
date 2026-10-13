@@ -1,0 +1,69 @@
+{
+	"realm": "daily",
+	"displayName": "Daily",
+	"enabled": true,
+	"registrationAllowed": true,
+	"registrationEmailAsUsername": true,
+	"loginWithEmailAllowed": true,
+	"duplicateEmailsAllowed": false,
+	"resetPasswordAllowed": true,
+	"verifyEmail": false,
+	"rememberMe": true,
+	"bruteForceProtected": true,
+	"internationalizationEnabled": true,
+	"supportedLocales": ["de", "en"],
+	"defaultLocale": "de",
+	"ssoSessionIdleTimeout": 1209600,
+	"ssoSessionMaxLifespan": 2592000,
+	"accessTokenLifespan": 300,
+	"roles": {
+		"realm": [
+			{ "name": "user", "description": "Signed-in member" },
+			{ "name": "editor", "description": "Curates the feed" },
+			{ "name": "admin", "description": "Platform administration" }
+		]
+	},
+	"defaultRole": {
+		"name": "default-roles-daily",
+		"composite": true,
+		"composites": { "realm": ["user", "offline_access", "uma_authorization"] }
+	},
+	"clients": [
+		{
+			"clientId": "daily-web",
+			"name": "Daily web app",
+			"enabled": true,
+			"protocol": "openid-connect",
+			"publicClient": false,
+			"clientAuthenticatorType": "client-secret",
+			"secret": "daily-web-dev-secret",
+			"standardFlowEnabled": true,
+			"implicitFlowEnabled": false,
+			"directAccessGrantsEnabled": false,
+			"serviceAccountsEnabled": false,
+			"redirectUris": [
+				"http://localhost:5174/auth/callback",
+				"http://localhost:4174/auth/callback"
+			],
+			"webOrigins": ["http://localhost:5174", "http://localhost:4174"],
+			"attributes": {
+				"pkce.code.challenge.method": "S256",
+				"post.logout.redirect.uris": "http://localhost:5174/*##http://localhost:4174/*"
+			},
+			"defaultClientScopes": ["openid", "profile", "email", "roles"],
+			"optionalClientScopes": ["offline_access"]
+		}
+	],
+	"users": [
+		{
+			"username": "test@dai-ly.de",
+			"email": "test@dai-ly.de",
+			"emailVerified": true,
+			"enabled": true,
+			"firstName": "Test",
+			"lastName": "Nutzer",
+			"credentials": [{ "type": "password", "value": "test-dev-password", "temporary": false }],
+			"realmRoles": ["user"]
+		}
+	]
+}
