@@ -4,10 +4,10 @@
 	locale on the server.
 -->
 <script lang="ts">
-	import type { Path } from '$app/types';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { getLocale, locales, localizeHref } from '#lib/paraglide/runtime.js';
+	import { getLocale, locales } from '#lib/paraglide/runtime.js';
+	import { inLocale } from '#lib/i18n/links.js';
 
 	const labels: Record<string, string> = { de: 'DE', en: 'EN' };
 	const current = $derived(getLocale());
@@ -17,7 +17,7 @@
 	{#each locales as locale, index (locale)}
 		{#if index > 0}<span class="sep" aria-hidden="true">/</span>{/if}
 		<a
-			href={resolve(localizeHref(page.url.pathname, { locale }) as Path)}
+			href={resolve(inLocale(page.url.pathname, locale))}
 			hreflang={locale}
 			lang={locale}
 			aria-current={locale === current ? 'true' : undefined}
