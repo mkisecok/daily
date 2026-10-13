@@ -19,7 +19,7 @@
 			numeral: 'II.',
 			title: m.landing_note_title(),
 			body: m.landing_note_body(),
-			href: resolve('/notizen'),
+			href: resolve('/(app)/notizen'),
 			link: m.nav_notes()
 		},
 		{
