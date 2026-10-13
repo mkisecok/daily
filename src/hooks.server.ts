@@ -1,6 +1,8 @@
 import type { Handle } from '@sveltejs/kit/hooks';
+import { sequence } from '@sveltejs/kit/hooks';
 import { getTextDirection } from '#lib/paraglide/runtime.js';
 import { paraglideMiddleware } from '#lib/paraglide/server.js';
+import { loadSession } from '#lib/server/auth/session.js';
 import { parseTheme, THEME_COOKIE } from '#lib/theme.js';
 
 /**
@@ -23,4 +25,12 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 		);
 	});
 
-export const handle: Handle = handleParaglide;
+/** Resolves the session cookie once per request into `locals`. */
+const handleAuth: Handle = async ({ event, resolve }) => {
+	const session = await loadSession(event.cookies);
+	event.locals.session = session;
+	event.locals.user = session?.user;
+	return resolve(event);
+};
+
+export const handle: Handle = sequence(handleParaglide, handleAuth);
