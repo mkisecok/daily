@@ -17,7 +17,7 @@ test('catalogue lists the DSFA screening as available and planned tools without 
 
 test('DSFA screening: answer, save, and read the verdict back', async ({ page }) => {
 	await page.goto('/werkzeuge/dsfa-schwellwert');
-	await page.getByRole('link', { name: /Anmelden und Prüfung beginnen/ }).click();
+	await page.getByRole('link', { name: /Anmelden, um Ergebnisse zu speichern/ }).click();
 	await page.locator('#username').fill(username);
 	await page.locator('#password').fill(password);
 	await page.locator('#kc-login').click();
@@ -40,4 +40,27 @@ test('DSFA screening: answer, save, and read the verdict back', async ({ page })
 
 	await page.getByRole('button', { name: 'Abmelden' }).click();
 	await expect(page.getByRole('link', { name: 'Anmelden' })).toBeVisible();
+});
+
+test('risk classification runs in the browser without an account', async ({ page }) => {
+	await page.goto('/werkzeuge/risikoklassifizierung');
+	await page.getByRole('link', { name: /Prüfung beginnen/ }).click();
+	await expect(page).toHaveURL(/\/werkzeuge\/risikoklassifizierung\/pruefen$/);
+
+	const questions = page.locator('fieldset');
+	const count = await questions.count();
+	expect(count).toBeGreaterThan(20);
+	for (let i = 0; i < count; i++) {
+		await questions.nth(i).getByLabel('Nein').check();
+	}
+	await questions.nth(0).getByLabel('Ja').check(); // it is an AI system
+	await page.locator('input[name="answer.t_interaction"][value="yes"]').check();
+
+	await page.getByRole('button', { name: 'Auswerten' }).click();
+	await expect(
+		page.getByRole('heading', { level: 2, name: 'Transparenzpflichten nach Art. 50.' })
+	).toBeVisible();
+
+	await page.getByRole('button', { name: 'Antworten ändern' }).click();
+	await expect(page.locator('input[name="answer.t_interaction"][value="yes"]')).toBeChecked();
 });
