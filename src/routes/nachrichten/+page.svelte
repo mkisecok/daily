@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import type { Path } from '$app/types';
+	import { PUBLIC_PREVIEW } from '$app/env/public';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { SvelteMap, SvelteURLSearchParams } from 'svelte/reactivity';
@@ -31,10 +33,44 @@
 	};
 	const regions = ['eu', 'de', 'land'];
 
+	/**
+	 * The static preview is prerendered without a query string, so it reads
+	 * the URL only after hydration and filters in the browser. Before that
+	 * it renders exactly what was prerendered, so hydration matches.
+	 */
+	let hydrated = $state(false);
+	onMount(() => {
+		hydrated = true;
+	});
+	const search = $derived(PUBLIC_PREVIEW && !hydrated ? '' : page.url.search);
+
+	const filter = $derived.by(() => {
+		if (!PUBLIC_PREVIEW) return data.filter;
+		const params = new SvelteURLSearchParams(search);
+		return {
+			tag: params.get('tag'),
+			region: params.get('region'),
+			source: params.get('quelle'),
+			before: null,
+			merken: false
+		};
+	});
+
+	const items = $derived(
+		PUBLIC_PREVIEW
+			? data.items.filter(
+					(item) =>
+						(!filter.tag || item.tags.includes(filter.tag)) &&
+						(!filter.region || item.source.region === filter.region) &&
+						(!filter.source || item.source.slug === filter.source)
+				)
+			: data.items
+	);
+
 	/** Items grouped by publication day, newest first. */
 	const days = $derived.by(() => {
 		const groups: { day: string; items: typeof data.items }[] = [];
-		for (const item of data.items) {
+		for (const item of items) {
 			const day = dayKey(item.publishedAt);
 			const last = groups.at(-1);
 			if (last && last.day === day) last.items.push(item);
@@ -43,7 +79,8 @@
 		return groups;
 	});
 
-	const oldest = $derived(data.items.at(-1)?.publishedAt ?? null);
+	/** Paging needs the database; the preview shows its fixed two-week window. */
+	const oldest = $derived(PUBLIC_PREVIEW ? null : (data.items.at(-1)?.publishedAt ?? null));
 
 	const bookmarkEndpoint = resolve('/nachrichten/merken');
 	/** Bookmark state changed on this page since load, by item id. */
@@ -67,13 +104,13 @@
 
 	/** Current query with some parameters replaced; `null` removes one. */
 	function link(params: Record<string, string | null>): Path {
-		const search = new SvelteURLSearchParams(page.url.search);
+		const next = new SvelteURLSearchParams(search);
 		for (const [key, value] of Object.entries(params)) {
-			if (value === null) search.delete(key);
-			else search.set(key, value);
+			if (value === null) next.delete(key);
+			else next.set(key, value);
 		}
-		if (!('vor' in params)) search.delete('vor');
-		const query = search.toString();
+		if (!('vor' in params)) next.delete('vor');
+		const query = next.toString();
 		return localized(`/nachrichten${query ? `?${query}` : ''}`);
 	}
 </script>
@@ -91,14 +128,11 @@
 <nav class="filters no-print" aria-label={m.feed_filters()}>
 	<div class="group">
 		<span class="eyebrow">{m.filter_regulation()}</span>
-		<a
-			href={resolve(link({ tag: null }))}
-			aria-current={data.filter.tag === null ? 'true' : undefined}
-		>
+		<a href={resolve(link({ tag: null }))} aria-current={filter.tag === null ? 'true' : undefined}>
 			{m.filter_all()}
 		</a>
 		{#each data.tags.regulation as tag (tag)}
-			<a href={resolve(link({ tag }))} aria-current={data.filter.tag === tag ? 'true' : undefined}>
+			<a href={resolve(link({ tag }))} aria-current={filter.tag === tag ? 'true' : undefined}>
 				{tagLabels[tag]()}
 			</a>
 		{/each}
@@ -106,7 +140,7 @@
 	<div class="group">
 		<span class="eyebrow">{m.filter_kind()}</span>
 		{#each data.tags.kind as tag (tag)}
-			<a href={resolve(link({ tag }))} aria-current={data.filter.tag === tag ? 'true' : undefined}>
+			<a href={resolve(link({ tag }))} aria-current={filter.tag === tag ? 'true' : undefined}>
 				{tagLabels[tag]()}
 			</a>
 		{/each}
@@ -115,14 +149,14 @@
 		<span class="eyebrow">{m.filter_region()}</span>
 		<a
 			href={resolve(link({ region: null }))}
-			aria-current={data.filter.region === null ? 'true' : undefined}
+			aria-current={filter.region === null ? 'true' : undefined}
 		>
 			{m.filter_all()}
 		</a>
 		{#each regions as region (region)}
 			<a
 				href={resolve(link({ region }))}
-				aria-current={data.filter.region === region ? 'true' : undefined}
+				aria-current={filter.region === region ? 'true' : undefined}
 			>
 				{regionLabels[region]()}
 			</a>
@@ -132,8 +166,8 @@
 		<div class="group">
 			<span class="eyebrow">{m.filter_mine()}</span>
 			<a
-				href={resolve(link({ merken: data.filter.merken ? null : '1' }))}
-				aria-current={data.filter.merken ? 'true' : undefined}
+				href={resolve(link({ merken: filter.merken ? null : '1' }))}
+				aria-current={filter.merken ? 'true' : undefined}
 			>
 				{m.filter_bookmarked()}
 			</a>
