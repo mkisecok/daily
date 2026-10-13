@@ -13,5 +13,18 @@ export const variables = defineEnvVars({
 			if (!value || !/^https?:\/\//.test(value)) throw new Error('APP_ORIGIN must be an origin');
 			return value.replace(/\/$/, '');
 		}
+	},
+	PUBLIC_PREVIEW: {
+		public: true,
+		static: true,
+		description:
+			'Build the public static preview: every page prerendered, no database, no sign-in (GitHub Pages).',
+		schema: (value) => value === '1' || value === 'true'
+	},
+	PUBLIC_BASE_PATH: {
+		public: true,
+		static: true,
+		description: 'Path prefix the site is served under, e.g. /daily. Empty for a domain root.',
+		schema: (value) => (value ?? '').replace(/\/$/, '')
 	}
 });
