@@ -7,6 +7,9 @@ import { getQuestionnaire, getTool } from '#lib/tools/registry.js';
 import type { Answers, YesNoAnswer } from '#lib/tools/types.js';
 import type { Actions, PageServerLoad } from './$types';
 
+/** Needs a signed-in user and the database; never part of a static build. */
+export const prerender = false;
+
 const ANSWER_PREFIX = 'answer.';
 
 function isYesNo(value: FormDataEntryValue | null): value is YesNoAnswer {
