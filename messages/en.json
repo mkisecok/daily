@@ -56,5 +56,6 @@
 	"run_print": "Print",
 	"run_again": "Assess again",
 	"run_back": "Back to tool",
-	"run_disclaimer": "The assessment rests solely on the answers given."
+	"run_disclaimer": "The assessment rests solely on the answers given.",
+	"verdict_notes": "Obligations and notes"
 }

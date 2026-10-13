@@ -29,6 +29,15 @@
 		</ol>
 	{/if}
 
+	{#if result.notes && result.notes.length > 0}
+		<h3 class="eyebrow reasons-title">{m.verdict_notes()}</h3>
+		<ul class="notes">
+			{#each result.notes as note, index (index)}
+				<li>{text(note)}</li>
+			{/each}
+		</ul>
+	{/if}
+
 	<p class="sources">
 		<span class="eyebrow">{m.verdict_sources()}</span>
 		{#each result.citations as basis, index (basis.law + basis.ref)}
@@ -84,6 +93,17 @@
 
 			& .reason-text {
 				margin-right: 0.75rem;
+			}
+		}
+
+		& .notes {
+			margin: 0.75rem 0 0 1.25rem;
+			max-width: var(--measure);
+
+			& li {
+				padding: 0.3rem 0;
+				font-size: 15px;
+				color: var(--ink2);
 			}
 		}
 

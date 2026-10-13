@@ -65,6 +65,8 @@ export type QuestionnaireResult = {
 	headline: Localized;
 	explanation: Localized;
 	reasons: Reason[];
+	/** Obligations, dates or next steps that follow from the verdict. */
+	notes?: Localized[];
 	citations: LegalBasis[];
 };
 

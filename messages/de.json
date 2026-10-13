@@ -56,5 +56,6 @@
 	"run_print": "Drucken",
 	"run_again": "Erneut prüfen",
 	"run_back": "Zum Werkzeug",
-	"run_disclaimer": "Die Bewertung stützt sich allein auf die gegebenen Antworten."
+	"run_disclaimer": "Die Bewertung stützt sich allein auf die gegebenen Antworten.",
+	"verdict_notes": "Pflichten und Hinweise"
 }
