@@ -19,7 +19,10 @@
 		"db:push": "drizzle-kit push",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
-		"db:studio": "drizzle-kit studio"
+		"db:studio": "drizzle-kit studio",
+		"worker": "tsx worker/index.ts",
+		"worker:once": "tsx worker/index.ts --once",
+		"build:worker": "esbuild worker/index.ts --bundle --platform=node --format=esm --target=node22 --outfile=build-worker/index.js --banner:js=\"import { createRequire } from 'module'; const require = createRequire(import.meta.url);\""
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
@@ -35,6 +38,7 @@
 		"@vitest/browser-playwright": "^4.1.8",
 		"drizzle-kit": "^0.31.10",
 		"drizzle-orm": "^0.45.2",
+		"esbuild": "^0.28.2",
 		"eslint": "^10.4.1",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.19.0",
@@ -45,6 +49,7 @@
 		"prettier-plugin-svelte": "^4.1.0",
 		"svelte": "^5.57.1",
 		"svelte-check": "^4.6.0",
+		"tsx": "^4.23.15",
 		"typescript": "^6.0.3",
 		"typescript-eslint": "^8.60.1",
 		"vite": "^8.3.0",
@@ -56,6 +61,9 @@
 		"#lib/*": "./src/lib/*"
 	},
 	"dependencies": {
-		"openid-client": "^6.8.8"
+		"cheerio": "^1.2.0",
+		"node-cron": "^4.6.0",
+		"openid-client": "^6.8.8",
+		"rss-parser": "^3.13.0"
 	}
 }
