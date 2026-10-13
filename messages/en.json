@@ -1,4 +1,26 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"hello_world": "Hello, {name} from en!"
+	"site_tagline": "Data · AI · Law",
+	"nav_label": "Main navigation",
+	"nav_feed": "News",
+	"nav_tools": "Tools",
+	"nav_norms": "Statutes",
+	"nav_notes": "Notes",
+	"theme_to_dark": "Dark paper",
+	"theme_to_light": "Light paper",
+	"dateline_issue": "No. {n}",
+	"landing_claim": "The daily desk for data protection and AI law.",
+	"landing_intro": "Daily gathers what data protection officers, AI officers and auditors need every day: the latest decisions of supervisory authorities and courts, a notebook that attaches to them, and tools that turn each duty under the GDPR and the AI Act into a documented result.",
+	"landing_status": "The platform grows one tool at a time.",
+	"landing_read_title": "Read",
+	"landing_read_body": "One digest per day: EDPB, BfDI, German state authorities, CJEU, Official Journal. Every entry carries the provision it touches. Five minutes over coffee is enough to stay current.",
+	"landing_note_title": "Note",
+	"landing_note_body": "One note per day, linked to the items, deadlines and assessments it concerns. Full-text search across everything you have ever written down.",
+	"landing_work_title": "Work",
+	"landing_work_body": "Tools for concrete duties: AI Act risk class, DPIA screening, the 72-hour breach clock, data subject requests. Every result cites its legal basis and prints cleanly.",
+	"placeholder_building": "Under construction.",
+	"footer_label": "Legal",
+	"footer_imprint": "Imprint",
+	"footer_privacy": "Privacy",
+	"footer_disclaimer": "Not legal advice."
 }

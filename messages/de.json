@@ -1,4 +1,26 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"hello_world": "Hello, {name} from de!"
+	"site_tagline": "Data · AI · Law",
+	"nav_label": "Hauptnavigation",
+	"nav_feed": "Nachrichten",
+	"nav_tools": "Werkzeuge",
+	"nav_norms": "Normen",
+	"nav_notes": "Notizen",
+	"theme_to_dark": "Dunkles Papier",
+	"theme_to_light": "Helles Papier",
+	"dateline_issue": "Nr. {n}",
+	"landing_claim": "Der tägliche Arbeitsplatz für Datenschutz und KI-Recht.",
+	"landing_intro": "Daily bündelt, was Datenschutzbeauftragte, KI-Beauftragte und Auditoren jeden Tag brauchen: die aktuellen Entscheidungen der Aufsicht und der Gerichte, ein Notizbuch, das daran anknüpft, und Werkzeuge, die jede Pflicht aus DSGVO und KI-Verordnung in ein dokumentiertes Ergebnis überführen.",
+	"landing_status": "Die Plattform wächst Werkzeug für Werkzeug.",
+	"landing_read_title": "Lesen",
+	"landing_read_body": "Eine Übersicht pro Tag: EDSA, BfDI, Landesbehörden, EuGH, Amtsblatt. Jeder Eintrag trägt die Norm, die er berührt. Fünf Minuten in der Kaffeepause genügen, um auf dem Stand zu sein.",
+	"landing_note_title": "Notieren",
+	"landing_note_body": "Eine Notiz pro Tag, verknüpft mit den Meldungen, Fristen und Prüfungen, die sie betrifft. Volltextsuche über alles, was Sie je festgehalten haben.",
+	"landing_work_title": "Arbeiten",
+	"landing_work_body": "Werkzeuge für konkrete Pflichten: Risikoklasse nach KI-Verordnung, DSFA-Schwellwert, 72-Stunden-Frist bei Datenpannen, Betroffenenanfragen. Jedes Ergebnis zitiert seine Rechtsgrundlage und lässt sich drucken.",
+	"placeholder_building": "Im Aufbau.",
+	"footer_label": "Rechtliches",
+	"footer_imprint": "Impressum",
+	"footer_privacy": "Datenschutz",
+	"footer_disclaimer": "Keine Rechtsberatung."
 }
