@@ -1,9 +1,8 @@
 <script lang="ts">
 	import type { Path } from '$app/types';
-	import { enhance } from '$app/forms';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { SvelteURLSearchParams } from 'svelte/reactivity';
+	import { SvelteMap, SvelteURLSearchParams } from 'svelte/reactivity';
 	import { m } from '#lib/paraglide/messages.js';
 	import { dayKey, formatLongDate, formatTime } from '#lib/i18n/date.js';
 	import { localized } from '#lib/i18n/links.js';
@@ -46,8 +45,25 @@
 
 	const oldest = $derived(data.items.at(-1)?.publishedAt ?? null);
 
-	/** Named action that keeps the active filters in the URL after the POST. */
-	const bookmarkAction = $derived(page.url.search ? `${page.url.search}&/bookmark` : '?/bookmark');
+	const bookmarkEndpoint = resolve('/nachrichten/merken');
+	/** Bookmark state changed on this page since load, by item id. */
+	const toggled = new SvelteMap<string, boolean>();
+
+	/** Toggles without a reload; the form still works as a plain post without JS. */
+	async function toggleBookmark(event: SubmitEvent & { currentTarget: HTMLFormElement }) {
+		event.preventDefault();
+		const response = await fetch(bookmarkEndpoint, {
+			method: 'POST',
+			headers: { accept: 'application/json' },
+			body: new FormData(event.currentTarget)
+		});
+		if (!response.ok) return;
+		const { itemId, bookmarked } = (await response.json()) as {
+			itemId: string;
+			bookmarked: boolean;
+		};
+		toggled.set(itemId, bookmarked);
+	}
 
 	/** Current query with some parameters replaced; `null` removes one. */
 	function link(params: Record<string, string | null>): Path {
@@ -160,10 +176,17 @@
 							<a class="tag" href={resolve(link({ tag }))}>{tagLabels[tag]?.() ?? tag}</a>
 						{/each}
 						{#if data.user}
-							<form method="post" action={bookmarkAction} use:enhance class="bookmark">
+							{@const bookmarked = toggled.get(item.id) ?? item.bookmarked}
+							<form
+								method="post"
+								action={bookmarkEndpoint}
+								onsubmit={toggleBookmark}
+								class="bookmark"
+							>
 								<input type="hidden" name="item" value={item.id} />
-								<button type="submit" aria-pressed={item.bookmarked}>
-									{item.bookmarked ? m.bookmark_remove() : m.bookmark_add()}
+								<input type="hidden" name="back" value={page.url.pathname + page.url.search} />
+								<button type="submit" aria-pressed={bookmarked}>
+									{bookmarked ? m.bookmark_remove() : m.bookmark_add()}
 								</button>
 							</form>
 						{/if}

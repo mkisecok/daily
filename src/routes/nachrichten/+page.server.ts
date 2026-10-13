@@ -1,8 +1,7 @@
-import { fail, redirect } from '@sveltejs/kit';
 import { db } from '#lib/server/db/index.js';
-import { listFeed, listSources, toggleBookmark, type FeedFilter } from '#lib/server/feed/query.js';
+import { listFeed, listSources, type FeedFilter } from '#lib/server/feed/query.js';
 import { KIND_TAGS, REGULATION_TAGS } from '#lib/server/feed/tagging.js';
-import type { Actions, PageServerLoad } from './$types';
+import type { PageServerLoad } from './$types';
 
 const REGIONS = ['eu', 'de', 'land'] as const;
 const ALL_TAGS: readonly string[] = [...REGULATION_TAGS, ...KIND_TAGS];
@@ -43,16 +42,4 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		},
 		tags: { regulation: REGULATION_TAGS, kind: KIND_TAGS }
 	};
-};
-
-export const actions: Actions = {
-	bookmark: async ({ request, locals, url }) => {
-		if (!locals.user)
-			redirect(303, `/auth/login?next=${encodeURIComponent(url.pathname + url.search)}`);
-		const form = await request.formData();
-		const itemId = form.get('item');
-		if (typeof itemId !== 'string' || !/^[0-9a-f-]{36}$/.test(itemId)) return fail(400);
-		const bookmarked = await toggleBookmark(db, locals.user.id, itemId);
-		return { itemId, bookmarked };
-	}
 };
