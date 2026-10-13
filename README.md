@@ -1,54 +1,61 @@
-# sv
+# Daily — Data · AI · Law
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A daily workplace for data protection officers, AI officers and auditors working under the
+GDPR (DSGVO) and the EU AI Act (KI-VO). German first, English included.
 
-## Creating a project
+- **Nachrichten** – news from the EDPB, CJEU, BfDI, DSK, state authorities and the legal press,
+  tagged by regulation and kind. Title, excerpt and link only; the text stays with the source.
+- **Werkzeuge** – tools that turn one legal duty into a documented, citable result. Available:
+  DPIA screening (Art. 35 DSGVO, WP 248, DSK must-list) and AI Act risk classification (Art. 5,
+  Annex I/III, Art. 6(3), Art. 50, dates after Omnibus Regulation (EU) 2026/1744). Over twenty
+  more are planned and listed in the catalogue.
+- **Notizen** – a notebook tied to news items and assessments (in progress).
 
-If you're seeing this, you've probably already done this step. Congrats!
+Not legal advice.
 
-```sh
-# create a new project
-npx sv create my-app
-```
+## Stack
 
-To recreate this project with the same configuration:
+SvelteKit 3 · Svelte 5 · TypeScript · Paraglide (de/en) · Drizzle + PostgreSQL 17 ·
+Keycloak 26 via `openid-client` · node-cron feed worker · Vitest · Playwright.
 
-```sh
-# recreate this project
-pnpm dlx sv@1.1.1 create --template minimal --types ts --add prettier eslint vitest="usages:unit,component" playwright="demo:no" drizzle="database:postgresql+postgresql:postgres.js+docker:yes" paraglide="languageTags:de,en+demo:no" sveltekit-adapter="adapter:node" --no-download-check --install pnpm daily
-```
+## Local development
 
-## Adding features
-
-Add features to your project with `sv add`:
-
-```sh
-npx sv add
-```
-
-For example, to add Tailwind CSS:
+Requires Node 22+, pnpm and Docker.
 
 ```sh
-npx sv add tailwindcss
+pnpm install
+cp .env.example .env
+docker compose up -d        # Postgres on 5433, Keycloak on 8080 with the "daily" realm
+pnpm db:migrate
+pnpm worker:once            # fetch the news sources once
+pnpm dev                    # http://localhost:5174
 ```
 
-## Developing
+The imported realm contains a local test user; see `infra/keycloak/realm-daily.json`.
+Those credentials only exist on your machine.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Checks
 
 ```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+pnpm check                  # svelte-check
+pnpm lint                   # prettier + eslint
+pnpm vitest run --project server
+pnpm test:e2e               # needs the compose stack running
 ```
 
-## Building
+## Static preview
 
-To create a production version of your app:
+`pnpm build:static` builds a public preview without server, database or sign-in: every page is
+prerendered, news is fetched from the sources at build time and filtered in the browser, and
+the tools run in the browser without saving. Settings live in `.env.static`; set
+`PUBLIC_BASE_PATH` (for example `/daily`) when the site is served from a sub-path.
 
 ```sh
-npm run build
+PUBLIC_BASE_PATH=/daily pnpm build:static
+PUBLIC_BASE_PATH=/daily pnpm preview:static   # http://localhost:4175/daily/
 ```
 
-You can preview the production build with `npm run preview`.
+## Documentation
+
+The product plan and design decisions are in
+[`docs/superpowers/specs/2026-10-13-daily-design.md`](docs/superpowers/specs/2026-10-13-daily-design.md).
