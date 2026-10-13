@@ -1,14 +1,43 @@
+# Local development stack: Postgres (app + Keycloak databases) and Keycloak.
+# Production uses infra/compose.prod.yml behind Caddy.
 services:
-  db:
-    image: postgres
-    restart: always
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
     ports:
-      - 5432:5432
+      - '5433:5432'
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: mysecretpassword
-      POSTGRES_DB: local
+      POSTGRES_USER: daily
+      POSTGRES_PASSWORD: daily-dev-password
+      POSTGRES_DB: daily
     volumes:
-      - pgdata:/var/lib/postgresql
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/postgres/init-keycloak-db.sql:/docker-entrypoint-initdb.d/10-keycloak.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U daily -d daily']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.1
+    restart: unless-stopped
+    command: ['start-dev', '--import-realm']
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - '8080:8080'
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: daily
+      KC_DB_PASSWORD: daily-dev-password
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin-dev-password
+      KC_HTTP_ENABLED: 'true'
+    volumes:
+      - ./infra/keycloak:/opt/keycloak/data/import:ro
+
 volumes:
   pgdata:
