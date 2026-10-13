@@ -1,4 +1,6 @@
+import { PUBLIC_PREVIEW } from '$app/env/public';
 import { db } from '#lib/server/db/index.js';
+import { fetchLiveFeed } from '#lib/server/feed/live.js';
 import { listFeed, listSources, type FeedFilter } from '#lib/server/feed/query.js';
 import { KIND_TAGS, REGULATION_TAGS } from '#lib/server/feed/tagging.js';
 import type { PageServerLoad } from './$types';
@@ -24,7 +26,20 @@ function readFilter(url: URL, userId?: string): FeedFilter {
 	};
 }
 
+const tags = { regulation: REGULATION_TAGS, kind: KIND_TAGS };
+
 export const load: PageServerLoad = async ({ url, locals }) => {
+	if (PUBLIC_PREVIEW) {
+		// Prerendered: no query string, no database. The page filters in the browser.
+		const { items, sources } = await fetchLiveFeed();
+		return {
+			items: items.map((item) => ({ ...item, publishedAt: item.publishedAt.toISOString() })),
+			sources,
+			filter: { tag: null, region: null, source: null, before: null, merken: false },
+			tags
+		};
+	}
+
 	const filter = readFilter(url, locals.user?.id);
 	const [items, sources] = await Promise.all([
 		listFeed(db, filter, locals.user?.id),
@@ -40,6 +55,6 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 			before: filter.before?.toISOString() ?? null,
 			merken: Boolean(filter.bookmarkedBy)
 		},
-		tags: { regulation: REGULATION_TAGS, kind: KIND_TAGS }
+		tags
 	};
 };
