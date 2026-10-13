@@ -1,0 +1,437 @@
+{
+	"slug": "risikoklassifizierung",
+	"version": 1,
+	"intro": {
+		"de": "Die KI-Verordnung (Verordnung (EU) 2024/1689) stuft KI-Systeme nach ihrem Risiko ein: verbotene Praktiken (Art. 5), Hochrisiko-Systeme (Art. 6 mit Anhang I und III), Systeme mit Transparenzpflichten (Art. 50) und alle übrigen. Diese Prüfung führt in dieser Reihenfolge durch die Einstufung und nennt die Pflichten und das Geltungsdatum, das die Omnibus-Verordnung (EU) 2026/1744 festgelegt hat. Sie bezieht sich auf ein konkretes KI-System, nicht auf ein KI-Modell mit allgemeinem Verwendungszweck.",
+		"en": "The AI Act (Regulation (EU) 2024/1689) classifies AI systems by risk: prohibited practices (Art. 5), high-risk systems (Art. 6 with Annexes I and III), systems with transparency obligations (Art. 50) and all others. This assessment walks through the classification in that order and names the obligations and the application date set by the Omnibus Regulation (EU) 2026/1744. It concerns a specific AI system, not a general-purpose AI model."
+	},
+	"sources": [
+		{
+			"law": "KI-VO",
+			"ref": "Art. 2, 3, 5, 6, 50, 113"
+		},
+		{
+			"law": "KI-VO",
+			"ref": "Anhang I und III"
+		},
+		{
+			"law": "KI-VO",
+			"ref": "Verordnung (EU) 2026/1744 (Omnibus)"
+		}
+	],
+	"sections": [
+		{
+			"id": "scope",
+			"title": {
+				"de": "Anwendungsbereich",
+				"en": "Scope"
+			},
+			"questions": [
+				{
+					"id": "s_ai",
+					"type": "yesno",
+					"text": {
+						"de": "Handelt es sich um ein KI-System im Sinne von Art. 3 Nr. 1: ein maschinengestütztes System, das mit unterschiedlichem Grad an Autonomie betrieben wird und aus Eingaben ableitet, wie Ausgaben wie Vorhersagen, Inhalte, Empfehlungen oder Entscheidungen erzeugt werden, die physische oder virtuelle Umgebungen beeinflussen können?",
+						"en": "Is it an AI system within the meaning of Art. 3(1): a machine-based system that operates with varying levels of autonomy and infers from input how to generate outputs such as predictions, content, recommendations or decisions that can influence physical or virtual environments?"
+					},
+					"help": {
+						"de": "Regelbasierte Software ohne Ableitungsfähigkeit (einfache Berechnungen, feste Entscheidungstabellen) ist nach den Leitlinien der Kommission zur Definition in der Regel kein KI-System.",
+						"en": "Rule-based software without inference (simple calculations, fixed decision tables) is generally not an AI system under the Commission guidelines on the definition."
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 3 Nr. 1"
+					}
+				},
+				{
+					"id": "s_excluded",
+					"type": "yesno",
+					"text": {
+						"de": "Wird das System ausschließlich für militärische, Verteidigungs- oder nationale Sicherheitszwecke, ausschließlich für wissenschaftliche Forschung und Entwicklung oder von einer natürlichen Person im Rahmen einer rein persönlichen, nicht beruflichen Tätigkeit genutzt?",
+						"en": "Is the system used exclusively for military, defence or national-security purposes, exclusively for scientific research and development, or by a natural person in a purely personal, non-professional activity?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 2 Abs. 3, 6 und 10"
+					}
+				}
+			]
+		},
+		{
+			"id": "prohibited",
+			"title": {
+				"de": "Verbotene Praktiken (Art. 5)",
+				"en": "Prohibited practices (Art. 5)"
+			},
+			"intro": {
+				"de": "Diese Praktiken sind seit dem 2. Februar 2025 verboten. Ein einziges „Ja“ genügt.",
+				"en": "These practices have been prohibited since 2 February 2025. A single \"yes\" is enough."
+			},
+			"questions": [
+				{
+					"id": "p_subliminal",
+					"type": "yesno",
+					"text": {
+						"de": "Setzt das System unterschwellige, manipulative oder täuschende Techniken ein, um das Verhalten von Personen wesentlich zu verändern und ihre Fähigkeit zu einer informierten Entscheidung zu beeinträchtigen, sodass erheblicher Schaden droht?",
+						"en": "Does the system deploy subliminal, manipulative or deceptive techniques to materially distort behaviour and impair the ability to make an informed decision, causing or likely causing significant harm?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 5 Abs. 1 lit. a"
+					}
+				},
+				{
+					"id": "p_vulnerable",
+					"type": "yesno",
+					"text": {
+						"de": "Nutzt das System Schwächen von Personen aufgrund ihres Alters, einer Behinderung oder ihrer sozialen oder wirtschaftlichen Lage aus, um ihr Verhalten in schädigender Weise wesentlich zu verändern?",
+						"en": "Does the system exploit vulnerabilities due to age, disability or social or economic situation to materially distort behaviour in a harmful way?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 5 Abs. 1 lit. b"
+					}
+				},
+				{
+					"id": "p_socialscoring",
+					"type": "yesno",
+					"text": {
+						"de": "Bewertet oder klassifiziert das System Personen über einen Zeitraum anhand ihres sozialen Verhaltens oder persönlicher Eigenschaften (Social Scoring) mit nachteiliger Behandlung in sachfremden Zusammenhängen oder in unverhältnismäßiger Weise?",
+						"en": "Does the system evaluate or classify persons over time based on social behaviour or personal characteristics (social scoring) leading to detrimental treatment in unrelated contexts or disproportionate to the behaviour?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 5 Abs. 1 lit. c"
+					}
+				},
+				{
+					"id": "p_crimerisk",
+					"type": "yesno",
+					"text": {
+						"de": "Bewertet oder prognostiziert das System das Risiko, dass eine Person eine Straftat begeht, allein auf Grundlage von Profiling oder Persönlichkeitsmerkmalen?",
+						"en": "Does the system assess or predict the risk of a person committing a criminal offence based solely on profiling or personality traits?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 5 Abs. 1 lit. d"
+					}
+				},
+				{
+					"id": "p_scraping",
+					"type": "yesno",
+					"text": {
+						"de": "Erstellt oder erweitert das System Gesichtserkennungsdatenbanken durch ungezieltes Auslesen von Gesichtsbildern aus dem Internet oder von Überwachungsaufnahmen?",
+						"en": "Does the system create or expand facial recognition databases through untargeted scraping of facial images from the internet or CCTV footage?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 5 Abs. 1 lit. e"
+					}
+				},
+				{
+					"id": "p_emotionwork",
+					"type": "yesno",
+					"text": {
+						"de": "Leitet das System Emotionen von Personen am Arbeitsplatz oder in Bildungseinrichtungen ab (außer aus medizinischen oder Sicherheitsgründen)?",
+						"en": "Does the system infer emotions of persons in the workplace or in education institutions (except for medical or safety reasons)?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 5 Abs. 1 lit. f"
+					}
+				},
+				{
+					"id": "p_biocategorisation",
+					"type": "yesno",
+					"text": {
+						"de": "Kategorisiert das System Personen anhand biometrischer Daten, um Rasse, politische Meinungen, Gewerkschaftszugehörigkeit, religiöse Überzeugungen, Sexualleben oder sexuelle Ausrichtung abzuleiten?",
+						"en": "Does the system categorise persons based on biometric data to deduce race, political opinions, trade union membership, religious beliefs, sex life or sexual orientation?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 5 Abs. 1 lit. g"
+					}
+				},
+				{
+					"id": "p_rbi",
+					"type": "yesno",
+					"text": {
+						"de": "Wird das System zur biometrischen Echtzeit-Fernidentifizierung in öffentlich zugänglichen Räumen zu Strafverfolgungszwecken eingesetzt (außerhalb der eng begrenzten Ausnahmen)?",
+						"en": "Is the system used for real-time remote biometric identification in publicly accessible spaces for law enforcement (outside the narrow exceptions)?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 5 Abs. 1 lit. h"
+					}
+				},
+				{
+					"id": "p_ncii",
+					"type": "yesno",
+					"text": {
+						"de": "Wird das System eingesetzt, um ohne Einwilligung intime Bildaufnahmen (Deepfake-Nacktbilder) oder Darstellungen sexuellen Kindesmissbrauchs zu erzeugen oder zu verbreiten?",
+						"en": "Is the system used to generate or disseminate non-consensual intimate imagery (deepfake nudes) or child sexual abuse material?"
+					},
+					"help": {
+						"de": "Verbot eingefügt durch die Omnibus-Verordnung (EU) 2026/1744; gilt ab dem 2. Dezember 2026.",
+						"en": "Prohibition inserted by Omnibus Regulation (EU) 2026/1744; applies from 2 December 2026."
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 5 Abs. 1 lit. i (Omnibus 2026/1744)"
+					}
+				}
+			]
+		},
+		{
+			"id": "highrisk",
+			"title": {
+				"de": "Hochrisiko-Bereiche (Art. 6, Anhang I und III)",
+				"en": "High-risk areas (Art. 6, Annexes I and III)"
+			},
+			"questions": [
+				{
+					"id": "h_annex1",
+					"type": "yesno",
+					"text": {
+						"de": "Ist das System ein Sicherheitsbauteil eines Produkts – oder selbst ein Produkt –, das unter die Harmonisierungsvorschriften in Anhang I fällt und einer Konformitätsbewertung durch Dritte unterliegt (z. B. Medizinprodukte, Maschinen, Aufzüge, Fahrzeuge, Luftfahrt)?",
+						"en": "Is the system a safety component of a product – or itself a product – covered by the Union harmonisation legislation in Annex I and subject to third-party conformity assessment (e.g. medical devices, machinery, lifts, vehicles, aviation)?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 6 Abs. 1, Anhang I"
+					}
+				},
+				{
+					"id": "h_biometrics",
+					"type": "yesno",
+					"text": {
+						"de": "Biometrie: biometrische Fernidentifizierung, biometrische Kategorisierung nach sensiblen Merkmalen oder Emotionserkennung (soweit nicht verboten)?",
+						"en": "Biometrics: remote biometric identification, biometric categorisation by sensitive attributes, or emotion recognition (where not prohibited)?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Anhang III Nr. 1"
+					}
+				},
+				{
+					"id": "h_infrastructure",
+					"type": "yesno",
+					"text": {
+						"de": "Kritische Infrastruktur: Sicherheitsbauteil in der Verwaltung oder dem Betrieb kritischer digitaler Infrastruktur, des Straßenverkehrs oder der Wasser-, Gas-, Wärme- oder Stromversorgung?",
+						"en": "Critical infrastructure: safety component in the management or operation of critical digital infrastructure, road traffic, or the supply of water, gas, heating or electricity?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Anhang III Nr. 2"
+					}
+				},
+				{
+					"id": "h_education",
+					"type": "yesno",
+					"text": {
+						"de": "Bildung: Zugang oder Zulassung zu Bildungseinrichtungen, Bewertung von Lernergebnissen, Einstufung des Bildungsniveaus oder Überwachung bei Prüfungen?",
+						"en": "Education: access or admission to institutions, evaluation of learning outcomes, assessing the level of education, or monitoring during tests?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Anhang III Nr. 3"
+					}
+				},
+				{
+					"id": "h_employment",
+					"type": "yesno",
+					"text": {
+						"de": "Beschäftigung: Einstellung oder Auswahl (Stellenanzeigen, Bewerberfilterung, Bewertung), Entscheidungen über Arbeitsbedingungen, Beförderung oder Kündigung, Aufgabenzuweisung oder Leistungs- und Verhaltensüberwachung?",
+						"en": "Employment: recruitment or selection (job adverts, filtering applications, evaluating candidates), decisions on terms, promotion or termination, task allocation, or monitoring performance and behaviour?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Anhang III Nr. 4"
+					}
+				},
+				{
+					"id": "h_services",
+					"type": "yesno",
+					"text": {
+						"de": "Wesentliche Leistungen: Anspruch auf öffentliche Leistungen, Kreditwürdigkeitsprüfung oder Bonitätsbewertung, Risikobewertung und Preisbildung bei Lebens- und Krankenversicherungen oder Priorisierung von Notrufen und Rettungsdiensten?",
+						"en": "Essential services: eligibility for public benefits, creditworthiness or credit scoring, risk assessment and pricing in life and health insurance, or triage of emergency calls and services?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Anhang III Nr. 5"
+					}
+				},
+				{
+					"id": "h_lawenforcement",
+					"type": "yesno",
+					"text": {
+						"de": "Strafverfolgung: Einsatz durch oder für Strafverfolgungsbehörden zur Risikobewertung, als Lügendetektor, zur Beweiswürdigung, zur Vorhersage von Straftaten oder zum Profiling?",
+						"en": "Law enforcement: use by or for law-enforcement authorities for risk assessment, polygraphs, evaluating evidence, predicting offences or profiling?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Anhang III Nr. 6"
+					}
+				},
+				{
+					"id": "h_migration",
+					"type": "yesno",
+					"text": {
+						"de": "Migration, Asyl und Grenzkontrolle: Risikobewertung, Prüfung von Anträgen, Identifizierung von Personen?",
+						"en": "Migration, asylum and border control: risk assessment, examining applications, identifying persons?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Anhang III Nr. 7"
+					}
+				},
+				{
+					"id": "h_justice",
+					"type": "yesno",
+					"text": {
+						"de": "Rechtspflege und demokratische Prozesse: Unterstützung von Gerichten bei der Auslegung und Anwendung des Rechts oder Beeinflussung von Wahlen und Abstimmungen?",
+						"en": "Administration of justice and democratic processes: assisting courts in interpreting and applying the law, or influencing elections and referendums?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Anhang III Nr. 8"
+					}
+				}
+			]
+		},
+		{
+			"id": "exception",
+			"title": {
+				"de": "Ausnahme nach Art. 6 Abs. 3",
+				"en": "Exception under Art. 6(3)"
+			},
+			"intro": {
+				"de": "Ein System aus einem Anhang-III-Bereich gilt nicht als hochriskant, wenn es kein erhebliches Risiko für Gesundheit, Sicherheit oder Grundrechte birgt, weil es nur eine der folgenden Aufgaben erfüllt. Die Ausnahme gilt nie, wenn das System Profiling natürlicher Personen vornimmt.",
+				"en": "A system in an Annex III area is not high-risk where it poses no significant risk to health, safety or fundamental rights because it only performs one of the following tasks. The exception never applies where the system profiles natural persons."
+			},
+			"questions": [
+				{
+					"id": "x_procedural",
+					"type": "yesno",
+					"text": {
+						"de": "Erfüllt das System nur eine eng begrenzte Verfahrensaufgabe?",
+						"en": "Does the system only perform a narrow procedural task?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 6 Abs. 3 lit. a"
+					}
+				},
+				{
+					"id": "x_improve",
+					"type": "yesno",
+					"text": {
+						"de": "Verbessert das System nur das Ergebnis einer zuvor abgeschlossenen menschlichen Tätigkeit?",
+						"en": "Does the system only improve the result of a previously completed human activity?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 6 Abs. 3 lit. b"
+					}
+				},
+				{
+					"id": "x_patterns",
+					"type": "yesno",
+					"text": {
+						"de": "Erkennt das System nur Entscheidungsmuster oder Abweichungen davon, ohne die menschliche Bewertung zu ersetzen oder zu beeinflussen?",
+						"en": "Does the system only detect decision-making patterns or deviations without replacing or influencing the human assessment?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 6 Abs. 3 lit. c"
+					}
+				},
+				{
+					"id": "x_preparatory",
+					"type": "yesno",
+					"text": {
+						"de": "Erfüllt das System nur eine vorbereitende Aufgabe für eine Bewertung, die für die Anhang-III-Anwendungsfälle relevant ist?",
+						"en": "Does the system only perform a preparatory task to an assessment relevant for the Annex III use cases?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 6 Abs. 3 lit. d"
+					}
+				},
+				{
+					"id": "x_profiling",
+					"type": "yesno",
+					"text": {
+						"de": "Nimmt das System ein Profiling natürlicher Personen vor?",
+						"en": "Does the system perform profiling of natural persons?"
+					},
+					"help": {
+						"de": "Profiling im Sinne von Art. 4 Nr. 4 DSGVO. Bei „Ja“ ist die Ausnahme ausgeschlossen.",
+						"en": "Profiling within the meaning of Art. 4(4) GDPR. A \"yes\" rules the exception out."
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 6 Abs. 3 UAbs. 3"
+					}
+				}
+			]
+		},
+		{
+			"id": "transparency",
+			"title": {
+				"de": "Transparenzpflichten (Art. 50)",
+				"en": "Transparency obligations (Art. 50)"
+			},
+			"questions": [
+				{
+					"id": "t_interaction",
+					"type": "yesno",
+					"text": {
+						"de": "Interagiert das System unmittelbar mit natürlichen Personen (z. B. Chatbot, Sprachassistent)?",
+						"en": "Does the system interact directly with natural persons (e.g. chatbot, voice assistant)?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 50 Abs. 1"
+					}
+				},
+				{
+					"id": "t_synthetic",
+					"type": "yesno",
+					"text": {
+						"de": "Erzeugt das System synthetische Audio-, Bild-, Video- oder Textinhalte?",
+						"en": "Does the system generate synthetic audio, image, video or text content?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 50 Abs. 2"
+					}
+				},
+				{
+					"id": "t_emotion",
+					"type": "yesno",
+					"text": {
+						"de": "Wird ein Emotionserkennungs- oder biometrisches Kategorisierungssystem betrieben (soweit nicht verboten)?",
+						"en": "Is an emotion recognition or biometric categorisation system operated (where not prohibited)?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 50 Abs. 3"
+					}
+				},
+				{
+					"id": "t_deepfake",
+					"type": "yesno",
+					"text": {
+						"de": "Erzeugt oder verbreitet das System Deepfakes oder KI-generierte Texte zur Information der Öffentlichkeit über Angelegenheiten von öffentlichem Interesse?",
+						"en": "Does the system generate or disseminate deepfakes or AI-generated text informing the public on matters of public interest?"
+					},
+					"cite": {
+						"law": "KI-VO",
+						"ref": "Art. 50 Abs. 4"
+					}
+				}
+			]
+		}
+	]
+}
