@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { PUBLIC_PREVIEW } from '$app/env/public';
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
 	import { formatShortDate } from '#lib/i18n/date.js';
@@ -39,7 +40,9 @@
 	{/if}
 	<p class="action">
 		<a class="start" href={checkHref}>{m.tool_start()} →</a>
-		{#if data.user}
+		{#if PUBLIC_PREVIEW}
+			<!-- no accounts in the static preview -->
+		{:else if data.user}
 			<a class="secondary" href={saveHref}>{m.tool_save()}</a>
 		{:else}
 			<a class="secondary" href={loginHref} data-sveltekit-reload>{m.tool_save_login()}</a>

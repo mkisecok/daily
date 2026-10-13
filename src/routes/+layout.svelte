@@ -6,12 +6,14 @@
 	import '../styles/base.css';
 	import '../styles/primitives.css';
 	import '../styles/print.css';
-	import type { Path } from '$app/types';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { locales, localizeHref } from '#lib/paraglide/runtime.js';
+	import { locales } from '#lib/paraglide/runtime.js';
+	import { inLocale } from '#lib/i18n/links.js';
 	import favicon from '#lib/assets/favicon.svg';
+	import { PUBLIC_PREVIEW } from '$app/env/public';
 	import Masthead from '#lib/ui/Masthead.svelte';
+	import PreviewNotice from '#lib/ui/PreviewNotice.svelte';
 	import Footer from '#lib/ui/Footer.svelte';
 	import type { LayoutProps } from './$types';
 
@@ -21,15 +23,12 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 	{#each locales as locale (locale)}
-		<link
-			rel="alternate"
-			hreflang={locale}
-			href={resolve(localizeHref(page.url.pathname, { locale }) as Path)}
-		/>
+		<link rel="alternate" hreflang={locale} href={resolve(inLocale(page.url.pathname, locale))} />
 	{/each}
 </svelte:head>
 
 <div class="frame">
+	{#if PUBLIC_PREVIEW}<PreviewNotice />{/if}
 	<Masthead theme={data.theme} user={data.user} />
 	<main class="page">
 		{@render children()}

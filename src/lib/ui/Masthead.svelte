@@ -4,6 +4,7 @@
 	sign-in state. A hairline below, nothing else.
 -->
 <script lang="ts">
+	import { PUBLIC_PREVIEW } from '$app/env/public';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { m } from '#lib/paraglide/messages.js';
@@ -61,7 +62,7 @@
 					<span class="name">{user.displayName}</span>
 					<button type="submit">{m.nav_logout()}</button>
 				</form>
-			{:else}
+			{:else if !PUBLIC_PREVIEW}
 				<a class="login" href={loginHref} data-sveltekit-reload>{m.nav_login()}</a>
 			{/if}
 		</div>

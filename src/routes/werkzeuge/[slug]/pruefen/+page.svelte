@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { PUBLIC_PREVIEW } from '$app/env/public';
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
 	import { localized } from '#lib/i18n/links.js';
@@ -94,7 +95,9 @@
 	<div class="actions no-print">
 		<button type="button" onclick={() => window.print()}>{m.run_print()}</button>
 		<button type="button" class="quiet" onclick={edit}>{m.check_edit()}</button>
-		{#if data.user}
+		{#if PUBLIC_PREVIEW}
+			<!-- no accounts in the static preview -->
+		{:else if data.user}
 			<a href={saveHref}>{m.tool_save()}</a>
 		{:else}
 			<a href={loginHref} data-sveltekit-reload>{m.tool_save_login()}</a>
