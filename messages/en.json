@@ -6,6 +6,8 @@
 	"nav_tools": "Tools",
 	"nav_norms": "Statutes",
 	"nav_notes": "Notes",
+	"nav_login": "Sign in",
+	"nav_logout": "Sign out",
 	"theme_to_dark": "Dark paper",
 	"theme_to_light": "Light paper",
 	"dateline_issue": "No. {n}",

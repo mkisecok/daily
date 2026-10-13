@@ -6,6 +6,8 @@
 	"nav_tools": "Werkzeuge",
 	"nav_norms": "Normen",
 	"nav_notes": "Notizen",
+	"nav_login": "Anmelden",
+	"nav_logout": "Abmelden",
 	"theme_to_dark": "Dunkles Papier",
 	"theme_to_light": "Helles Papier",
 	"dateline_issue": "Nr. {n}",

@@ -30,7 +30,7 @@
 </svelte:head>
 
 <div class="frame">
-	<Masthead theme={data.theme} />
+	<Masthead theme={data.theme} user={data.user} />
 	<main class="page">
 		{@render children()}
 	</main>
