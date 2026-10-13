@@ -11,9 +11,10 @@
 	let { data }: PageProps = $props();
 
 	const questionnaire = $derived(getQuestionnaire(data.tool.slug));
-	const startHref = $derived(resolve(localized(`/werkzeuge/${data.tool.slug}/neu`)));
+	const checkHref = $derived(resolve(localized(`/werkzeuge/${data.tool.slug}/pruefen`)));
+	const saveHref = $derived(resolve(localized(`/werkzeuge/${data.tool.slug}/neu`)));
 	const loginHref = $derived(
-		resolve(localized(`/auth/login?next=${encodeURIComponent(startHref)}`))
+		resolve(localized(`/auth/login?next=${encodeURIComponent(saveHref)}`))
 	);
 
 	function verdictLabel(verdict: string | null): string {
@@ -37,10 +38,11 @@
 		<p class="measure">{text(questionnaire.catalog.intro)}</p>
 	{/if}
 	<p class="action">
+		<a class="start" href={checkHref}>{m.tool_start()} →</a>
 		{#if data.user}
-			<a class="start" href={startHref}>{m.tool_start()} →</a>
+			<a class="secondary" href={saveHref}>{m.tool_save()}</a>
 		{:else}
-			<a class="start" href={loginHref} data-sveltekit-reload>{m.tool_start_login()} →</a>
+			<a class="secondary" href={loginHref} data-sveltekit-reload>{m.tool_save_login()}</a>
 		{/if}
 	</p>
 </section>
@@ -90,7 +92,18 @@
 		}
 
 		& .action {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: baseline;
+			gap: 1.5rem;
 			margin-top: 1.75rem;
+		}
+
+		& .secondary {
+			font-family: var(--mono);
+			font-size: 12px;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
 		}
 
 		& .start {
