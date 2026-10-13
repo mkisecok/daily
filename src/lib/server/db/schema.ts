@@ -1,4 +1,5 @@
 import {
+	boolean,
 	index,
 	integer,
 	jsonb,
@@ -98,7 +99,69 @@ export const toolRuns = pgTable(
 	]
 );
 
+/* ---------- feed ---------- */
+
+export const feedSourceKind = pgEnum('feed_source_kind', ['rss', 'html']);
+export const feedRegion = pgEnum('feed_region', ['eu', 'de', 'land']);
+
+/** A publisher the worker polls. Rows are synced from `feed/sources.ts`. */
+export const feedSources = pgTable('feed_sources', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	slug: text('slug').notNull().unique(),
+	name: text('name').notNull(),
+	kind: feedSourceKind('kind').notNull(),
+	url: text('url').notNull(),
+	region: feedRegion('region').notNull(),
+	/** 1 = authority, court or legislator; 2 = legal press. */
+	tier: integer('tier').notNull().default(1),
+	lang: text('lang').notNull().default('de'),
+	active: boolean('active').notNull().default(true),
+	lastFetchedAt: timestamp('last_fetched_at', { withTimezone: true }),
+	lastItemAt: timestamp('last_item_at', { withTimezone: true }),
+	lastError: text('last_error'),
+	failureCount: integer('failure_count').notNull().default(0)
+});
+
+/** Title, excerpt and link only: never the article body. */
+export const feedItems = pgTable(
+	'feed_items',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		sourceId: uuid('source_id')
+			.notNull()
+			.references(() => feedSources.id, { onDelete: 'cascade' }),
+		url: text('url').notNull(),
+		urlHash: text('url_hash').notNull().unique(),
+		title: text('title').notNull(),
+		excerpt: text('excerpt'),
+		publishedAt: timestamp('published_at', { withTimezone: true }).notNull(),
+		fetchedAt: timestamp('fetched_at', { withTimezone: true }).notNull().defaultNow(),
+		lang: text('lang').notNull().default('de'),
+		tags: text('tags').array().notNull().default([])
+	},
+	(table) => [
+		index('feed_items_published_idx').on(table.publishedAt),
+		index('feed_items_tags_idx').using('gin', table.tags)
+	]
+);
+
+export const bookmarks = pgTable(
+	'bookmarks',
+	{
+		userId: uuid('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		itemId: uuid('item_id')
+			.notNull()
+			.references(() => feedItems.id, { onDelete: 'cascade' }),
+		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
+	},
+	(table) => [primaryKey({ columns: [table.userId, table.itemId] })]
+);
+
 export type User = typeof users.$inferSelect;
 export type ToolRun = typeof toolRuns.$inferSelect;
+export type FeedSource = typeof feedSources.$inferSelect;
+export type FeedItem = typeof feedItems.$inferSelect;
 export type Organisation = typeof organisations.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
