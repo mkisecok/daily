@@ -1,0 +1,25 @@
+/**
+ * A verdict or register should print like a memo: no chrome, black on white,
+ * URL and date in the footer.
+ */
+@media print {
+	body {
+		background: #fff;
+		color: #000;
+		font-size: 11pt;
+	}
+
+	a {
+		color: inherit;
+
+		&[href^='http']::after {
+			content: ' (' attr(href) ')';
+			font-family: var(--mono);
+			font-size: 0.85em;
+		}
+	}
+
+	@page {
+		margin: 20mm;
+	}
+}

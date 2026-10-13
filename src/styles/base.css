@@ -1,0 +1,72 @@
+/**
+ * Reset and document surface. Fonts are self-hosted (fontsource) and imported
+ * from the root layout, so the site never contacts a third-party font CDN.
+ */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	font-family: var(--sans);
+	font-size: 15px;
+	line-height: 1.6;
+	background: var(--paper);
+	color: var(--ink);
+	min-height: 100vh;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+	font-variant-numeric: lining-nums;
+}
+
+h1,
+h2,
+h3,
+h4 {
+	font-family: var(--serif);
+	font-weight: 600;
+	line-height: 1.2;
+	letter-spacing: -0.005em;
+	text-wrap: balance;
+}
+
+p {
+	text-wrap: pretty;
+}
+
+a {
+	color: var(--navy);
+	text-decoration: none;
+	text-underline-offset: 0.18em;
+	text-decoration-thickness: 1px;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+button {
+	font-family: inherit;
+	font-size: inherit;
+	color: inherit;
+	background: none;
+	border: 0;
+	cursor: pointer;
+}
+
+:focus-visible {
+	outline: 2px solid var(--navy);
+	outline-offset: 2px;
+}
+
+::selection {
+	background: var(--navy-soft);
+}

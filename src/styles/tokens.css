@@ -1,0 +1,64 @@
+/**
+ * Design tokens — the "Kanzlei" identity.
+ *
+ * Paper and ink, hairline rules, serif headings, mono for article numbers and
+ * dates. Three signal colours only, and they are the wordmark's letters:
+ *
+ *   navy   D   data        links, primary actions
+ *   wax    AI  AI          warnings, fines, overdue deadlines
+ *   khaki  L   law         done, compliant, success
+ *
+ * Everything else is ink on paper. No gradients, no shadows on surfaces,
+ * no pills, no emoji.
+ */
+
+:root,
+html[data-theme='light'] {
+	--paper: #f7f4ee;
+	--sheet: #fffdf9;
+	--rule: #d9d2c5;
+	--rule2: #eae4d8;
+	--ink: #1c1b19;
+	--ink2: #4a4741;
+	--ink3: #8a857b;
+
+	--navy: #1f3a5f;
+	--navy-soft: rgba(31, 58, 95, 0.09);
+	--wax: #a23b2a;
+	--wax-soft: rgba(162, 59, 42, 0.09);
+	--khaki: #6b6b3a;
+	--khaki-soft: rgba(107, 107, 58, 0.11);
+
+	--on-navy: #fffdf9;
+
+	--sans: 'DM Sans Variable', 'DM Sans', system-ui, -apple-system, sans-serif;
+	--serif: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, 'Times New Roman', serif;
+	--mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
+
+	--measure: 68ch;
+	--page-max: 72rem;
+	--gutter: clamp(1rem, 4vw, 2.5rem);
+
+	color-scheme: light;
+}
+
+html[data-theme='dark'] {
+	--paper: #141311;
+	--sheet: #1b1a17;
+	--rule: #35322c;
+	--rule2: #2a2823;
+	--ink: #ede8df;
+	--ink2: #b5afa3;
+	--ink3: #7f7a70;
+
+	--navy: #7fa8d4;
+	--navy-soft: rgba(127, 168, 212, 0.13);
+	--wax: #d4675a;
+	--wax-soft: rgba(212, 103, 90, 0.14);
+	--khaki: #a7a766;
+	--khaki-soft: rgba(167, 167, 102, 0.14);
+
+	--on-navy: #141311;
+
+	color-scheme: dark;
+}

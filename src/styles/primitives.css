@@ -1,0 +1,36 @@
+/**
+ * Shared primitives — only what appears in more than one component.
+ */
+
+.page {
+	max-width: var(--page-max);
+	margin: 0 auto;
+	padding: 0 var(--gutter);
+}
+
+.measure {
+	max-width: var(--measure);
+}
+
+/** Small-caps label set in mono: section numbers, tags, status words. */
+.eyebrow {
+	font-family: var(--mono);
+	font-size: 11px;
+	font-weight: 500;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--ink3);
+}
+
+/** A hairline. The only divider the site uses. */
+.rule {
+	border: 0;
+	border-top: 1px solid var(--rule);
+	height: 0;
+}
+
+.no-print {
+	@media print {
+		display: none !important;
+	}
+}
