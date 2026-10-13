@@ -1,3 +1,10 @@
+/**
+ * Dates are shown in German time regardless of where the page is rendered
+ * (server, build machine or browser), so prerendered and hydrated output
+ * agree and a 23:30 decision is not filed under the next day.
+ */
+const TIME_ZONE = 'Europe/Berlin';
+
 const cache = new Map<string, Intl.DateTimeFormat>();
 
 function toBcp47(locale: string): string {
@@ -8,7 +15,7 @@ function formatter(locale: string, options: Intl.DateTimeFormatOptions): Intl.Da
 	const key = locale + JSON.stringify(options);
 	let instance = cache.get(key);
 	if (!instance) {
-		instance = new Intl.DateTimeFormat(toBcp47(locale), options);
+		instance = new Intl.DateTimeFormat(toBcp47(locale), { timeZone: TIME_ZONE, ...options });
 		cache.set(key, instance);
 	}
 	return instance;
@@ -27,6 +34,18 @@ export function formatLongDate(iso: string, locale: string): string {
 /** "13.10.2026" / "13/10/2026". */
 export function formatShortDate(iso: string, locale: string): string {
 	return formatter(locale, { day: '2-digit', month: '2-digit', year: 'numeric' }).format(
+		new Date(iso)
+	);
+}
+
+/** "14:05". */
+export function formatTime(iso: string, locale: string): string {
+	return formatter(locale, { hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
+}
+
+/** Calendar day in German time as `YYYY-MM-DD`, for grouping. */
+export function dayKey(iso: string): string {
+	return formatter('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(
 		new Date(iso)
 	);
 }

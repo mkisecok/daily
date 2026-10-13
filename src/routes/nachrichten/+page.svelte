@@ -5,7 +5,7 @@
 	import { page } from '$app/state';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import { m } from '#lib/paraglide/messages.js';
-	import { formatLongDate } from '#lib/i18n/date.js';
+	import { dayKey, formatLongDate, formatTime } from '#lib/i18n/date.js';
 	import { localized } from '#lib/i18n/links.js';
 	import type { PageProps } from './$types';
 
@@ -36,7 +36,7 @@
 	const days = $derived.by(() => {
 		const groups: { day: string; items: typeof data.items }[] = [];
 		for (const item of data.items) {
-			const day = item.publishedAt.slice(0, 10);
+			const day = dayKey(item.publishedAt);
 			const last = groups.at(-1);
 			if (last && last.day === day) last.items.push(item);
 			else groups.push({ day, items: [item] });
@@ -59,13 +59,6 @@
 		if (!('vor' in params)) search.delete('vor');
 		const query = search.toString();
 		return localized(`/nachrichten${query ? `?${query}` : ''}`);
-	}
-
-	function time(iso: string): string {
-		return new Intl.DateTimeFormat(data.locale === 'en' ? 'en-GB' : 'de', {
-			hour: '2-digit',
-			minute: '2-digit'
-		}).format(new Date(iso));
 	}
 </script>
 
@@ -149,7 +142,7 @@
 						<span class="sep">·</span>
 						<span class="region">{regionLabels[item.source.region]()}</span>
 						<span class="sep">·</span>
-						<time datetime={item.publishedAt}>{time(item.publishedAt)}</time>
+						<time datetime={item.publishedAt}>{formatTime(item.publishedAt, data.locale)}</time>
 						{#if item.lang !== data.locale}
 							<span class="sep">·</span>
 							<span class="lang">{item.lang.toUpperCase()}</span>
