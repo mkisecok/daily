@@ -5,13 +5,18 @@ import type {
 	ToolManifest
 } from './types.js';
 import { dsfaSchwellwert } from './dsfa-schwellwert/tool.js';
+import { risikoklassifizierung } from './risikoklassifizierung/tool.js';
 import { planned } from './planned.js';
 
 /**
  * Every tool the platform knows about, built or planned. Order within a
  * category is the order shown in the catalogue.
  */
-export const tools: readonly ToolManifest[] = [dsfaSchwellwert.manifest, ...planned];
+export const tools: readonly ToolManifest[] = [
+	dsfaSchwellwert.manifest,
+	risikoklassifizierung.manifest,
+	...planned
+];
 
 export const categories: readonly ToolCategory[] = ['datenschutz', 'ki', 'audit', 'entwickler'];
 
@@ -31,6 +36,10 @@ const questionnaires: Record<
 	[dsfaSchwellwert.manifest.slug]: {
 		catalog: dsfaSchwellwert.catalog,
 		engine: dsfaSchwellwert.engine
+	},
+	[risikoklassifizierung.manifest.slug]: {
+		catalog: risikoklassifizierung.catalog,
+		engine: risikoklassifizierung.engine
 	}
 };
 

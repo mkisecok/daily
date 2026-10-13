@@ -10,8 +10,9 @@ test('catalogue lists the DSFA screening as available and planned tools without 
 	await page.goto('/werkzeuge');
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Werkzeuge');
 	await expect(page.getByRole('link', { name: 'DSFA-Schwellwertanalyse' })).toBeVisible();
-	await expect(page.getByText('Risikoklassifizierung')).toBeVisible();
-	await expect(page.getByRole('link', { name: 'Risikoklassifizierung' })).toHaveCount(0);
+	await expect(page.getByRole('link', { name: 'Risikoklassifizierung' })).toBeVisible();
+	await expect(page.getByText('Betreiberpflichten')).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Betreiberpflichten' })).toHaveCount(0);
 });
 
 test('DSFA screening: answer, save, and read the verdict back', async ({ page }) => {

@@ -184,24 +184,6 @@ export const planned: ToolManifest[] = [
 		]
 	},
 	{
-		slug: 'risikoklassifizierung',
-		category: 'ki',
-		status: 'planned',
-		shape: 'questionnaire',
-		version: 0,
-		name: { de: 'Risikoklassifizierung', en: 'Risk classification' },
-		summary: {
-			de: 'Entscheidungsbaum: Art. 5 verboten → Art. 6 und Anhang III Hochrisiko → Art. 50 Transparenz → minimal. Mit Geltungsdatum nach Omnibus 2026/1744.',
-			en: 'Decision tree: Art. 5 prohibited → Art. 6 and Annex III high-risk → Art. 50 transparency → minimal. With the application date after Omnibus 2026/1744.'
-		},
-		legalBasis: [
-			{ law: 'KI-VO', ref: 'Art. 5' },
-			{ law: 'KI-VO', ref: 'Art. 6' },
-			{ law: 'KI-VO', ref: 'Anhang III' },
-			{ law: 'KI-VO', ref: 'Art. 50' }
-		]
-	},
-	{
 		slug: 'betreiberpflichten',
 		category: 'ki',
 		status: 'planned',
