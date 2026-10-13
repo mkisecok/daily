@@ -1,0 +1,70 @@
+name: Deploy preview to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # 07:00, 11:00, 15:00, 19:00 German summer time (06:00–18:00 in winter):
+    # each run fetches the news sources afresh.
+    - cron: '0 5,9,13,17 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; never cancel a deploy that is already running.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Compile messages
+        run: pnpm i18n:compile
+
+      - name: Type check
+        run: pnpm check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Unit tests
+        run: pnpm vitest run --project server
+
+      - name: Build static preview
+        env:
+          PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+        run: pnpm build:static
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
