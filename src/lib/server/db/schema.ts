@@ -1,4 +1,14 @@
-import { pgEnum, pgTable, primaryKey, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import {
+	index,
+	integer,
+	jsonb,
+	pgEnum,
+	pgTable,
+	primaryKey,
+	text,
+	timestamp,
+	uuid
+} from 'drizzle-orm/pg-core';
 
 /** Keycloak is the identity provider; `id` is its `sub`. */
 export const users = pgTable('users', {
@@ -58,6 +68,37 @@ export const sessions = pgTable('sessions', {
 	createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
 });
 
+export const toolShape = pgEnum('tool_shape', ['questionnaire', 'register', 'workflow']);
+
+/**
+ * One completed use of a questionnaire tool. `input` holds the answers,
+ * `result` the engine's verdict, both frozen with the catalog version so a
+ * later catalog change never rewrites history.
+ */
+export const toolRuns = pgTable(
+	'tool_runs',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		organisationId: uuid('organisation_id')
+			.notNull()
+			.references(() => organisations.id, { onDelete: 'cascade' }),
+		userId: uuid('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'set null' }),
+		toolSlug: text('tool_slug').notNull(),
+		shape: toolShape('shape').notNull(),
+		catalogVersion: integer('catalog_version').notNull(),
+		input: jsonb('input').notNull(),
+		result: jsonb('result').notNull(),
+		verdict: text('verdict'),
+		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
+	},
+	(table) => [
+		index('tool_runs_org_tool_idx').on(table.organisationId, table.toolSlug, table.createdAt)
+	]
+);
+
 export type User = typeof users.$inferSelect;
+export type ToolRun = typeof toolRuns.$inferSelect;
 export type Organisation = typeof organisations.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
