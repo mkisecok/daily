@@ -29,6 +29,8 @@ async function shot(name: string, fullPage = true) {
 
 await page.goto(`${baseUrl}/`);
 await shot('landing');
+await page.goto(`${baseUrl}/nachrichten`);
+await shot('nachrichten');
 await page.goto(`${baseUrl}/werkzeuge`);
 await shot('werkzeuge');
 await page.goto(`${baseUrl}/werkzeuge/dsfa-schwellwert`);
