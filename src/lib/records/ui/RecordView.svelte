@@ -4,7 +4,7 @@
 	result and link to their questionnaire.
 -->
 <script lang="ts">
-	import type { Path } from '$app/types';
+	import type { RoutePath } from '#lib/i18n/links.js';
 	import { resolve } from '$app/paths';
 	import { formatShortDate } from '#lib/i18n/date.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
@@ -22,7 +22,7 @@
 		definition: RecordToolDefinition;
 		record: StoredRecord;
 		/** Route path to the questionnaire for an assessment field; resolved here. */
-		assessHref: (field: FieldDef & { type: 'assessment' }) => Path;
+		assessHref: (field: FieldDef & { type: 'assessment' }) => RoutePath;
 	} = $props();
 
 	const locale = getLocale();

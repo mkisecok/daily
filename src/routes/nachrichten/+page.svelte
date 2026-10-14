@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { Path } from '$app/types';
 	import { PUBLIC_PREVIEW } from '$app/env/public';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { SvelteMap, SvelteURLSearchParams } from 'svelte/reactivity';
 	import { m } from '#lib/paraglide/messages.js';
 	import { dayKey, formatLongDate, formatTime } from '#lib/i18n/date.js';
-	import { localized } from '#lib/i18n/links.js';
+	import { localized, type RoutePath } from '#lib/i18n/links.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -103,7 +102,7 @@
 	}
 
 	/** Current query with some parameters replaced; `null` removes one. */
-	function link(params: Record<string, string | null>): Path {
+	function link(params: Record<string, string | null>): RoutePath {
 		const next = new SvelteURLSearchParams(search);
 		for (const [key, value] of Object.entries(params)) {
 			if (value === null) next.delete(key);

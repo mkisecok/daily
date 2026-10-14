@@ -4,7 +4,7 @@
 	last change. The title links to the record.
 -->
 <script lang="ts">
-	import type { Path } from '$app/types';
+	import type { RoutePath } from '#lib/i18n/links.js';
 	import { resolve } from '$app/paths';
 	import { formatShortDate } from '#lib/i18n/date.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
@@ -22,7 +22,7 @@
 		definition: RecordToolDefinition;
 		records: StoredRecord[];
 		/** Route path (e.g. from `localized()`); resolved here. */
-		hrefFor: (record: StoredRecord) => Path;
+		hrefFor: (record: StoredRecord) => RoutePath;
 	} = $props();
 
 	const locale = getLocale();

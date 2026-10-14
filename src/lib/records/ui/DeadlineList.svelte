@@ -4,7 +4,7 @@
 	24 hours marked; each links to its record.
 -->
 <script lang="ts">
-	import type { Path } from '$app/types';
+	import type { RoutePath } from '#lib/i18n/links.js';
 	import { resolve } from '$app/paths';
 	import { formatShortDate, formatTime } from '#lib/i18n/date.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
@@ -22,7 +22,7 @@
 	}: {
 		deadlines: Deadline[];
 		/** Route path (e.g. from `localized()`); resolved here. */
-		hrefFor: (deadline: Deadline) => Path;
+		hrefFor: (deadline: Deadline) => RoutePath;
 		now?: Date;
 		showTool?: boolean;
 	} = $props();
