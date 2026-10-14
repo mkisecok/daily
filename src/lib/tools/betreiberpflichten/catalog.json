@@ -1,0 +1,264 @@
+{
+	"slug": "betreiberpflichten",
+	"version": 1,
+	"intro": {
+		"de": "Wer ein Hochrisiko-KI-System in eigener Verantwortung einsetzt, ist Betreiber und trägt die Pflichten aus Art. 26 KI-VO, ergänzt um KI-Kompetenz (Art. 4), Grundrechte-Folgenabschätzung (Art. 27) und das Recht auf Erläuterung (Art. 86). Diese Prüfliste zeigt, welche Pflichten erfüllt sind und wo Lücken bestehen. Für Hochrisiko-Systeme nach Anhang III gelten die Pflichten ab dem 2. Dezember 2027, für Systeme nach Anhang I ab dem 2. August 2028.",
+		"en": "Whoever uses a high-risk AI system under their own authority is a deployer and bears the obligations of Art. 26 AI Act, complemented by AI literacy (Art. 4), the fundamental rights impact assessment (Art. 27) and the right to explanation (Art. 86). This checklist shows which obligations are met and where gaps remain. For Annex III high-risk systems the obligations apply from 2 December 2027, for Annex I systems from 2 August 2028."
+	},
+	"sources": [
+		{ "law": "KI-VO", "ref": "Art. 26" },
+		{ "law": "KI-VO", "ref": "Art. 4, 27, 49, 73, 86" },
+		{ "law": "KI-VO", "ref": "Verordnung (EU) 2026/1744 (Omnibus)" }
+	],
+	"sections": [
+		{
+			"id": "scope",
+			"title": { "de": "Anwendbarkeit", "en": "Applicability" },
+			"questions": [
+				{
+					"id": "s_highrisk",
+					"type": "yesno",
+					"text": {
+						"de": "Ist das System ein Hochrisiko-KI-System nach Art. 6 (Anhang I oder Anhang III)?",
+						"en": "Is the system a high-risk AI system under Art. 6 (Annex I or Annex III)?"
+					},
+					"help": {
+						"de": "Im Zweifel zuerst die Risikoklassifizierung durchführen.",
+						"en": "If in doubt, run the risk classification first."
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 6" }
+				},
+				{
+					"id": "s_deployer",
+					"type": "yesno",
+					"text": {
+						"de": "Setzen Sie das System in eigener Verantwortung im Rahmen einer beruflichen Tätigkeit ein (Betreiber)?",
+						"en": "Do you use the system under your own authority in the course of a professional activity (deployer)?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 3 Nr. 4" }
+				}
+			]
+		},
+		{
+			"id": "operation",
+			"title": { "de": "Betrieb", "en": "Operation" },
+			"questions": [
+				{
+					"id": "o_instructions",
+					"type": "yesno",
+					"text": {
+						"de": "Haben Sie technische und organisatorische Maßnahmen getroffen, damit das System entsprechend der Betriebsanleitung des Anbieters verwendet wird?",
+						"en": "Have you taken technical and organisational measures to ensure the system is used in accordance with the provider's instructions for use?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 26 Abs. 1" },
+					"remedy": {
+						"de": "Betriebsanleitung beschaffen, Einsatzgrenzen in eine interne Arbeitsanweisung übernehmen und Zuständigkeiten festlegen.",
+						"en": "Obtain the instructions for use, turn the operating limits into an internal work instruction and assign responsibilities."
+					}
+				},
+				{
+					"id": "o_oversight",
+					"type": "yesno",
+					"text": {
+						"de": "Ist die menschliche Aufsicht natürlichen Personen übertragen, die über die nötige Kompetenz, Ausbildung und Befugnis verfügen und die nötige Unterstützung erhalten?",
+						"en": "Is human oversight assigned to natural persons who have the necessary competence, training and authority, and the necessary support?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 26 Abs. 2" },
+					"remedy": {
+						"de": "Aufsichtspersonen benennen, ihre Befugnis zum Eingreifen und Abschalten schriftlich festlegen und Schulung nachweisen.",
+						"en": "Name the oversight persons, set out in writing their authority to intervene and stop the system, and document their training."
+					}
+				},
+				{
+					"id": "o_literacy",
+					"type": "yesno",
+					"text": {
+						"de": "Verfügt das mit dem Betrieb und der Nutzung befasste Personal über ausreichende KI-Kompetenz?",
+						"en": "Do the staff dealing with the operation and use of the system have a sufficient level of AI literacy?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 4" },
+					"remedy": {
+						"de": "Schulungsplan je Rolle aufstellen und Teilnahme dokumentieren; die Pflicht gilt seit dem 2. Februar 2025.",
+						"en": "Set up a training plan per role and record attendance; the duty applies since 2 February 2025."
+					}
+				},
+				{
+					"id": "o_input",
+					"type": "yesnona",
+					"text": {
+						"de": "Soweit Sie die Eingabedaten kontrollieren: Sind sie im Hinblick auf die Zweckbestimmung des Systems relevant und ausreichend repräsentativ?",
+						"en": "To the extent you exercise control over the input data: is it relevant and sufficiently representative in view of the intended purpose?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 26 Abs. 4" },
+					"remedy": {
+						"de": "Anforderungen an Eingabedaten festlegen (Quellen, Aktualität, Repräsentativität) und stichprobenartig prüfen.",
+						"en": "Define requirements for input data (sources, currency, representativeness) and check them by sampling."
+					}
+				},
+				{
+					"id": "o_monitoring",
+					"type": "yesno",
+					"text": {
+						"de": "Überwachen Sie den Betrieb anhand der Betriebsanleitung und informieren Sie den Anbieter, wo nötig?",
+						"en": "Do you monitor the operation on the basis of the instructions for use and inform the provider where relevant?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 26 Abs. 5 UAbs. 1" },
+					"remedy": {
+						"de": "Überwachungsintervalle und Kennzahlen festlegen und einen Meldeweg zum Anbieter vereinbaren.",
+						"en": "Define monitoring intervals and indicators and agree a reporting channel to the provider."
+					}
+				},
+				{
+					"id": "o_suspend",
+					"type": "yesno",
+					"text": {
+						"de": "Ist geregelt, dass die Verwendung ausgesetzt und Anbieter oder Händler sowie die Marktüberwachungsbehörde unverzüglich informiert werden, wenn das System ein Risiko im Sinne von Art. 79 Abs. 1 darstellt?",
+						"en": "Is it laid down that use is suspended and the provider or distributor and the market surveillance authority are informed without undue delay if the system presents a risk within the meaning of Art. 79(1)?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 26 Abs. 5 UAbs. 1" },
+					"remedy": {
+						"de": "Abschaltkriterien und Verantwortliche festlegen und die Kontaktdaten der zuständigen Marktüberwachungsbehörde hinterlegen.",
+						"en": "Define shutdown criteria and responsible persons and keep the contact details of the competent market surveillance authority at hand."
+					}
+				},
+				{
+					"id": "o_incident",
+					"type": "yesno",
+					"text": {
+						"de": "Gibt es ein Verfahren, schwerwiegende Vorfälle unverzüglich zuerst dem Anbieter und dann Einführer oder Händler und den Behörden zu melden?",
+						"en": "Is there a procedure to report serious incidents without undue delay first to the provider, then to the importer or distributor and the authorities?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 26 Abs. 5, Art. 73" },
+					"remedy": {
+						"de": "Vorfallprozess mit Fristen nach Art. 73 aufsetzen und mit dem Datenschutz-Meldeprozess nach Art. 33 DSGVO verzahnen.",
+						"en": "Set up an incident process with the Art. 73 deadlines and link it to the data breach process under Art. 33 GDPR."
+					}
+				},
+				{
+					"id": "o_logs",
+					"type": "yesnona",
+					"text": {
+						"de": "Werden die automatisch erzeugten Protokolle, soweit sie Ihrer Kontrolle unterliegen, mindestens sechs Monate aufbewahrt?",
+						"en": "Are the automatically generated logs, to the extent under your control, kept for at least six months?"
+					},
+					"help": {
+						"de": "Längere Fristen aus anderem Recht gehen vor; kürzere Löschfristen aus dem Datenschutzrecht sind abzuwägen.",
+						"en": "Longer periods under other law take precedence; shorter deletion periods under data protection law need to be weighed."
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 26 Abs. 6" },
+					"remedy": {
+						"de": "Aufbewahrung der Protokolle für mindestens sechs Monate technisch einrichten und im Löschkonzept begründen.",
+						"en": "Configure log retention for at least six months and justify it in the retention schedule."
+					}
+				}
+			]
+		},
+		{
+			"id": "people",
+			"title": { "de": "Betroffene Personen", "en": "Affected persons" },
+			"questions": [
+				{
+					"id": "p_workers",
+					"type": "yesnona",
+					"text": {
+						"de": "Bei Einsatz am Arbeitsplatz: Wurden Arbeitnehmervertretungen und betroffene Beschäftigte vor der Inbetriebnahme informiert?",
+						"en": "When used at the workplace: were workers' representatives and affected workers informed before the system was put into service?"
+					},
+					"help": {
+						"de": "In Deutschland ist bei technischen Einrichtungen zur Leistungs- oder Verhaltenskontrolle zusätzlich die Mitbestimmung des Betriebsrats zu beachten.",
+						"en": "In Germany, the works council's co-determination right for technical monitoring equipment applies in addition."
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 26 Abs. 7" },
+					"remedy": {
+						"de": "Betriebsrat und Beschäftigte vor Inbetriebnahme informieren; bei Leistungs- oder Verhaltenskontrolle Betriebsvereinbarung abschließen (§ 87 Abs. 1 Nr. 6 BetrVG).",
+						"en": "Inform the works council and staff before going live; where performance or behaviour can be monitored, conclude a works agreement (§ 87(1) no. 6 BetrVG)."
+					}
+				},
+				{
+					"id": "p_inform",
+					"type": "yesnona",
+					"text": {
+						"de": "Trifft oder unterstützt das System Entscheidungen über natürliche Personen (Anhang III) – und werden diese Personen über den Einsatz informiert?",
+						"en": "Does the system make or assist decisions about natural persons (Annex III) – and are those persons informed that it is used?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 26 Abs. 11" },
+					"remedy": {
+						"de": "Betroffene in Datenschutzhinweisen und Entscheidungsschreiben über den KI-Einsatz informieren.",
+						"en": "Inform affected persons about the use of AI in privacy notices and decision letters."
+					}
+				},
+				{
+					"id": "p_explanation",
+					"type": "yesnona",
+					"text": {
+						"de": "Können Sie Betroffenen auf Antrag eine klare und aussagekräftige Erläuterung der Rolle des Systems im Entscheidungsverfahren und der wichtigsten Elemente der Entscheidung geben?",
+						"en": "Can you give affected persons, on request, a clear and meaningful explanation of the role of the system in the decision-making procedure and of the main elements of the decision?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 86" },
+					"remedy": {
+						"de": "Vorlage für Erläuterungen erstellen und beim Anbieter die dafür nötigen Informationen anfordern.",
+						"en": "Prepare a template for explanations and request the necessary information from the provider."
+					}
+				}
+			]
+		},
+		{
+			"id": "records",
+			"title": { "de": "Dokumentation und Behörden", "en": "Records and authorities" },
+			"questions": [
+				{
+					"id": "d_dpia",
+					"type": "yesnona",
+					"text": {
+						"de": "Verarbeitet das System personenbezogene Daten – und haben Sie die Informationen des Anbieters nach Art. 13 für eine Datenschutz-Folgenabschätzung genutzt?",
+						"en": "Does the system process personal data – and have you used the provider's Art. 13 information to carry out a data protection impact assessment?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 26 Abs. 9" },
+					"remedy": {
+						"de": "DSFA nach Art. 35 DSGVO durchführen und dabei die Betriebsanleitung und Dokumentation des Anbieters auswerten.",
+						"en": "Carry out a DPIA under Art. 35 GDPR, using the provider's instructions for use and documentation."
+					}
+				},
+				{
+					"id": "d_fria",
+					"type": "yesnona",
+					"text": {
+						"de": "Falls eine Grundrechte-Folgenabschätzung erforderlich ist (öffentliche Stellen, private Erbringer öffentlicher Dienste, Kreditwürdigkeit, Lebens- und Krankenversicherung): Wurde sie vor der ersten Verwendung durchgeführt und der Behörde mitgeteilt?",
+						"en": "Where a fundamental rights impact assessment is required (public bodies, private providers of public services, creditworthiness, life and health insurance): was it carried out before first use and notified to the authority?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 27" },
+					"remedy": {
+						"de": "Grundrechte-Folgenabschätzung vor der ersten Verwendung durchführen und das Ergebnis der Marktüberwachungsbehörde mitteilen.",
+						"en": "Carry out the fundamental rights impact assessment before first use and notify the result to the market surveillance authority."
+					}
+				},
+				{
+					"id": "d_register",
+					"type": "yesnona",
+					"text": {
+						"de": "Als Behörde, Einrichtung oder Organ der Union oder als in deren Auftrag handelnde Stelle: Ist die Verwendung in der EU-Datenbank registriert?",
+						"en": "As a public authority or Union institution, body or agency, or acting on their behalf: is the use registered in the EU database?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 26 Abs. 8, Art. 49" },
+					"remedy": {
+						"de": "Verwendung in der EU-Datenbank registrieren; ohne Registrierung des Systems durch den Anbieter darf es nicht verwendet werden.",
+						"en": "Register the use in the EU database; a system not registered by its provider must not be used."
+					}
+				},
+				{
+					"id": "d_cooperation",
+					"type": "yesno",
+					"text": {
+						"de": "Ist geregelt, wer mit den zuständigen Behörden zusammenarbeitet und Auskünfte erteilt?",
+						"en": "Is it settled who cooperates with the competent authorities and provides information?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 26 Abs. 12" },
+					"remedy": {
+						"de": "Ansprechperson für Behörden benennen und die Unterlagen (Anleitung, Protokolle, Bewertungen) zentral ablegen.",
+						"en": "Name a contact for authorities and keep the documents (instructions, logs, assessments) in one place."
+					}
+				}
+			]
+		}
+	]
+}
