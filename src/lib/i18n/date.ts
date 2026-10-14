@@ -49,3 +49,34 @@ export function dayKey(iso: string): string {
 		new Date(iso)
 	);
 }
+
+/** An instant as the value of `<input type="datetime-local">` in German time. */
+export function toBerlinInput(iso: string): string {
+	const parts = Object.fromEntries(
+		formatter('en-CA', {
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit',
+			hour: '2-digit',
+			minute: '2-digit',
+			hourCycle: 'h23'
+		})
+			.formatToParts(new Date(iso))
+			.map((part) => [part.type, part.value])
+	);
+	return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+}
+
+/**
+ * A `datetime-local` value read as German time, as an ISO instant. Two
+ * passes settle the offset on the days daylight saving starts or ends.
+ */
+export function fromBerlinInput(value: string): string {
+	const asUtc = Date.parse(`${value.length === 16 ? `${value}:00` : value}Z`);
+	if (Number.isNaN(asUtc)) return '';
+	const offset = (time: number) =>
+		Date.parse(`${toBerlinInput(new Date(time).toISOString())}:00Z`) - time;
+	let time = asUtc - offset(asUtc);
+	time = asUtc - offset(time);
+	return new Date(time).toISOString();
+}
