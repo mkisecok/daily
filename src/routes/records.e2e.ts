@@ -221,3 +221,56 @@ test('AVV-Prüfung reports a missing clause; a training refresher appears on Fri
 	await expect(row).toContainText('15.01.2027');
 	await expect(row).toContainText('Wiederholungsschulung Datenschutz');
 });
+
+test('DSFA: a high residual risk blocks sign-off until the authority is consulted', async ({
+	page
+}) => {
+	const name = `E2E-DSFA ${Date.now()}`;
+	await signIn(page, '/werkzeuge/dsfa/eintraege?neu=1');
+	await expect(page).toHaveURL(/\/werkzeuge\/dsfa\/eintraege\?neu=1$/);
+
+	await page.getByLabel('Verarbeitungsvorgang').fill(name);
+	await page.getByLabel('Systematische Beschreibung der Verarbeitung').fill('Kameras im Lager');
+	await page.getByLabel('Zwecke und berechtigte Interessen').fill('Diebstahlschutz');
+	await page.getByLabel('Notwendigkeit und Verhältnismäßigkeit').fill('Mildere Mittel geprüft');
+	for (const id of ['vertraulichkeit', 'integritaet', 'verfuegbarkeit', 'zweck', 'rechte']) {
+		await page.locator(`#field-${id}_w`).selectOption('2');
+		await page.locator(`#field-${id}_s`).selectOption('2');
+	}
+	await page.locator('#field-vertraulichkeit_w').selectOption('4');
+	await page.locator('#field-vertraulichkeit_s').selectOption('4');
+	await page.locator('#field-vertraulichkeit_massnahmen').fill('Verschlüsselung');
+	await page.getByLabel('Entscheidung des Verantwortlichen').fill('Freigabe unter Auflagen');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+
+	await expect(page.locator('.verdict .headline')).toHaveText(
+		'Hohes Restrisiko: Aufsichtsbehörde vorher konsultieren.'
+	);
+	await page.getByRole('button', { name: 'Bewertung abschließen' }).click();
+	await expect(page.locator('[aria-current="step"]')).toHaveText('Bewertet');
+	await expect(page.getByRole('button', { name: 'Freigeben' })).toBeDisabled();
+	await expect(page.locator('.state-bar')).toContainText('Art. 36 Abs. 1');
+});
+
+test('Vorfallmeldung: a death shortens the reporting period to 10 days', async ({ page }) => {
+	const title = `E2E-Vorfall ${Date.now()}`;
+	await signIn(page, '/werkzeuge/vorfallmeldung/eintraege?neu=1');
+	await expect(page).toHaveURL(/\/werkzeuge\/vorfallmeldung\/eintraege\?neu=1$/);
+
+	await page.getByLabel('Bezeichnung').fill(title);
+	await page.locator('#field-rolle').selectOption('anbieter');
+	await page.getByLabel('Kenntnis am').fill(berlinInput(new Date()));
+	await page.getByLabel('Was ist geschehen?').fill('Fehlklassifikation in der Triage');
+	await page.getByLabel('Tod oder schwere Schädigung der Gesundheit (lit. a)').check();
+	await page.locator('input[name="field-todesfall"][value="true"]').check();
+	await page.locator('#field-kausalitaet').selectOption('wahrscheinlich');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+
+	await expect(page.locator('.verdict .headline')).toHaveText(
+		'Meldepflichtig: spätestens 10 Tage ab Kenntnis.'
+	);
+	await page.getByRole('link', { name: 'Fristen' }).click();
+	await expect(page.locator('.deadlines li', { hasText: title })).toContainText(
+		'Meldung an die Marktüberwachungsbehörde (spätestens 10 Tage)'
+	);
+});
