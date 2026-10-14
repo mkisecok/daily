@@ -30,6 +30,8 @@ export type FieldDef = FieldBase &
 		| { type: 'boolean' }
 		/** A frozen snapshot of a questionnaire result, e.g. the risk classification. */
 		| { type: 'assessment'; tool: string }
+		/** The id of a record of another register or workflow tool, e.g. the audit of a finding. */
+		| { type: 'reference'; tool: string }
 	);
 
 export type FieldSection = { id: string; title: Localized; intro?: Localized; fields: FieldDef[] };
@@ -62,6 +64,12 @@ export type RecordToolDefinition = {
 	sections: FieldSection[];
 	/** Present for workflow tools; registers have no states. */
 	workflow?: WorkflowDef;
+	/**
+	 * Reference fields whose target is shown in full on the record page,
+	 * together with the records that point to it, e.g. a report embedding
+	 * its audit and the audit's findings.
+	 */
+	composes?: string[];
 };
 
 /* ---------- values ---------- */

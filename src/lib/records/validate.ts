@@ -102,6 +102,11 @@ function coerce(field: FieldDef, raw: unknown): { value: FieldValue; error?: Fie
 			if (typeof raw === 'string' && FALSE.has(raw)) return { value: false };
 			return { value: null, error: 'invalid' };
 		}
+		case 'reference': {
+			if (raw === '') return { value: null };
+			if (typeof raw !== 'string' || raw.length > 100) return { value: null, error: 'invalid' };
+			return { value: raw };
+		}
 		case 'assessment': {
 			if (raw === '') return { value: null };
 			if (!isAssessment(raw)) return { value: null, error: 'invalid' };
