@@ -11,6 +11,7 @@ import { betreiberpflichten } from './betreiberpflichten/tool.js';
 import { interessenabwaegung } from './interessenabwaegung/tool.js';
 import { einwilligungCheck } from './einwilligung-check/tool.js';
 import { drittlandTransfer } from './drittland-transfer/tool.js';
+import { datenpanne } from './datenpanne/tool.js';
 import { kiDsgvoSchnittstelle } from './ki-dsgvo-schnittstelle/tool.js';
 import { technischeDokumentation } from './technische-dokumentation/tool.js';
 import { kiNutzungsrichtlinie } from './ki-nutzungsrichtlinie/tool.js';
@@ -30,6 +31,7 @@ export const tools: readonly ToolManifest[] = [
 	interessenabwaegung.manifest,
 	einwilligungCheck.manifest,
 	drittlandTransfer.manifest,
+	datenpanne.manifest,
 	kiDsgvoSchnittstelle.manifest,
 	technischeDokumentation.manifest,
 	kiNutzungsrichtlinie.manifest,
@@ -100,6 +102,7 @@ export function getQuestionnaire(slug: string) {
 
 /** Register and workflow tools: definition + engine, keyed by slug. */
 const recordTools: Record<string, RecordTool> = {
+	[datenpanne.manifest.slug]: datenpanne,
 	[kiRegister.manifest.slug]: kiRegister
 };
 

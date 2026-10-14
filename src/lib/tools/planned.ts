@@ -37,22 +37,6 @@ export const planned: ToolManifest[] = [
 		]
 	},
 	{
-		slug: 'datenpanne',
-		category: 'datenschutz',
-		status: 'planned',
-		shape: 'workflow',
-		version: 0,
-		name: { de: 'Datenpanne', en: 'Personal data breach' },
-		summary: {
-			de: '72-Stunden-Uhr ab Kenntnisnahme, Risikoprüfung (Meldung an Behörde? Benachrichtigung Betroffener?), Inhaltsprüfung nach Art. 33 Abs. 3, Verzeichnis.',
-			en: '72-hour clock from awareness, risk test (notify the authority? inform data subjects?), Art. 33(3) content checklist, breach register.'
-		},
-		legalBasis: [
-			{ law: 'DSGVO', ref: 'Art. 33' },
-			{ law: 'DSGVO', ref: 'Art. 34' }
-		]
-	},
-	{
 		slug: 'betroffenenanfrage',
 		category: 'datenschutz',
 		status: 'planned',
