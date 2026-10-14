@@ -29,3 +29,10 @@ export type LawText = {
 	chapters: Chapter[];
 	provisions: Provision[];
 };
+
+/** A block as shown: its text split into plain parts and links to provisions. */
+export type RenderedBlock = {
+	label?: string;
+	segments: { text: string; law?: LawId; id?: string }[];
+	children?: RenderedBlock[];
+};
