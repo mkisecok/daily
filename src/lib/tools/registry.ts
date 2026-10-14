@@ -31,6 +31,7 @@ import { auditprogramm } from './auditprogramm/tool.js';
 import { pruefkatalog } from './pruefkatalog/tool.js';
 import { feststellungen } from './feststellungen/tool.js';
 import { auditbericht } from './auditbericht/tool.js';
+import { aimsGap } from './aims-gap/tool.js';
 import { planned } from './planned.js';
 
 /**
@@ -56,6 +57,7 @@ export const tools: readonly ToolManifest[] = [
 	kiDsgvoSchnittstelle.manifest,
 	technischeDokumentation.manifest,
 	kiNutzungsrichtlinie.manifest,
+	aimsGap.manifest,
 	kiRegister.manifest,
 	kiKompetenz.manifest,
 	vorfallmeldung.manifest,
@@ -82,6 +84,10 @@ const questionnaires: Record<
 	string,
 	{ catalog: QuestionnaireCatalog; engine: QuestionnaireEngine }
 > = {
+	[aimsGap.manifest.slug]: {
+		catalog: aimsGap.catalog,
+		engine: aimsGap.engine
+	},
 	[dsfaSchwellwert.manifest.slug]: {
 		catalog: dsfaSchwellwert.catalog,
 		engine: dsfaSchwellwert.engine

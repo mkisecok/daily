@@ -8,23 +8,6 @@ import type { ToolManifest } from './types.js';
 export const planned: ToolManifest[] = [
 	// ---------- Datenschutz ----------
 	// ---------- Künstliche Intelligenz ----------
-	{
-		slug: 'aims-gap',
-		category: 'ki',
-		status: 'planned',
-		shape: 'questionnaire',
-		version: 0,
-		name: { de: 'AIMS-Gap-Analyse', en: 'AIMS gap analysis' },
-		summary: {
-			de: 'Lückenanalyse gegen ISO/IEC 42001 Anhang A, abgebildet auf KI-VO-Artikel und ISO 27001.',
-			en: 'Gap analysis against ISO/IEC 42001 Annex A, mapped to AI Act articles and ISO 27001.'
-		},
-		legalBasis: [
-			{ law: 'ISO 42001', ref: 'Anhang A' },
-			{ law: 'ISO 27001', ref: 'Anhang A' }
-		]
-	},
-
 	// ---------- Audit ----------
 
 	// ---------- Entwickler ----------
