@@ -10,6 +10,7 @@ import { transparenzpflichten } from './transparenzpflichten/tool.js';
 import { betreiberpflichten } from './betreiberpflichten/tool.js';
 import { interessenabwaegung } from './interessenabwaegung/tool.js';
 import { einwilligungCheck } from './einwilligung-check/tool.js';
+import { drittlandTransfer } from './drittland-transfer/tool.js';
 import { planned } from './planned.js';
 
 /**
@@ -23,6 +24,7 @@ export const tools: readonly ToolManifest[] = [
 	betreiberpflichten.manifest,
 	interessenabwaegung.manifest,
 	einwilligungCheck.manifest,
+	drittlandTransfer.manifest,
 	...planned
 ];
 
@@ -64,6 +66,10 @@ const questionnaires: Record<
 	[einwilligungCheck.manifest.slug]: {
 		catalog: einwilligungCheck.catalog,
 		engine: einwilligungCheck.engine
+	},
+	[drittlandTransfer.manifest.slug]: {
+		catalog: drittlandTransfer.catalog,
+		engine: drittlandTransfer.engine
 	}
 };
 

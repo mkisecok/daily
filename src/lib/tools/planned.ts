@@ -82,19 +82,6 @@ export const planned: ToolManifest[] = [
 		legalBasis: [{ law: 'DSGVO', ref: 'Art. 28' }]
 	},
 	{
-		slug: 'drittland-transfer',
-		category: 'datenschutz',
-		status: 'planned',
-		shape: 'questionnaire',
-		version: 0,
-		name: { de: 'Drittland-Transfer', en: 'Third-country transfer' },
-		summary: {
-			de: 'Land → Mechanismus (Angemessenheit, DPF, SCC + TIA, BCR); Transfer Impact Assessment als Fragebogen.',
-			en: 'Country → mechanism (adequacy, DPF, SCCs + TIA, BCRs); transfer impact assessment questionnaire.'
-		},
-		legalBasis: [{ law: 'DSGVO', ref: 'Art. 44–49' }]
-	},
-	{
 		slug: 'tom-katalog',
 		category: 'datenschutz',
 		status: 'planned',
