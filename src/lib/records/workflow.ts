@@ -1,3 +1,4 @@
+import type { Localized } from '../tools/types.js';
 import type { RecordToolDefinition, RecordView, StateDef, TransitionDef } from './types.js';
 import { isEmpty } from './validate.js';
 
@@ -16,9 +17,14 @@ export function isTerminal(definition: RecordToolDefinition, state: string | nul
 	return stateById(definition, state)?.terminal === true;
 }
 
-export type AvailableTransition = { transition: TransitionDef; missing: string[] };
+export type AvailableTransition = {
+	transition: TransitionDef;
+	missing: string[];
+	/** Why the transition's own check blocks it, if it does. */
+	blocked: Localized | null;
+};
 
-/** Transitions out of the record's current state, with the required fields still empty. */
+/** Transitions out of the record's current state, with what still stands in their way. */
 export function allowedTransitions(
 	definition: RecordToolDefinition,
 	record: RecordView
@@ -28,14 +34,16 @@ export function allowedTransitions(
 		.filter((transition) => transition.from === record.state)
 		.map((transition) => ({
 			transition,
-			missing: (transition.requires ?? []).filter((id) => isEmpty(record.data[id]))
+			missing: (transition.requires ?? []).filter((id) => isEmpty(record.data[id])),
+			blocked: transition.check?.(record) ?? null
 		}));
 }
 
 export type TransitionResult =
 	| { ok: true; state: string }
 	| { ok: false; error: 'not-workflow' | 'not-allowed' }
-	| { ok: false; error: 'missing'; missing: string[] };
+	| { ok: false; error: 'missing'; missing: string[] }
+	| { ok: false; error: 'blocked'; reason: Localized };
 
 /** Checks a transition; the caller persists the new state. */
 export function applyTransition(
@@ -47,5 +55,6 @@ export function applyTransition(
 	const option = allowedTransitions(definition, record).find((o) => o.transition.to === to);
 	if (!option) return { ok: false, error: 'not-allowed' };
 	if (option.missing.length > 0) return { ok: false, error: 'missing', missing: option.missing };
+	if (option.blocked) return { ok: false, error: 'blocked', reason: option.blocked };
 	return { ok: true, state: to };
 }

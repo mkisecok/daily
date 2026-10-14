@@ -47,6 +47,30 @@ describe('workflow', () => {
 		});
 	});
 
+	it('applies the transition check after the required fields', () => {
+		const reason = { de: 'Erst B wählen', en: 'Choose B first' };
+		const guarded = {
+			...def,
+			workflow: {
+				...def.workflow!,
+				transitions: def.workflow!.transitions.map((t) =>
+					t.to === 'review'
+						? {
+								...t,
+								check: (r: { data: Record<string, unknown> }) =>
+									r.data.kind === 'b' ? null : reason
+							}
+						: t
+				)
+			}
+		};
+		const a = record({ data: { name: 'Eins', kind: 'a' } });
+		expect(allowedTransitions(guarded, a)[0].blocked).toEqual(reason);
+		expect(applyTransition(guarded, a, 'review')).toEqual({ ok: false, error: 'blocked', reason });
+		const b = record({ data: { name: 'Eins', kind: 'b' } });
+		expect(applyTransition(guarded, b, 'review')).toEqual({ ok: true, state: 'review' });
+	});
+
 	it('allows a transition once its fields are filled', () => {
 		const filled = record({ data: { name: 'Eins', kind: 'a' } });
 		expect(applyTransition(def, filled, 'review')).toEqual({ ok: true, state: 'review' });

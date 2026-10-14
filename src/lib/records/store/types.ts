@@ -1,3 +1,4 @@
+import type { Localized } from '../../tools/types.js';
 import type { ValidationErrors } from '../validate.js';
 import type {
 	AssessmentSnapshot,
@@ -11,6 +12,8 @@ export type StoreError =
 	| { ok: false; error: 'not-found' | 'unknown-tool' | 'not-workflow' | 'not-allowed' }
 	| { ok: false; error: 'invalid'; errors: ValidationErrors }
 	| { ok: false; error: 'missing'; missing: string[] }
+	/** A transition's own check failed; `reason` says why. */
+	| { ok: false; error: 'blocked'; reason: Localized }
 	/** Someone saved in between; `current` is the stored record. */
 	| { ok: false; error: 'conflict'; current: StoredRecord };
 

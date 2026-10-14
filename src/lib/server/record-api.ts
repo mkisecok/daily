@@ -37,7 +37,8 @@ const STATUS = {
 	'not-allowed': 409,
 	conflict: 409,
 	invalid: 422,
-	missing: 422
+	missing: 422,
+	blocked: 422
 } as const;
 
 /** The stored record, or the store error as JSON with a matching status. */

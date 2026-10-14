@@ -42,6 +42,8 @@ export type TransitionDef = {
 	label: Localized;
 	/** Fields that must be filled before the transition is allowed. */
 	requires?: string[];
+	/** Further condition on the values; returns why the step is blocked, or null. */
+	check?: (record: RecordView) => Localized | null;
 };
 
 export type WorkflowDef = {
