@@ -26,6 +26,8 @@ entries stay in your browser).
   print version (beta):
   - Record of processing activities (Art. 30 DSGVO) – completeness per letter, takes the DPIA
     decision over from the DPIA screening
+  - Data protection impact assessment (Art. 35, 36 DSGVO) – risk matrix before and after
+    measures, prior consultation with the deadline for the authority's opinion
   - Data subject requests (Art. 12, 15–22 DSGVO) – one-month period with extension, checklist
     per right
   - Processor contract check (Art. 28 DSGVO) – checklist for Art. 28(3) (a)–(h), sub-processors,
@@ -39,6 +41,9 @@ entries stay in your browser).
   - Personal data breach (Art. 33, 34 DSGVO) – 72-hour clock from awareness, risk assessment,
     status from recording to closure
   - AI literacy (Art. 4, 26(2) KI-VO) – content per role, refresher deadlines
+  - Serious incident reports (Art. 73 KI-VO) – 15, 10 or 2 days from awareness
+  - Fundamental rights impact assessment (Art. 27 KI-VO) – applicability, elements (a)–(f),
+    notification of the authority
 
   More are planned and listed in the catalogue.
 
