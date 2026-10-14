@@ -59,14 +59,29 @@
 			</div>
 		</fieldset>
 	{:else}
-		<label class="label" for={id}>
-			{text(field.label)}{#if field.required}<span class="req" aria-hidden="true">*</span>{/if}
-		</label>
+		<!-- The asterisk stays outside the label so the accessible name is the label alone. -->
+		<span class="label-row">
+			<label class="label" for={id}>{text(field.label)}</label>{#if field.required}<span
+					class="req"
+					aria-hidden="true">*</span
+				>{/if}
+		</span>
 		{#if field.type === 'textarea'}
-			<textarea {id} rows="4" bind:value aria-describedby={describedBy} aria-invalid={!!error}
-			></textarea>
+			<textarea
+				{id}
+				rows="4"
+				bind:value
+				aria-describedby={describedBy}
+				aria-invalid={!!error}
+				aria-required={field.required || undefined}></textarea>
 		{:else if field.type === 'select'}
-			<select {id} bind:value aria-describedby={describedBy} aria-invalid={!!error}>
+			<select
+				{id}
+				bind:value
+				aria-describedby={describedBy}
+				aria-invalid={!!error}
+				aria-required={field.required || undefined}
+			>
 				<option value="">{m.records_select()}</option>
 				{#each field.options as option (option.value)}
 					<option value={option.value}>{text(option.label)}</option>
@@ -81,11 +96,19 @@
 					bind:value
 					aria-describedby={describedBy}
 					aria-invalid={!!error}
+					aria-required={field.required || undefined}
 				/>
 				{#if field.unit}<span class="unit">{text(field.unit)}</span>{/if}
 			</span>
 		{:else if field.type === 'date'}
-			<input {id} type="date" bind:value aria-describedby={describedBy} aria-invalid={!!error} />
+			<input
+				{id}
+				type="date"
+				bind:value
+				aria-describedby={describedBy}
+				aria-invalid={!!error}
+				aria-required={field.required || undefined}
+			/>
 		{:else if field.type === 'datetime'}
 			<input
 				{id}
@@ -93,9 +116,17 @@
 				bind:value
 				aria-describedby={describedBy}
 				aria-invalid={!!error}
+				aria-required={field.required || undefined}
 			/>
 		{:else}
-			<input {id} type="text" bind:value aria-describedby={describedBy} aria-invalid={!!error} />
+			<input
+				{id}
+				type="text"
+				bind:value
+				aria-describedby={describedBy}
+				aria-invalid={!!error}
+				aria-required={field.required || undefined}
+			/>
 		{/if}
 	{/if}
 
@@ -143,12 +174,20 @@
 		margin: 0;
 	}
 
+	.label-row {
+		display: block;
+	}
+
 	.label {
 		display: block;
 		padding: 0;
 		font-family: var(--serif);
 		font-size: 16px;
 		color: var(--ink);
+	}
+
+	.label-row .label {
+		display: inline;
 	}
 
 	.req {
