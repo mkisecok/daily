@@ -11,18 +11,24 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import Citation from '#lib/tools/_shared/Citation.svelte';
 	import { text } from '#lib/tools/i18n.js';
-	import { formatValue } from '../format.js';
+	import { formatValue, type Titles } from '../format.js';
 	import type { FieldDef, RecordToolDefinition, StoredRecord } from '../types.js';
 
 	let {
 		definition,
 		record,
-		assessHref
+		assessHref = undefined,
+		titles = {},
+		referenceHref = undefined
 	}: {
 		definition: RecordToolDefinition;
 		record: StoredRecord;
-		/** Route path to the questionnaire for an assessment field; resolved here. */
-		assessHref: (field: FieldDef & { type: 'assessment' }) => RoutePath;
+		/** Route path to the questionnaire for an assessment field; resolved here. Omit for read-only views. */
+		assessHref?: (field: FieldDef & { type: 'assessment' }) => RoutePath;
+		/** Titles of referenced records by id. */
+		titles?: Titles;
+		/** Route path to a referenced record; resolved here. */
+		referenceHref?: (tool: string, id: string) => RoutePath;
 	} = $props();
 
 	const locale = getLocale();
@@ -48,13 +54,17 @@
 								{:else}
 									<span class="none">{m.records_assessment_none()}</span>
 								{/if}
-								{#if !record.archivedAt}
+								{#if !record.archivedAt && assessHref}
 									<a class="assess no-print" href={resolve(assessHref(field))}>
 										{value ? m.records_assessment_rerun() : m.records_assessment_run()} →
 									</a>
 								{/if}
+							{:else if field.type === 'reference' && typeof value === 'string' && referenceHref}
+								<a href={resolve(referenceHref(field.tool, value))}
+									>{formatValue(field, value, locale, titles)}</a
+								>
 							{:else}
-								{formatValue(field, value, locale) || '—'}
+								{formatValue(field, value, locale, titles) || '—'}
 							{/if}
 						</dd>
 					</div>

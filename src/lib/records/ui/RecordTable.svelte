@@ -10,17 +10,20 @@
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { text } from '#lib/tools/i18n.js';
-	import { formatValue, stateLabel } from '../format.js';
+	import { formatValue, stateLabel, type Titles } from '../format.js';
 	import type { RecordToolDefinition, StoredRecord } from '../types.js';
 	import { allFields } from '../validate.js';
 
 	let {
 		definition,
 		records,
-		hrefFor
+		hrefFor,
+		titles = {}
 	}: {
 		definition: RecordToolDefinition;
 		records: StoredRecord[];
+		/** Titles of referenced records by id. */
+		titles?: Titles;
 		/** Route path (e.g. from `localized()`); resolved here. */
 		hrefFor: (record: StoredRecord) => RoutePath;
 	} = $props();
@@ -51,7 +54,7 @@
 				<tr>
 					<th scope="row"><a href={resolve(hrefFor(record))}>{record.title}</a></th>
 					{#each columns as column (column.id)}
-						<td>{formatValue(column, record.data[column.id], locale) || '—'}</td>
+						<td>{formatValue(column, record.data[column.id], locale, titles) || '—'}</td>
 					{/each}
 					{#if definition.workflow}
 						<td><span class="state">{stateLabel(definition, record.state, locale)}</span></td>

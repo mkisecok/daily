@@ -10,7 +10,7 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { cite, text } from '#lib/tools/i18n.js';
 	import type { Localized } from '#lib/tools/types.js';
-	import { formatValue, stateLabel } from '../format.js';
+	import { formatValue, stateLabel, type Titles } from '../format.js';
 	import type { RecordToolDefinition, StoredRecord } from '../types.js';
 
 	let {
@@ -18,6 +18,7 @@
 		records,
 		title,
 		organisation = null,
+		titles = {},
 		now = new Date()
 	}: {
 		definition: RecordToolDefinition;
@@ -25,6 +26,8 @@
 		title: Localized;
 		/** Whose register this is (Art. 30(1)(a)); unknown in the preview. */
 		organisation?: string | null;
+		/** Titles of referenced records by id. */
+		titles?: Titles;
 		now?: Date;
 	} = $props();
 
@@ -55,7 +58,7 @@
 									({cite(field.cite)})</span
 								>{/if}
 						</dt>
-						<dd>{formatValue(field, record.data[field.id], locale) || '—'}</dd>
+						<dd>{formatValue(field, record.data[field.id], locale, titles) || '—'}</dd>
 					{/each}
 				{/each}
 			</dl>

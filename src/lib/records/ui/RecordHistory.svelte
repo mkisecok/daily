@@ -8,12 +8,15 @@
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { text } from '#lib/tools/i18n.js';
-	import { formatValue, stateLabel } from '../format.js';
+	import { formatValue, stateLabel, type Titles } from '../format.js';
 	import type { RecordEvent, RecordToolDefinition } from '../types.js';
 	import { fieldById } from '../validate.js';
 
-	let { definition, events }: { definition: RecordToolDefinition; events: RecordEvent[] } =
-		$props();
+	let {
+		definition,
+		events,
+		titles = {}
+	}: { definition: RecordToolDefinition; events: RecordEvent[]; titles?: Titles } = $props();
 
 	const locale = getLocale();
 	const kinds: Record<RecordEvent['kind'], () => string> = {
@@ -34,8 +37,8 @@
 				{
 					id,
 					label: text(field.label),
-					before: formatValue(field, before, locale) || '—',
-					after: formatValue(field, after, locale) || '—'
+					before: formatValue(field, before, locale, titles) || '—',
+					after: formatValue(field, after, locale, titles) || '—'
 				}
 			];
 		});
