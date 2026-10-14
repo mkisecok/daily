@@ -6,7 +6,7 @@ export function text(value: Localized, locale: string = getLocale()): string {
 	return locale === 'en' ? value.en : value.de;
 }
 
-const BODIES = new Set<LegalBasis['law']>(['EDPB', 'DSK', 'WP29']);
+const BODIES = new Set<LegalBasis['law']>(['EDPB', 'DSK', 'WP29', 'EuGH']);
 
 /**
  * Statutes cite law-last, as German practice has it: "Art. 35 Abs. 3 DSGVO".

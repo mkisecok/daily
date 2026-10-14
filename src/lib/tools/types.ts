@@ -6,7 +6,17 @@ export type ToolStatus = 'stable' | 'beta' | 'planned';
 export type ToolShape = 'questionnaire' | 'register' | 'workflow';
 
 export type Law =
-	'DSGVO' | 'KI-VO' | 'BDSG' | 'TDDDG' | 'ISO 27001' | 'ISO 42001' | 'EDPB' | 'DSK' | 'WP29';
+	| 'DSGVO'
+	| 'KI-VO'
+	| 'BDSG'
+	| 'TDDDG'
+	| 'BetrVG'
+	| 'ISO 27001'
+	| 'ISO 42001'
+	| 'EDPB'
+	| 'DSK'
+	| 'WP29'
+	| 'EuGH';
 
 /** A citation such as { law: 'DSGVO', ref: 'Art. 35 Abs. 3 lit. a' }. */
 export type LegalBasis = { law: Law; ref: string; title?: Localized };
@@ -34,6 +44,8 @@ export type Question = {
 	text: Localized;
 	help?: Localized;
 	cite?: LegalBasis;
+	/** Checklist questions: what to do when the answer is "no". */
+	remedy?: Localized;
 };
 
 export type QuestionSection = {
