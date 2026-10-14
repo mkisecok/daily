@@ -5,6 +5,7 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { toCsv } from '#lib/records/csv.js';
+	import { stateLabel } from '#lib/records/format.js';
 	import { getStore } from '#lib/records/store/index.js';
 	import type { StoreError } from '#lib/records/store/types.js';
 	import type { StoredRecord } from '#lib/records/types.js';
@@ -13,6 +14,7 @@
 	import PrintRegister from '#lib/records/ui/PrintRegister.svelte';
 	import RecordForm from '#lib/records/ui/RecordForm.svelte';
 	import RecordHistory from '#lib/records/ui/RecordHistory.svelte';
+	import RecordLinks from '#lib/records/ui/RecordLinks.svelte';
 	import RecordTable from '#lib/records/ui/RecordTable.svelte';
 	import RecordView from '#lib/records/ui/RecordView.svelte';
 	import StateBar from '#lib/records/ui/StateBar.svelte';
@@ -36,6 +38,8 @@
 
 	const listPath = $derived(localized(`/werkzeuge/${slug}/eintraege`));
 	const recordPath = (id: string) => localized(`/werkzeuge/${slug}/eintraege?eintrag=${id}`);
+	const referenceHref = (tool: string, id: string) =>
+		localized(`/werkzeuge/${tool}/eintraege?eintrag=${id}`);
 
 	let editing = $state(false);
 	let confirmArchive = $state(false);
@@ -131,7 +135,7 @@
 		const day = new Date().toISOString().slice(0, 10);
 		downloadText(
 			`${slug}-${day}.csv`,
-			toCsv(data.definition, records, locale),
+			toCsv(data.definition, records, locale, data.titles),
 			'text/csv;charset=utf-8'
 		);
 	}
@@ -183,6 +187,7 @@
 		definition={data.definition}
 		{errors}
 		{busy}
+		choices={data.choices}
 		onsave={create}
 		oncancel={() => goto(resolve(listPath))}
 	/>
@@ -208,6 +213,7 @@
 					data={record.data}
 					{errors}
 					{busy}
+					choices={data.choices}
 					onsave={(input) => save(record, input)}
 					oncancel={() => {
 						editing = false;
@@ -243,9 +249,46 @@
 			<RecordView
 				definition={data.definition}
 				{record}
+				titles={data.titles}
+				{referenceHref}
 				assessHref={(field) =>
 					localized(`/werkzeuge/${field.tool}/pruefen?fuer=${slug}:${record.id}:${field.id}`)}
 			/>
+
+			{#each data.composed as part (part.record.id)}
+				<section class="composed">
+					<h2 class="eyebrow">{m.records_composed()}</h2>
+					<h3>
+						{text(part.tool.manifest.name)}:
+						<a href={resolve(referenceHref(part.tool.manifest.slug, part.record.id))}
+							>{part.record.title}</a
+						>
+					</h3>
+					<RecordView definition={part.tool.definition} record={part.record} />
+					{#each part.backlinks as group (group.tool.manifest.slug)}
+						<h3>{text(group.tool.manifest.name)} ({group.records.length})</h3>
+						{#each group.records as item (item.id)}
+							<article class="composed-record">
+								<h4>
+									{item.title}{#if group.tool.definition.workflow}
+										<span class="composed-state"
+											>{stateLabel(group.tool.definition, item.state, locale)}</span
+										>{/if}
+								</h4>
+								<RecordView
+									definition={group.tool.definition}
+									record={item}
+									titles={{ [part.record.id]: part.record.title }}
+								/>
+							</article>
+						{/each}
+					{/each}
+				</section>
+			{/each}
+
+			{#if data.backlinks.length > 0}
+				<RecordLinks backlinks={data.backlinks} hrefFor={referenceHref} />
+			{/if}
 
 			<div class="toolbar actions no-print">
 				{#if !record.archivedAt}
@@ -272,7 +315,7 @@
 				{/if}
 			</div>
 
-			<RecordHistory definition={data.definition} events={detail.events} />
+			<RecordHistory definition={data.definition} events={detail.events} titles={data.titles} />
 		{/if}
 	{/if}
 {:else}
@@ -293,7 +336,12 @@
 		{#if records.length === 0}
 			<p class="quiet-text">{m.records_empty()}</p>
 		{:else}
-			<RecordTable definition={data.definition} {records} hrefFor={(r) => recordPath(r.id)} />
+			<RecordTable
+				definition={data.definition}
+				{records}
+				titles={data.titles}
+				hrefFor={(r) => recordPath(r.id)}
+			/>
 		{/if}
 	</section>
 	{#if records.length > 0}
@@ -301,6 +349,7 @@
 			definition={data.definition}
 			{records}
 			title={data.tool.name}
+			titles={data.titles}
 			organisation={data.organisation?.name}
 		/>
 	{/if}
@@ -352,6 +401,37 @@
 
 	.deadlines {
 		padding-top: 1.5rem;
+	}
+
+	.composed {
+		margin-top: 2.5rem;
+		padding-top: 1rem;
+		border-top: 2px solid var(--ink);
+
+		& h3 {
+			margin-top: 1.5rem;
+			font-size: 18px;
+		}
+	}
+
+	.composed-record {
+		margin-top: 1rem;
+		padding-left: 1rem;
+		border-left: 2px solid var(--rule);
+		break-inside: avoid;
+
+		& h4 {
+			font-size: 16px;
+		}
+	}
+
+	.composed-state {
+		margin-left: 0.75rem;
+		font-family: var(--mono);
+		font-size: 11px;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--navy);
 	}
 
 	.actions {
