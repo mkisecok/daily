@@ -14,6 +14,7 @@ import { drittlandTransfer } from './drittland-transfer/tool.js';
 import { kiDsgvoSchnittstelle } from './ki-dsgvo-schnittstelle/tool.js';
 import { technischeDokumentation } from './technische-dokumentation/tool.js';
 import { kiNutzungsrichtlinie } from './ki-nutzungsrichtlinie/tool.js';
+import { kiRegister } from './ki-register/tool.js';
 import type { RecordTool } from '../records/types.js';
 import { planned } from './planned.js';
 
@@ -32,6 +33,7 @@ export const tools: readonly ToolManifest[] = [
 	kiDsgvoSchnittstelle.manifest,
 	technischeDokumentation.manifest,
 	kiNutzungsrichtlinie.manifest,
+	kiRegister.manifest,
 	...planned
 ];
 
@@ -97,7 +99,9 @@ export function getQuestionnaire(slug: string) {
 }
 
 /** Register and workflow tools: definition + engine, keyed by slug. */
-const recordTools: Record<string, RecordTool> = {};
+const recordTools: Record<string, RecordTool> = {
+	[kiRegister.manifest.slug]: kiRegister
+};
 
 export function getRecordTool(slug: string): RecordTool | undefined {
 	return recordTools[slug];

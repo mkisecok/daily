@@ -125,22 +125,6 @@ export const planned: ToolManifest[] = [
 	},
 	// ---------- Künstliche Intelligenz ----------
 	{
-		slug: 'ki-register',
-		category: 'ki',
-		status: 'planned',
-		shape: 'register',
-		version: 0,
-		name: { de: 'KI-Register', en: 'AI system register' },
-		summary: {
-			de: 'Inventar der KI-Systeme je Mandant: Zweck, Rolle (Anbieter/Betreiber), Modell, Datenkategorien, Risikoklasse, Verantwortliche.',
-			en: 'Inventory of AI systems per client: purpose, role (provider/deployer), model, data categories, risk class, owner.'
-		},
-		legalBasis: [
-			{ law: 'KI-VO', ref: 'Art. 3' },
-			{ law: 'KI-VO', ref: 'Art. 26' }
-		]
-	},
-	{
 		slug: 'grundrechte-folgenabschaetzung',
 		category: 'ki',
 		status: 'planned',
