@@ -1,0 +1,200 @@
+{
+	"slug": "ki-dsgvo-schnittstelle",
+	"version": 1,
+	"intro": {
+		"de": "Die KI-Verordnung lässt die DSGVO unberührt. Sobald ein KI-System personenbezogene Daten verarbeitet – im Training, in Eingaben oder in Ausgaben –, gelten alle Grundsätze und Pflichten der DSGVO. Diese Prüfliste bündelt die Punkte, die bei KI regelmäßig offen bleiben, nach der Orientierungshilfe der Datenschutzkonferenz und der Stellungnahme 28/2024 des EDSA.",
+		"en": "The AI Act leaves the GDPR untouched. As soon as an AI system processes personal data – in training, inputs or outputs – all GDPR principles and duties apply. This checklist gathers the points that typically remain open with AI, following the German DSK guidance and EDPB Opinion 28/2024."
+	},
+	"sources": [
+		{ "law": "DSGVO", "ref": "Art. 5, 6, 9, 13, 15–17, 22, 28, 35, 44" },
+		{ "law": "DSK", "ref": "Orientierungshilfe KI und Datenschutz (2024)" },
+		{ "law": "EDPB", "ref": "Stellungnahme 28/2024 zu KI-Modellen" },
+		{ "law": "EuGH", "ref": "C-634/21 (SCHUFA)" }
+	],
+	"sections": [
+		{
+			"id": "scope",
+			"title": { "de": "Ausgangslage", "en": "Starting point" },
+			"questions": [
+				{
+					"id": "k_personal",
+					"type": "yesno",
+					"text": {
+						"de": "Verarbeitet das KI-System personenbezogene Daten, sei es in den Trainingsdaten, in Eingaben (Prompts, Dokumente) oder in Ausgaben?",
+						"en": "Does the AI system process personal data, whether in training data, inputs (prompts, documents) or outputs?"
+					},
+					"help": {
+						"de": "Ein mit personenbezogenen Daten trainiertes Modell ist nach Stellungnahme 28/2024 des EDSA nicht ohne Weiteres anonym.",
+						"en": "Under EDPB Opinion 28/2024, a model trained on personal data is not automatically anonymous."
+					},
+					"cite": { "law": "EDPB", "ref": "Stellungnahme 28/2024" }
+				},
+				{
+					"id": "k_automated",
+					"type": "yesno",
+					"text": {
+						"de": "Trifft das System Entscheidungen ausschließlich automatisiert, die Personen gegenüber rechtliche Wirkung entfalten oder sie ähnlich erheblich beeinträchtigen?",
+						"en": "Does the system make solely automated decisions that produce legal effects concerning persons or similarly significantly affect them?"
+					},
+					"help": {
+						"de": "Nach dem EuGH kann schon ein Score eine solche Entscheidung sein, wenn ein Dritter maßgeblich darauf abstellt.",
+						"en": "According to the CJEU, even a score can be such a decision if a third party draws strongly on it."
+					},
+					"cite": { "law": "EuGH", "ref": "C-634/21 (SCHUFA)" }
+				}
+			]
+		},
+		{
+			"id": "lawfulness",
+			"title": { "de": "Rechtmäßigkeit", "en": "Lawfulness" },
+			"questions": [
+				{
+					"id": "k_basis",
+					"type": "yesno",
+					"text": {
+						"de": "Ist für jede Phase – Training, Betrieb, Verwendung der Ausgaben – eine Rechtsgrundlage nach Art. 6 bestimmt und dokumentiert?",
+						"en": "Is a legal basis under Art. 6 identified and documented for each phase – training, operation, use of outputs?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 6 Abs. 1" },
+					"remedy": {
+						"de": "Rechtsgrundlage je Phase festlegen; bei berechtigtem Interesse die Interessenabwägung durchführen und dokumentieren.",
+						"en": "Determine the legal basis per phase; where relying on legitimate interest, carry out and document the balancing test."
+					}
+				},
+				{
+					"id": "k_special",
+					"type": "yesnona",
+					"text": {
+						"de": "Bei besonderen Kategorien personenbezogener Daten: Liegt zusätzlich eine Ausnahme nach Art. 9 Abs. 2 vor?",
+						"en": "For special categories of personal data: does an exception under Art. 9(2) apply in addition?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 9 Abs. 2" },
+					"remedy": {
+						"de": "Ausnahme nach Art. 9 Abs. 2 bestimmen oder besondere Kategorien aus Eingaben und Trainingsdaten herausfiltern.",
+						"en": "Identify an exception under Art. 9(2) or filter special categories out of inputs and training data."
+					}
+				},
+				{
+					"id": "k_art22",
+					"type": "yesnona",
+					"text": {
+						"de": "Bei ausschließlich automatisierten Entscheidungen: Greift eine Ausnahme nach Art. 22 Abs. 2, und haben Betroffene das Recht auf menschliches Eingreifen, auf Darlegung ihres Standpunkts und auf Anfechtung?",
+						"en": "For solely automated decisions: does an exception under Art. 22(2) apply, and do data subjects have the right to human intervention, to express their view and to contest the decision?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 22 Abs. 2 und 3" },
+					"remedy": {
+						"de": "Eine Ausnahme nach Art. 22 Abs. 2 sicherstellen und einen Prozess für menschliche Überprüfung und Anfechtung einrichten, oder einen Menschen mit echter Entscheidungsbefugnis einbinden.",
+						"en": "Secure an exception under Art. 22(2) and set up a process for human review and contestation, or involve a human with genuine decision-making authority."
+					}
+				}
+			]
+		},
+		{
+			"id": "principles",
+			"title": { "de": "Grundsätze", "en": "Principles" },
+			"questions": [
+				{
+					"id": "k_minimisation",
+					"type": "yesno",
+					"text": {
+						"de": "Werden nur die erforderlichen Daten in Training und Eingaben verwendet, wo möglich anonymisiert oder pseudonymisiert?",
+						"en": "Is only the data necessary used in training and inputs, anonymised or pseudonymised where possible?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 5 Abs. 1 lit. c, Art. 25" },
+					"remedy": {
+						"de": "Eingaben vor dem Senden pseudonymisieren und Regeln festlegen, welche Daten in Prompts nicht gehören.",
+						"en": "Pseudonymise inputs before sending and lay down rules on which data does not belong in prompts."
+					}
+				},
+				{
+					"id": "k_accuracy",
+					"type": "yesno",
+					"text": {
+						"de": "Werden Ausgaben über Personen vor ihrer Verwendung auf Richtigkeit geprüft (Halluzinationen)?",
+						"en": "Are outputs about persons checked for accuracy before they are used (hallucinations)?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 5 Abs. 1 lit. d" },
+					"remedy": {
+						"de": "Menschliche Prüfung von Ausgaben über Personen vorschreiben, bevor sie in Entscheidungen oder Dokumente einfließen.",
+						"en": "Require human review of outputs about persons before they enter decisions or documents."
+					}
+				},
+				{
+					"id": "k_transparency",
+					"type": "yesno",
+					"text": {
+						"de": "Werden die Betroffenen über die KI-Verarbeitung informiert, bei automatisierten Entscheidungen auch über die involvierte Logik und ihre Tragweite?",
+						"en": "Are data subjects informed about the AI processing, and for automated decisions also about the logic involved and its significance?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 13 Abs. 2 lit. f, Art. 14" },
+					"remedy": {
+						"de": "Datenschutzhinweise um Zweck, Datenarten, Empfänger und gegebenenfalls die Logik automatisierter Entscheidungen ergänzen.",
+						"en": "Extend the privacy notice with purpose, data categories, recipients and, where relevant, the logic of automated decisions."
+					}
+				}
+			]
+		},
+		{
+			"id": "governance",
+			"title": { "de": "Organisation", "en": "Governance" },
+			"questions": [
+				{
+					"id": "k_rights",
+					"type": "yesno",
+					"text": {
+						"de": "Können Auskunft, Berichtigung und Löschung auch für Daten in Trainingssätzen, Verläufen und Ausgaben umgesetzt werden?",
+						"en": "Can access, rectification and erasure be implemented for data in training sets, histories and outputs as well?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 15–17" },
+					"remedy": {
+						"de": "Speicherorte von Eingaben, Verläufen und Trainingsdaten erfassen und festlegen, wie Betroffenenanfragen dort umgesetzt werden.",
+						"en": "Map where inputs, histories and training data are stored and set out how data subject requests are fulfilled there."
+					}
+				},
+				{
+					"id": "k_dpia",
+					"type": "yesno",
+					"text": {
+						"de": "Wurde geprüft, ob eine Datenschutz-Folgenabschätzung nötig ist, und wurde sie gegebenenfalls durchgeführt?",
+						"en": "Has it been assessed whether a data protection impact assessment is required, and has it been carried out where needed?"
+					},
+					"help": {
+						"de": "KI-gestützte Verarbeitungen zur Steuerung der Interaktion mit Betroffenen stehen auf der Muss-Liste der DSK.",
+						"en": "AI-supported processing that steers interaction with data subjects is on the DSK must-list."
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 35" },
+					"remedy": {
+						"de": "DSFA-Schwellwertanalyse durchführen und bei Bedarf eine DSFA vor dem Einsatz abschließen.",
+						"en": "Run the DPIA screening and, if needed, complete a DPIA before deployment."
+					}
+				},
+				{
+					"id": "k_processor",
+					"type": "yesnona",
+					"text": {
+						"de": "Bei externen KI-Diensten: Ist ein Auftragsverarbeitungsvertrag geschlossen und ausgeschlossen, dass der Anbieter Eingaben für eigene Zwecke wie das Training nutzt?",
+						"en": "For external AI services: is a processing agreement in place, and is the provider barred from using inputs for its own purposes such as training?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 28" },
+					"remedy": {
+						"de": "Geschäftsversion mit Auftragsverarbeitungsvertrag nutzen und die Nutzung von Eingaben zum Training vertraglich und in den Einstellungen ausschließen.",
+						"en": "Use a business plan with a processing agreement and exclude the use of inputs for training by contract and in the settings."
+					}
+				},
+				{
+					"id": "k_transfer",
+					"type": "yesnona",
+					"text": {
+						"de": "Bei Verarbeitung außerhalb des EWR: Ist die Übermittlung nach Art. 44 ff. abgesichert?",
+						"en": "For processing outside the EEA: is the transfer secured under Art. 44 et seq.?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 44–49" },
+					"remedy": {
+						"de": "Drittland-Transfer prüfen: Angemessenheitsbeschluss, DPF-Zertifizierung oder Standardvertragsklauseln mit Transfer Impact Assessment.",
+						"en": "Check the third-country transfer: adequacy decision, DPF certification or standard contractual clauses with transfer impact assessment."
+					}
+				}
+			]
+		}
+	]
+}
