@@ -13,6 +13,7 @@ import { einwilligungCheck } from './einwilligung-check/tool.js';
 import { drittlandTransfer } from './drittland-transfer/tool.js';
 import { kiDsgvoSchnittstelle } from './ki-dsgvo-schnittstelle/tool.js';
 import { technischeDokumentation } from './technische-dokumentation/tool.js';
+import { kiNutzungsrichtlinie } from './ki-nutzungsrichtlinie/tool.js';
 import { planned } from './planned.js';
 
 /**
@@ -29,6 +30,7 @@ export const tools: readonly ToolManifest[] = [
 	drittlandTransfer.manifest,
 	kiDsgvoSchnittstelle.manifest,
 	technischeDokumentation.manifest,
+	kiNutzungsrichtlinie.manifest,
 	...planned
 ];
 
@@ -82,6 +84,10 @@ const questionnaires: Record<
 	[technischeDokumentation.manifest.slug]: {
 		catalog: technischeDokumentation.catalog,
 		engine: technischeDokumentation.engine
+	},
+	[kiNutzungsrichtlinie.manifest.slug]: {
+		catalog: kiNutzungsrichtlinie.catalog,
+		engine: kiNutzungsrichtlinie.engine
 	}
 };
 

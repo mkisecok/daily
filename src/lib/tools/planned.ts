@@ -167,22 +167,6 @@ export const planned: ToolManifest[] = [
 		legalBasis: [{ law: 'KI-VO', ref: 'Art. 4' }]
 	},
 	{
-		slug: 'ki-nutzungsrichtlinie',
-		category: 'ki',
-		status: 'planned',
-		shape: 'questionnaire',
-		version: 0,
-		name: { de: 'KI-Nutzungsrichtlinie', en: 'AI usage policy' },
-		summary: {
-			de: 'Generator für eine interne Richtlinie: erlaubte Werkzeuge, Datenklassen, verbotene Eingaben, Protokollierung.',
-			en: 'Generator for an internal policy: allowed tools, data classes, prohibited inputs, logging.'
-		},
-		legalBasis: [
-			{ law: 'KI-VO', ref: 'Art. 4' },
-			{ law: 'DSK', ref: 'Orientierungshilfe KI' }
-		]
-	},
-	{
 		slug: 'vorfallmeldung',
 		category: 'ki',
 		status: 'planned',
