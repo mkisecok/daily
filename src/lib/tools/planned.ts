@@ -8,19 +8,6 @@ import type { ToolManifest } from './types.js';
 export const planned: ToolManifest[] = [
 	// ---------- Datenschutz ----------
 	{
-		slug: 'vvt',
-		category: 'datenschutz',
-		status: 'planned',
-		shape: 'register',
-		version: 0,
-		name: { de: 'Verzeichnis von Verarbeitungstätigkeiten', en: 'Record of processing activities' },
-		summary: {
-			de: 'Strukturiertes Verzeichnis je Mandant: Zweck, Kategorien, Empfänger, Drittland, Löschfrist, TOMs. Druck als amtliches Verzeichnis.',
-			en: 'Structured register per client: purpose, categories, recipients, third countries, retention, TOMs. Prints as the official record.'
-		},
-		legalBasis: [{ law: 'DSGVO', ref: 'Art. 30' }]
-	},
-	{
 		slug: 'dsfa',
 		category: 'datenschutz',
 		status: 'planned',

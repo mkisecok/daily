@@ -5,6 +5,7 @@ import type {
 	ToolManifest
 } from './types.js';
 import { dsfaSchwellwert } from './dsfa-schwellwert/tool.js';
+import { vvt } from './vvt/tool.js';
 import { risikoklassifizierung } from './risikoklassifizierung/tool.js';
 import { transparenzpflichten } from './transparenzpflichten/tool.js';
 import { betreiberpflichten } from './betreiberpflichten/tool.js';
@@ -24,6 +25,7 @@ import { planned } from './planned.js';
  * category is the order shown in the catalogue.
  */
 export const tools: readonly ToolManifest[] = [
+	vvt.manifest,
 	dsfaSchwellwert.manifest,
 	risikoklassifizierung.manifest,
 	transparenzpflichten.manifest,
@@ -102,6 +104,7 @@ export function getQuestionnaire(slug: string) {
 
 /** Register and workflow tools: definition + engine, keyed by slug. */
 const recordTools: Record<string, RecordTool> = {
+	[vvt.manifest.slug]: vvt,
 	[datenpanne.manifest.slug]: datenpanne,
 	[kiRegister.manifest.slug]: kiRegister
 };
