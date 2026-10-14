@@ -142,5 +142,19 @@
 	"deadlines_due": "Due",
 	"handoff_for": "Assessment for the entry “{title}” in {tool}.",
 	"handoff_attach": "Attach to {tool}",
-	"handoff_failed": "The result could not be attached."
+	"handoff_failed": "The result could not be attached.",
+	"org_title": "Client organisations",
+	"org_intro": "Daily keeps assessments, registers and deadlines apart per organisation. Your own organisation always exists; as an external data protection or AI officer you add clients here and switch between them.",
+	"org_active": "Active",
+	"org_switch": "Switch",
+	"org_own": "Own organisation",
+	"org_client": "Client",
+	"org_add": "Add client",
+	"org_name": "Name",
+	"org_name_invalid": "Please enter a name of 1 to 120 characters.",
+	"org_rename": "Rename",
+	"org_save": "Save",
+	"org_cancel": "Cancel",
+	"org_working_in": "Workspace: {name}",
+	"org_switched": "You are now working in {name}."
 }

@@ -142,5 +142,19 @@
 	"deadlines_due": "Fällig",
 	"handoff_for": "Prüfung für den Eintrag „{title}“ in {tool}.",
 	"handoff_attach": "In {tool} übernehmen",
-	"handoff_failed": "Das Ergebnis konnte nicht übernommen werden."
+	"handoff_failed": "Das Ergebnis konnte nicht übernommen werden.",
+	"org_title": "Mandanten",
+	"org_intro": "Daily trennt Prüfungen, Register und Fristen nach Organisation. Ihre eigene Organisation ist immer vorhanden; als externe Datenschutz- oder KI-Beauftragte legen Sie hier Mandanten an und wechseln zwischen ihnen.",
+	"org_active": "Aktiv",
+	"org_switch": "Wechseln",
+	"org_own": "Eigene Organisation",
+	"org_client": "Mandant",
+	"org_add": "Mandant anlegen",
+	"org_name": "Name",
+	"org_name_invalid": "Bitte einen Namen mit 1 bis 120 Zeichen angeben.",
+	"org_rename": "Umbenennen",
+	"org_save": "Speichern",
+	"org_cancel": "Abbrechen",
+	"org_working_in": "Arbeitsbereich: {name}",
+	"org_switched": "Sie arbeiten jetzt in {name}."
 }
