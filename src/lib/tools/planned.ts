@@ -24,22 +24,6 @@ export const planned: ToolManifest[] = [
 		]
 	},
 	{
-		slug: 'loeschkonzept',
-		category: 'datenschutz',
-		status: 'planned',
-		shape: 'register',
-		version: 0,
-		name: { de: 'Löschkonzept', en: 'Retention schedule' },
-		summary: {
-			de: 'Aufbewahrungsfristen je Datenkategorie (HGB, AO), daraus abgeleitete Löschregeln.',
-			en: 'Retention periods per data category (HGB, AO) and the deletion rules derived from them.'
-		},
-		legalBasis: [
-			{ law: 'DSGVO', ref: 'Art. 5 Abs. 1 lit. e' },
-			{ law: 'DSGVO', ref: 'Art. 17' }
-		]
-	},
-	{
 		slug: 'schulungsnachweis',
 		category: 'datenschutz',
 		status: 'planned',
