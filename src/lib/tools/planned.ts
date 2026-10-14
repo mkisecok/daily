@@ -38,19 +38,6 @@ export const planned: ToolManifest[] = [
 		legalBasis: [{ law: 'KI-VO', ref: 'Art. 27' }]
 	},
 	{
-		slug: 'vorfallmeldung',
-		category: 'ki',
-		status: 'planned',
-		shape: 'workflow',
-		version: 0,
-		name: { de: 'Vorfallmeldung', en: 'Serious incident report' },
-		summary: {
-			de: 'Register schwerwiegender Vorfälle mit Fristen nach Art. 73 (15, 10 und 2 Tage), Verknüpfung zur Datenpanne.',
-			en: 'Register of serious incidents with Art. 73 deadlines (15, 10 and 2 days), linked to data breaches.'
-		},
-		legalBasis: [{ law: 'KI-VO', ref: 'Art. 73' }]
-	},
-	{
 		slug: 'aims-gap',
 		category: 'ki',
 		status: 'planned',

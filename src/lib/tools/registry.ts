@@ -24,6 +24,7 @@ import { tomKatalog } from './tom-katalog/tool.js';
 import { loeschkonzept } from './loeschkonzept/tool.js';
 import { schulungsnachweis } from './schulungsnachweis/tool.js';
 import { kiKompetenz } from './ki-kompetenz/tool.js';
+import { vorfallmeldung } from './vorfallmeldung/tool.js';
 import { planned } from './planned.js';
 
 /**
@@ -50,6 +51,7 @@ export const tools: readonly ToolManifest[] = [
 	kiNutzungsrichtlinie.manifest,
 	kiRegister.manifest,
 	kiKompetenz.manifest,
+	vorfallmeldung.manifest,
 	...planned
 ];
 
@@ -116,6 +118,7 @@ export function getQuestionnaire(slug: string) {
 
 /** Register and workflow tools: definition + engine, keyed by slug. */
 const recordTools: Record<string, RecordTool> = {
+	[vorfallmeldung.manifest.slug]: vorfallmeldung,
 	[kiKompetenz.manifest.slug]: kiKompetenz,
 	[schulungsnachweis.manifest.slug]: schulungsnachweis,
 	[loeschkonzept.manifest.slug]: loeschkonzept,
