@@ -85,3 +85,44 @@ test('consent check offers "not applicable" and names each defect', async ({ pag
 	await expect(page.getByText('Alle ablehnen', { exact: false }).first()).toBeVisible();
 	await expect(page.locator('.answer[data-answer="na"]')).toHaveText('Entfällt');
 });
+
+test('AI usage policy generator prints a numbered draft', async ({ page }) => {
+	await page.goto('/werkzeuge/ki-nutzungsrichtlinie/pruefen');
+	const questions = page.locator('fieldset');
+	const count = await questions.count();
+	for (let i = 0; i < count; i++) {
+		await questions.nth(i).getByLabel('Ja', { exact: true }).check();
+	}
+	await page.locator('input[name="answer.p_private"][value="no"]').check();
+
+	await page.getByRole('button', { name: 'Auswerten' }).click();
+	await expect(
+		page.getByRole('heading', { level: 2, name: 'Entwurf der KI-Nutzungsrichtlinie.' })
+	).toBeVisible();
+	await expect(
+		page.getByRole('heading', { level: 3, name: 'Entwurf der Richtlinie' })
+	).toBeVisible();
+	await expect(page.locator('.verdict .notes li')).toHaveCount(6);
+	await expect(page.locator('.verdict .notes li').first()).toContainText('§ 1 Geltungsbereich');
+});
+
+test('third-country transfer check asks for a TIA with standard contractual clauses', async ({
+	page
+}) => {
+	await page.goto('/en/werkzeuge/drittland-transfer/pruefen');
+	const set = (id: string, value: string) =>
+		page.locator(`input[name="answer.${id}"][value="${value}"]`).check();
+	await set('t_transfer', 'yes');
+	await set('t_adequacy', 'no');
+	await set('t_dpf', 'na');
+	await set('t_scc', 'yes');
+	await set('t_bcr', 'no');
+	await set('t_tia', 'no');
+	await set('t_measures', 'na');
+	await set('t_derogation', 'no');
+
+	await page.getByRole('button', { name: 'Evaluate' }).click();
+	await expect(
+		page.getByRole('heading', { level: 2, name: 'Transfer impact assessment missing.' })
+	).toBeVisible();
+});
