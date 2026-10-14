@@ -11,6 +11,7 @@ import { betreiberpflichten } from './betreiberpflichten/tool.js';
 import { interessenabwaegung } from './interessenabwaegung/tool.js';
 import { einwilligungCheck } from './einwilligung-check/tool.js';
 import { drittlandTransfer } from './drittland-transfer/tool.js';
+import { kiDsgvoSchnittstelle } from './ki-dsgvo-schnittstelle/tool.js';
 import { planned } from './planned.js';
 
 /**
@@ -25,6 +26,7 @@ export const tools: readonly ToolManifest[] = [
 	interessenabwaegung.manifest,
 	einwilligungCheck.manifest,
 	drittlandTransfer.manifest,
+	kiDsgvoSchnittstelle.manifest,
 	...planned
 ];
 
@@ -70,6 +72,10 @@ const questionnaires: Record<
 	[drittlandTransfer.manifest.slug]: {
 		catalog: drittlandTransfer.catalog,
 		engine: drittlandTransfer.engine
+	},
+	[kiDsgvoSchnittstelle.manifest.slug]: {
+		catalog: kiDsgvoSchnittstelle.catalog,
+		engine: kiDsgvoSchnittstelle.engine
 	}
 };
 

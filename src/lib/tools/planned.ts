@@ -212,22 +212,6 @@ export const planned: ToolManifest[] = [
 		legalBasis: [{ law: 'KI-VO', ref: 'Art. 73' }]
 	},
 	{
-		slug: 'ki-dsgvo-schnittstelle',
-		category: 'ki',
-		status: 'planned',
-		shape: 'questionnaire',
-		version: 0,
-		name: { de: 'KI und DSGVO', en: 'AI and GDPR' },
-		summary: {
-			de: 'Geführte Prüfung: automatisierte Entscheidung (Art. 22), DSFA-Auslöser bei KI, Rechtsgrundlage für Trainingsdaten.',
-			en: 'Guided check: automated decisions (Art. 22), DPIA triggers for AI, legal basis for training data.'
-		},
-		legalBasis: [
-			{ law: 'DSGVO', ref: 'Art. 22' },
-			{ law: 'DSGVO', ref: 'Art. 35' }
-		]
-	},
-	{
 		slug: 'aims-gap',
 		category: 'ki',
 		status: 'planned',
