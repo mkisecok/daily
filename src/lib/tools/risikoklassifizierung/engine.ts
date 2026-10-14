@@ -47,6 +47,10 @@ const TRANSPARENCY = ['t_interaction', 't_synthetic', 't_emotion', 't_deepfake']
 
 const L = (de: string, en: string): Localized => ({ de, en });
 
+/** Outcome codes, taken over by the AI register. */
+export type RiskOutcome =
+	'kein-ki' | 'ausserhalb' | 'verboten' | 'hochrisiko' | 'art6-3' | 'art50' | 'minimal';
+
 /**
  * Classification in the order the Regulation applies it:
  *   0. not an AI system / excluded use          → out of scope
@@ -57,16 +61,6 @@ const L = (de: string, en: string): Localized => ({ de, en });
  *   5. any Art. 50 case                           → transparency duties (2 Aug 2026)
  *   6. otherwise                                  → minimal risk
  */
-/** Outcome codes, taken over by the AI register. */
-export type RiskOutcome =
-	| 'kein-ki'
-	| 'ausserhalb'
-	| 'verboten'
-	| 'hochrisiko'
-	| 'art6-3'
-	| 'art50'
-	| 'minimal';
-
 export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): QuestionnaireResult {
 	const questions = new Map(catalog.sections.flatMap((s) => s.questions).map((q) => [q.id, q]));
 	const yes = (id: string) => answers[id] === 'yes';
