@@ -17,13 +17,6 @@
 	const loginHref = $derived(
 		resolve(localized(`/auth/login?next=${encodeURIComponent(saveHref)}`))
 	);
-
-	function verdictLabel(verdict: string | null): string {
-		if (verdict === 'positive') return m.verdict_positive_short();
-		if (verdict === 'conditional') return m.verdict_conditional_short();
-		if (verdict === 'negative') return m.verdict_negative_short();
-		return '—';
-	}
 </script>
 
 <svelte:head>
@@ -71,7 +64,9 @@
 									{formatShortDate(run.createdAt.toISOString(), data.locale)}
 								</a>
 							</td>
-							<td>{verdictLabel(run.verdict)}</td>
+							<td class="result" data-level={run.verdict}>
+								{run.headline ? text(run.headline) : '—'}
+							</td>
 						</tr>
 					{/each}
 				</tbody>
@@ -156,6 +151,18 @@
 			padding: 0.55rem 0;
 			border-bottom: 1px solid var(--rule2);
 			font-variant-numeric: tabular-nums;
+		}
+
+		& .result {
+			font-family: var(--serif);
+
+			&[data-level='positive'] {
+				color: var(--wax);
+			}
+
+			&[data-level='negative'] {
+				color: var(--khaki);
+			}
 		}
 	}
 </style>

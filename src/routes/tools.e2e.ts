@@ -36,7 +36,7 @@ test('DSFA screening: answer, save, and read the verdict back', async ({ page })
 	await expect(page.getByText('Art. 35 Abs. 3 lit. b DSGVO').first()).toBeVisible();
 
 	await page.getByRole('link', { name: 'Zum Werkzeug' }).click();
-	await expect(page.getByRole('cell', { name: 'Erforderlich' }).first()).toBeVisible();
+	await expect(page.getByRole('cell', { name: 'DSFA erforderlich.' }).first()).toBeVisible();
 
 	await page.getByRole('button', { name: 'Abmelden' }).click();
 	await expect(page.getByRole('link', { name: 'Anmelden' })).toBeVisible();
