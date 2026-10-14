@@ -187,3 +187,37 @@ test('Betroffenenanfrage: reply deadline on Fristen and closing as answered', as
 	await page.getByRole('button', { name: 'Als beantwortet abschließen' }).click();
 	await expect(page.locator('[aria-current="step"]')).toHaveText('Beantwortet');
 });
+
+test('AVV-Prüfung reports a missing clause; a training refresher appears on Fristen', async ({
+	page
+}) => {
+	const processor = `E2E-Hosting ${Date.now()}`;
+	await signIn(page, '/werkzeuge/avv-pruefung/eintraege?neu=1');
+	await expect(page).toHaveURL(/\/werkzeuge\/avv-pruefung\/eintraege\?neu=1$/);
+
+	await page.getByLabel('Auftragsverarbeiter', { exact: true }).fill(processor);
+	await page.getByLabel('Leistung und Gegenstand der Verarbeitung').fill('Hosting der Website');
+	await page.locator('#field-status').selectOption('pruefung');
+	for (const id of ['grundlagen', 'lit_a', 'lit_b', 'lit_c', 'lit_d', 'lit_e', 'lit_f', 'lit_h']) {
+		await page.locator(`input[name="field-${id}"][value="true"]`).check();
+	}
+	await page.locator('input[name="field-lit_g"][value="false"]').check();
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page.locator('.verdict .headline')).toHaveText(
+		'Vertrag erfüllt Art. 28 nicht vollständig.'
+	);
+	await expect(page.locator('.verdict .reasons')).toContainText('Art. 28 Abs. 3 lit. g DSGVO');
+
+	const training = `E2E-Unterweisung ${Date.now()}`;
+	await page.goto('/werkzeuge/schulungsnachweis/eintraege?neu=1');
+	await page.getByLabel('Titel').fill(training);
+	await page.getByLabel('Datum').fill('2026-01-15');
+	await page.getByLabel('Wiederholung nach').fill('12');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page.locator('.verdict .headline')).toHaveText('Schulung ohne Nachweis.');
+
+	await page.getByRole('link', { name: 'Fristen' }).click();
+	const row = page.locator('.deadlines li', { hasText: training });
+	await expect(row).toContainText('15.01.2027');
+	await expect(row).toContainText('Wiederholungsschulung Datenschutz');
+});
