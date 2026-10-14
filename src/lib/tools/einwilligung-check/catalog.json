@@ -1,0 +1,201 @@
+{
+	"slug": "einwilligung-check",
+	"version": 1,
+	"intro": {
+		"de": "Wer Informationen auf dem Endgerät speichert oder ausliest, braucht nach § 25 TDDDG eine Einwilligung, es sei denn, der Zugriff ist für den ausdrücklich gewünschten Dienst unbedingt erforderlich. Die Einwilligung muss den Anforderungen der DSGVO genügen. Diese Prüfliste folgt der Orientierungshilfe der Datenschutzkonferenz für digitale Dienste und der Rechtsprechung des EuGH.",
+		"en": "Storing or reading information on a user's device requires consent under § 25 TDDDG unless the access is strictly necessary for the service the user explicitly requested. The consent must meet the requirements of the GDPR. This checklist follows the German DSK guidance for digital services and CJEU case law."
+	},
+	"sources": [
+		{ "law": "TDDDG", "ref": "§ 25" },
+		{ "law": "DSGVO", "ref": "Art. 4 Nr. 11, Art. 7" },
+		{ "law": "DSK", "ref": "Orientierungshilfe für Anbieter digitaler Dienste" },
+		{ "law": "EuGH", "ref": "C-673/17 (Planet49)" }
+	],
+	"sections": [
+		{
+			"id": "scope",
+			"title": { "de": "Anwendungsbereich", "en": "Scope" },
+			"questions": [
+				{
+					"id": "s_access",
+					"type": "yesno",
+					"text": {
+						"de": "Speichert die Website oder App Informationen auf dem Endgerät oder liest sie solche aus (Cookies, Local Storage, Pixel, Fingerprinting, SDKs)?",
+						"en": "Does the website or app store information on the device or read it from there (cookies, local storage, pixels, fingerprinting, SDKs)?"
+					},
+					"cite": { "law": "TDDDG", "ref": "§ 25 Abs. 1" }
+				},
+				{
+					"id": "s_optional",
+					"type": "yesno",
+					"text": {
+						"de": "Gibt es dabei Zugriffe, die für den ausdrücklich gewünschten Dienst nicht unbedingt erforderlich sind (Reichweitenmessung, Marketing, A/B-Tests, eingebettete Drittinhalte)?",
+						"en": "Are there accesses that are not strictly necessary for the service explicitly requested (analytics, marketing, A/B testing, embedded third-party content)?"
+					},
+					"cite": { "law": "TDDDG", "ref": "§ 25 Abs. 2 Nr. 2" }
+				}
+			]
+		},
+		{
+			"id": "before",
+			"title": { "de": "Vor der Einwilligung", "en": "Before consent" },
+			"questions": [
+				{
+					"id": "c_blocked",
+					"type": "yesno",
+					"text": {
+						"de": "Werden alle nicht erforderlichen Zugriffe erst nach der Einwilligung ausgelöst, auch Tags, Pixel und Skripte von Dritten?",
+						"en": "Are all non-essential accesses triggered only after consent, including third-party tags, pixels and scripts?"
+					},
+					"cite": { "law": "TDDDG", "ref": "§ 25 Abs. 1" },
+					"remedy": {
+						"de": "Alle optionalen Skripte über das Einwilligungswerkzeug steuern und vor der Zustimmung blockieren; Netzwerkverkehr beim ersten Aufruf mit leerem Browser prüfen.",
+						"en": "Control all optional scripts through the consent tool and block them before consent; check network traffic on first load in a clean browser."
+					}
+				},
+				{
+					"id": "c_necessary",
+					"type": "yesno",
+					"text": {
+						"de": "Ist für jeden Zugriff ohne Einwilligung dokumentiert, warum er unbedingt erforderlich ist (z. B. Warenkorb, Login, Sicherheit, Speichern der Einwilligungsentscheidung)?",
+						"en": "Is it documented for every access without consent why it is strictly necessary (e.g. shopping cart, login, security, storing the consent choice)?"
+					},
+					"cite": { "law": "TDDDG", "ref": "§ 25 Abs. 2 Nr. 2" },
+					"remedy": {
+						"de": "Cookie-Inventar mit Zweck, Anbieter, Laufzeit und Begründung der Erforderlichkeit anlegen und bei jeder Änderung pflegen.",
+						"en": "Create a cookie inventory with purpose, vendor, lifetime and the reason it is necessary, and maintain it with every change."
+					}
+				}
+			]
+		},
+		{
+			"id": "banner",
+			"title": { "de": "Einwilligungsbanner", "en": "Consent banner" },
+			"questions": [
+				{
+					"id": "b_reject",
+					"type": "yesno",
+					"text": {
+						"de": "Gibt es auf der ersten Ebene eine gleichwertige Möglichkeit, alle optionalen Zugriffe abzulehnen?",
+						"en": "Is there an equivalent option on the first layer to reject all optional accesses?"
+					},
+					"cite": { "law": "DSK", "ref": "Orientierungshilfe digitale Dienste" },
+					"remedy": {
+						"de": "Schaltfläche „Alle ablehnen“ auf der ersten Ebene neben „Alle akzeptieren“ anbieten, gleich groß und gleich gut erreichbar.",
+						"en": "Offer a \"Reject all\" button on the first layer next to \"Accept all\", equal in size and equally easy to reach."
+					}
+				},
+				{
+					"id": "b_unticked",
+					"type": "yesno",
+					"text": {
+						"de": "Sind alle Auswahlkästchen für optionale Zwecke anfangs leer?",
+						"en": "Are all checkboxes for optional purposes unticked by default?"
+					},
+					"cite": { "law": "EuGH", "ref": "C-673/17 (Planet49)" },
+					"remedy": {
+						"de": "Vorauswahlen entfernen; eine Einwilligung durch vorangekreuzte Kästchen ist unwirksam.",
+						"en": "Remove pre-ticked boxes; consent given through pre-ticked boxes is invalid."
+					}
+				},
+				{
+					"id": "b_nudging",
+					"type": "yesno",
+					"text": {
+						"de": "Wird auf eine Gestaltung verzichtet, die zur Zustimmung drängt (nur die Zustimmung farblich hervorgehoben, Ablehnung versteckt oder umständlich)?",
+						"en": "Is the design free of nudging towards consent (only consent highlighted, rejection hidden or cumbersome)?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 4 Nr. 11, Art. 7 Abs. 4" },
+					"remedy": {
+						"de": "Zustimmung und Ablehnung gleichwertig gestalten und keine Zusatzklicks nur für die Ablehnung verlangen.",
+						"en": "Give consent and rejection equal weight and do not require extra clicks only for rejecting."
+					}
+				},
+				{
+					"id": "b_informed",
+					"type": "yesno",
+					"text": {
+						"de": "Werden vor der Einwilligung Zwecke, beteiligte Dritte, Speicherdauer und etwaige Drittlandübermittlungen genannt?",
+						"en": "Are purposes, third parties involved, storage period and any third-country transfers named before consent?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 4 Nr. 11, Art. 13" },
+					"remedy": {
+						"de": "Banner und zweite Ebene um Zwecke, Empfänger, Laufzeiten und Drittlandbezug ergänzen und auf die Datenschutzerklärung verweisen.",
+						"en": "Add purposes, recipients, lifetimes and third-country transfers to the banner and second layer and link the privacy notice."
+					}
+				},
+				{
+					"id": "b_granular",
+					"type": "yesno",
+					"text": {
+						"de": "Kann für unterschiedliche Zwecke getrennt eingewilligt werden?",
+						"en": "Can consent be given separately for different purposes?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 7 Abs. 2, ErwG 43" },
+					"remedy": {
+						"de": "Zwecke auf der zweiten Ebene einzeln wählbar machen, statt nur eine Gesamteinwilligung anzubieten.",
+						"en": "Make purposes individually selectable on the second layer instead of offering a single blanket consent."
+					}
+				},
+				{
+					"id": "b_wall",
+					"type": "yesnona",
+					"text": {
+						"de": "Falls der Zugang zur Seite von der Einwilligung abhängt (Cookie-Wall, Pur-Abo): Gibt es eine gleichwertige, zumutbare Alternative ohne Tracking?",
+						"en": "If access to the site depends on consent (cookie wall, pay-or-consent): is there an equivalent, reasonable alternative without tracking?"
+					},
+					"cite": { "law": "DSK", "ref": "Beschluss zu Pur-Abo-Modellen (2023)" },
+					"remedy": {
+						"de": "Gleichwertige Alternative zu marktüblichen Bedingungen anbieten und Einwilligungen im Pur-Abo-Modell zweckbezogen einholen.",
+						"en": "Offer an equivalent alternative on customary terms and obtain consent in the pay-or-consent model per purpose."
+					}
+				}
+			]
+		},
+		{
+			"id": "after",
+			"title": { "de": "Nach der Einwilligung", "en": "After consent" },
+			"questions": [
+				{
+					"id": "a_withdraw",
+					"type": "yesno",
+					"text": {
+						"de": "Kann die Einwilligung jederzeit so einfach widerrufen werden, wie sie erteilt wurde?",
+						"en": "Can consent be withdrawn at any time as easily as it was given?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 7 Abs. 3" },
+					"remedy": {
+						"de": "Dauerhaft sichtbaren Link oder Schaltfläche zum Öffnen der Einstellungen auf jeder Seite einbauen.",
+						"en": "Add a permanently visible link or button on every page that reopens the settings."
+					}
+				},
+				{
+					"id": "a_proof",
+					"type": "yesno",
+					"text": {
+						"de": "Werden Einwilligungen nachweisbar protokolliert (Zeitpunkt, Version des Banners, gewählte Zwecke)?",
+						"en": "Are consents logged in a provable way (time, banner version, purposes chosen)?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 7 Abs. 1" },
+					"remedy": {
+						"de": "Einwilligungen mit Zeitstempel, Banner-Version und Auswahl protokollieren, ohne dafür zusätzliche Identifikatoren zu bilden.",
+						"en": "Log consents with timestamp, banner version and choices, without creating additional identifiers for it."
+					}
+				},
+				{
+					"id": "a_transfer",
+					"type": "yesnona",
+					"text": {
+						"de": "Bei Übermittlungen in Drittländer (z. B. USA): Gibt es eine Grundlage nach Art. 44 ff. DSGVO (Angemessenheitsbeschluss, Zertifizierung nach dem Data Privacy Framework, Standardvertragsklauseln)?",
+						"en": "For transfers to third countries (e.g. the USA): is there a basis under Art. 44 et seq. GDPR (adequacy decision, Data Privacy Framework certification, standard contractual clauses)?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 44–49" },
+					"remedy": {
+						"de": "Für jeden Anbieter die Übermittlungsgrundlage prüfen und dokumentieren, bei US-Anbietern die DPF-Zertifizierung.",
+						"en": "Check and document the transfer basis for every vendor, for US vendors the DPF certification."
+					}
+				}
+			]
+		}
+	]
+}
