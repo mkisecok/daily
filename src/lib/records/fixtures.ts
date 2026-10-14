@@ -1,4 +1,5 @@
-import type { RecordToolDefinition } from './types.js';
+import type { ToolManifest } from '../tools/types.js';
+import type { RecordTool, RecordToolDefinition } from './types.js';
 
 const L = (de: string, en: string) => ({ de, en });
 
@@ -56,5 +57,25 @@ export const testDefinition: RecordToolDefinition = {
 			{ from: 'review', to: 'open', label: L('Zurück', 'Back') },
 			{ from: 'review', to: 'done', label: L('Abschließen', 'Close'), requires: ['due'] }
 		]
+	}
+};
+
+/** The test definition as a tool whose engine turns `due` into a deadline. */
+export const testTool: RecordTool = {
+	manifest: {
+		slug: testDefinition.slug,
+		category: 'datenschutz',
+		shape: 'workflow',
+		status: 'available',
+		title: L('Testregister', 'Test register'),
+		summary: L('', ''),
+		laws: ['DSGVO']
+	} as unknown as ToolManifest,
+	definition: testDefinition,
+	engine: {
+		deadlines: (record) =>
+			typeof record.data.due === 'string'
+				? [{ kind: 'due', label: L('Fällig', 'Due'), dueAt: `${record.data.due}T00:00:00.000Z` }]
+				: []
 	}
 };
