@@ -46,7 +46,7 @@
 
 	// A different list, record or form starts clean.
 	afterNavigate(({ from, to }) => {
-		if (from?.url.search === to?.url.search) return;
+		if (from?.url?.search === to?.url?.search) return;
 		editing = false;
 		confirmArchive = false;
 		errors = {};
