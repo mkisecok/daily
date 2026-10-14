@@ -14,6 +14,7 @@ import { drittlandTransfer } from './drittland-transfer/tool.js';
 import { kiDsgvoSchnittstelle } from './ki-dsgvo-schnittstelle/tool.js';
 import { technischeDokumentation } from './technische-dokumentation/tool.js';
 import { kiNutzungsrichtlinie } from './ki-nutzungsrichtlinie/tool.js';
+import type { RecordTool } from '../records/types.js';
 import { planned } from './planned.js';
 
 /**
@@ -93,4 +94,11 @@ const questionnaires: Record<
 
 export function getQuestionnaire(slug: string) {
 	return questionnaires[slug];
+}
+
+/** Register and workflow tools: definition + engine, keyed by slug. */
+const recordTools: Record<string, RecordTool> = {};
+
+export function getRecordTool(slug: string): RecordTool | undefined {
+	return recordTools[slug];
 }
