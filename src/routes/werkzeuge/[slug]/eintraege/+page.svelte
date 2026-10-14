@@ -53,11 +53,12 @@
 		message = null;
 	});
 
-	function describe(result: StoreError): string {
+	/** The message for a store error; validation errors show in the form instead. */
+	function describe(result: StoreError): string | null {
 		switch (result.error) {
 			case 'invalid':
 				errors = result.errors;
-				return m.records_errors();
+				return null;
 			case 'conflict':
 				return m.records_conflict();
 			case 'missing':
