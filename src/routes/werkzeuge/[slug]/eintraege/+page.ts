@@ -1,11 +1,12 @@
 import { error } from '@sveltejs/kit';
+import { browser } from '$app/environment';
 import { getStore } from '#lib/records/store/index.js';
 import { getRecordTool, getTool, tools } from '#lib/tools/registry.js';
 import type { EntryGenerator, PageLoad } from './$types';
 
 /**
  * Records come from the store (browser storage or the API), so the page
- * renders on the client only; prerendering emits an empty shell.
+ * renders on the client only.
  */
 export const ssr = false;
 
@@ -23,6 +24,8 @@ export const load: PageLoad = async ({ params, data, url, depends }) => {
 	depends('records:data');
 
 	const base = { ...data, tool, definition: recordTool.definition };
+	// Prerendering still calls load; the store only exists in the browser, which loads again.
+	if (!browser) return { ...base, view: 'list' as const, records: [] };
 	const id = url.searchParams.get('eintrag');
 	if (id) return { ...base, view: 'detail' as const, detail: await getStore().get(id) };
 	if (url.searchParams.get('neu') === '1') return { ...base, view: 'new' as const };
