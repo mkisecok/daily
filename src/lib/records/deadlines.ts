@@ -27,14 +27,23 @@ export function addMonths(iso: string, months: number): string {
 	return date.toISOString();
 }
 
+/** A calendar date (`YYYY-MM-DD`) at a time of day in German time, as an instant. */
+export function dayAt(date: string, time = '09:00'): string {
+	return fromBerlinInput(`${date}T${time}`);
+}
+
+/** A calendar date plus whole months, clamped to the end of shorter months. */
+export function dateAfterMonths(date: string, months: number): string {
+	return addMonths(`${date}T00:00:00.000Z`, months).slice(0, 10);
+}
+
 /**
  * A period of months counted from the German calendar day of an event and
  * ending at the end of the corresponding day (23:59 German time), e.g.
  * Art. 12(3): a request received on 31 January is due on 28 February.
  */
 export function monthsAfterDay(iso: string, months: number): string {
-	const day = addMonths(`${dayKey(iso)}T00:00:00.000Z`, months).slice(0, 10);
-	return fromBerlinInput(`${day}T23:59`);
+	return dayAt(dateAfterMonths(dayKey(iso), months), '23:59');
 }
 
 /**

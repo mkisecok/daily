@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { toCsv } from './csv.js';
-import { addHours, addMonths, computeDeadlines, monthsAfterDay } from './deadlines.js';
+import {
+	addHours,
+	addMonths,
+	computeDeadlines,
+	dateAfterMonths,
+	dayAt,
+	monthsAfterDay
+} from './deadlines.js';
 import { testDefinition as def } from './fixtures.js';
 import { formatValue } from './format.js';
 import { toIcs } from './ics.js';
@@ -87,6 +94,12 @@ describe('deadline maths', () => {
 		expect(addMonths('2026-10-14T09:00:00.000Z', 1)).toBe('2026-11-14T09:00:00.000Z');
 		expect(addMonths('2026-01-31T09:00:00.000Z', 1)).toBe('2026-02-28T09:00:00.000Z');
 		expect(addMonths('2026-12-31T09:00:00.000Z', 2)).toBe('2027-02-28T09:00:00.000Z');
+	});
+
+	it('places calendar dates in German time and adds months to them', () => {
+		expect(dayAt('2026-12-01')).toBe('2026-12-01T08:00:00.000Z');
+		expect(dayAt('2026-07-01', '23:59')).toBe('2026-07-01T21:59:00.000Z');
+		expect(dateAfterMonths('2026-08-31', 6)).toBe('2027-02-28');
 	});
 
 	it('counts months on the German calendar day and ends at 23:59', () => {
