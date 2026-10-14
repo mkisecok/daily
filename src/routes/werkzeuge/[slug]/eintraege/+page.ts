@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 import { getStore } from '#lib/records/store/index.js';
 import { getRecordTool, getTool, tools } from '#lib/tools/registry.js';
 import type { EntryGenerator, PageLoad } from './$types';
