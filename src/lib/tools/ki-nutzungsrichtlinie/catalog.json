@@ -1,0 +1,148 @@
+{
+	"slug": "ki-nutzungsrichtlinie",
+	"version": 1,
+	"intro": {
+		"de": "Aus Ihren Antworten entsteht der Entwurf einer internen Richtlinie für die dienstliche Nutzung von KI, besonders generativer KI. Die Fragen sind Entscheidungen der Organisation; riskante Entscheidungen werden als Hinweis markiert. Der Entwurf ist eine Vorlage, die mit Datenschutz, Informationssicherheit und gegebenenfalls dem Betriebsrat abzustimmen ist.",
+		"en": "Your answers produce a draft internal policy for the professional use of AI, especially generative AI. The questions are organisational decisions; risky choices are flagged. The draft is a template to be agreed with data protection, information security and, where applicable, the works council."
+	},
+	"sources": [
+		{ "law": "KI-VO", "ref": "Art. 4, 26, 50" },
+		{ "law": "DSGVO", "ref": "Art. 5, 22, 28, 33" },
+		{ "law": "BetrVG", "ref": "§ 87 Abs. 1 Nr. 6, § 90" },
+		{ "law": "DSK", "ref": "Orientierungshilfe KI und Datenschutz (2024)" }
+	],
+	"sections": [
+		{
+			"id": "tools",
+			"title": { "de": "Werkzeuge", "en": "Tools" },
+			"questions": [
+				{
+					"id": "p_allowlist",
+					"type": "yesno",
+					"text": {
+						"de": "Sollen nur von der Organisation freigegebene KI-Werkzeuge genutzt werden dürfen?",
+						"en": "Should only AI tools approved by the organisation be allowed?"
+					}
+				},
+				{
+					"id": "p_private",
+					"type": "yesno",
+					"text": {
+						"de": "Dürfen Beschäftigte private Konten oder kostenlose Verbraucherversionen dienstlich nutzen?",
+						"en": "May staff use private accounts or free consumer versions for work?"
+					},
+					"help": {
+						"de": "Verbraucherversionen nutzen Eingaben oft zum Training und haben keinen Auftragsverarbeitungsvertrag.",
+						"en": "Consumer versions often use inputs for training and come without a processing agreement."
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 28" }
+				}
+			]
+		},
+		{
+			"id": "data",
+			"title": { "de": "Daten", "en": "Data" },
+			"questions": [
+				{
+					"id": "p_personal",
+					"type": "yesno",
+					"text": {
+						"de": "Dürfen personenbezogene Daten in freigegebene KI-Werkzeuge eingegeben werden?",
+						"en": "May personal data be entered into approved AI tools?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 5, 6" }
+				},
+				{
+					"id": "p_confidential",
+					"type": "yesno",
+					"text": {
+						"de": "Dürfen vertrauliche Geschäftsinformationen eingegeben werden?",
+						"en": "May confidential business information be entered?"
+					}
+				}
+			]
+		},
+		{
+			"id": "use",
+			"title": { "de": "Nutzung", "en": "Use" },
+			"questions": [
+				{
+					"id": "p_review",
+					"type": "yesno",
+					"text": {
+						"de": "Müssen Ergebnisse vor ihrer Verwendung von einem Menschen geprüft werden?",
+						"en": "Must outputs be checked by a human before they are used?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 5 Abs. 1 lit. d" }
+				},
+				{
+					"id": "p_label",
+					"type": "yesno",
+					"text": {
+						"de": "Sollen KI-erzeugte Inhalte, die nach außen gehen, gekennzeichnet werden, auch über die gesetzliche Pflicht hinaus?",
+						"en": "Should AI-generated content that goes outside be labelled, also beyond the legal duty?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 50" }
+				},
+				{
+					"id": "p_code",
+					"type": "yesnona",
+					"text": {
+						"de": "Soll KI zur Programmierung eingesetzt werden dürfen?",
+						"en": "Should AI be allowed for programming?"
+					}
+				},
+				{
+					"id": "p_people",
+					"type": "yesno",
+					"text": {
+						"de": "Soll KI bei Entscheidungen über Personen eingesetzt werden dürfen, etwa bei Bewerbungen, Leistungsbewertung oder Kreditvergabe?",
+						"en": "Should AI be allowed in decisions about persons, such as applications, performance reviews or lending?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 22" }
+				}
+			]
+		},
+		{
+			"id": "organisation",
+			"title": { "de": "Organisation", "en": "Organisation" },
+			"questions": [
+				{
+					"id": "p_training",
+					"type": "yesno",
+					"text": {
+						"de": "Erhalten alle Nutzenden vor der ersten Nutzung eine Schulung?",
+						"en": "Do all users receive training before first use?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 4" }
+				},
+				{
+					"id": "p_contact",
+					"type": "yesno",
+					"text": {
+						"de": "Gibt es eine benannte Stelle für Freigaben und Fragen, etwa eine KI-Beauftragte oder einen KI-Beauftragten?",
+						"en": "Is there a named function for approvals and questions, such as an AI officer?"
+					}
+				},
+				{
+					"id": "p_incidents",
+					"type": "yesno",
+					"text": {
+						"de": "Sollen Fehlausgaben, versehentlich eingegebene Daten und Sicherheitsvorfälle gemeldet werden?",
+						"en": "Should faulty outputs, data entered by mistake and security incidents be reported?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 33" }
+				},
+				{
+					"id": "p_council",
+					"type": "yesnona",
+					"text": {
+						"de": "Besteht ein Betriebsrat?",
+						"en": "Is there a works council?"
+					},
+					"cite": { "law": "BetrVG", "ref": "§ 87 Abs. 1 Nr. 6, § 90" }
+				}
+			]
+		}
+	]
+}
