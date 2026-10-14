@@ -27,6 +27,7 @@
 	<ul class="measure">
 		<li>{m.preview_works_feed()}</li>
 		<li>{m.preview_works_tools()}</li>
+		<li>{m.preview_works_records()}</li>
 		<li>{m.preview_works_lang()}</li>
 	</ul>
 </section>
