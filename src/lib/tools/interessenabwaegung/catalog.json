@@ -1,0 +1,190 @@
+{
+	"slug": "interessenabwaegung",
+	"version": 1,
+	"intro": {
+		"de": "Art. 6 Abs. 1 lit. f DSGVO erlaubt eine Verarbeitung, wenn drei Voraussetzungen kumulativ vorliegen: ein berechtigtes Interesse, die Erforderlichkeit der Verarbeitung dafür und das Ergebnis einer Abwägung, nach der die Interessen, Grundrechte und Grundfreiheiten der betroffenen Personen nicht überwiegen. Die Prüfung folgt den Leitlinien 1/2024 des EDSA. Das Ergebnis ist eine begründete Einschätzung, die Sie dokumentieren und vertreten müssen.",
+		"en": "Art. 6(1)(f) GDPR allows processing when three conditions are met cumulatively: a legitimate interest, the necessity of the processing for it, and a balancing test showing that the interests, fundamental rights and freedoms of the data subjects do not override it. The assessment follows EDPB Guidelines 1/2024. The result is a reasoned estimate you must document and stand behind."
+	},
+	"sources": [
+		{ "law": "DSGVO", "ref": "Art. 6 Abs. 1 lit. f" },
+		{ "law": "DSGVO", "ref": "Erwägungsgründe 47–49" },
+		{ "law": "EDPB", "ref": "Leitlinien 1/2024 zu Art. 6 Abs. 1 lit. f" }
+	],
+	"sections": [
+		{
+			"id": "scope",
+			"title": { "de": "Anwendbarkeit", "en": "Applicability" },
+			"questions": [
+				{
+					"id": "x_authority",
+					"type": "yesno",
+					"text": {
+						"de": "Verarbeitet eine Behörde die Daten in Erfüllung ihrer Aufgaben?",
+						"en": "Does a public authority process the data in the performance of its tasks?"
+					},
+					"help": {
+						"de": "Dann ist Art. 6 Abs. 1 lit. f ausgeschlossen; in Betracht kommen lit. c oder e mit einer Rechtsgrundlage im Unions- oder nationalen Recht.",
+						"en": "Then Art. 6(1)(f) is excluded; points (c) or (e) with a legal basis in Union or national law come into question."
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 6 Abs. 1 UAbs. 2" }
+				}
+			]
+		},
+		{
+			"id": "interest",
+			"title": { "de": "Stufe 1: Berechtigtes Interesse", "en": "Step 1: Legitimate interest" },
+			"questions": [
+				{
+					"id": "i_lawful",
+					"type": "yesno",
+					"text": {
+						"de": "Ist das verfolgte Interesse rechtmäßig, also mit dem Unions- und nationalen Recht vereinbar?",
+						"en": "Is the interest pursued lawful, i.e. compatible with Union and national law?"
+					},
+					"cite": { "law": "EDPB", "ref": "Leitlinien 1/2024, Abschnitt 2.2.1" }
+				},
+				{
+					"id": "i_specific",
+					"type": "yesno",
+					"text": {
+						"de": "Ist das Interesse klar und hinreichend genau formuliert?",
+						"en": "Is the interest clearly and precisely articulated?"
+					},
+					"cite": { "law": "EDPB", "ref": "Leitlinien 1/2024, Abschnitt 2.2.1" }
+				},
+				{
+					"id": "i_present",
+					"type": "yesno",
+					"text": {
+						"de": "Ist das Interesse real und gegenwärtig, nicht bloß spekulativ?",
+						"en": "Is the interest real and present, not speculative?"
+					},
+					"cite": { "law": "EDPB", "ref": "Leitlinien 1/2024, Abschnitt 2.2.1" }
+				}
+			]
+		},
+		{
+			"id": "necessity",
+			"title": { "de": "Stufe 2: Erforderlichkeit", "en": "Step 2: Necessity" },
+			"questions": [
+				{
+					"id": "n_suitable",
+					"type": "yesno",
+					"text": {
+						"de": "Ist die Verarbeitung geeignet, das Interesse tatsächlich zu verwirklichen?",
+						"en": "Is the processing suitable to actually achieve the interest?"
+					},
+					"cite": { "law": "EDPB", "ref": "Leitlinien 1/2024, Abschnitt 2.3" }
+				},
+				{
+					"id": "n_less",
+					"type": "yesno",
+					"text": {
+						"de": "Gibt es kein gleich wirksames, aber weniger eingreifendes Mittel, um das Interesse zu erreichen?",
+						"en": "Is there no equally effective but less intrusive means to achieve the interest?"
+					},
+					"help": {
+						"de": "„Ja“ bedeutet: Es gibt keine mildere Alternative.",
+						"en": "\"Yes\" means: there is no less intrusive alternative."
+					},
+					"cite": { "law": "EDPB", "ref": "Leitlinien 1/2024, Abschnitt 2.3" }
+				},
+				{
+					"id": "n_minimal",
+					"type": "yesno",
+					"text": {
+						"de": "Beschränkt sich die Verarbeitung auf die dafür erforderlichen Daten und Personen?",
+						"en": "Is the processing limited to the data and persons necessary for it?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 5 Abs. 1 lit. c" }
+				}
+			]
+		},
+		{
+			"id": "balance",
+			"title": { "de": "Stufe 3: Abwägung", "en": "Step 3: Balancing" },
+			"intro": {
+				"de": "Die ersten Fragen beschreiben Umstände, die gegen die Verarbeitung sprechen, die letzten solche, die für sie sprechen.",
+				"en": "The first questions describe circumstances that weigh against the processing, the last ones circumstances that weigh in its favour."
+			},
+			"questions": [
+				{
+					"id": "a_special",
+					"type": "yesno",
+					"text": {
+						"de": "Werden besondere Kategorien personenbezogener Daten (Art. 9) oder Daten über Straftaten (Art. 10) verarbeitet?",
+						"en": "Are special categories of personal data (Art. 9) or data on criminal offences (Art. 10) processed?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 9, 10" }
+				},
+				{
+					"id": "a_children",
+					"type": "yesno",
+					"text": {
+						"de": "Sind Kinder betroffen?",
+						"en": "Are children affected?"
+					},
+					"help": {
+						"de": "Art. 6 Abs. 1 lit. f hebt Kinder ausdrücklich hervor; ihr Schutz wiegt schwer.",
+						"en": "Art. 6(1)(f) singles out children expressly; their protection carries great weight."
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 6 Abs. 1 lit. f, ErwG 38" }
+				},
+				{
+					"id": "a_scale",
+					"type": "yesno",
+					"text": {
+						"de": "Werden Daten in großem Umfang verarbeitet, mit anderen Daten verknüpft oder für Profiling genutzt?",
+						"en": "Is data processed on a large scale, combined with other data or used for profiling?"
+					},
+					"cite": { "law": "EDPB", "ref": "Leitlinien 1/2024, Abschnitt 2.4" }
+				},
+				{
+					"id": "a_impact",
+					"type": "yesno",
+					"text": {
+						"de": "Drohen den Betroffenen erhebliche Folgen, etwa Diskriminierung, finanzielle Nachteile, Rufschäden oder der Verlust der Kontrolle über ihre Daten?",
+						"en": "Could the data subjects face significant consequences such as discrimination, financial loss, reputational damage or loss of control over their data?"
+					},
+					"cite": { "law": "EDPB", "ref": "Leitlinien 1/2024, Abschnitt 2.4" }
+				},
+				{
+					"id": "f_expected",
+					"type": "yesno",
+					"text": {
+						"de": "Können die Betroffenen zum Zeitpunkt der Erhebung und angesichts der Umstände vernünftigerweise mit dieser Verarbeitung rechnen?",
+						"en": "Can the data subjects reasonably expect this processing at the time and in the context of the collection?"
+					},
+					"cite": { "law": "DSGVO", "ref": "ErwG 47" }
+				},
+				{
+					"id": "f_relationship",
+					"type": "yesno",
+					"text": {
+						"de": "Besteht eine maßgebliche und angemessene Beziehung zu den Betroffenen, zum Beispiel weil sie Kunden sind?",
+						"en": "Is there a relevant and appropriate relationship with the data subjects, for example because they are customers?"
+					},
+					"cite": { "law": "DSGVO", "ref": "ErwG 47" }
+				},
+				{
+					"id": "f_safeguards",
+					"type": "yesno",
+					"text": {
+						"de": "Gibt es zusätzliche Schutzmaßnahmen wie Pseudonymisierung, kurze Speicherfristen, Zugriffsbeschränkung oder besondere Transparenz?",
+						"en": "Are there additional safeguards such as pseudonymisation, short retention, restricted access or extra transparency?"
+					},
+					"cite": { "law": "EDPB", "ref": "Leitlinien 1/2024, Abschnitt 2.4.5" }
+				},
+				{
+					"id": "f_objection",
+					"type": "yesno",
+					"text": {
+						"de": "Wird auf das Widerspruchsrecht hingewiesen, und kann es einfach ausgeübt werden?",
+						"en": "Are data subjects informed about their right to object, and can they exercise it easily?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 21" }
+				}
+			]
+		}
+	]
+}
