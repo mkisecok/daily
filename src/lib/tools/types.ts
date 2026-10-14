@@ -80,6 +80,8 @@ export type Reason = {
 
 export type QuestionnaireResult = {
 	verdict: VerdictLevel;
+	/** Machine-readable outcome for tools that take the result over, e.g. `hochrisiko`. */
+	outcome?: string;
 	headline: Localized;
 	explanation: Localized;
 	reasons: Reason[];
