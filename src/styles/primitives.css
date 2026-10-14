@@ -34,3 +34,57 @@
 		display: none !important;
 	}
 }
+
+/** A row of actions in mono caps: black buttons, `.quiet` ones outlined. */
+.toolbar {
+	display: flex;
+	align-items: center;
+	gap: 1.25rem;
+	flex-wrap: wrap;
+	font-family: var(--mono);
+	font-size: 12px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+
+	& button,
+	& .button {
+		font: inherit;
+		letter-spacing: inherit;
+		text-transform: inherit;
+		padding: 0.6rem 1.1rem;
+		border: 1px solid var(--ink);
+		color: var(--on-navy);
+		background: var(--ink);
+		text-decoration: none;
+
+		&:hover {
+			background: var(--navy);
+			border-color: var(--navy);
+			text-decoration: none;
+		}
+
+		&.quiet {
+			color: var(--ink);
+			background: none;
+
+			&:hover {
+				color: var(--on-navy);
+				background: var(--navy);
+			}
+		}
+
+		&:disabled {
+			opacity: 0.45;
+			cursor: not-allowed;
+		}
+	}
+}
+
+/** Shown only on paper. */
+.print-only {
+	display: none;
+
+	@media print {
+		display: block;
+	}
+}
