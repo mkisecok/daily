@@ -34,6 +34,7 @@ import { auditbericht } from './auditbericht/tool.js';
 import { aimsGap } from './aims-gap/tool.js';
 import { repoCheck } from './repo-check/tool.js';
 import { guardrailTest } from './guardrail-test/tool.js';
+import { notes } from '../notes/tool.js';
 import { planned } from './planned.js';
 
 /**
@@ -140,6 +141,8 @@ export function getQuestionnaire(slug: string) {
 
 /** Register and workflow tools: definition + engine, keyed by slug. */
 const recordTools: Record<string, RecordTool> = {
+	// Not in the catalogue: the notebook runs on the records framework.
+	[notes.manifest.slug]: notes,
 	[auditbericht.manifest.slug]: auditbericht,
 	[feststellungen.manifest.slug]: feststellungen,
 	[pruefkatalog.manifest.slug]: pruefkatalog,
