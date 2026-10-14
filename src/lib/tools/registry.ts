@@ -6,6 +6,7 @@ import type {
 } from './types.js';
 import { dsfaSchwellwert } from './dsfa-schwellwert/tool.js';
 import { risikoklassifizierung } from './risikoklassifizierung/tool.js';
+import { transparenzpflichten } from './transparenzpflichten/tool.js';
 import { planned } from './planned.js';
 
 /**
@@ -15,6 +16,7 @@ import { planned } from './planned.js';
 export const tools: readonly ToolManifest[] = [
 	dsfaSchwellwert.manifest,
 	risikoklassifizierung.manifest,
+	transparenzpflichten.manifest,
 	...planned
 ];
 
@@ -40,6 +42,10 @@ const questionnaires: Record<
 	[risikoklassifizierung.manifest.slug]: {
 		catalog: risikoklassifizierung.catalog,
 		engine: risikoklassifizierung.engine
+	},
+	[transparenzpflichten.manifest.slug]: {
+		catalog: transparenzpflichten.catalog,
+		engine: transparenzpflichten.engine
 	}
 };
 

@@ -239,19 +239,6 @@ export const planned: ToolManifest[] = [
 		]
 	},
 	{
-		slug: 'transparenzpflichten',
-		category: 'ki',
-		status: 'planned',
-		shape: 'questionnaire',
-		version: 0,
-		name: { de: 'Transparenzpflichten', en: 'Transparency obligations' },
-		summary: {
-			de: 'Prüfung nach Art. 50: Chatbot-Hinweis, Kennzeichnung synthetischer Inhalte und Deepfakes, Emotionserkennung.',
-			en: 'Art. 50 check: chatbot disclosure, labelling of synthetic content and deepfakes, emotion recognition.'
-		},
-		legalBasis: [{ law: 'KI-VO', ref: 'Art. 50' }]
-	},
-	{
 		slug: 'technische-dokumentation',
 		category: 'ki',
 		status: 'planned',
