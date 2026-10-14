@@ -4,6 +4,8 @@ Plan written 2026-10-14. Decisions confirmed with the user: records are **stored
 in the public preview, and the first slice is **KI-Register (register) + Datenpanne (workflow)**
 with a shared **Fristen** (deadline) page.
 
+**Status 2026‑10‑14: implemented.** Slice 1 and all later slices are built, plus the tools this plan left out (Prüfkatalog, AIMS‑Gap, Repo‑Check, Guardrail‑Test). Framework changes made along the way are in "As built" at the end; the tool list is in §9 of the main design doc.
+
 ## Context
 
 Daily has ten questionnaire tools: answers in, verdict out, optionally saved as a `tool_run`. The
@@ -136,7 +138,7 @@ Open deadlines across all record tools, sorted by due time, overdue in wax red, 
 highlighted, link to the record, `.ics` download (`toIcs`, generated in the browser). Masthead gets
 a "Fristen" nav item (signed-in users in the full app, always in the preview).
 
-## Build order (small commits, each with tests)
+## Build order (small commits, each with tests) — done
 
 1. `records/types.ts`, `validate.ts`, `diff.ts` + unit tests
 2. `workflow.ts`, `deadlines.ts`, `ics.ts`, `csv.ts` + unit tests
@@ -160,7 +162,7 @@ a "Fristen" nav item (signed-in users in the full app, always in the preview).
     under `/daily`: create a record, reload, it persists; add as a CI step before deploy
 17. README + push; check the deploy
 
-## Later slices (same pattern, no framework changes expected)
+## Later slices — done
 
 - **Slice 2:** Mandanten page (create client organisation, switch active organisation via cookie),
   VVT (Art. 30, official print layout, references TOM/AVV), Betroffenenanfrage (Art. 12, one month,
@@ -172,6 +174,9 @@ a "Fristen" nav item (signed-in users in the full app, always in the preview).
 - **Slice 5:** Auditprogramm, Feststellungen (corrective actions with deadlines), Auditbericht
   (print composed from programme + findings).
 - Not planned here: AIMS-Gap (ISO texts are copyrighted), Prüfkatalog, Repo-Check, Guardrail-Test.
+  Built anyway at the user's request: AIMS-Gap as a questionnaire in own words citing clause numbers
+  only, Prüfkatalog as a register with question sets, Repo-Check and Guardrail-Test as `utility`
+  tools with their own pages.
 
 ## Reuse
 
@@ -179,7 +184,7 @@ a "Fristen" nav item (signed-in users in the full app, always in the preview).
 - `Verdict`, `Citation`, `ToolHeader`, `StatusBadge` — `src/lib/tools/_shared/`
 - `text()`, `cite()` — `src/lib/tools/i18n.ts`; `localized()` — `src/lib/i18n/links.ts`
 - `formatLongDate`, `formatTime`, `dayKey` (Europe/Berlin) — `src/lib/i18n/date.ts`
-- `getActiveOrganisationId` — `src/lib/server/org.ts`; `db` — `src/lib/server/db/index.ts`
+- `locals.organisation` (resolved in `hooks.server.ts` via `src/lib/server/org.ts`); `db` — `src/lib/server/db/index.ts`
 - `PUBLIC_PREVIEW` — `src/env.ts`; print styles — `src/styles/print.css`
 
 ## Verification
@@ -192,3 +197,29 @@ a "Fristen" nav item (signed-in users in the full app, always in the preview).
   create, edit, transition, reload, CSV, print, `.ics` opens in a calendar
 - After push: Pages workflow green; live preview stores a record in the browser and keeps it
   after reload; no console errors
+
+## As built (2026-10-14)
+
+Changes to the plan above, in the order they became necessary:
+
+| Change                                                                                                         | Why                                                                                                                      | Where                                                               |
+| -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| Pure planning functions (`planCreate`, `planUpdate`, `planTransition`, `planAssessment`) shared by both stores | The browser store and the Postgres repository cannot drift apart                                                         | `src/lib/records/operations.ts`                                     |
+| Repository as a factory taking `db` and a tool lookup, scoped per organisation                                 | Testable against Postgres without SvelteKit env                                                                          | `src/lib/server/records.ts`, `records.db.spec.ts`, `pnpm test:db`   |
+| `outcome` on questionnaire results and assessment snapshots; `fromAssessment(field, result, record)`           | The register derives values (risk class, DSFA decision) from a machine-readable outcome and must not undo existing state | `tools/types.ts`, `records/types.ts`                                |
+| Transition `check(record)` returning a reason                                                                  | Steps depend on values, e.g. "nicht meldepflichtig" only for risk "kein"; the state bar says why a step is blocked       | `records/workflow.ts`, `StateBar.svelte`                            |
+| Date helpers `addHours`, `addMonths`, `dayAt`, `dateAfterMonths`, `monthsAfterDay`                             | Hour periods in absolute time, month periods on the German calendar day ending 23:59                                     | `records/deadlines.ts`                                              |
+| Active organisation resolved once per request from a cookie, checked against memberships                       | Mandanten page (slice 2)                                                                                                 | `hooks.server.ts`, `server/org.ts`, `(app)/mandanten`               |
+| `reference` field type, `composes` on definitions, backlinks                                                   | Audit tools refer to an audit; the report embeds audit, checklists and findings                                          | `records/links.ts`, `+page.ts` of `eintraege`, `RecordLinks.svelte` |
+| `utility` tool shape with a static route per tool                                                              | Interactive tools that are neither questionnaires nor records                                                            | `routes/werkzeuge/repo-check`, `routes/werkzeuge/guardrail-test`    |
+| `localized()` typed as `RoutePath`                                                                             | SvelteKit's generated `Path` union grew too large for `resolve()` once there were enough routes                          | `src/lib/i18n/links.ts`                                             |
+| Required mark outside the `<label>`, `aria-required` on inputs                                                 | Accessible names were "Status*"; screen readers did not hear "required"                                                  | `FieldInput.svelte`                                                 |
+| CSV byte order mark written as an escape                                                                       | The editor tooling had turned it into an invisible character                                                             | `records/csv.ts`                                                    |
+
+Tools on the framework: VVT, DSFA, Datenpanne, Betroffenenanfrage, AVV-Prüfung, TOM-Katalog,
+Löschkonzept, Schulungsnachweis, KI-Register, KI-Kompetenz, Vorfallmeldung,
+Grundrechte-Folgenabschätzung, Auditprogramm, Prüfkatalog, Feststellungen, Auditbericht.
+
+Verification as run on 2026-10-14: `pnpm check`, `pnpm lint`, 266 unit tests, 11 database tests,
+25 server E2E tests with Keycloak and Postgres, preview E2E under `/daily` (also in CI), Pages
+deploy green with every record page live.
