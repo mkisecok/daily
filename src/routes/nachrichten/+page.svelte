@@ -223,6 +223,16 @@
 								</button>
 							</form>
 						{/if}
+						{#if data.user || PUBLIC_PREVIEW}
+							<a
+								class="note-link"
+								href={resolve(
+									localized(
+										`/notizen?neu=1&titel=${encodeURIComponent(item.title)}&quelle=${encodeURIComponent(item.url)}`
+									)
+								)}>{m.notes_from_feed()}</a
+							>
+						{/if}
 					</div>
 				</li>
 			{/each}
@@ -385,6 +395,10 @@
 					text-decoration: none;
 				}
 			}
+		}
+
+		& .note-link {
+			color: var(--navy);
 		}
 
 		& .bookmark {

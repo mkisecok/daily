@@ -47,6 +47,17 @@
 		</section>
 	{/if}
 
+	<p class="toolbar no-print">
+		<a
+			class="button quiet"
+			href={resolve(
+				localized(
+					`/notizen?neu=1&titel=${encodeURIComponent(`${data.provision.label} ${data.law.law}${data.provision.title ? ` – ${data.provision.title}` : ''}`)}&text=${encodeURIComponent(`${data.provision.label} ${data.law.law}`)}`
+				)
+			)}>{m.notes_from_norm()}</a
+		>
+	</p>
+
 	<nav class="pager no-print" aria-label={data.law.law}>
 		{#if data.prev}
 			<a href={href(data.prev.id)} rel="prev">← {data.prev.label} {data.prev.title}</a>
@@ -111,6 +122,10 @@
 			font-family: var(--serif);
 			font-size: 15px;
 		}
+	}
+
+	.toolbar {
+		margin-top: 2rem;
 	}
 
 	.pager {

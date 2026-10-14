@@ -298,6 +298,14 @@
 					>{m.records_print()}</button
 				>
 				<a class="button quiet" href={resolve(listPath)}>{m.records_back()}</a>
+				<a
+					class="button quiet"
+					href={resolve(
+						localized(
+							`/notizen?neu=1&titel=${encodeURIComponent(record.title)}&quelle=${encodeURIComponent(`/werkzeuge/${slug}/eintraege?eintrag=${record.id}`)}`
+						)
+					)}>{m.notes_from_record()}</a
+				>
 				{#if !record.archivedAt}
 					{#if confirmArchive}
 						<span class="confirm">{m.records_archive_confirm()}</span>
