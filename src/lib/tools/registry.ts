@@ -33,6 +33,7 @@ import { feststellungen } from './feststellungen/tool.js';
 import { auditbericht } from './auditbericht/tool.js';
 import { aimsGap } from './aims-gap/tool.js';
 import { repoCheck } from './repo-check/tool.js';
+import { guardrailTest } from './guardrail-test/tool.js';
 import { planned } from './planned.js';
 
 /**
@@ -68,6 +69,7 @@ export const tools: readonly ToolManifest[] = [
 	feststellungen.manifest,
 	auditbericht.manifest,
 	repoCheck.manifest,
+	guardrailTest.manifest,
 	...planned
 ];
 
