@@ -4,6 +4,8 @@
 
 Plan written 2026‑10‑13. Decisions in §1 confirmed by the user in this session. Vision in §0 restated after the user's clarification.
 
+**Status 2026‑10‑14:** every tool in §3.2–3.5 is built and live in the public preview; what was built, how it deviates from this plan and what is still open is in **§9**. The records framework behind the register and workflow tools is specified in [`2026-10-14-records-design.md`](2026-10-14-records-design.md).
+
 ---
 
 ## 0. Vision and context
@@ -37,8 +39,8 @@ Daily is a fully new project at `Desktop/daily`. It shares no code, tokens, stat
 | Name            | **Daily** (D = Data, AI, L = Law, Y = Yield). Wordmark: **D** blue, **AI** red, **L** khaki green, **Y** ink (Y colour assumed).                                                           |
 | Domain          | **dai-ly.de** (free 2026‑10‑13, DENIC RDAP 404). `auth.dai-ly.de` for Keycloak, `www` redirects.                                                                                           |
 | Look            | **Kanzlei**: warm paper, ink, Source Serif 4 headings, DM Sans UI, JetBrains Mono for article numbers/dates/deadlines, hairline rules. No cards, gradients, emoji, purple, icon libraries. |
-| Frontend        | SvelteKit 2, Svelte 5 runes, TypeScript strict, pnpm.                                                                                                                                      |
-| Auth            | Keycloak 26 (self‑hosted), OIDC code + PKCE via `@auth/sveltekit` Keycloak provider.                                                                                                       |
+| Frontend        | SvelteKit 3 (as built; planned 2), Svelte 5 runes, TypeScript strict, pnpm.                                                                                                                |
+| Auth            | Keycloak 26 (self‑hosted), OIDC code + PKCE. As built: `openid-client` with server‑side sessions in Postgres (Auth.js had no SvelteKit 3 support).                                         |
 | DB              | PostgreSQL 17 in Docker on the same VPS (databases `daily`, `keycloak`), Drizzle ORM. Supabase (Frankfurt) remains a documented fallback – only the connection string changes.             |
 | i18n            | German default, English switchable (Paraglide 2, URL strategy).                                                                                                                            |
 | Hosting         | Hetzner Cloud Falkenstein, Ubuntu 24.04, Docker Compose, Caddy TLS.                                                                                                                        |
@@ -81,6 +83,8 @@ Prohibitions + AI literacy 2 Feb 2025 · GPAI 2 Aug 2025 · **Digital Omnibus on
 ## 3. Product: the tool catalogue
 
 Every tool answers one question a practitioner has, cites the legal basis, and produces an artefact (a decision, a register entry, a dated document). Tools are grouped by the role that needs them. **Status** drives the roadmap and is shown publicly on `/werkzeuge`: `stable`, `beta`, `planned`.
+
+> Status 2026‑10‑14: all tools below are built — the ten first questionnaires `stable`, everything added later `beta` — and none is `planned`. Normen‑Navigator, Notizen and Berichte (§3.1) are not built yet. Details in §9.
 
 ### 3.1 Cross‑cutting (always on)
 
@@ -154,6 +158,8 @@ Every tool answers one question a practitioner has, cites the legal basis, and p
 
 Phase 1 proves the **framework** with five real tools of three different shapes (register, decision tree, deadline workflow), so every later tool is a repeat of a known pattern.
 
+> As built, the order was different: the questionnaires first (10 tools, 13 Oct), then the records framework and all register/workflow tools in five slices, then AIMS‑Gap, Repo‑Check and Guardrail‑Test (14 Oct). Phases 2–5 are therefore complete for the tool catalogue; the platform parts of Phase 1 that are still open are listed in §9.4.
+
 ---
 
 ## 4. Architecture
@@ -190,6 +196,8 @@ report.ts      result → ReportModel (sections, tables, citations) → shared H
 - `workflow` – a record with states and deadlines (Datenpanne, DSAR, Vorfall, Feststellung)
 
 Adding a tool = new folder + manifest entry + migration (if register/workflow) + messages in `de.json/en.json`. A `pnpm new-tool <slug> --shape questionnaire` script scaffolds it.
+
+**As built (2026‑10‑14).** Four shapes: `questionnaire` (`catalog.json` + pure `engine.ts` + `tool.ts`), `register` and `workflow` (`definition.ts` with fields, sections and states + pure `engine.ts` with `deadlines`, `assess`, `fromAssessment` + `tool.ts`), and `utility` for interactive tools with their own page (Repo‑Check, Guardrail‑Test). No per‑tool migrations and no Svelte per tool: register/workflow records share three generic tables and generic UI driven by the definition (records design doc). Content lives in TypeScript/JSON as `Localized` strings, not in message files. The `new-tool` script was not written; promotion from `planned.ts` to the registry is a few lines.
 
 ### 4.2 Project layout
 
@@ -230,6 +238,8 @@ daily/
 | `normen_articles`                                           | law, article, title, text_de, text_en, recitals[], refs[] (seeded from EUR‑Lex)                                                                                                               |
 
 Full‑text: generated `tsvector` columns (`german`) on notes, tool_records.record_json → text, normen_articles.
+
+**As built (migrations 0000–0003).** `users`, `organisations`, `memberships`, `sessions` (server‑side OIDC tokens), `tool_runs`, `feed_sources`, `feed_items`, `bookmarks`, and for register/workflow tools `records` (jsonb data, state, version for optimistic locking, soft delete via `archived_at`), `record_events` (append‑only history with field diffs) and `deadlines`. Not built: `notes`, `note_links`, `reports`, `normen_articles`, full‑text columns.
 
 ### 4.4 Design system ("Kanzlei")
 
@@ -346,6 +356,8 @@ Impressum/Datenschutz linked everywhere · robots/sitemap · OG image · uptime 
 | Course m4–5     | Phase 4 tools        | Audit toolset, AIMS‑Gap, Repo‑Check                  |
 | After           | Phase 5              | V1.0, demo, Guardrail‑Test, optional paid tier       |
 
+> Status 2026‑10‑14: the tool work of all phases is done (§9.2). Still open from Steps 8, 10, 12 and 14–17: Normen‑Navigator, Berichte/PDF, Notizen, containerising, server, domain and go‑live (§9.4).
+
 ---
 
 ## 7. Verification
@@ -369,3 +381,53 @@ Impressum/Datenschutz linked everywhere · robots/sitemap · OG image · uptime 
 | Google Fonts GDPR                        | Self‑host                                                                                                             |
 | LLM summaries (Phase 2)                  | Public news text only; disclosed in Datenschutzerklärung                                                              |
 | Wordmark Y colour                        | Assumed ink; one‑line change                                                                                          |
+| Legal content of the new tools           | Needs review by the user before anyone relies on it; open points listed in §9.5                                       |
+
+---
+
+## 9. Built so far (status 2026‑10‑14)
+
+Repository https://github.com/mkisecok/daily (public), live static preview https://mkisecok.github.io/daily/ (GitHub Pages, rebuilt on every push and four times a day for fresh news). History is kept as small single‑purpose conventional commits.
+
+### 9.1 Platform
+
+| Part                                                                                                                                                                                                                                                     | State                   |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| Shell, Kanzlei design, wordmark, light/dark, de/en (Paraglide, `/` and `/en`)                                                                                                                                                                            | Built                   |
+| Keycloak login (openid-client, PKCE, Postgres sessions, refresh, logout)                                                                                                                                                                                 | Built                   |
+| Organisations and **Mandanten** page: own organisation on first login, clients added, active organisation per browser cookie (checked against memberships in `hooks.server.ts`, `locals.organisation`), workspace shown in the masthead                  | Built                   |
+| **Nachrichten** (feed): RSS/HTML adapters with retry, keyword tagging, filters, bookmarks; worker with node-cron                                                                                                                                         | Built                   |
+| **Fristen**: open deadlines of all register/workflow tools, overdue/due‑soon marks, `.ics` export                                                                                                                                                        | Built                   |
+| **Werkzeuge** catalogue and questionnaire runner (`/werkzeuge/[slug]/pruefen`, in‑browser), saved runs per organisation                                                                                                                                  | Built                   |
+| Records framework for register/workflow tools (records design doc): generic form/list/history/print, CSV, workflow states with checks, deadlines, assessment handoff from questionnaires, references between records with backlinks and composed reports | Built                   |
+| Static preview mode (`PUBLIC_PREVIEW`): prerendered, no DB/auth, records in `localStorage`, notice and "delete local data"                                                                                                                               | Built                   |
+| CI (`pages.yml`): check, lint, unit tests, preview E2E, static build, deploy                                                                                                                                                                             | Built                   |
+| Normen‑Navigator, Notizen, Berichte/Jahresbericht/PDF                                                                                                                                                                                                    | **Placeholders** (§9.4) |
+
+### 9.2 Tools (29, none planned)
+
+| Category    | Questionnaire                                                                                                                            | Register                                                       | Workflow                                      | Utility                    |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | --------------------------------------------- | -------------------------- |
+| Datenschutz | DSFA‑Schwellwert, Interessenabwägung, Einwilligungs‑Check, Drittland‑Transfer                                                            | VVT, AVV‑Prüfung, TOM‑Katalog, Löschkonzept, Schulungsnachweis | DSFA, Datenpanne, Betroffenenanfrage          | –                          |
+| KI          | Risikoklassifizierung, Transparenzpflichten, Betreiberpflichten, KI und DSGVO, Technische Dokumentation, KI‑Nutzungsrichtlinie, AIMS‑Gap | KI‑Register, KI‑Kompetenz                                      | Vorfallmeldung, Grundrechte‑Folgenabschätzung | –                          |
+| Audit       | –                                                                                                                                        | Prüfkatalog, Auditbericht                                      | Auditprogramm, Feststellungen                 | –                          |
+| Entwickler  | –                                                                                                                                        | –                                                              | –                                             | Repo‑Check, Guardrail‑Test |
+
+The ten first questionnaires are `stable`; all others `beta`. Cross‑tool links: Risikoklassifizierung → KI‑Register (risk class), DSFA‑Schwellwert → VVT and DSFA, Drittland‑Transfer → VVT (assessment fields); Prüfkatalog, Feststellungen and Auditbericht refer to an Auditprogramm entry, and the report composes the audit with its checklists and findings.
+
+Deviations from §3: Repo‑Check scans files or pasted code in the browser (nothing uploaded) instead of a repository connection; Guardrail‑Test works with pasted answers or an OpenAI‑compatible endpoint called from the browser; AIMS‑Gap and the ISO question sets are written in Daily's own words and cite clause numbers only (no standard text).
+
+### 9.3 Quality
+
+Unit tests for every engine and the records framework (266), database tests against the compose Postgres (`pnpm test:db`, 11), server‑mode Playwright E2E with Keycloak (25: auth, feed, i18n, questionnaires, every slice of record tools, Mandanten isolation, audit chain, utilities) and a preview E2E under `/daily` that runs in CI before every deploy.
+
+### 9.4 Open
+
+- Normen‑Navigator (article texts, cross‑references), Notizen (notes tied to news and records), Berichte (PDF, Jahresbericht); today reports are the browser print view.
+- Steps 14–17: Docker image, Hetzner server, Caddy, dai-ly.de DNS, backups, go‑live; the full app has so far only run locally.
+- Feed LLM summaries (Phase 2), e‑mail reminders for Fristen, deleting organisations (left out on purpose), inviting members to an organisation.
+- DPMA/EUIPO trademark search, daily.eu check (§8).
+
+### 9.5 Legal content to review
+
+Every tool cites its basis, but the content has not been reviewed by a lawyer. Points flagged during the build: Omnibus dates (Reg. (EU) 2026/1744) used across the KI tools; scope of Art. 4 KI‑VO after the Omnibus; 8‑year retention for accounting vouchers (BEG IV, since 2025) and 6 months for rejected applications (practice, not statute) in Löschkonzept; § 26 BDSG after EuGH C‑34/21 in VVT; whether the Art. 12(3) period pauses while identity proof is awaited (Daily counts from receipt); the simplified DSK‑style risk thresholds in DSFA; Art. 73 periods counted as 24‑hour days from the minute of awareness; the 90 % refusal and 25 % over‑refusal thresholds in Guardrail‑Test.
