@@ -1,4 +1,3 @@
-import type { ToolManifest } from '../tools/types.js';
 import type { RecordTool, RecordToolDefinition } from './types.js';
 
 const L = (de: string, en: string) => ({ de, en });
@@ -65,12 +64,13 @@ export const testTool: RecordTool = {
 	manifest: {
 		slug: testDefinition.slug,
 		category: 'datenschutz',
+		status: 'beta',
 		shape: 'workflow',
-		status: 'available',
-		title: L('Testregister', 'Test register'),
+		version: testDefinition.version,
+		name: L('Testregister', 'Test register'),
 		summary: L('', ''),
-		laws: ['DSGVO']
-	} as unknown as ToolManifest,
+		legalBasis: []
+	},
 	definition: testDefinition,
 	engine: {
 		deadlines: (record) =>
