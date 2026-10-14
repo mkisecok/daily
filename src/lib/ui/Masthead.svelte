@@ -30,7 +30,7 @@
 		{ href: resolve(localized('/nachrichten')), route: '/nachrichten', label: m.nav_feed() },
 		{ href: resolve(localized('/werkzeuge')), route: '/werkzeuge', label: m.nav_tools() },
 		{ href: resolve(localized('/normen')), route: '/normen', label: m.nav_norms() },
-		{ href: resolve(localized('/notizen')), route: '/(app)/notizen', label: m.nav_notes() },
+		{ href: resolve(localized('/notizen')), route: '/notizen', label: m.nav_notes() },
 		// Deadlines come from records: the organisation's when signed in, the browser's in the preview.
 		...(user || PUBLIC_PREVIEW
 			? [{ href: resolve(localized('/fristen')), route: '/fristen', label: m.deadlines_title() }]
