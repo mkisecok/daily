@@ -22,7 +22,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
 
@@ -49,6 +49,13 @@ jobs:
 
       - name: Unit tests
         run: pnpm vitest run --project server
+
+      - name: Install browser for preview tests
+        run: pnpm exec playwright install --with-deps chromium
+
+      # Builds under /daily and checks that records persist in browser storage.
+      - name: Preview end-to-end tests
+        run: pnpm test:e2e:preview
 
       - name: Build static preview
         env:
