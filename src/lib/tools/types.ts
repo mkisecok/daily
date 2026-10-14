@@ -85,6 +85,8 @@ export type QuestionnaireResult = {
 	reasons: Reason[];
 	/** Obligations, dates or next steps that follow from the verdict. */
 	notes?: Localized[];
+	/** Heading for `notes` when "Obligations and notes" does not fit, e.g. generated clauses. */
+	notesTitle?: Localized;
 	citations: LegalBasis[];
 };
 
