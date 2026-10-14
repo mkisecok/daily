@@ -29,7 +29,7 @@
 
 <div class="frame">
 	{#if PUBLIC_PREVIEW}<PreviewNotice />{/if}
-	<Masthead theme={data.theme} user={data.user} />
+	<Masthead theme={data.theme} user={data.user} organisation={data.organisation} />
 	<main class="page">
 		{@render children()}
 	</main>

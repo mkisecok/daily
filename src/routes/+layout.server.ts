@@ -21,6 +21,9 @@ export const load: LayoutServerLoad = ({ cookies, locals }) => {
 		theme: parseTheme(cookies.get(THEME_COOKIE)),
 		today: now.toISOString(),
 		issue: Math.floor((now.getTime() - FIRST_ISSUE.getTime()) / DAY) + 1,
-		user: locals.user ? { displayName: locals.user.displayName, roles: locals.user.roles } : null
+		user: locals.user ? { displayName: locals.user.displayName, roles: locals.user.roles } : null,
+		organisation: locals.organisation
+			? { name: locals.organisation.name, kind: locals.organisation.kind }
+			: null
 	};
 };

@@ -16,10 +16,13 @@
 
 	let {
 		theme,
-		user
+		user,
+		organisation = null
 	}: {
 		theme: ThemeSetting;
 		user: { displayName: string } | null;
+		/** The workspace the signed-in user works in. */
+		organisation?: { name: string; kind: 'eigene' | 'mandant' } | null;
 	} = $props();
 
 	/** `route` is the route id prefix that marks the item as current. */
@@ -64,6 +67,14 @@
 			{#if user}
 				<form class="account" method="post" action={resolve('/auth/logout')}>
 					<span class="name">{user.displayName}</span>
+					{#if organisation}
+						<a
+							class="org"
+							href={resolve(localized('/mandanten'))}
+							title={m.org_working_in({ name: organisation.name })}
+							data-kind={organisation.kind}>{organisation.name}</a
+						>
+					{/if}
 					<button type="submit">{m.nav_logout()}</button>
 				</form>
 			{:else if !PUBLIC_PREVIEW}
@@ -176,6 +187,22 @@
 
 				@media (max-width: 40rem) {
 					display: none;
+				}
+			}
+
+			& .org {
+				max-width: 14rem;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				font-family: var(--mono);
+				font-size: 11px;
+				letter-spacing: 0.06em;
+				color: var(--ink2);
+
+				/* A client workspace is marked so nobody files into the wrong one. */
+				&[data-kind='mandant'] {
+					color: var(--navy);
 				}
 			}
 		}
