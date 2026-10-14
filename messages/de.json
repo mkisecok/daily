@@ -156,5 +156,6 @@
 	"org_save": "Speichern",
 	"org_cancel": "Abbrechen",
 	"org_working_in": "Arbeitsbereich: {name}",
-	"org_switched": "Sie arbeiten jetzt in {name}."
+	"org_switched": "Sie arbeiten jetzt in {name}.",
+	"records_print_organisation": "Verantwortlicher: {name}"
 }

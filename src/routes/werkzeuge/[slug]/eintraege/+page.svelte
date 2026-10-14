@@ -297,7 +297,12 @@
 		{/if}
 	</section>
 	{#if records.length > 0}
-		<PrintRegister definition={data.definition} {records} title={data.tool.name} />
+		<PrintRegister
+			definition={data.definition}
+			{records}
+			title={data.tool.name}
+			organisation={data.organisation?.name}
+		/>
 	{/if}
 {/if}
 

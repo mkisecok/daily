@@ -156,5 +156,6 @@
 	"org_save": "Save",
 	"org_cancel": "Cancel",
 	"org_working_in": "Workspace: {name}",
-	"org_switched": "You are now working in {name}."
+	"org_switched": "You are now working in {name}.",
+	"records_print_organisation": "Controller: {name}"
 }
