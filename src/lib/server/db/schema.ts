@@ -99,6 +99,89 @@ export const toolRuns = pgTable(
 	]
 );
 
+/* ---------- records ---------- */
+
+/**
+ * One entry of a register or workflow tool. `data` is validated against the
+ * tool definition of `definition_version`; `version` increments on every
+ * change for optimistic locking. Archiving is a soft delete, so the history
+ * stays available (accountability, Art. 5(2) DSGVO).
+ */
+export const records = pgTable(
+	'records',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		organisationId: uuid('organisation_id')
+			.notNull()
+			.references(() => organisations.id, { onDelete: 'cascade' }),
+		toolSlug: text('tool_slug').notNull(),
+		definitionVersion: integer('definition_version').notNull(),
+		/** Null for registers, a workflow state id otherwise. */
+		state: text('state'),
+		title: text('title').notNull(),
+		data: jsonb('data').notNull(),
+		version: integer('version').notNull().default(1),
+		createdBy: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
+		updatedBy: uuid('updated_by').references(() => users.id, { onDelete: 'set null' }),
+		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+		updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+		archivedAt: timestamp('archived_at', { withTimezone: true })
+	},
+	(table) => [
+		index('records_org_tool_idx').on(table.organisationId, table.toolSlug, table.updatedAt)
+	]
+);
+
+export const recordEventKind = pgEnum('record_event_kind', [
+	'created',
+	'updated',
+	'transition',
+	'assessment',
+	'archived'
+]);
+
+/** Append-only history of a record: who changed which fields, and when. */
+export const recordEvents = pgTable(
+	'record_events',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		recordId: uuid('record_id')
+			.notNull()
+			.references(() => records.id, { onDelete: 'cascade' }),
+		userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
+		kind: recordEventKind('kind').notNull(),
+		changes: jsonb('changes').notNull().default({}),
+		fromState: text('from_state'),
+		toState: text('to_state'),
+		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
+	},
+	(table) => [index('record_events_record_idx').on(table.recordId, table.createdAt)]
+);
+
+/**
+ * Deadlines derived from records by the tool engines. Recomputed on every
+ * save: open rows of the record are replaced, `done_at` marks those a
+ * terminal state or archive closed.
+ */
+export const deadlines = pgTable(
+	'deadlines',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		organisationId: uuid('organisation_id')
+			.notNull()
+			.references(() => organisations.id, { onDelete: 'cascade' }),
+		recordId: uuid('record_id')
+			.notNull()
+			.references(() => records.id, { onDelete: 'cascade' }),
+		toolSlug: text('tool_slug').notNull(),
+		kind: text('kind').notNull(),
+		dueAt: timestamp('due_at', { withTimezone: true }).notNull(),
+		doneAt: timestamp('done_at', { withTimezone: true }),
+		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
+	},
+	(table) => [index('deadlines_org_due_idx').on(table.organisationId, table.doneAt, table.dueAt)]
+);
+
 /* ---------- feed ---------- */
 
 export const feedSourceKind = pgEnum('feed_source_kind', ['rss', 'html']);
@@ -165,3 +248,6 @@ export type FeedSource = typeof feedSources.$inferSelect;
 export type FeedItem = typeof feedItems.$inferSelect;
 export type Organisation = typeof organisations.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
+export type RecordRow = typeof records.$inferSelect;
+export type RecordEventRow = typeof recordEvents.$inferSelect;
+export type DeadlineRow = typeof deadlines.$inferSelect;
