@@ -1,0 +1,165 @@
+{
+	"slug": "transparenzpflichten",
+	"version": 1,
+	"intro": {
+		"de": "Art. 50 KI-VO verlangt Transparenz bei bestimmten KI-Systemen, unabhängig von ihrer Risikoklasse. Anbieter müssen Interaktion und synthetische Inhalte erkennbar machen, Betreiber müssen über Emotionserkennung, biometrische Kategorisierung, Deepfakes und KI-erzeugte Texte zu Themen von öffentlichem Interesse informieren. Die Pflichten gelten seit dem 2. August 2026.",
+		"en": "Art. 50 AI Act requires transparency for certain AI systems regardless of their risk class. Providers must make interaction and synthetic content recognisable; deployers must disclose emotion recognition, biometric categorisation, deepfakes and AI-generated text on matters of public interest. The obligations apply since 2 August 2026."
+	},
+	"sources": [
+		{ "law": "KI-VO", "ref": "Art. 50" },
+		{ "law": "KI-VO", "ref": "Art. 3 Nr. 3, 4 und 60" },
+		{ "law": "KI-VO", "ref": "Verordnung (EU) 2026/1744 (Omnibus)" }
+	],
+	"sections": [
+		{
+			"id": "role",
+			"title": { "de": "Rolle", "en": "Role" },
+			"intro": {
+				"de": "Eine Organisation kann für dasselbe System Anbieter und Betreiber zugleich sein.",
+				"en": "One organisation can be both provider and deployer of the same system."
+			},
+			"questions": [
+				{
+					"id": "r_provider",
+					"type": "yesno",
+					"text": {
+						"de": "Entwickeln Sie das KI-System oder lassen Sie es entwickeln und bringen es unter Ihrem Namen in Verkehr oder nehmen es in Betrieb (Anbieter)?",
+						"en": "Do you develop the AI system, or have it developed, and place it on the market or put it into service under your name (provider)?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 3 Nr. 3" }
+				},
+				{
+					"id": "r_deployer",
+					"type": "yesno",
+					"text": {
+						"de": "Verwenden Sie das KI-System in eigener Verantwortung im Rahmen einer beruflichen Tätigkeit (Betreiber)?",
+						"en": "Do you use the AI system under your authority in the course of a professional activity (deployer)?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 3 Nr. 4" }
+				},
+				{
+					"id": "r_existing",
+					"type": "yesnona",
+					"text": {
+						"de": "Wurde das System bereits vor dem 2. August 2026 in Verkehr gebracht oder in Betrieb genommen?",
+						"en": "Was the system placed on the market or put into service before 2 August 2026?"
+					},
+					"help": {
+						"de": "Für solche Systeme gilt die Kennzeichnungspflicht für synthetische Inhalte erst ab dem 2. Dezember 2026.",
+						"en": "For such systems the marking duty for synthetic content applies only from 2 December 2026."
+					},
+					"cite": { "law": "KI-VO", "ref": "Verordnung (EU) 2026/1744" }
+				}
+			]
+		},
+		{
+			"id": "provider",
+			"title": { "de": "Pflichten des Anbieters", "en": "Provider obligations" },
+			"questions": [
+				{
+					"id": "a_interaction",
+					"type": "yesno",
+					"text": {
+						"de": "Ist das System dafür bestimmt, unmittelbar mit natürlichen Personen zu interagieren (Chatbot, Sprachassistent, Telefon-Bot)?",
+						"en": "Is the system intended to interact directly with natural persons (chatbot, voice assistant, phone bot)?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 50 Abs. 1" }
+				},
+				{
+					"id": "a_obvious",
+					"type": "yesnona",
+					"text": {
+						"de": "Ist es für eine angemessen informierte, aufmerksame und verständige Person aus den Umständen offensichtlich, dass sie mit einem KI-System interagiert?",
+						"en": "Is it obvious to a reasonably well-informed, observant and circumspect person, from the circumstances, that they are interacting with an AI system?"
+					},
+					"help": {
+						"de": "Nur dann entfällt der Hinweis. Im Zweifel nein.",
+						"en": "Only then is the notice not required. If in doubt, answer no."
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 50 Abs. 1" }
+				},
+				{
+					"id": "a_synthetic",
+					"type": "yesno",
+					"text": {
+						"de": "Erzeugt das System synthetische Audio-, Bild-, Video- oder Textinhalte, auch als KI-System mit allgemeinem Verwendungszweck?",
+						"en": "Does the system generate synthetic audio, image, video or text content, including as a general-purpose AI system?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 50 Abs. 2" }
+				},
+				{
+					"id": "a_assistive",
+					"type": "yesnona",
+					"text": {
+						"de": "Hat das System nur eine unterstützende Funktion für die Standardbearbeitung oder verändert es die Eingabedaten und ihre Semantik nicht wesentlich?",
+						"en": "Does the system only perform an assistive function for standard editing, or does it not substantially alter the input data or its semantics?"
+					},
+					"help": {
+						"de": "Beispiele: Rechtschreibkorrektur, Zuschnitt, Farbkorrektur. Dann entfällt die Kennzeichnung.",
+						"en": "Examples: spell checking, cropping, colour correction. Then no marking is required."
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 50 Abs. 2 UAbs. 2" }
+				}
+			]
+		},
+		{
+			"id": "deployer",
+			"title": { "de": "Pflichten des Betreibers", "en": "Deployer obligations" },
+			"questions": [
+				{
+					"id": "b_emotion",
+					"type": "yesno",
+					"text": {
+						"de": "Betreiben Sie ein System zur Emotionserkennung oder zur biometrischen Kategorisierung?",
+						"en": "Do you operate an emotion recognition or biometric categorisation system?"
+					},
+					"help": {
+						"de": "Emotionserkennung am Arbeitsplatz und in Bildungseinrichtungen ist nach Art. 5 Abs. 1 lit. f verboten, außer aus medizinischen oder Sicherheitsgründen.",
+						"en": "Emotion recognition in the workplace and in education is prohibited under Art. 5(1)(f), except for medical or safety reasons."
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 50 Abs. 3" }
+				},
+				{
+					"id": "b_deepfake",
+					"type": "yesno",
+					"text": {
+						"de": "Erzeugen oder verändern Sie Bild-, Ton- oder Videoinhalte, die realen Personen, Gegenständen, Orten oder Ereignissen merklich ähneln und fälschlich als echt erscheinen würden (Deepfake)?",
+						"en": "Do you generate or manipulate image, audio or video content that appreciably resembles real persons, objects, places or events and would falsely appear authentic (deepfake)?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 50 Abs. 4 UAbs. 1" }
+				},
+				{
+					"id": "b_artistic",
+					"type": "yesnona",
+					"text": {
+						"de": "Ist der Inhalt offensichtlich Teil eines künstlerischen, kreativen, satirischen, fiktionalen oder vergleichbaren Werks oder Programms?",
+						"en": "Is the content evidently part of an artistic, creative, satirical, fictional or analogous work or programme?"
+					},
+					"help": {
+						"de": "Dann genügt ein Hinweis, der die Darstellung oder den Genuss des Werks nicht beeinträchtigt.",
+						"en": "Then a disclosure that does not hamper the display or enjoyment of the work is sufficient."
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 50 Abs. 4 UAbs. 1" }
+				},
+				{
+					"id": "b_text",
+					"type": "yesno",
+					"text": {
+						"de": "Veröffentlichen Sie KI-erzeugten oder -veränderten Text, um die Öffentlichkeit über Angelegenheiten von öffentlichem Interesse zu informieren?",
+						"en": "Do you publish AI-generated or manipulated text with the purpose of informing the public on matters of public interest?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 50 Abs. 4 UAbs. 2" }
+				},
+				{
+					"id": "b_editorial",
+					"type": "yesnona",
+					"text": {
+						"de": "Wird der Text von Menschen überprüft oder redaktionell kontrolliert, und trägt eine natürliche oder juristische Person die redaktionelle Verantwortung?",
+						"en": "Is the text subject to human review or editorial control, with a natural or legal person holding editorial responsibility?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 50 Abs. 4 UAbs. 2" }
+				}
+			]
+		}
+	]
+}
