@@ -1,0 +1,364 @@
+{
+	"slug": "aims-gap",
+	"version": 1,
+	"intro": {
+		"de": "Lückenanalyse für ein KI-Managementsystem nach ISO/IEC 42001: Kontext und Führung, Planung und Unterstützung, die Maßnahmenbereiche des Anhangs A sowie Bewertung und Verbesserung. Jede Lücke nennt die Stelle der Norm und die Pflichten der KI-Verordnung, die eine geschlossene Lücke mit abdeckt. Die Fragen fassen Anforderungen in eigenen Worten zusammen; maßgeblich bleibt der Normtext.",
+		"en": "Gap analysis for an AI management system under ISO/IEC 42001: context and leadership, planning and support, the control areas of Annex A, and evaluation and improvement. Each gap names the clause and the AI Act obligations that closing it also covers. The questions summarise requirements in Daily's own words; the standard's text remains authoritative."
+	},
+	"sources": [
+		{
+			"law": "ISO 42001",
+			"ref": "Kap. 4–10"
+		},
+		{
+			"law": "ISO 42001",
+			"ref": "Anhang A"
+		},
+		{
+			"law": "KI-VO",
+			"ref": "Art. 4, 9–17, 26, 27"
+		}
+	],
+	"sections": [
+		{
+			"id": "kontext",
+			"title": {
+				"de": "Kontext und Führung",
+				"en": "Context and leadership"
+			},
+			"questions": [
+				{
+					"id": "c_scope",
+					"type": "yesnona",
+					"text": {
+						"de": "Sind Geltungsbereich des Managementsystems und die eigene Rolle gegenüber KI-Systemen (Anbieter, Betreiber, beides) festgelegt?",
+						"en": "Are the scope of the management system and the organisation's role towards AI systems (provider, deployer, both) defined?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Kap. 4.1, 4.3"
+					},
+					"remedy": {
+						"de": "Geltungsbereich und Rolle dokumentieren; die Rolle bestimmt die Pflichten nach der KI-Verordnung (Art. 3 Nr. 3 und 4).",
+						"en": "Document scope and role; the role determines the AI Act obligations (Art. 3(3) and (4))."
+					}
+				},
+				{
+					"id": "c_interested",
+					"type": "yesnona",
+					"text": {
+						"de": "Sind die Anforderungen interessierter Parteien, darunter rechtliche Pflichten, ermittelt?",
+						"en": "Have the requirements of interested parties, including legal obligations, been identified?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Kap. 4.2"
+					},
+					"remedy": {
+						"de": "Rechtliche Anforderungen (KI-VO, DSGVO, Arbeitsrecht) und Erwartungen von Kunden und Beschäftigten erfassen.",
+						"en": "Record legal requirements (AI Act, GDPR, employment law) and the expectations of customers and staff."
+					}
+				},
+				{
+					"id": "c_policy",
+					"type": "yesnona",
+					"text": {
+						"de": "Hat die Leitung eine KI-Politik festgelegt und bekannt gemacht?",
+						"en": "Has top management set and communicated an AI policy?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Kap. 5.2, Anhang A.2"
+					},
+					"remedy": {
+						"de": "KI-Politik beschließen und veröffentlichen; das Werkzeug KI-Nutzungsrichtlinie liefert einen Entwurf.",
+						"en": "Adopt and publish an AI policy; the AI usage policy tool provides a draft."
+					}
+				},
+				{
+					"id": "c_roles",
+					"type": "yesnona",
+					"text": {
+						"de": "Sind Rollen, Verantwortlichkeiten und Befugnisse für KI zugewiesen, einschließlich der menschlichen Aufsicht?",
+						"en": "Are roles, responsibilities and authorities for AI assigned, including human oversight?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Kap. 5.3, Anhang A.3"
+					},
+					"remedy": {
+						"de": "Verantwortliche je KI-System benennen; die menschliche Aufsicht braucht Kompetenz und Befugnis (KI-VO Art. 26 Abs. 2).",
+						"en": "Name owners per AI system; human oversight needs competence and authority (AI Act Art. 26(2))."
+					}
+				}
+			]
+		},
+		{
+			"id": "planung",
+			"title": {
+				"de": "Planung und Unterstützung",
+				"en": "Planning and support"
+			},
+			"questions": [
+				{
+					"id": "p_risk",
+					"type": "yesnona",
+					"text": {
+						"de": "Werden KI-Risiken nach einem festgelegten Verfahren beurteilt und behandelt?",
+						"en": "Are AI risks assessed and treated by a defined process?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Kap. 6.1.2, 6.1.3"
+					},
+					"remedy": {
+						"de": "Risikoverfahren festlegen und je System anwenden; deckt das Risikomanagement nach KI-VO Art. 9 mit ab.",
+						"en": "Define a risk process and apply it per system; also covers risk management under AI Act Art. 9."
+					}
+				},
+				{
+					"id": "p_impact",
+					"type": "yesnona",
+					"text": {
+						"de": "Werden die Auswirkungen von KI-Systemen auf Personen, Gruppen und die Gesellschaft abgeschätzt?",
+						"en": "Are the impacts of AI systems on individuals, groups and society assessed?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Kap. 6.1.4, Anhang A.5"
+					},
+					"remedy": {
+						"de": "Folgenabschätzung je System durchführen; sie stützt Grundrechte-Folgenabschätzung (KI-VO Art. 27) und DSFA (DSGVO Art. 35).",
+						"en": "Carry out an impact assessment per system; it supports the FRIA (AI Act Art. 27) and the DPIA (GDPR Art. 35)."
+					}
+				},
+				{
+					"id": "p_objectives",
+					"type": "yesnona",
+					"text": {
+						"de": "Gibt es messbare Ziele für den verantwortungsvollen Einsatz von KI?",
+						"en": "Are there measurable objectives for the responsible use of AI?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Kap. 6.2"
+					},
+					"remedy": {
+						"de": "Ziele mit Kennzahlen festlegen, etwa Fehlerquoten oder Beschwerden je System.",
+						"en": "Set objectives with metrics, e.g. error rates or complaints per system."
+					}
+				},
+				{
+					"id": "p_competence",
+					"type": "yesnona",
+					"text": {
+						"de": "Ist die Kompetenz der an KI Beteiligten bestimmt und belegt?",
+						"en": "Is the competence of the people involved in AI determined and evidenced?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Kap. 7.2, Anhang A.4"
+					},
+					"remedy": {
+						"de": "Kompetenzbedarf je Rolle festlegen und Schulungen nachweisen; deckt KI-VO Art. 4 mit ab (Werkzeug KI-Kompetenz).",
+						"en": "Set competence needs per role and evidence training; also covers AI Act Art. 4 (AI literacy tool)."
+					}
+				},
+				{
+					"id": "p_docs",
+					"type": "yesnona",
+					"text": {
+						"de": "Wird die erforderliche Dokumentation gelenkt (Version, Freigabe, Aufbewahrung)?",
+						"en": "Is the required documentation controlled (version, approval, retention)?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Kap. 7.5"
+					},
+					"remedy": {
+						"de": "Lenkung dokumentierter Information einführen; Grundlage für technische Dokumentation und Protokolle (KI-VO Art. 11, 12, 18).",
+						"en": "Introduce control of documented information; the basis for technical documentation and logs (AI Act Art. 11, 12, 18)."
+					}
+				}
+			]
+		},
+		{
+			"id": "anhang",
+			"title": {
+				"de": "Maßnahmenbereiche (Anhang A)",
+				"en": "Control areas (Annex A)"
+			},
+			"questions": [
+				{
+					"id": "a_resources",
+					"type": "yesnona",
+					"text": {
+						"de": "Sind die Ressourcen je KI-System dokumentiert: Daten, Werkzeuge, Rechenleistung, Personal?",
+						"en": "Are the resources per AI system documented: data, tools, computing, people?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Anhang A.4"
+					},
+					"remedy": {
+						"de": "Ressourcen je System im KI-Register oder in der Systembeschreibung festhalten.",
+						"en": "Record resources per system in the AI register or system description."
+					}
+				},
+				{
+					"id": "a_lifecycle",
+					"type": "yesnona",
+					"text": {
+						"de": "Gibt es einen festgelegten Lebenszyklus mit Anforderungen, Verifikation und Validierung vor der Freigabe?",
+						"en": "Is there a defined life cycle with requirements, verification and validation before release?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Anhang A.6"
+					},
+					"remedy": {
+						"de": "Freigabeprozess mit Tests auf Genauigkeit und Robustheit einführen; deckt KI-VO Art. 15 und das Qualitätsmanagement nach Art. 17 mit ab.",
+						"en": "Introduce a release process with tests for accuracy and robustness; also covers AI Act Art. 15 and quality management under Art. 17."
+					}
+				},
+				{
+					"id": "a_operation",
+					"type": "yesnona",
+					"text": {
+						"de": "Wird der Betrieb überwacht, werden Ereignisse protokolliert und Abweichungen ausgewertet?",
+						"en": "Is operation monitored, are events logged and deviations analysed?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Anhang A.6"
+					},
+					"remedy": {
+						"de": "Überwachung und Protokollierung einrichten; deckt Protokollierung (KI-VO Art. 12) und Beobachtung nach dem Inverkehrbringen (Art. 72) mit ab.",
+						"en": "Set up monitoring and logging; also covers logging (AI Act Art. 12) and post-market monitoring (Art. 72)."
+					}
+				},
+				{
+					"id": "a_data",
+					"type": "yesnona",
+					"text": {
+						"de": "Sind Herkunft, Qualität und Aufbereitung der Daten für KI-Systeme dokumentiert?",
+						"en": "Are the provenance, quality and preparation of data for AI systems documented?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Anhang A.7"
+					},
+					"remedy": {
+						"de": "Datenherkunft, Qualitätskriterien und Aufbereitung festhalten; deckt Daten-Governance nach KI-VO Art. 10 mit ab.",
+						"en": "Record data provenance, quality criteria and preparation; also covers data governance under AI Act Art. 10."
+					}
+				},
+				{
+					"id": "a_information",
+					"type": "yesnona",
+					"text": {
+						"de": "Erhalten Nutzer und Betroffene die nötigen Informationen, und können Vorfälle gemeldet werden?",
+						"en": "Do users and affected persons receive the necessary information, and can incidents be reported?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Anhang A.8"
+					},
+					"remedy": {
+						"de": "Informationen und Meldeweg bereitstellen; deckt KI-VO Art. 13, 50 und die Vorfallmeldung nach Art. 73 mit ab.",
+						"en": "Provide information and a reporting channel; also covers AI Act Art. 13, 50 and incident reporting under Art. 73."
+					}
+				},
+				{
+					"id": "a_use",
+					"type": "yesnona",
+					"text": {
+						"de": "Ist festgelegt, wofür KI-Systeme verwendet werden dürfen, und wird die Einhaltung geprüft?",
+						"en": "Is it defined what AI systems may be used for, and is compliance checked?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Anhang A.9"
+					},
+					"remedy": {
+						"de": "Zweckbestimmung und Nutzungsregeln festlegen; deckt Betreiberpflichten nach KI-VO Art. 26 mit ab.",
+						"en": "Define intended purposes and usage rules; also covers deployer obligations under AI Act Art. 26."
+					}
+				},
+				{
+					"id": "a_thirdparty",
+					"type": "yesnona",
+					"text": {
+						"de": "Sind Verantwortlichkeiten mit Lieferanten, Partnern und Kunden über den Lebenszyklus geregelt?",
+						"en": "Are responsibilities with suppliers, partners and customers allocated across the life cycle?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Anhang A.10"
+					},
+					"remedy": {
+						"de": "Verträge um KI-Pflichten ergänzen; berücksichtigt die Wertschöpfungskette nach KI-VO Art. 25 und Auftragsverarbeitung nach DSGVO Art. 28.",
+						"en": "Add AI obligations to contracts; considers the value chain under AI Act Art. 25 and processing on behalf under GDPR Art. 28."
+					}
+				}
+			]
+		},
+		{
+			"id": "leistung",
+			"title": {
+				"de": "Bewertung und Verbesserung",
+				"en": "Evaluation and improvement"
+			},
+			"questions": [
+				{
+					"id": "l_audit",
+					"type": "yesnona",
+					"text": {
+						"de": "Werden interne Audits des Managementsystems geplant und durchgeführt?",
+						"en": "Are internal audits of the management system planned and carried out?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Kap. 9.2"
+					},
+					"remedy": {
+						"de": "Auditprogramm aufsetzen (Werkzeug Auditprogramm).",
+						"en": "Set up an audit programme (audit programme tool)."
+					}
+				},
+				{
+					"id": "l_review",
+					"type": "yesnona",
+					"text": {
+						"de": "Bewertet die Leitung das Managementsystem in festgelegten Abständen?",
+						"en": "Does top management review the management system at planned intervals?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Kap. 9.3"
+					},
+					"remedy": {
+						"de": "Managementbewertung mindestens jährlich mit dokumentierten Entscheidungen durchführen.",
+						"en": "Hold a management review at least annually with documented decisions."
+					}
+				},
+				{
+					"id": "l_corrective",
+					"type": "yesnona",
+					"text": {
+						"de": "Werden Abweichungen mit Ursachenanalyse und Korrekturmaßnahmen behandelt?",
+						"en": "Are nonconformities handled with root cause analysis and corrective action?"
+					},
+					"cite": {
+						"law": "ISO 42001",
+						"ref": "Kap. 10.2"
+					},
+					"remedy": {
+						"de": "Abweichungen mit Ursache, Maßnahme und Frist verfolgen (Werkzeug Feststellungen); deckt Korrekturmaßnahmen nach KI-VO Art. 20 mit ab.",
+						"en": "Track nonconformities with cause, action and deadline (findings tool); also covers corrective actions under AI Act Art. 20."
+					}
+				}
+			]
+		}
+	]
+}
