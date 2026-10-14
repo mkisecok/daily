@@ -1,4 +1,4 @@
-import { formatValue, stateLabel } from './format.js';
+import { formatValue, stateLabel, type Titles } from './format.js';
 import type { RecordToolDefinition, StoredRecord } from './types.js';
 import { allFields } from './validate.js';
 
@@ -15,7 +15,8 @@ function cell(value: string): string {
 export function toCsv(
 	definition: RecordToolDefinition,
 	records: StoredRecord[],
-	locale: string
+	locale: string,
+	titles: Titles = {}
 ): string {
 	const fields = allFields(definition);
 	const withState = Boolean(definition.workflow);
@@ -26,7 +27,7 @@ export function toCsv(
 	];
 	const rows = records.map((record) => [
 		...(withState ? [stateLabel(definition, record.state, locale)] : []),
-		...fields.map((field) => formatValue(field, record.data[field.id], locale)),
+		...fields.map((field) => formatValue(field, record.data[field.id], locale, titles)),
 		formatValue(
 			{ id: 'updatedAt', type: 'datetime', label: { de: '', en: '' } },
 			record.updatedAt,

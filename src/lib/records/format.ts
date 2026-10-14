@@ -8,11 +8,15 @@ function pick(value: { de: string; en: string }, locale: Locale): string {
 	return locale === 'en' ? value.en : value.de;
 }
 
+/** Titles of referenced records by id, for reference fields. */
+export type Titles = Record<string, string>;
+
 /** A stored value as readable text, in German time and the given locale. */
 export function formatValue(
 	field: FieldDef,
 	value: FieldValue | undefined,
-	locale: Locale
+	locale: Locale,
+	titles: Titles = {}
 ): string {
 	if (value === null || value === undefined || value === '') return '';
 	switch (field.type) {
@@ -42,6 +46,8 @@ export function formatValue(
 			return typeof value === 'number'
 				? `${value.toLocaleString(locale === 'en' ? 'en-GB' : 'de-DE')}${field.unit ? ` ${pick(field.unit, locale)}` : ''}`
 				: '';
+		case 'reference':
+			return typeof value === 'string' ? (titles[value] ?? '—') : '';
 		case 'assessment':
 			return typeof value === 'object' && value !== null && !Array.isArray(value)
 				? pick(value.headline, locale)
