@@ -26,58 +26,6 @@ export const planned: ToolManifest[] = [
 	},
 
 	// ---------- Audit ----------
-	{
-		slug: 'auditprogramm',
-		category: 'audit',
-		status: 'planned',
-		shape: 'workflow',
-		version: 0,
-		name: { de: 'Auditprogramm', en: 'Audit programme' },
-		summary: {
-			de: 'Audit definieren: Umfang, Kriterien (DSGVO, KI-VO, 27001, 42001, TISAX), Zeitplan, Ansprechpartner.',
-			en: 'Define an audit: scope, criteria (GDPR, AI Act, 27001, 42001, TISAX), schedule, contacts.'
-		},
-		legalBasis: [{ law: 'ISO 27001', ref: 'Kap. 9.2' }]
-	},
-	{
-		slug: 'pruefkatalog',
-		category: 'audit',
-		status: 'planned',
-		shape: 'questionnaire',
-		version: 0,
-		name: { de: 'Prüfkatalog', en: 'Audit checklist' },
-		summary: {
-			de: 'Fragensätze je Kriterium, Stichproben, Interviewnotizen.',
-			en: 'Question sets per criterion, sampling, interview notes.'
-		},
-		legalBasis: [{ law: 'DSGVO', ref: 'Art. 39 Abs. 1 lit. b' }]
-	},
-	{
-		slug: 'feststellungen',
-		category: 'audit',
-		status: 'planned',
-		shape: 'workflow',
-		version: 0,
-		name: { de: 'Feststellungen', en: 'Findings' },
-		summary: {
-			de: 'Haupt- und Nebenabweichungen, Hinweise, Nachweise, Korrekturmaßnahmen mit Fristen.',
-			en: 'Major and minor nonconformities, observations, evidence, corrective actions with deadlines.'
-		},
-		legalBasis: [{ law: 'ISO 27001', ref: 'Kap. 10.1' }]
-	},
-	{
-		slug: 'auditbericht',
-		category: 'audit',
-		status: 'planned',
-		shape: 'workflow',
-		version: 0,
-		name: { de: 'Auditbericht', en: 'Audit report' },
-		summary: {
-			de: 'Berichtsgenerator aus Programm, Katalog und Feststellungen; PDF.',
-			en: 'Report generator from programme, checklist and findings; PDF.'
-		},
-		legalBasis: [{ law: 'ISO 27001', ref: 'Kap. 9.2' }]
-	},
 
 	// ---------- Entwickler ----------
 	{
