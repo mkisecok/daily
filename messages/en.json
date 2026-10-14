@@ -157,5 +157,7 @@
 	"org_cancel": "Cancel",
 	"org_working_in": "Workspace: {name}",
 	"org_switched": "You are now working in {name}.",
-	"records_print_organisation": "Controller: {name}"
+	"records_print_organisation": "Controller: {name}",
+	"records_links": "Linked entries",
+	"records_composed": "Basis of the report"
 }

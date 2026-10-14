@@ -157,5 +157,7 @@
 	"org_cancel": "Abbrechen",
 	"org_working_in": "Arbeitsbereich: {name}",
 	"org_switched": "Sie arbeiten jetzt in {name}.",
-	"records_print_organisation": "Verantwortlicher: {name}"
+	"records_print_organisation": "Verantwortlicher: {name}",
+	"records_links": "Verknüpfte Einträge",
+	"records_composed": "Grundlage des Berichts"
 }
