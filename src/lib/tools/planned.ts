@@ -183,22 +183,6 @@ export const planned: ToolManifest[] = [
 		]
 	},
 	{
-		slug: 'technische-dokumentation',
-		category: 'ki',
-		status: 'planned',
-		shape: 'questionnaire',
-		version: 0,
-		name: { de: 'Technische Dokumentation', en: 'Technical documentation' },
-		summary: {
-			de: 'Prüfliste nach Anhang IV mit Nachweisfeldern je Abschnitt (Anbieter).',
-			en: 'Annex IV checklist with evidence fields per section (providers).'
-		},
-		legalBasis: [
-			{ law: 'KI-VO', ref: 'Art. 11' },
-			{ law: 'KI-VO', ref: 'Anhang IV' }
-		]
-	},
-	{
 		slug: 'vorfallmeldung',
 		category: 'ki',
 		status: 'planned',
