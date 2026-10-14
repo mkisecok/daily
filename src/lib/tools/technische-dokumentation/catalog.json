@@ -1,0 +1,194 @@
+{
+	"slug": "technische-dokumentation",
+	"version": 1,
+	"intro": {
+		"de": "Anbieter von Hochrisiko-KI-Systemen müssen vor dem Inverkehrbringen eine technische Dokumentation erstellen, die mindestens die Angaben des Anhangs IV enthält, und sie aktuell halten (Art. 11). Kleine und mittlere Unternehmen dürfen eine vereinfachte Form nutzen. Diese Prüfliste geht die neun Abschnitte des Anhangs IV durch.",
+		"en": "Providers of high-risk AI systems must draw up technical documentation before placing the system on the market, containing at least the elements of Annex IV, and keep it up to date (Art. 11). SMEs may use a simplified form. This checklist walks through the nine sections of Annex IV."
+	},
+	"sources": [
+		{ "law": "KI-VO", "ref": "Art. 11, Anhang IV" },
+		{ "law": "KI-VO", "ref": "Art. 9, 17, 18, 47, 72" },
+		{ "law": "KI-VO", "ref": "Verordnung (EU) 2026/1744 (Omnibus)" }
+	],
+	"sections": [
+		{
+			"id": "scope",
+			"title": { "de": "Anwendbarkeit", "en": "Applicability" },
+			"questions": [
+				{
+					"id": "s_provider",
+					"type": "yesno",
+					"text": {
+						"de": "Sind Sie Anbieter des Systems, entwickeln es also oder lassen es entwickeln und bringen es unter Ihrem Namen in Verkehr?",
+						"en": "Are you the provider of the system, i.e. do you develop it or have it developed and place it on the market under your name?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 3 Nr. 3" }
+				},
+				{
+					"id": "s_highrisk",
+					"type": "yesno",
+					"text": {
+						"de": "Ist das System ein Hochrisiko-KI-System nach Art. 6?",
+						"en": "Is the system a high-risk AI system under Art. 6?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 6" }
+				}
+			]
+		},
+		{
+			"id": "annex",
+			"title": { "de": "Inhalt nach Anhang IV", "en": "Contents under Annex IV" },
+			"questions": [
+				{
+					"id": "d_general",
+					"type": "yesno",
+					"text": {
+						"de": "Allgemeine Beschreibung: Zweckbestimmung, Anbieter, Version, Zusammenwirken mit Hard- und Software, Formen des Inverkehrbringens, Benutzeroberfläche und Betriebsanleitung?",
+						"en": "General description: intended purpose, provider, version, interaction with hardware and software, forms in which it is placed on the market, user interface and instructions for use?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 1" },
+					"remedy": {
+						"de": "Systemsteckbrief mit Zweckbestimmung, Versionen, Schnittstellen und Betriebsanleitung anlegen.",
+						"en": "Create a system profile with intended purpose, versions, interfaces and instructions for use."
+					}
+				},
+				{
+					"id": "d_development",
+					"type": "yesno",
+					"text": {
+						"de": "Detaillierte Beschreibung von Bestandteilen und Entwicklung: Methoden, Designentscheidungen, Systemarchitektur, Datenanforderungen und Datenblätter, Maßnahmen zur menschlichen Aufsicht, vorab festgelegte Änderungen, Validierung und Tests mit Metriken und Protokollen?",
+						"en": "Detailed description of elements and development: methods, design choices, system architecture, data requirements and datasheets, human oversight measures, predetermined changes, validation and testing with metrics and logs?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 2" },
+					"remedy": {
+						"de": "Architektur, Trainings- und Testdaten (Herkunft, Aufbereitung, Kennzeichnung) sowie Test- und Validierungsberichte dokumentieren.",
+						"en": "Document architecture, training and test data (provenance, preparation, labelling) and test and validation reports."
+					}
+				},
+				{
+					"id": "d_monitoring",
+					"type": "yesno",
+					"text": {
+						"de": "Überwachung, Funktionsweise und Kontrolle: Fähigkeiten und Grenzen, Genauigkeit für bestimmte Personengruppen, vorhersehbare unbeabsichtigte Ergebnisse und Risiken, Aufsichtsmaßnahmen, Spezifikationen der Eingabedaten?",
+						"en": "Monitoring, functioning and control: capabilities and limitations, accuracy for specific groups of persons, foreseeable unintended outcomes and risks, oversight measures, input data specifications?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 3" },
+					"remedy": {
+						"de": "Leistungsgrenzen und Genauigkeit je Personengruppe messen und die bekannten Risiken mit Gegenmaßnahmen beschreiben.",
+						"en": "Measure performance limits and accuracy per group of persons and describe known risks with their countermeasures."
+					}
+				},
+				{
+					"id": "d_metrics",
+					"type": "yesno",
+					"text": {
+						"de": "Begründung, warum die gewählten Leistungskennzahlen für dieses System angemessen sind?",
+						"en": "Justification why the chosen performance metrics are appropriate for this system?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 4" },
+					"remedy": {
+						"de": "Die Wahl der Kennzahlen (z. B. Fehlerraten, Fairness-Maße) im Verhältnis zur Zweckbestimmung begründen.",
+						"en": "Justify the choice of metrics (e.g. error rates, fairness measures) relative to the intended purpose."
+					}
+				},
+				{
+					"id": "d_risk",
+					"type": "yesno",
+					"text": {
+						"de": "Ausführliche Beschreibung des Risikomanagementsystems nach Art. 9?",
+						"en": "Detailed description of the risk management system under Art. 9?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 5, Art. 9" },
+					"remedy": {
+						"de": "Risikomanagementprozess über den gesamten Lebenszyklus aufsetzen und Risikoanalyse, Bewertung und Maßnahmen dokumentieren.",
+						"en": "Set up a risk management process across the life cycle and document risk analysis, evaluation and measures."
+					}
+				},
+				{
+					"id": "d_changes",
+					"type": "yesno",
+					"text": {
+						"de": "Beschreibung der relevanten Änderungen am System während seines Lebenszyklus?",
+						"en": "Description of relevant changes made to the system through its life cycle?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 6" },
+					"remedy": {
+						"de": "Änderungsprotokoll mit Versionen, Grund und Auswirkung auf Konformität führen.",
+						"en": "Keep a change log with versions, reason and effect on conformity."
+					}
+				},
+				{
+					"id": "d_standards",
+					"type": "yesno",
+					"text": {
+						"de": "Liste der angewandten harmonisierten Normen oder, wo keine angewandt wurden, Beschreibung der gewählten Lösungen und angewandten gemeinsamen Spezifikationen?",
+						"en": "List of harmonised standards applied or, where none were applied, a description of the solutions adopted and any common specifications applied?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 7" },
+					"remedy": {
+						"de": "Angewandte Normen auflisten; wo keine vorliegen, die eigenen Lösungen je Anforderung der Art. 8–15 beschreiben.",
+						"en": "List the standards applied; where none exist, describe your own solutions per requirement of Art. 8–15."
+					}
+				},
+				{
+					"id": "d_declaration",
+					"type": "yesno",
+					"text": {
+						"de": "Kopie der EU-Konformitätserklärung nach Art. 47?",
+						"en": "Copy of the EU declaration of conformity under Art. 47?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 8, Art. 47" },
+					"remedy": {
+						"de": "Nach abgeschlossener Konformitätsbewertung die EU-Konformitätserklärung ausstellen und der Dokumentation beifügen.",
+						"en": "After the conformity assessment, issue the EU declaration of conformity and add it to the documentation."
+					}
+				},
+				{
+					"id": "d_postmarket",
+					"type": "yesno",
+					"text": {
+						"de": "Beschreibung des Systems zur Beobachtung nach dem Inverkehrbringen einschließlich des Plans nach Art. 72?",
+						"en": "Description of the post-market monitoring system, including the plan under Art. 72?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 9, Art. 72" },
+					"remedy": {
+						"de": "Plan zur Beobachtung nach dem Inverkehrbringen aufstellen: welche Daten, wie oft, wer bewertet, wann wird eingegriffen.",
+						"en": "Draw up a post-market monitoring plan: which data, how often, who evaluates, when to intervene."
+					}
+				}
+			]
+		},
+		{
+			"id": "maintenance",
+			"title": { "de": "Pflege und Aufbewahrung", "en": "Maintenance and retention" },
+			"questions": [
+				{
+					"id": "m_current",
+					"type": "yesno",
+					"text": {
+						"de": "Wird die Dokumentation vor dem Inverkehrbringen erstellt und danach laufend aktualisiert?",
+						"en": "Is the documentation drawn up before placing on the market and kept up to date afterwards?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 11 Abs. 1" },
+					"remedy": {
+						"de": "Aktualisierung der Dokumentation in den Freigabeprozess jeder neuen Version aufnehmen.",
+						"en": "Make updating the documentation part of the release process for every new version."
+					}
+				},
+				{
+					"id": "m_retention",
+					"type": "yesno",
+					"text": {
+						"de": "Wird die Dokumentation zehn Jahre nach dem Inverkehrbringen für die Behörden bereitgehalten?",
+						"en": "Is the documentation kept available for the authorities for ten years after placing on the market?"
+					},
+					"cite": { "law": "KI-VO", "ref": "Art. 18 Abs. 1" },
+					"remedy": {
+						"de": "Archivierung für zehn Jahre ab dem Inverkehrbringen festlegen, auch für den Fall einer Betriebsaufgabe.",
+						"en": "Set up archiving for ten years from placing on the market, including in case the business ceases."
+					}
+				}
+			]
+		}
+	]
+}
