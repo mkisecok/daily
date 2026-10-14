@@ -14,7 +14,8 @@
 	const answerLabel: Record<string, () => string> = {
 		yes: m.answer_yes,
 		no: m.answer_no,
-		unknown: m.answer_unknown
+		unknown: m.answer_unknown,
+		na: m.answer_na
 	};
 
 	/** Every question with its continuous number and the stored answer. */

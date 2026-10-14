@@ -3,6 +3,7 @@
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
 	import { localized } from '#lib/i18n/links.js';
+	import { readAnswers } from '#lib/tools/answers.js';
 	import { text } from '#lib/tools/i18n.js';
 	import { getQuestionnaire } from '#lib/tools/registry.js';
 	import type { Answers, QuestionnaireResult, YesNoAnswer } from '#lib/tools/types.js';
@@ -27,7 +28,8 @@
 	const answerLabel: Record<YesNoAnswer, () => string> = {
 		yes: m.answer_yes,
 		no: m.answer_no,
-		unknown: m.answer_unknown
+		unknown: m.answer_unknown,
+		na: m.answer_na
 	};
 
 	/** Questions numbered continuously across sections. */
@@ -40,22 +42,13 @@
 	});
 	const rows = $derived(sections.flatMap((section) => section.questions));
 
-	function isYesNo(value: FormDataEntryValue | null): value is YesNoAnswer {
-		return value === 'yes' || value === 'no' || value === 'unknown';
-	}
-
 	/** Evaluates in the browser; nothing leaves the page. */
 	function evaluate(event: SubmitEvent & { currentTarget: HTMLFormElement }) {
 		event.preventDefault();
 		if (!engine) return;
-		const form = new FormData(event.currentTarget);
-		const next: Answers = {};
-		for (const { question } of rows) {
-			const value = form.get(`answer.${question.id}`);
-			if (isYesNo(value)) next[question.id] = value;
-		}
-		answers = next;
-		result = engine(data.catalog, next);
+		const read = readAnswers(data.catalog, new FormData(event.currentTarget));
+		answers = read.answers;
+		result = engine(data.catalog, read.answers);
 		window.scrollTo({ top: 0 });
 	}
 

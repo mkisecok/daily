@@ -41,6 +41,7 @@
 	"answer_yes": "Ja",
 	"answer_no": "Nein",
 	"answer_unknown": "Unklar",
+	"answer_na": "Entfällt",
 	"form_evaluate": "Auswerten und speichern",
 	"form_saved_note": "Das Ergebnis wird mit Datum und Katalogversion gespeichert und lässt sich drucken.",
 	"form_missing_answers": "Bitte beantworten Sie alle Fragen.",

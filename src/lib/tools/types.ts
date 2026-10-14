@@ -24,8 +24,9 @@ export type ToolManifest = {
 
 /* ---------- questionnaire shape ---------- */
 
-export type QuestionType = 'yesno';
-export type YesNoAnswer = 'yes' | 'no' | 'unknown';
+/** `yesnona` adds "not applicable" for duties that only exist in some situations. */
+export type QuestionType = 'yesno' | 'yesnona';
+export type YesNoAnswer = 'yes' | 'no' | 'unknown' | 'na';
 
 export type Question = {
 	id: string;
@@ -52,6 +53,11 @@ export type QuestionnaireCatalog = {
 
 export type Answers = Record<string, YesNoAnswer>;
 
+/**
+ * Severity, not truth value: `positive` means something applies that demands
+ * action (shown in wax red), `conditional` needs a judgement or open points
+ * (navy), `negative` means nothing to do (khaki).
+ */
 export type VerdictLevel = 'positive' | 'conditional' | 'negative';
 
 export type Reason = {

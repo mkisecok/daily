@@ -41,6 +41,7 @@
 	"answer_yes": "Yes",
 	"answer_no": "No",
 	"answer_unknown": "Unclear",
+	"answer_na": "Not applicable",
 	"form_evaluate": "Evaluate and save",
 	"form_saved_note": "The result is stored with date and catalog version and can be printed.",
 	"form_missing_answers": "Please answer every question.",
