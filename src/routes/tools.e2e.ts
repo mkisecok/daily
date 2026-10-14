@@ -11,8 +11,10 @@ test('catalogue lists the DSFA screening as available and planned tools without 
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Werkzeuge');
 	await expect(page.getByRole('link', { name: 'DSFA-Schwellwertanalyse' })).toBeVisible();
 	await expect(page.getByRole('link', { name: 'Risikoklassifizierung' })).toBeVisible();
-	await expect(page.getByText('Betreiberpflichten')).toBeVisible();
-	await expect(page.getByRole('link', { name: 'Betreiberpflichten' })).toHaveCount(0);
+	await expect(
+		page.locator('.tool .title', { hasText: 'Grundrechte-Folgenabschätzung' })
+	).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Grundrechte-Folgenabschätzung' })).toHaveCount(0);
 });
 
 test('DSFA screening: answer, save, and read the verdict back', async ({ page }) => {
@@ -63,4 +65,23 @@ test('risk classification runs in the browser without an account', async ({ page
 
 	await page.getByRole('button', { name: 'Antworten ändern' }).click();
 	await expect(page.locator('input[name="answer.t_interaction"][value="yes"]')).toBeChecked();
+});
+
+test('consent check offers "not applicable" and names each defect', async ({ page }) => {
+	await page.goto('/werkzeuge/einwilligung-check/pruefen');
+
+	const questions = page.locator('fieldset');
+	const count = await questions.count();
+	for (let i = 0; i < count; i++) {
+		await questions.nth(i).getByLabel('Ja', { exact: true }).check();
+	}
+	await page.locator('input[name="answer.b_wall"][value="na"]').check();
+	await page.locator('input[name="answer.b_reject"][value="no"]').check();
+
+	await page.getByRole('button', { name: 'Auswerten' }).click();
+	await expect(
+		page.getByRole('heading', { level: 2, name: '1 Mangel im Einwilligungsverfahren.' })
+	).toBeVisible();
+	await expect(page.getByText('Alle ablehnen', { exact: false }).first()).toBeVisible();
+	await expect(page.locator('.answer[data-answer="na"]')).toHaveText('Entfällt');
 });
