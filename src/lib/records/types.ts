@@ -135,7 +135,7 @@ export type RecordEngine = {
 	deadlines?: (record: RecordView) => DeadlineSpec[];
 	assess?: (record: RecordView) => QuestionnaireResult | null;
 	/** Values an attached questionnaire result sets, e.g. the risk class. */
-	fromAssessment?: (field: string, result: QuestionnaireResult) => RecordData;
+	fromAssessment?: (field: string, result: QuestionnaireResult, record: RecordView) => RecordData;
 };
 
 export type RecordTool = {

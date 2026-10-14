@@ -15,7 +15,7 @@
 	import { getRecordTool } from '#lib/tools/registry.js';
 	import type { QuestionnaireResult } from '#lib/tools/types.js';
 	import { getStore } from '../store/index.js';
-	import type { RecordTool } from '../types.js';
+	import type { RecordTool, StoredRecord } from '../types.js';
 	import { fieldById } from '../validate.js';
 
 	let {
@@ -25,7 +25,7 @@
 	}: { questionnaire: string; catalogVersion: number; result: QuestionnaireResult | null } =
 		$props();
 
-	type Target = { tool: RecordTool; id: string; field: string; title: string };
+	type Target = { tool: RecordTool; id: string; field: string; record: StoredRecord };
 	let target = $state<Target | null>(null);
 	let busy = $state(false);
 	let failed = $state(false);
@@ -40,12 +40,12 @@
 			.get(id)
 			.catch(() => null);
 		if (!detail || detail.record.archivedAt) return;
-		target = { tool, id, field: def.id, title: detail.record.title };
+		target = { tool, id, field: def.id, record: detail.record };
 	});
 
 	async function attach() {
 		if (!target || !result) return;
-		const { tool, id, field } = target;
+		const { tool, id, field, record } = target;
 		busy = true;
 		failed = false;
 		try {
@@ -60,7 +60,7 @@
 					headline: result.headline,
 					at: new Date().toISOString()
 				},
-				tool.engine.fromAssessment?.(field, result) ?? {}
+				tool.engine.fromAssessment?.(field, result, record) ?? {}
 			);
 			if (!outcome.ok) throw new Error(outcome.error);
 			await goto(resolve(localized(`/werkzeuge/${tool.manifest.slug}/eintraege?eintrag=${id}`)));
@@ -74,7 +74,7 @@
 
 {#if target}
 	<aside class="handoff no-print">
-		<p>{m.handoff_for({ title: target.title, tool: text(target.tool.manifest.name) })}</p>
+		<p>{m.handoff_for({ title: target.record.title, tool: text(target.tool.manifest.name) })}</p>
 		{#if result}
 			<p class="toolbar">
 				<button type="button" onclick={attach} disabled={busy}>

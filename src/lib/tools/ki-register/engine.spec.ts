@@ -27,14 +27,14 @@ describe('KI-Register', () => {
 	it('takes the risk class over from the risk classification', () => {
 		const result = (outcome: string) =>
 			({ outcome, verdict: 'positive', headline: { de: '', en: '' } }) as QuestionnaireResult;
-		expect(engine.fromAssessment!('einstufung', result('hochrisiko'))).toEqual({
+		expect(engine.fromAssessment!('einstufung', result('hochrisiko'), view({}))).toEqual({
 			risikoklasse: 'hochriskant'
 		});
-		expect(engine.fromAssessment!('einstufung', result('kein-ki'))).toEqual({
+		expect(engine.fromAssessment!('einstufung', result('kein-ki'), view({}))).toEqual({
 			risikoklasse: 'ausserhalb'
 		});
-		expect(engine.fromAssessment!('einstufung', result('unbekannt'))).toEqual({});
-		expect(engine.fromAssessment!('anderes', result('minimal'))).toEqual({});
+		expect(engine.fromAssessment!('einstufung', result('unbekannt'), view({}))).toEqual({});
+		expect(engine.fromAssessment!('anderes', result('minimal'), view({}))).toEqual({});
 	});
 
 	it('sets the review date at 9:00 German time and drops it for retired systems', () => {
