@@ -3,7 +3,8 @@ export type Localized = { de: string; en: string };
 
 export type ToolCategory = 'datenschutz' | 'ki' | 'audit' | 'entwickler';
 export type ToolStatus = 'stable' | 'beta' | 'planned';
-export type ToolShape = 'questionnaire' | 'register' | 'workflow';
+/** `utility`: an interactive tool with its own page, e.g. the repository scan. */
+export type ToolShape = 'questionnaire' | 'register' | 'workflow' | 'utility';
 
 export type Law =
 	| 'DSGVO'
