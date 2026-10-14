@@ -1,0 +1,120 @@
+{
+	"slug": "drittland-transfer",
+	"version": 1,
+	"intro": {
+		"de": "Personenbezogene Daten dürfen in ein Land außerhalb des EWR nur übermittelt werden, wenn Kapitel V der DSGVO eingehalten ist: ein Angemessenheitsbeschluss, geeignete Garantien mit einer Bewertung des Ziellandes oder ausnahmsweise eine Ausnahme nach Art. 49. Die Prüfung folgt dieser Reihenfolge und den Empfehlungen 01/2020 des EDSA zur Schrems-II-Entscheidung. Sie ersetzt nicht die Rechtsgrundlage nach Art. 6 und den Auftragsverarbeitungsvertrag, die zusätzlich nötig sind.",
+		"en": "Personal data may be transferred to a country outside the EEA only in compliance with Chapter V GDPR: an adequacy decision, appropriate safeguards with an assessment of the destination country, or exceptionally a derogation under Art. 49. The assessment follows this order and EDPB Recommendations 01/2020 on the Schrems II judgment. It does not replace the legal basis under Art. 6 and the processing agreement, which are needed in addition."
+	},
+	"sources": [
+		{ "law": "DSGVO", "ref": "Art. 44–49" },
+		{ "law": "EuGH", "ref": "C-311/18 (Schrems II)" },
+		{ "law": "EDPB", "ref": "Empfehlungen 01/2020 zu ergänzenden Maßnahmen" },
+		{ "law": "EDPB", "ref": "Leitlinien 05/2021 zu Art. 3 und Kapitel V" }
+	],
+	"sections": [
+		{
+			"id": "scope",
+			"title": { "de": "Liegt eine Übermittlung vor?", "en": "Is there a transfer?" },
+			"questions": [
+				{
+					"id": "t_transfer",
+					"type": "yesno",
+					"text": {
+						"de": "Werden personenbezogene Daten an einen Empfänger außerhalb des EWR übermittelt oder ihm zugänglich gemacht, auch durch Fernzugriff, Support oder einen Cloud-Dienst?",
+						"en": "Is personal data transferred or made accessible to a recipient outside the EEA, including through remote access, support or a cloud service?"
+					},
+					"help": {
+						"de": "Auch ein EU-Rechenzentrum eines Anbieters mit Mutterkonzern in einem Drittland kann wegen dortiger Zugriffsrechte relevant sein.",
+						"en": "An EU data centre of a provider whose parent company is in a third country can also be relevant because of access rights there."
+					},
+					"cite": { "law": "EDPB", "ref": "Leitlinien 05/2021" }
+				}
+			]
+		},
+		{
+			"id": "adequacy",
+			"title": { "de": "Angemessenheit", "en": "Adequacy" },
+			"questions": [
+				{
+					"id": "t_adequacy",
+					"type": "yesno",
+					"text": {
+						"de": "Besteht für das Empfängerland ein Angemessenheitsbeschluss der Kommission, der diesen Empfänger erfasst (z. B. Schweiz, Vereinigtes Königreich, Japan, Republik Korea, Israel, Neuseeland, Argentinien, Uruguay, Kanada für kommerzielle Organisationen)?",
+						"en": "Is there a Commission adequacy decision for the destination country that covers this recipient (e.g. Switzerland, United Kingdom, Japan, Republic of Korea, Israel, New Zealand, Argentina, Uruguay, Canada for commercial organisations)?"
+					},
+					"help": {
+						"de": "Die aktuelle Liste veröffentlicht die Kommission; Beschlüsse können befristet oder auf Teilbereiche beschränkt sein.",
+						"en": "The Commission publishes the current list; decisions may be time-limited or restricted to certain sectors."
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 45" }
+				},
+				{
+					"id": "t_dpf",
+					"type": "yesnona",
+					"text": {
+						"de": "Bei Empfängern in den USA: Ist der Empfänger aktiv unter dem EU-U.S. Data Privacy Framework zertifiziert, und deckt die Zertifizierung die übermittelten Daten ab (z. B. Personaldaten)?",
+						"en": "For recipients in the USA: is the recipient actively certified under the EU-U.S. Data Privacy Framework, and does the certification cover the data transferred (e.g. HR data)?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 45, Durchführungsbeschluss (EU) 2023/1795" }
+				}
+			]
+		},
+		{
+			"id": "safeguards",
+			"title": { "de": "Geeignete Garantien", "en": "Appropriate safeguards" },
+			"questions": [
+				{
+					"id": "t_scc",
+					"type": "yesno",
+					"text": {
+						"de": "Sind die Standardvertragsklauseln der Kommission (Durchführungsbeschluss 2021/914) im passenden Modul abgeschlossen?",
+						"en": "Have the Commission's standard contractual clauses (Implementing Decision 2021/914) been concluded in the appropriate module?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 46 Abs. 2 lit. c" }
+				},
+				{
+					"id": "t_bcr",
+					"type": "yesno",
+					"text": {
+						"de": "Oder liegen genehmigte verbindliche interne Datenschutzvorschriften (Binding Corporate Rules) vor, die den Empfänger erfassen?",
+						"en": "Or are there approved binding corporate rules that cover the recipient?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 47" }
+				},
+				{
+					"id": "t_tia",
+					"type": "yesno",
+					"text": {
+						"de": "Wurde ein Transfer Impact Assessment durchgeführt, das Recht und Praxis des Ziellandes bewertet, insbesondere Zugriffe von Behörden?",
+						"en": "Has a transfer impact assessment been carried out that evaluates law and practice of the destination country, in particular access by public authorities?"
+					},
+					"cite": { "law": "EDPB", "ref": "Empfehlungen 01/2020, Schritt 3" }
+				},
+				{
+					"id": "t_measures",
+					"type": "yesnona",
+					"text": {
+						"de": "Falls das Assessment Schutzlücken zeigt: Sind wirksame ergänzende Maßnahmen umgesetzt, etwa Verschlüsselung mit Schlüsseln nur im EWR oder Pseudonymisierung?",
+						"en": "If the assessment reveals gaps: are effective supplementary measures in place, such as encryption with keys held only in the EEA, or pseudonymisation?"
+					},
+					"cite": { "law": "EDPB", "ref": "Empfehlungen 01/2020, Schritt 4" }
+				}
+			]
+		},
+		{
+			"id": "derogations",
+			"title": { "de": "Ausnahmen", "en": "Derogations" },
+			"questions": [
+				{
+					"id": "t_derogation",
+					"type": "yesno",
+					"text": {
+						"de": "Greift für eine gelegentliche, nicht wiederholte Übermittlung eine Ausnahme nach Art. 49, etwa eine ausdrückliche Einwilligung nach Information über die Risiken, die Erfüllung eines Vertrags mit der betroffenen Person oder die Geltendmachung von Rechtsansprüchen?",
+						"en": "For an occasional, non-repetitive transfer, does a derogation under Art. 49 apply, such as explicit consent after being informed of the risks, the performance of a contract with the data subject, or legal claims?"
+					},
+					"cite": { "law": "DSGVO", "ref": "Art. 49 Abs. 1" }
+				}
+			]
+		}
+	]
+}
