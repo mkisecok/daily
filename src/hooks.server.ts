@@ -3,6 +3,8 @@ import { sequence } from '@sveltejs/kit/hooks';
 import { getTextDirection } from '#lib/paraglide/runtime.js';
 import { paraglideMiddleware } from '#lib/paraglide/server.js';
 import { loadSession } from '#lib/server/auth/session.js';
+import { db } from '#lib/server/db/index.js';
+import { ORG_COOKIE, resolveOrganisation } from '#lib/server/org.js';
 import { parseTheme, THEME_COOKIE } from '#lib/theme.js';
 
 /**
@@ -25,11 +27,14 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 		);
 	});
 
-/** Resolves the session cookie once per request into `locals`. */
+/** Resolves the session and the active organisation once per request into `locals`. */
 const handleAuth: Handle = async ({ event, resolve }) => {
 	const session = await loadSession(event.cookies);
 	event.locals.session = session;
 	event.locals.user = session?.user;
+	event.locals.organisation = session
+		? await resolveOrganisation(db, session.user.id, event.cookies.get(ORG_COOKIE))
+		: undefined;
 	return resolve(event);
 };
 
