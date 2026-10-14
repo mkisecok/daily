@@ -10,7 +10,8 @@ import type { Law } from '../tools/types.js';
 
 export type Inline =
 	| { type: 'text'; text: string }
-	| { type: 'strong' | 'em'; children: Inline[] }
+	| { type: 'strong'; children: Inline[] }
+	| { type: 'em'; children: Inline[] }
 	| { type: 'code'; text: string }
 	| { type: 'link'; href: string; external: boolean; children: Inline[] }
 	| { type: 'norm'; path: string; text: string };
