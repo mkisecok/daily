@@ -26,6 +26,7 @@ import { schulungsnachweis } from './schulungsnachweis/tool.js';
 import { kiKompetenz } from './ki-kompetenz/tool.js';
 import { vorfallmeldung } from './vorfallmeldung/tool.js';
 import { dsfa } from './dsfa/tool.js';
+import { grundrechteFolgenabschaetzung } from './grundrechte-folgenabschaetzung/tool.js';
 import { planned } from './planned.js';
 
 /**
@@ -54,6 +55,7 @@ export const tools: readonly ToolManifest[] = [
 	kiRegister.manifest,
 	kiKompetenz.manifest,
 	vorfallmeldung.manifest,
+	grundrechteFolgenabschaetzung.manifest,
 	...planned
 ];
 
@@ -120,6 +122,7 @@ export function getQuestionnaire(slug: string) {
 
 /** Register and workflow tools: definition + engine, keyed by slug. */
 const recordTools: Record<string, RecordTool> = {
+	[grundrechteFolgenabschaetzung.manifest.slug]: grundrechteFolgenabschaetzung,
 	[dsfa.manifest.slug]: dsfa,
 	[vorfallmeldung.manifest.slug]: vorfallmeldung,
 	[kiKompetenz.manifest.slug]: kiKompetenz,

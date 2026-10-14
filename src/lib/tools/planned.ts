@@ -9,19 +9,6 @@ export const planned: ToolManifest[] = [
 	// ---------- Datenschutz ----------
 	// ---------- Künstliche Intelligenz ----------
 	{
-		slug: 'grundrechte-folgenabschaetzung',
-		category: 'ki',
-		status: 'planned',
-		shape: 'workflow',
-		version: 0,
-		name: { de: 'Grundrechte-Folgenabschätzung', en: 'Fundamental rights impact assessment' },
-		summary: {
-			de: 'FRIA nach Art. 27 für öffentliche Stellen sowie Kredit- und Versicherungsbetreiber.',
-			en: 'FRIA under Art. 27 for public bodies and credit or insurance deployers.'
-		},
-		legalBasis: [{ law: 'KI-VO', ref: 'Art. 27' }]
-	},
-	{
 		slug: 'aims-gap',
 		category: 'ki',
 		status: 'planned',
