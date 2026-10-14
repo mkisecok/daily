@@ -38,19 +38,6 @@ export const planned: ToolManifest[] = [
 		legalBasis: [{ law: 'KI-VO', ref: 'Art. 27' }]
 	},
 	{
-		slug: 'ki-kompetenz',
-		category: 'ki',
-		status: 'planned',
-		shape: 'register',
-		version: 0,
-		name: { de: 'KI-Kompetenz', en: 'AI literacy' },
-		summary: {
-			de: 'Schulungsplan und Nachweis je Rolle nach Art. 4.',
-			en: 'Training plan and evidence per role under Art. 4.'
-		},
-		legalBasis: [{ law: 'KI-VO', ref: 'Art. 4' }]
-	},
-	{
 		slug: 'vorfallmeldung',
 		category: 'ki',
 		status: 'planned',
