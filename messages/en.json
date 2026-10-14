@@ -138,5 +138,8 @@
 	"deadlines_overdue": "Overdue",
 	"deadlines_soon": "Due within 24 hours",
 	"deadlines_ics": "Calendar file (.ics)",
-	"deadlines_due": "Due"
+	"deadlines_due": "Due",
+	"handoff_for": "Assessment for the entry “{title}” in {tool}.",
+	"handoff_attach": "Attach to {tool}",
+	"handoff_failed": "The result could not be attached."
 }

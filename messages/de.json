@@ -138,5 +138,8 @@
 	"deadlines_overdue": "Überfällig",
 	"deadlines_soon": "Fällig in 24 Stunden",
 	"deadlines_ics": "Kalenderdatei (.ics)",
-	"deadlines_due": "Fällig"
+	"deadlines_due": "Fällig",
+	"handoff_for": "Prüfung für den Eintrag „{title}“ in {tool}.",
+	"handoff_attach": "In {tool} übernehmen",
+	"handoff_failed": "Das Ergebnis konnte nicht übernommen werden."
 }
