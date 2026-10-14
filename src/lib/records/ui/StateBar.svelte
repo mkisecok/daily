@@ -2,7 +2,7 @@
 	@component
 	Where a workflow record stands: the states in order with the current one
 	marked, then the possible next steps. A step whose required fields are
-	empty is disabled and names what is missing.
+	empty, or whose own check fails, is disabled and says why.
 -->
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
@@ -47,21 +47,25 @@
 		<div class="next">
 			<span class="eyebrow">{m.records_next()}</span>
 			<div class="toolbar">
-				{#each options as { transition, missing } (transition.to)}
+				{#each options as { transition, missing, blocked } (transition.to)}
 					<button
 						type="button"
 						class="quiet"
-						disabled={busy || missing.length > 0}
+						disabled={busy || missing.length > 0 || blocked !== null}
 						onclick={() => ontransition(transition.to)}
 					>
 						{text(transition.label)}
 					</button>
 				{/each}
 			</div>
-			{#each options.filter((o) => o.missing.length > 0) as { transition, missing } (transition.to)}
-				<p class="missing">
-					{text(transition.label)}: {m.records_missing({ fields: labels(missing) })}
-				</p>
+			{#each options as { transition, missing, blocked } (transition.to)}
+				{#if missing.length > 0}
+					<p class="missing">
+						{text(transition.label)}: {m.records_missing({ fields: labels(missing) })}
+					</p>
+				{:else if blocked}
+					<p class="missing">{text(transition.label)}: {text(blocked)}</p>
+				{/if}
 			{/each}
 		</div>
 	{/if}

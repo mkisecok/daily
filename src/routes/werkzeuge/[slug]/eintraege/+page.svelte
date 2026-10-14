@@ -69,6 +69,8 @@
 						})
 						.join(', ')
 				});
+			case 'blocked':
+				return text(result.reason);
 			default:
 				return m.records_not_allowed();
 		}
