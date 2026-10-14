@@ -68,6 +68,8 @@ export type AssessmentSnapshot = {
 	tool: string;
 	catalogVersion: number;
 	verdict: VerdictLevel;
+	/** The questionnaire's machine-readable outcome, when it names one. */
+	outcome?: string;
 	headline: Localized;
 	/** ISO timestamp of the assessment. */
 	at: string;
@@ -130,6 +132,8 @@ export type RecordView = Pick<StoredRecord, 'data' | 'state'>;
 export type RecordEngine = {
 	deadlines?: (record: RecordView) => DeadlineSpec[];
 	assess?: (record: RecordView) => QuestionnaireResult | null;
+	/** Values an attached questionnaire result sets, e.g. the risk class. */
+	fromAssessment?: (field: string, result: QuestionnaireResult) => RecordData;
 };
 
 export type RecordTool = {
