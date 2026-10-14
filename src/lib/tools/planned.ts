@@ -7,22 +7,6 @@ import type { ToolManifest } from './types.js';
  */
 export const planned: ToolManifest[] = [
 	// ---------- Datenschutz ----------
-	{
-		slug: 'dsfa',
-		category: 'datenschutz',
-		status: 'planned',
-		shape: 'workflow',
-		version: 0,
-		name: { de: 'Datenschutz-Folgenabschätzung', en: 'Data protection impact assessment' },
-		summary: {
-			de: 'Vollständige DSFA: Beschreibung, Erforderlichkeit, Risikomatrix, Maßnahmen, Restrisiko, Konsultationsentscheidung. Bericht als PDF.',
-			en: 'Full DPIA: description, necessity, risk matrix, measures, residual risk, consultation decision. PDF report.'
-		},
-		legalBasis: [
-			{ law: 'DSGVO', ref: 'Art. 35' },
-			{ law: 'DSGVO', ref: 'Art. 36' }
-		]
-	},
 	// ---------- Künstliche Intelligenz ----------
 	{
 		slug: 'grundrechte-folgenabschaetzung',
