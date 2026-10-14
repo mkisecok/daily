@@ -11,6 +11,7 @@
 	import QuestionRow from '#lib/tools/_shared/QuestionRow.svelte';
 	import ToolHeader from '#lib/tools/_shared/ToolHeader.svelte';
 	import Verdict from '#lib/tools/_shared/Verdict.svelte';
+	import AssessmentHandoff from '#lib/records/ui/AssessmentHandoff.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -63,6 +64,8 @@
 </svelte:head>
 
 <ToolHeader tool={data.tool} />
+
+<AssessmentHandoff questionnaire={data.tool.slug} catalogVersion={data.catalog.version} {result} />
 
 {#if result}
 	<Verdict {result} />
