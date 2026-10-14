@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { citationPath, provisionsOf } from './cite.js';
 import { crossReferences } from './crossref.js';
 import { provisionLabel } from './laws.js';
+import { search } from './search.js';
 import { citationIndex } from './usage.js';
 
 const ids = (law: Parameters<typeof provisionsOf>[0]['law'], ref: string) =>
@@ -92,5 +93,43 @@ describe('tools citing a provision', () => {
 		]);
 		expect(index.get('dsgvo/art-35')?.map((t) => t.slug)).toEqual(['a', 'b']);
 		expect(index.get('dsgvo/art-36')?.map((t) => t.slug)).toEqual(['b']);
+	});
+});
+
+describe('search', () => {
+	const entry = (
+		law: 'dsgvo' | 'bdsg',
+		id: string,
+		label: string,
+		title: string,
+		text: string
+	) => ({
+		law,
+		id,
+		label,
+		title,
+		text
+	});
+	const index = [
+		entry(
+			'dsgvo',
+			'art-6',
+			'Art. 6',
+			'Rechtmäßigkeit der Verarbeitung',
+			'zur Wahrung der berechtigten Interessen des Verantwortlichen'
+		),
+		entry('dsgvo', 'art-22', 'Art. 22', 'Automatisierte Entscheidungen', 'Profiling'),
+		entry('bdsg', 'p-26', '§ 26', 'Beschäftigungsverhältnis', 'Daten von Beschäftigten')
+	];
+
+	it('finds inflected forms and ranks title hits first', () => {
+		expect(search(index, 'berechtigtes Interesse').map((h) => h.entry.id)).toEqual(['art-6']);
+		expect(search(index, 'rechtmäßigkeit')[0].entry.id).toBe('art-6');
+		expect(search(index, 'Beschaftigte').map((h) => h.entry.id)).toEqual(['p-26']);
+	});
+
+	it('jumps to a provision typed as a reference', () => {
+		expect(search(index, 'Art. 22').map((h) => h.entry.id)).toEqual(['art-22']);
+		expect(search(index, '§ 26').map((h) => h.entry.id)).toEqual(['p-26']);
 	});
 });
