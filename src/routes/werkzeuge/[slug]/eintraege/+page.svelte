@@ -1,0 +1,366 @@
+<script lang="ts">
+	import { afterNavigate, goto, invalidate } from '$app/navigation';
+	import { resolve } from '$app/paths';
+	import { localized } from '#lib/i18n/links.js';
+	import { m } from '#lib/paraglide/messages.js';
+	import { getLocale } from '#lib/paraglide/runtime.js';
+	import { toCsv } from '#lib/records/csv.js';
+	import { getStore } from '#lib/records/store/index.js';
+	import type { StoreError } from '#lib/records/store/types.js';
+	import type { StoredRecord } from '#lib/records/types.js';
+	import DeadlineList from '#lib/records/ui/DeadlineList.svelte';
+	import { downloadText } from '#lib/records/ui/download.js';
+	import PrintRegister from '#lib/records/ui/PrintRegister.svelte';
+	import RecordForm from '#lib/records/ui/RecordForm.svelte';
+	import RecordHistory from '#lib/records/ui/RecordHistory.svelte';
+	import RecordTable from '#lib/records/ui/RecordTable.svelte';
+	import RecordView from '#lib/records/ui/RecordView.svelte';
+	import StateBar from '#lib/records/ui/StateBar.svelte';
+	import { fieldById, type ValidationErrors } from '#lib/records/validate.js';
+	import { formatShortDate } from '#lib/i18n/date.js';
+	import { text } from '#lib/tools/i18n.js';
+	import { getRecordTool } from '#lib/tools/registry.js';
+	import ToolHeader from '#lib/tools/_shared/ToolHeader.svelte';
+	import Verdict from '#lib/tools/_shared/Verdict.svelte';
+	import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
+
+	const store = getStore();
+	const locale = getLocale();
+	const slug = $derived(data.tool.slug);
+	const engine = $derived(getRecordTool(slug)?.engine);
+	const detail = $derived(data.view === 'detail' ? data.detail : undefined);
+	const records = $derived(data.view === 'list' ? data.records : []);
+	const assessment = $derived(detail ? (engine?.assess?.(detail.record) ?? null) : null);
+
+	const listPath = $derived(localized(`/werkzeuge/${slug}/eintraege`));
+	const recordPath = (id: string) => localized(`/werkzeuge/${slug}/eintraege?eintrag=${id}`);
+
+	let editing = $state(false);
+	let confirmArchive = $state(false);
+	let confirmClear = $state(false);
+	let busy = $state(false);
+	let errors = $state<ValidationErrors>({});
+	let message = $state<string | null>(null);
+
+	// A different list, record or form starts clean.
+	afterNavigate(({ from, to }) => {
+		if (from?.url.search === to?.url.search) return;
+		editing = false;
+		confirmArchive = false;
+		errors = {};
+		message = null;
+	});
+
+	function describe(result: StoreError): string {
+		switch (result.error) {
+			case 'invalid':
+				errors = result.errors;
+				return m.records_errors();
+			case 'conflict':
+				return m.records_conflict();
+			case 'missing':
+				return m.records_missing({
+					fields: result.missing
+						.map((id) => {
+							const field = fieldById(data.definition, id);
+							return field ? text(field.label) : id;
+						})
+						.join(', ')
+				});
+			default:
+				return m.records_not_allowed();
+		}
+	}
+
+	/** Runs a store call; failures (network, full storage) become a message. */
+	async function run<T>(action: () => Promise<T>): Promise<T | undefined> {
+		busy = true;
+		message = null;
+		try {
+			return await action();
+		} catch {
+			message = m.records_failed();
+			return undefined;
+		} finally {
+			busy = false;
+		}
+	}
+
+	async function create(input: Record<string, unknown>) {
+		const result = await run(() => store.create(slug, input));
+		if (!result) return;
+		if (!result.ok) {
+			message = describe(result);
+			return;
+		}
+		await goto(resolve(recordPath(result.value.id)));
+	}
+
+	async function save(record: StoredRecord, input: Record<string, unknown>) {
+		const result = await run(() => store.update(record.id, input, record.version));
+		if (!result) return;
+		if (result.ok) {
+			errors = {};
+			editing = false;
+			message = m.records_saved();
+		} else {
+			message = describe(result);
+			if (result.error === 'conflict') editing = false;
+		}
+		await invalidate('records:data');
+	}
+
+	async function transition(record: StoredRecord, to: string) {
+		const result = await run(() => store.transition(record.id, to, record.version));
+		if (result && !result.ok) message = describe(result);
+		await invalidate('records:data');
+	}
+
+	async function archive(record: StoredRecord) {
+		const result = await run(() => store.archive(record.id));
+		if (result?.ok) await goto(resolve(listPath));
+		else if (result) message = describe(result);
+	}
+
+	function exportCsv() {
+		const day = new Date().toISOString().slice(0, 10);
+		downloadText(
+			`${slug}-${day}.csv`,
+			toCsv(data.definition, records, locale),
+			'text/csv;charset=utf-8'
+		);
+	}
+
+	async function clearLocal() {
+		store.clear?.();
+		confirmClear = false;
+		await invalidate('records:data');
+	}
+</script>
+
+<svelte:head>
+	<title>{text(data.tool.name)} — Daily</title>
+	<meta name="description" content={text(data.tool.summary)} />
+</svelte:head>
+
+<div class="no-print">
+	<ToolHeader tool={data.tool} />
+</div>
+
+{#if data.preview}
+	<aside class="local no-print">
+		<p>{m.records_local()}</p>
+		{#if confirmClear}
+			<p class="toolbar">
+				<span class="confirm">{m.records_local_clear_confirm()}</span>
+				<button type="button" onclick={clearLocal}>{m.records_local_clear_yes()}</button>
+				<button type="button" class="quiet" onclick={() => (confirmClear = false)}>
+					{m.records_cancel()}
+				</button>
+			</p>
+		{:else}
+			<p class="toolbar">
+				<button type="button" class="quiet" onclick={() => (confirmClear = true)}>
+					{m.records_local_clear()}
+				</button>
+			</p>
+		{/if}
+	</aside>
+{/if}
+
+{#if message}
+	<p class="message no-print" role="status">{message}</p>
+{/if}
+
+{#if data.view === 'new'}
+	<h2 class="mode-title">{m.records_new()}</h2>
+	<RecordForm
+		definition={data.definition}
+		{errors}
+		{busy}
+		onsave={create}
+		oncancel={() => goto(resolve(listPath))}
+	/>
+{:else if data.view === 'detail'}
+	{#if !detail}
+		<p class="quiet-text">{m.records_not_found()}</p>
+		<p class="toolbar"><a class="button quiet" href={resolve(listPath)}>{m.records_back()}</a></p>
+	{:else}
+		{@const record = detail.record}
+		<header class="record-head">
+			<h2>{record.title}</h2>
+			{#if record.archivedAt}
+				<p class="archived">
+					{m.records_archived({ date: formatShortDate(record.archivedAt, locale) })}
+				</p>
+			{/if}
+		</header>
+
+		{#if editing}
+			{#key record.version}
+				<RecordForm
+					definition={data.definition}
+					data={record.data}
+					{errors}
+					{busy}
+					onsave={(input) => save(record, input)}
+					oncancel={() => {
+						editing = false;
+						errors = {};
+					}}
+				/>
+			{/key}
+		{:else}
+			{#if data.definition.workflow}
+				<StateBar
+					definition={data.definition}
+					{record}
+					{busy}
+					ontransition={(to) => transition(record, to)}
+				/>
+			{/if}
+
+			{#if detail.deadlines.length > 0}
+				<section class="deadlines">
+					<h2 class="eyebrow">{m.deadlines_title()}</h2>
+					<DeadlineList
+						deadlines={detail.deadlines}
+						hrefFor={(d) => recordPath(d.recordId)}
+						showTool={false}
+					/>
+				</section>
+			{/if}
+
+			{#if assessment}
+				<Verdict result={assessment} />
+			{/if}
+
+			<RecordView
+				definition={data.definition}
+				{record}
+				assessHref={(field) =>
+					localized(`/werkzeuge/${field.tool}/pruefen?fuer=${slug}:${record.id}:${field.id}`)}
+			/>
+
+			<div class="toolbar actions no-print">
+				{#if !record.archivedAt}
+					<button type="button" onclick={() => (editing = true)}>{m.records_edit()}</button>
+				{/if}
+				<button type="button" class="quiet" onclick={() => window.print()}
+					>{m.records_print()}</button
+				>
+				<a class="button quiet" href={resolve(listPath)}>{m.records_back()}</a>
+				{#if !record.archivedAt}
+					{#if confirmArchive}
+						<span class="confirm">{m.records_archive_confirm()}</span>
+						<button type="button" onclick={() => archive(record)} disabled={busy}
+							>{m.records_archive_yes()}</button
+						>
+						<button type="button" class="quiet" onclick={() => (confirmArchive = false)}>
+							{m.records_cancel()}
+						</button>
+					{:else}
+						<button type="button" class="quiet" onclick={() => (confirmArchive = true)}>
+							{m.records_archive()}
+						</button>
+					{/if}
+				{/if}
+			</div>
+
+			<RecordHistory definition={data.definition} events={detail.events} />
+		{/if}
+	{/if}
+{:else}
+	<section class="list no-print">
+		<p class="measure intro">{text(data.definition.intro)}</p>
+		<div class="toolbar">
+			<a class="button" href={resolve(localized(`/werkzeuge/${slug}/eintraege?neu=1`))}>
+				{m.records_new()}
+			</a>
+			{#if records.length > 0}
+				<button type="button" class="quiet" onclick={exportCsv}>{m.records_csv()}</button>
+				<button type="button" class="quiet" onclick={() => window.print()}
+					>{m.records_print()}</button
+				>
+			{/if}
+		</div>
+
+		{#if records.length === 0}
+			<p class="quiet-text">{m.records_empty()}</p>
+		{:else}
+			<RecordTable definition={data.definition} {records} hrefFor={(r) => recordPath(r.id)} />
+		{/if}
+	</section>
+	{#if records.length > 0}
+		<PrintRegister definition={data.definition} {records} title={data.tool.name} />
+	{/if}
+{/if}
+
+<style>
+	.local {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem 2rem;
+		margin-top: 1.5rem;
+		padding: 0.75rem 1rem;
+		border-left: 3px solid var(--khaki);
+		background: var(--khaki-soft);
+		font-size: 14px;
+
+		& p {
+			max-width: var(--measure);
+		}
+	}
+
+	.message {
+		margin-top: 1.5rem;
+		padding: 0.75rem 1rem;
+		border-left: 3px solid var(--navy);
+		background: var(--navy-soft);
+		font-size: 14px;
+	}
+
+	.intro {
+		margin: 1.5rem 0;
+		font-size: 16px;
+		color: var(--ink2);
+	}
+
+	.mode-title,
+	.record-head h2 {
+		margin-top: 2rem;
+		font-size: clamp(24px, 3vw, 30px);
+	}
+
+	.archived {
+		margin-top: 0.5rem;
+		font-size: 14px;
+		color: var(--wax);
+	}
+
+	.deadlines {
+		padding-top: 1.5rem;
+	}
+
+	.actions {
+		margin-top: 2rem;
+	}
+
+	.confirm {
+		font-family: var(--sans);
+		font-size: 14px;
+		letter-spacing: 0;
+		text-transform: none;
+		color: var(--ink);
+	}
+
+	.quiet-text {
+		margin-top: 1.5rem;
+		font-size: 14px;
+		color: var(--ink3);
+	}
+</style>
