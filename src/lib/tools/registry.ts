@@ -32,6 +32,7 @@ import { pruefkatalog } from './pruefkatalog/tool.js';
 import { feststellungen } from './feststellungen/tool.js';
 import { auditbericht } from './auditbericht/tool.js';
 import { aimsGap } from './aims-gap/tool.js';
+import { repoCheck } from './repo-check/tool.js';
 import { planned } from './planned.js';
 
 /**
@@ -66,6 +67,7 @@ export const tools: readonly ToolManifest[] = [
 	pruefkatalog.manifest,
 	feststellungen.manifest,
 	auditbericht.manifest,
+	repoCheck.manifest,
 	...planned
 ];
 

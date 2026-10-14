@@ -12,22 +12,6 @@ export const planned: ToolManifest[] = [
 
 	// ---------- Entwickler ----------
 	{
-		slug: 'repo-check',
-		category: 'entwickler',
-		status: 'planned',
-		shape: 'workflow',
-		version: 0,
-		name: { de: 'Repo-Check', en: 'Repository check' },
-		summary: {
-			de: 'Quellcode auf personenbezogene Muster, Geheimnisse und Aufrufe externer KI-Dienste prüfen; Befundliste für den DSB.',
-			en: 'Scan source code for personal-data patterns, secrets and calls to external AI services; findings list for the DPO.'
-		},
-		legalBasis: [
-			{ law: 'DSGVO', ref: 'Art. 25' },
-			{ law: 'DSGVO', ref: 'Art. 32' }
-		]
-	},
-	{
 		slug: 'guardrail-test',
 		category: 'entwickler',
 		status: 'planned',
