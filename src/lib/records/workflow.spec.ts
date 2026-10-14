@@ -149,7 +149,7 @@ describe('export', () => {
 			[record({ data: { name: 'Eins; zwei', notes: 'Zeile 1\nZeile 2', kind: 'a' } })],
 			'de'
 		);
-		expect(csv.startsWith('﻿Status;Name;Notizen;Art')).toBe(true);
+		expect(csv.startsWith('\uFEFFStatus;Name;Notizen;Art')).toBe(true);
 		const row = csv.split('\r\n')[1];
 		expect(row.startsWith('Offen;"Eins; zwei";"Zeile 1\nZeile 2";A;')).toBe(true);
 	});

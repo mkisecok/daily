@@ -34,5 +34,5 @@ export function toCsv(
 			locale
 		)
 	]);
-	return '﻿' + [header, ...rows].map((row) => row.map(cell).join(SEPARATOR)).join('\r\n');
+	return '\uFEFF' + [header, ...rows].map((row) => row.map(cell).join(SEPARATOR)).join('\r\n');
 }
