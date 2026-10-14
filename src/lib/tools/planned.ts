@@ -136,20 +136,6 @@ export const planned: ToolManifest[] = [
 		},
 		legalBasis: [{ law: 'DSGVO', ref: 'Art. 39 Abs. 1 lit. b' }]
 	},
-	{
-		slug: 'einwilligung-check',
-		category: 'datenschutz',
-		status: 'planned',
-		shape: 'questionnaire',
-		version: 0,
-		name: { de: 'Cookie- und Einwilligungs-Check', en: 'Cookie and consent check' },
-		summary: {
-			de: 'Prüfliste für Website-Einwilligungen nach § 25 TDDDG und DSK-Orientierungshilfe Telemedien.',
-			en: 'Website consent checklist under § 25 TDDDG and the DSK guidance on telemedia.'
-		},
-		legalBasis: [{ law: 'TDDDG', ref: '§ 25' }]
-	},
-
 	// ---------- Künstliche Intelligenz ----------
 	{
 		slug: 'ki-register',

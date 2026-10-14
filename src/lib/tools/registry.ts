@@ -9,6 +9,7 @@ import { risikoklassifizierung } from './risikoklassifizierung/tool.js';
 import { transparenzpflichten } from './transparenzpflichten/tool.js';
 import { betreiberpflichten } from './betreiberpflichten/tool.js';
 import { interessenabwaegung } from './interessenabwaegung/tool.js';
+import { einwilligungCheck } from './einwilligung-check/tool.js';
 import { planned } from './planned.js';
 
 /**
@@ -21,6 +22,7 @@ export const tools: readonly ToolManifest[] = [
 	transparenzpflichten.manifest,
 	betreiberpflichten.manifest,
 	interessenabwaegung.manifest,
+	einwilligungCheck.manifest,
 	...planned
 ];
 
@@ -58,6 +60,10 @@ const questionnaires: Record<
 	[interessenabwaegung.manifest.slug]: {
 		catalog: interessenabwaegung.catalog,
 		engine: interessenabwaegung.engine
+	},
+	[einwilligungCheck.manifest.slug]: {
+		catalog: einwilligungCheck.catalog,
+		engine: einwilligungCheck.engine
 	}
 };
 
