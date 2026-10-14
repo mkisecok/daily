@@ -12,10 +12,14 @@ with fresh news; sign-in, notes and saved assessments are switched off there).
   - DPIA screening (Art. 35 DSGVO, WP 248, DSK must-list)
   - Legitimate interests assessment (Art. 6(1)(f) DSGVO, EDPB Guidelines 1/2024)
   - Cookie and consent check (§ 25 TDDDG, Art. 7 DSGVO, Planet49)
+  - Third-country transfer check (Art. 44–49 DSGVO, Schrems II, EDPB Recommendations 01/2020)
   - AI Act risk classification (Art. 5, Annex I/III, Art. 6(3), Art. 50, dates after Omnibus
     Regulation (EU) 2026/1744)
   - AI Act transparency obligations (Art. 50)
   - Deployer obligations for high-risk AI (Art. 26, 4, 27, 86)
+  - Technical documentation completeness (Art. 11, Annex IV)
+  - AI and GDPR interface check (Art. 5, 6, 22, 35 DSGVO, EDPB Opinion 28/2024)
+  - AI usage policy generator (Art. 4 KI-VO, DSGVO, BetrVG)
 
   More are planned and listed in the catalogue.
 
