@@ -19,6 +19,7 @@ import { technischeDokumentation } from './technische-dokumentation/tool.js';
 import { kiNutzungsrichtlinie } from './ki-nutzungsrichtlinie/tool.js';
 import { kiRegister } from './ki-register/tool.js';
 import type { RecordTool } from '../records/types.js';
+import { avvPruefung } from './avv-pruefung/tool.js';
 import { planned } from './planned.js';
 
 /**
@@ -36,6 +37,7 @@ export const tools: readonly ToolManifest[] = [
 	drittlandTransfer.manifest,
 	datenpanne.manifest,
 	betroffenenanfrage.manifest,
+	avvPruefung.manifest,
 	kiDsgvoSchnittstelle.manifest,
 	technischeDokumentation.manifest,
 	kiNutzungsrichtlinie.manifest,
@@ -106,6 +108,7 @@ export function getQuestionnaire(slug: string) {
 
 /** Register and workflow tools: definition + engine, keyed by slug. */
 const recordTools: Record<string, RecordTool> = {
+	[avvPruefung.manifest.slug]: avvPruefung,
 	[vvt.manifest.slug]: vvt,
 	[datenpanne.manifest.slug]: datenpanne,
 	[betroffenenanfrage.manifest.slug]: betroffenenanfrage,

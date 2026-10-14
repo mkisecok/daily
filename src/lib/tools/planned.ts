@@ -24,19 +24,6 @@ export const planned: ToolManifest[] = [
 		]
 	},
 	{
-		slug: 'avv-pruefung',
-		category: 'datenschutz',
-		status: 'planned',
-		shape: 'register',
-		version: 0,
-		name: { de: 'AVV-Prüfung', en: 'Processor contract check' },
-		summary: {
-			de: 'Prüfliste nach Art. 28 Abs. 3 lit. a–h, Auftragsverarbeiter-Register mit Wiedervorlage, Unterauftragsverarbeiter.',
-			en: 'Checklist for Art. 28(3)(a)–(h), processor register with review dates, sub-processors.'
-		},
-		legalBasis: [{ law: 'DSGVO', ref: 'Art. 28' }]
-	},
-	{
 		slug: 'tom-katalog',
 		category: 'datenschutz',
 		status: 'planned',
