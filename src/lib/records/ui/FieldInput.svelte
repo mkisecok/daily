@@ -8,14 +8,21 @@
 	import Citation from '#lib/tools/_shared/Citation.svelte';
 	import { text } from '#lib/tools/i18n.js';
 	import type { FieldError } from '../validate.js';
-	import type { FieldDef } from '../types.js';
+	import type { FieldDef, Option } from '../types.js';
 	import type { FormValue } from './inputs.js';
 
 	let {
 		field,
 		value = $bindable(),
-		error = undefined
-	}: { field: FieldDef; value: FormValue; error?: FieldError } = $props();
+		error = undefined,
+		choices = []
+	}: {
+		field: FieldDef;
+		value: FormValue;
+		error?: FieldError;
+		/** Records a reference field can point to. */
+		choices?: Option[];
+	} = $props();
 
 	const id = $derived(`field-${field.id}`);
 	const describedBy = $derived(
@@ -74,6 +81,19 @@
 				aria-describedby={describedBy}
 				aria-invalid={!!error}
 				aria-required={field.required || undefined}></textarea>
+		{:else if field.type === 'reference'}
+			<select
+				{id}
+				bind:value
+				aria-describedby={describedBy}
+				aria-invalid={!!error}
+				aria-required={field.required || undefined}
+			>
+				<option value="">{m.records_select()}</option>
+				{#each choices as choice (choice.value)}
+					<option value={choice.value}>{text(choice.label)}</option>
+				{/each}
+			</select>
 		{:else if field.type === 'select'}
 			<select
 				{id}

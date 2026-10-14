@@ -7,7 +7,7 @@
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
 	import { text } from '#lib/tools/i18n.js';
-	import type { RecordData, RecordToolDefinition } from '../types.js';
+	import type { Option, RecordData, RecordToolDefinition } from '../types.js';
 	import type { ValidationErrors } from '../validate.js';
 	import FieldInput from './FieldInput.svelte';
 	import { fromInputs, toInputs, type FormValues } from './inputs.js';
@@ -17,6 +17,7 @@
 		data = {},
 		errors = {},
 		busy = false,
+		choices = {},
 		onsave,
 		oncancel
 	}: {
@@ -24,6 +25,8 @@
 		data?: RecordData;
 		errors?: ValidationErrors;
 		busy?: boolean;
+		/** Options for reference fields, by field id. */
+		choices?: Record<string, Option[]>;
 		onsave: (input: Record<string, unknown>) => void;
 		oncancel: () => void;
 	} = $props();
@@ -58,7 +61,12 @@
 			<h2>{text(section.title)}</h2>
 			{#if section.intro}<p class="measure intro">{text(section.intro)}</p>{/if}
 			{#each section.fields as field (field.id)}
-				<FieldInput {field} bind:value={values[field.id]} error={errors[field.id]} />
+				<FieldInput
+					{field}
+					bind:value={values[field.id]}
+					error={errors[field.id]}
+					choices={choices[field.id]}
+				/>
 			{/each}
 		</section>
 	{/each}
