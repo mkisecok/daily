@@ -184,19 +184,6 @@ export const planned: ToolManifest[] = [
 		]
 	},
 	{
-		slug: 'betreiberpflichten',
-		category: 'ki',
-		status: 'planned',
-		shape: 'questionnaire',
-		version: 0,
-		name: { de: 'Betreiberpflichten', en: 'Deployer obligations' },
-		summary: {
-			de: 'Pflichten nach Art. 26 je Hochrisiko-System: Betriebsanleitung, menschliche Aufsicht, Eingabedaten, Protokolle, Information der Beschäftigten.',
-			en: 'Art. 26 duties per high-risk system: instructions, human oversight, input data, logs, informing workers.'
-		},
-		legalBasis: [{ law: 'KI-VO', ref: 'Art. 26' }]
-	},
-	{
 		slug: 'grundrechte-folgenabschaetzung',
 		category: 'ki',
 		status: 'planned',
