@@ -70,7 +70,7 @@ async function cellar(celex: string, lang: Lang): Promise<string> {
 
 const clean = (text: string) =>
 	text
-		.replace(/[  -​]/g, ' ')
+		.replace(/[\u00a0\u2002-\u200b]/g, ' ')
 		.replace(/[▼►◄]\s*[A-Z]\d*/g, '')
 		.replace(/\s+/g, ' ')
 		.trim();
