@@ -108,22 +108,6 @@ export const planned: ToolManifest[] = [
 		legalBasis: [{ law: 'DSGVO', ref: 'Art. 32' }]
 	},
 	{
-		slug: 'interessenabwaegung',
-		category: 'datenschutz',
-		status: 'planned',
-		shape: 'questionnaire',
-		version: 0,
-		name: { de: 'Interessenabwägung', en: 'Legitimate interests assessment' },
-		summary: {
-			de: 'Dreistufiger Test (Zweck, Erforderlichkeit, Abwägung) mit dokumentiertem Ergebnis nach Art. 6 Abs. 1 lit. f.',
-			en: 'Three-step test (purpose, necessity, balancing) with a documented Art. 6(1)(f) result.'
-		},
-		legalBasis: [
-			{ law: 'DSGVO', ref: 'Art. 6 Abs. 1 lit. f' },
-			{ law: 'EDPB', ref: 'Leitlinien 1/2024' }
-		]
-	},
-	{
 		slug: 'loeschkonzept',
 		category: 'datenschutz',
 		status: 'planned',

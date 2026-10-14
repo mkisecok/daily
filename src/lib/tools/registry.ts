@@ -8,6 +8,7 @@ import { dsfaSchwellwert } from './dsfa-schwellwert/tool.js';
 import { risikoklassifizierung } from './risikoklassifizierung/tool.js';
 import { transparenzpflichten } from './transparenzpflichten/tool.js';
 import { betreiberpflichten } from './betreiberpflichten/tool.js';
+import { interessenabwaegung } from './interessenabwaegung/tool.js';
 import { planned } from './planned.js';
 
 /**
@@ -19,6 +20,7 @@ export const tools: readonly ToolManifest[] = [
 	risikoklassifizierung.manifest,
 	transparenzpflichten.manifest,
 	betreiberpflichten.manifest,
+	interessenabwaegung.manifest,
 	...planned
 ];
 
@@ -52,6 +54,10 @@ const questionnaires: Record<
 	[betreiberpflichten.manifest.slug]: {
 		catalog: betreiberpflichten.catalog,
 		engine: betreiberpflichten.engine
+	},
+	[interessenabwaegung.manifest.slug]: {
+		catalog: interessenabwaegung.catalog,
+		engine: interessenabwaegung.engine
 	}
 };
 
