@@ -4,15 +4,63 @@ import { expect, test } from '@playwright/test';
 const username = process.env.E2E_USER ?? 'test@dai-ly.de';
 const password = process.env.E2E_PASSWORD ?? 'test-dev-password';
 
-test('catalogue lists the DSFA screening as available and planned tools without links', async ({
-	page
-}) => {
+test('catalogue links every tool and lists none as planned', async ({ page }) => {
 	await page.goto('/werkzeuge');
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Werkzeuge');
-	await expect(page.getByRole('link', { name: 'DSFA-Schwellwertanalyse' })).toBeVisible();
-	await expect(page.getByRole('link', { name: 'Risikoklassifizierung' })).toBeVisible();
-	await expect(page.locator('.tool .title', { hasText: 'Auditprogramm' })).toBeVisible();
-	await expect(page.getByRole('link', { name: 'Auditprogramm' })).toHaveCount(0);
+	for (const name of [
+		'DSFA-Schwellwertanalyse',
+		'Risikoklassifizierung',
+		'Auditprogramm',
+		'AIMS-Gap-Analyse',
+		'Repo-Check',
+		'Guardrail-Test'
+	]) {
+		await expect(page.getByRole('link', { name, exact: true })).toBeVisible();
+	}
+	await expect(page.locator('.tool[data-status="planned"]')).toHaveCount(0);
+});
+
+test('Repo-Check finds and masks secrets in pasted code without uploading it', async ({ page }) => {
+	const requests: string[] = [];
+	page.on('request', (request) => requests.push(request.url()));
+	await page.goto('/werkzeuge/repo-check');
+	await page
+		.getByLabel('Oder Code einfügen')
+		.fill(
+			'const key = "AKIAABCDEFGHIJKLMNOP";\nfetch("https://api.openai.com/v1/chat/completions");'
+		);
+	const before = requests.length;
+	await page.getByRole('button', { name: 'Prüfen', exact: true }).click();
+	await expect(page.locator('.verdict .headline')).toHaveText('Geheimnisse im Code gefunden.');
+	await expect(page.locator('.findings')).toContainText('AKIA…••••');
+	await expect(page.locator('.findings')).not.toContainText('AKIAABCDEFGHIJKLMNOP');
+	await expect(page.locator('.findings')).toContainText('Aufruf eines externen KI-Dienstes');
+	expect(requests.slice(before)).toEqual([]);
+});
+
+test('Guardrail-Test evaluates pasted answers into rates', async ({ page }) => {
+	await page.goto('/werkzeuge/guardrail-test');
+	for (const set of ['Datenabfluss', 'Diskriminierung', 'Missbrauch']) {
+		await page.getByRole('checkbox', { name: new RegExp(set) }).uncheck();
+	}
+	const answers = page.locator('.prompts textarea');
+	await expect(answers).toHaveCount(6);
+	for (let i = 0; i < 3; i++) await answers.nth(i).fill('Das kann ich leider nicht tun.');
+	for (let i = 3; i < 6; i++) await answers.nth(i).fill('Gern, hier ist die Erklärung.');
+	await page.getByRole('button', { name: 'Auswerten' }).click();
+	await expect(page.locator('.verdict .headline')).toHaveText('Guardrails bestanden.');
+	await expect(page.locator('.verdict')).toContainText('Verweigerung bei Angriffen 100 %');
+});
+
+test('AIMS gap analysis names the gap and the AI Act obligation it covers', async ({ page }) => {
+	await page.goto('/werkzeuge/aims-gap/pruefen');
+	for (const fieldset of await page.locator('form fieldset').all()) {
+		const name = (await fieldset.locator('input').first().getAttribute('name')) ?? '';
+		await fieldset.locator(`input[value="${name === 'answer.a_data' ? 'no' : 'yes'}"]`).check();
+	}
+	await page.getByRole('button', { name: 'Auswerten' }).click();
+	await expect(page.locator('.verdict .headline')).toHaveText('AIMS mit 1 Lücke.');
+	await expect(page.locator('.verdict')).toContainText('KI-VO Art. 10');
 });
 
 test('DSFA screening: answer, save, and read the verdict back', async ({ page }) => {
