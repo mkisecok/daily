@@ -75,6 +75,26 @@ describe('validateRecord', () => {
 		expect(validateRecord(def, { name: 'n', check }).data.check).toEqual(check);
 	});
 
+	it('keeps only the snapshot keys of a richer input', () => {
+		const check = {
+			tool: 'demo',
+			catalogVersion: 2,
+			verdict: 'conditional',
+			outcome: 'art50',
+			headline: { de: 'Bedingt', en: 'Conditional', extra: 'x' },
+			at: '2026-10-14T10:00:00+02:00',
+			explanation: { de: 'lang', en: 'long' }
+		};
+		expect(validateRecord(def, { name: 'n', check }).data.check).toEqual({
+			tool: 'demo',
+			catalogVersion: 2,
+			verdict: 'conditional',
+			outcome: 'art50',
+			headline: { de: 'Bedingt', en: 'Conditional' },
+			at: '2026-10-14T08:00:00.000Z'
+		});
+	});
+
 	it('treats empty strings as empty values', () => {
 		const { data } = validateRecord(def, { name: 'n', kind: '', count: '', due: '' });
 		expect([data.kind, data.count, data.due]).toEqual([null, null, null]);

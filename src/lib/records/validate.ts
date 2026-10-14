@@ -104,7 +104,19 @@ function coerce(field: FieldDef, raw: unknown): { value: FieldValue; error?: Fie
 		}
 		case 'assessment': {
 			if (raw === '') return { value: null };
-			return isAssessment(raw) ? { value: raw } : { value: null, error: 'invalid' };
+			if (!isAssessment(raw)) return { value: null, error: 'invalid' };
+			// Keep only the snapshot's own keys: the input may be a whole result.
+			const { tool, catalogVersion, verdict, outcome, headline, at } = raw;
+			return {
+				value: {
+					tool,
+					catalogVersion,
+					verdict,
+					...(typeof outcome === 'string' ? { outcome } : {}),
+					headline: { de: headline.de, en: headline.en },
+					at: new Date(at).toISOString()
+				}
+			};
 		}
 	}
 }
