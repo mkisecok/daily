@@ -88,7 +88,7 @@
 	"preview_works_title": "Was hier funktioniert",
 	"preview_works_feed": "Nachrichten: Bei jedem Neuaufbau werden die Quellen frisch abgerufen und verschlagwortet. Filtern funktioniert im Browser.",
 	"preview_works_tools": "Werkzeuge: Die verfügbaren Prüfungen laufen vollständig im Browser. Antworten verlassen die Seite nicht und werden nicht gespeichert.",
-	"preview_works_records": "Register und Abläufe: Verzeichnis von Verarbeitungstätigkeiten, Betroffenenanfragen, Datenpanne, AVV-Prüfung, TOM-Katalog, Löschkonzept, Schulungsnachweis, KI-Register und KI-Kompetenz mit Verlauf, Fristen, CSV- und Kalenderexport. Einträge werden nur im Speicher dieses Browsers abgelegt, nicht übertragen, und lassen sich dort jederzeit löschen.",
+	"preview_works_records": "Register und Abläufe: Verzeichnis von Verarbeitungstätigkeiten, DSFA, Betroffenenanfragen, Datenpanne, AVV-Prüfung, TOM-Katalog, Löschkonzept, Schulungsnachweis, KI-Register, KI-Kompetenz, Vorfallmeldung und Grundrechte-Folgenabschätzung mit Verlauf, Fristen, CSV- und Kalenderexport. Einträge werden nur im Speicher dieses Browsers abgelegt, nicht übertragen, und lassen sich dort jederzeit löschen.",
 	"preview_works_lang": "Deutsch und Englisch, helles und dunkles Papier.",
 	"preview_missing_title": "Was die vollständige Installation zusätzlich bietet",
 	"preview_missing_body": "Anmeldung über Keycloak, Mandanten, Register in Postgres mit Autor im Verlauf und gemeinsamer Bearbeitung, gespeicherte und druckbare Prüfungen mit Katalogversion, Lesezeichen und das Notizbuch. Dafür braucht Daily einen Server mit Postgres und Keycloak.",

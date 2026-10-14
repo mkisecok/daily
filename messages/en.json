@@ -88,7 +88,7 @@
 	"preview_works_title": "What works here",
 	"preview_works_feed": "News: every rebuild fetches and tags the sources afresh. Filtering happens in your browser.",
 	"preview_works_tools": "Tools: the available assessments run entirely in your browser. Answers never leave the page and are not saved.",
-	"preview_works_records": "Registers and workflows: record of processing activities, data subject requests, personal data breach, processor contracts, TOM catalogue, retention schedule, training log, AI system register and AI literacy with history, deadlines, CSV and calendar export. Entries are kept only in this browser's storage, never transmitted, and can be deleted there at any time.",
+	"preview_works_records": "Registers and workflows: record of processing activities, DPIA, data subject requests, personal data breach, processor contracts, TOM catalogue, retention schedule, training log, AI system register, AI literacy, serious incident reports and fundamental rights impact assessment with history, deadlines, CSV and calendar export. Entries are kept only in this browser's storage, never transmitted, and can be deleted there at any time.",
 	"preview_works_lang": "German and English, light and dark paper.",
 	"preview_missing_title": "What the full installation adds",
 	"preview_missing_body": "Sign-in through Keycloak, client organisations, registers in Postgres with authors in the history and shared editing, saved and printable assessments with catalog version, bookmarks and the notebook. That needs a server with Postgres and Keycloak.",
