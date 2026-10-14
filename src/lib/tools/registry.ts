@@ -13,6 +13,7 @@ import { interessenabwaegung } from './interessenabwaegung/tool.js';
 import { einwilligungCheck } from './einwilligung-check/tool.js';
 import { drittlandTransfer } from './drittland-transfer/tool.js';
 import { datenpanne } from './datenpanne/tool.js';
+import { betroffenenanfrage } from './betroffenenanfrage/tool.js';
 import { kiDsgvoSchnittstelle } from './ki-dsgvo-schnittstelle/tool.js';
 import { technischeDokumentation } from './technische-dokumentation/tool.js';
 import { kiNutzungsrichtlinie } from './ki-nutzungsrichtlinie/tool.js';
@@ -34,6 +35,7 @@ export const tools: readonly ToolManifest[] = [
 	einwilligungCheck.manifest,
 	drittlandTransfer.manifest,
 	datenpanne.manifest,
+	betroffenenanfrage.manifest,
 	kiDsgvoSchnittstelle.manifest,
 	technischeDokumentation.manifest,
 	kiNutzungsrichtlinie.manifest,
@@ -106,6 +108,7 @@ export function getQuestionnaire(slug: string) {
 const recordTools: Record<string, RecordTool> = {
 	[vvt.manifest.slug]: vvt,
 	[datenpanne.manifest.slug]: datenpanne,
+	[betroffenenanfrage.manifest.slug]: betroffenenanfrage,
 	[kiRegister.manifest.slug]: kiRegister
 };
 

@@ -24,22 +24,6 @@ export const planned: ToolManifest[] = [
 		]
 	},
 	{
-		slug: 'betroffenenanfrage',
-		category: 'datenschutz',
-		status: 'planned',
-		shape: 'workflow',
-		version: 0,
-		name: { de: 'Betroffenenanfrage', en: 'Data subject request' },
-		summary: {
-			de: 'Anfragen nach Art. 15–22 verfolgen: Identitätsprüfung, Monatsfrist mit Verlängerung, Prüfliste je Recht, Register.',
-			en: 'Track requests under Art. 15–22: identity check, one-month deadline with extension, per-right checklist, register.'
-		},
-		legalBasis: [
-			{ law: 'DSGVO', ref: 'Art. 12' },
-			{ law: 'DSGVO', ref: 'Art. 15–22' }
-		]
-	},
-	{
 		slug: 'avv-pruefung',
 		category: 'datenschutz',
 		status: 'planned',
