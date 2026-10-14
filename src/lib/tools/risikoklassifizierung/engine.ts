@@ -57,6 +57,16 @@ const L = (de: string, en: string): Localized => ({ de, en });
  *   5. any Art. 50 case                           → transparency duties (2 Aug 2026)
  *   6. otherwise                                  → minimal risk
  */
+/** Outcome codes, taken over by the AI register. */
+export type RiskOutcome =
+	| 'kein-ki'
+	| 'ausserhalb'
+	| 'verboten'
+	| 'hochrisiko'
+	| 'art6-3'
+	| 'art50'
+	| 'minimal';
+
 export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): QuestionnaireResult {
 	const questions = new Map(catalog.sections.flatMap((s) => s.questions).map((q) => [q.id, q]));
 	const yes = (id: string) => answers[id] === 'yes';
@@ -80,6 +90,7 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 	if (answers.s_ai === 'no') {
 		return {
 			verdict: 'negative',
+			outcome: 'kein-ki',
 			headline: L('Kein KI-System.', 'Not an AI system.'),
 			explanation: L(
 				'Das System erfüllt die Definition in Art. 3 Nr. 1 KI-VO nicht. Die KI-Verordnung ist nicht anwendbar; die DSGVO und das Produktsicherheitsrecht gelten unverändert.',
@@ -99,6 +110,7 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 	if (yes('s_excluded')) {
 		return {
 			verdict: 'negative',
+			outcome: 'ausserhalb',
 			headline: L('Außerhalb des Anwendungsbereichs.', 'Outside the scope.'),
 			explanation: L(
 				'Art. 2 KI-VO nimmt die genannte Nutzung vom Anwendungsbereich aus. Sobald das System für einen anderen Zweck genutzt wird, ist die Einstufung zu wiederholen.',
@@ -115,6 +127,7 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 	if (prohibited.length > 0) {
 		return {
 			verdict: 'positive',
+			outcome: 'verboten',
 			headline: L('Verbotene Praxis.', 'Prohibited practice.'),
 			explanation: L(
 				`Mindestens eine Praktik des Art. 5 Abs. 1 KI-VO trifft zu. Das Inverkehrbringen, die Inbetriebnahme und die Verwendung sind seit dem ${DATES.prohibited.de} untersagt (das durch die Omnibus-Verordnung eingefügte Verbot nach lit. i ab dem ${DATES.prohibitedNcii.de}). Verstöße werden mit Geldbußen bis zu 35 Mio. € oder 7 % des weltweiten Jahresumsatzes geahndet (Art. 99 Abs. 3).`,
@@ -148,6 +161,7 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 		const escapeBlocked = annexIII.length > 0 && exceptions.length > 0 && profiling;
 		return {
 			verdict: 'positive',
+			outcome: 'hochrisiko',
 			headline: L('Hochrisiko-KI-System.', 'High-risk AI system.'),
 			explanation: L(
 				(annexI
@@ -192,6 +206,7 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 	if (annexIII.length > 0 && exceptions.length > 0 && !profiling) {
 		return {
 			verdict: 'conditional',
+			outcome: 'art6-3',
 			headline: L('Nicht hochriskant (Art. 6 Abs. 3).', 'Not high-risk (Art. 6(3)).'),
 			explanation: L(
 				'Das System fällt in einen Anhang-III-Bereich, erfüllt aber nur eine der in Art. 6 Abs. 3 genannten Aufgaben und nimmt kein Profiling vor. Es gilt daher nicht als hochriskant. Diese Bewertung ist zu dokumentieren und auf Verlangen der Behörde vorzulegen.',
@@ -222,6 +237,7 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 	if (transparency.length > 0) {
 		return {
 			verdict: 'conditional',
+			outcome: 'art50',
 			headline: L('Transparenzpflichten nach Art. 50.', 'Transparency obligations under Art. 50.'),
 			explanation: L(
 				`Das System ist weder verboten noch hochriskant, unterliegt aber den Transparenzpflichten des Art. 50 KI-VO. Diese gelten ab dem ${DATES.transparency.de}; für Systeme, die vor diesem Datum in Verkehr gebracht wurden, gilt die Kennzeichnungspflicht für synthetische Inhalte ab dem ${DATES.transparencyExisting.de} (${DATES.source}).`,
@@ -246,6 +262,7 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 	// 6. minimal
 	return {
 		verdict: 'negative',
+		outcome: 'minimal',
 		headline: L('Minimales Risiko.', 'Minimal risk.'),
 		explanation: L(
 			'Das System fällt in keine der Kategorien mit besonderen Pflichten. Es bleiben die allgemeinen Pflichten: KI-Kompetenz (Art. 4) und die freiwilligen Verhaltenskodizes (Art. 95). Datenschutzrecht und sonstiges Recht gelten unverändert.',

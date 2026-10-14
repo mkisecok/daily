@@ -97,4 +97,15 @@ describe('Risikoklassifizierung engine', () => {
 		const result = evaluate(catalog, answers(['t_interaction'], ['h_employment']));
 		expect(result.notes?.at(-1)?.de).toContain('1 Frage(n)');
 	});
+
+	it('names a machine-readable outcome for every class', () => {
+		const outcome = (input: Answers) => evaluate(catalog, input).outcome;
+		expect(outcome({ ...answers(), s_ai: 'no' })).toBe('kein-ki');
+		expect(outcome(answers(['s_excluded']))).toBe('ausserhalb');
+		expect(outcome(answers(['p_emotionwork']))).toBe('verboten');
+		expect(outcome(answers(['h_annex1']))).toBe('hochrisiko');
+		expect(outcome(answers(['h_employment', 'x_preparatory']))).toBe('art6-3');
+		expect(outcome(answers(['t_interaction']))).toBe('art50');
+		expect(outcome(answers())).toBe('minimal');
+	});
 });
