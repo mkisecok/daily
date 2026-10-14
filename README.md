@@ -21,6 +21,7 @@ entries stay in your browser).
   - Technical documentation completeness (Art. 11, Annex IV)
   - AI and GDPR interface check (Art. 5, 6, 22, 35 DSGVO, EDPB Opinion 28/2024)
   - AI usage policy generator (Art. 4 KI-VO, DSGVO, BetrVG)
+  - AIMS gap analysis (ISO/IEC 42001 clauses and Annex A, mapped to AI Act articles)
 
   Registers and workflows keep records over time, with history, deadlines, CSV export and a
   print version (beta):
@@ -45,7 +46,12 @@ entries stay in your browser).
   - Fundamental rights impact assessment (Art. 27 KI-VO) – applicability, elements (a)–(f),
     notification of the authority
 
-  More are planned and listed in the catalogue.
+  Audit: audit programme, audit checklist with question sets, findings with corrective actions,
+  and an audit report that composes the audit with its checklists and findings for print.
+  Records can refer to each other; a record shows the entries that point to it.
+
+  Developer tools run in the browser: a repository check for secrets, personal data, AI service
+  calls and trackers, and a guardrail test with refusal, leak and over-refusal rates.
 
 - **Fristen** – open deadlines from all registers in one list, with a calendar file (`.ics`).
 - **Mandanten** – external officers add client organisations and switch between them; every
