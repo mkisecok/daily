@@ -2,7 +2,6 @@ import { error } from '@sveltejs/kit';
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { db } from '#lib/server/db/index.js';
 import { toolRuns } from '#lib/server/db/schema.js';
-import { getActiveOrganisationId } from '#lib/server/org.js';
 import { getTool } from '#lib/tools/registry.js';
 import type { Localized, VerdictLevel } from '#lib/tools/types.js';
 import type { PageServerLoad } from './$types';
@@ -21,7 +20,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 	let runs: RunSummary[] = [];
 	if (locals.user) {
-		const organisationId = await getActiveOrganisationId(locals.user.id);
+		const organisationId = locals.organisation?.id;
 		if (organisationId) {
 			runs = await db
 				.select({

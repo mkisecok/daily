@@ -1,7 +1,6 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import { db } from '#lib/server/db/index.js';
 import { toolRuns } from '#lib/server/db/schema.js';
-import { getActiveOrganisationId } from '#lib/server/org.js';
 import { localizeHref } from '#lib/paraglide/runtime.js';
 import { readAnswers } from '#lib/tools/answers.js';
 import { getQuestionnaire, getTool } from '#lib/tools/registry.js';
@@ -23,7 +22,7 @@ export const actions: Actions = {
 		const questionnaire = getQuestionnaire(params.slug);
 		if (!tool || !questionnaire || !locals.user) error(404, 'Werkzeug nicht gefunden');
 
-		const organisationId = await getActiveOrganisationId(locals.user.id);
+		const organisationId = locals.organisation?.id;
 		if (!organisationId) error(403, 'Keine Organisation');
 
 		const { answers, missing } = readAnswers(questionnaire.catalog, await request.formData());

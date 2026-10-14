@@ -2,7 +2,6 @@ import { error } from '@sveltejs/kit';
 import { and, eq } from 'drizzle-orm';
 import { db } from '#lib/server/db/index.js';
 import { toolRuns } from '#lib/server/db/schema.js';
-import { getActiveOrganisationId } from '#lib/server/org.js';
 import { getQuestionnaire, getTool } from '#lib/tools/registry.js';
 import type { Answers, QuestionnaireResult } from '#lib/tools/types.js';
 import type { PageServerLoad } from './$types';
@@ -15,7 +14,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const questionnaire = getQuestionnaire(params.slug);
 	if (!tool || !questionnaire || !locals.user) error(404, 'Werkzeug nicht gefunden');
 
-	const organisationId = await getActiveOrganisationId(locals.user.id);
+	const organisationId = locals.organisation?.id;
 	if (!organisationId) error(403, 'Keine Organisation');
 
 	const run = await db

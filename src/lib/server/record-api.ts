@@ -2,7 +2,6 @@ import { error, json } from '@sveltejs/kit';
 import type { StoreResult } from '../records/store/types.js';
 import { getRecordTool } from '../tools/registry.js';
 import { db } from './db/index.js';
-import { getActiveOrganisationId } from './org.js';
 import { createRecordRepository } from './records.js';
 
 const repository = createRecordRepository(db, getRecordTool);
@@ -10,9 +9,8 @@ const repository = createRecordRepository(db, getRecordTool);
 /** The record store of the signed-in user's active organisation. */
 export async function storeFor(locals: App.Locals) {
 	if (!locals.user) error(401, 'Not signed in');
-	const organisationId = await getActiveOrganisationId(locals.user.id);
-	if (!organisationId) error(403, 'No organisation');
-	return repository.forOrganisation(organisationId, locals.user.id);
+	if (!locals.organisation) error(403, 'No organisation');
+	return repository.forOrganisation(locals.organisation.id, locals.user.id);
 }
 
 /** The JSON object body of a request, or 400. */
