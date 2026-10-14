@@ -48,9 +48,9 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 			verdict: 'positive',
 			headline: L(`${n.de} bei den Betreiberpflichten.`, `${n.en} in deployer obligations.`),
 			explanation: L(
-				`${n.de} müssen geschlossen werden, bevor die Pflichten gelten oder das System weiter eingesetzt wird.` +
+				`Zu schließen, bevor die Pflichten gelten oder das System weiter eingesetzt wird: ${n.de}.` +
 					(open.length ? ` Zusätzlich sind ${open.length} Punkt(e) offen.` : ''),
-				`${n.en} must be closed before the obligations apply or the system is used further.` +
+				`To be closed before the obligations apply or the system is used further: ${n.en}.` +
 					(open.length ? ` In addition, ${open.length} point(s) are open.` : '')
 			),
 			reasons: gaps,

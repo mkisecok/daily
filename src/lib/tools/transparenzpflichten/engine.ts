@@ -111,9 +111,9 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 			verdict: 'positive',
 			headline: L('Transparenzpflichten bestehen.', 'Transparency obligations apply.'),
 			explanation: L(
-				`Nach Art. 50 KI-VO ergeben sich ${n.de}. Sie gelten unabhängig davon, ob das System hochriskant ist.` +
+				`Ergebnis nach Art. 50 KI-VO: ${n.de}. Das gilt unabhängig davon, ob das System hochriskant ist.` +
 					(unclear.length ? ` ${unclear.length} Frage(n) sind noch offen.` : ''),
-				`Art. 50 AI Act gives rise to ${n.en}. They apply whether or not the system is high-risk.` +
+				`Result under Art. 50 AI Act: ${n.en}. This applies whether or not the system is high-risk.` +
 					(unclear.length ? ` ${unclear.length} question(s) remain open.` : '')
 			),
 			reasons,

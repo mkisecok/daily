@@ -61,9 +61,9 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 			verdict: 'positive',
 			headline: L(`${n.de} im Einwilligungsverfahren.`, `${n.en} in the consent process.`),
 			explanation: L(
-				`Einwilligungen, die unter diesen Mängeln eingeholt werden, sind voraussichtlich unwirksam; die betroffenen Zugriffe wären dann rechtswidrig. ${n.de} sind zu beheben.` +
+				`Einwilligungen, die unter diesen Mängeln eingeholt werden, sind voraussichtlich unwirksam; die betroffenen Zugriffe wären dann rechtswidrig. Zu beheben: ${n.de}.` +
 					(open.length ? ` ${open.length} Punkt(e) sind offen.` : ''),
-				`Consents obtained with these defects are likely invalid, which would make the affected accesses unlawful. ${n.en} must be fixed.` +
+				`Consents obtained with these defects are likely invalid, which would make the affected accesses unlawful. To be fixed: ${n.en}.` +
 					(open.length ? ` ${open.length} point(s) are open.` : '')
 			),
 			reasons: gaps,

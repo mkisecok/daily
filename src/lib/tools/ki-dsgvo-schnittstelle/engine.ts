@@ -47,9 +47,9 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 			verdict: 'positive',
 			headline: L(`${n.de} beim Datenschutz.`, `${n.en} in data protection.`),
 			explanation: L(
-				`Für die KI-Verarbeitung bestehen ${n.de} gegenüber der DSGVO.` +
+				`Festgestellt für die KI-Verarbeitung gegenüber der DSGVO: ${n.de}.` +
 					(open.length ? ` ${open.length} Punkt(e) sind offen.` : ''),
-				`The AI processing has ${n.en} against the GDPR.` +
+				`Found for the AI processing against the GDPR: ${n.en}.` +
 					(open.length ? ` ${open.length} point(s) are open.` : '')
 			),
 			reasons: gaps,
