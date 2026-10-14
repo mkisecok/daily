@@ -88,7 +88,11 @@
 </header>
 
 <style>
+	/* Stays at the top while scrolling, so the navigation is always at hand. */
 	.masthead {
+		position: sticky;
+		top: env(safe-area-inset-top, 0px);
+		z-index: 20;
 		border-bottom: 1px solid var(--rule);
 		background: var(--paper);
 
@@ -159,6 +163,40 @@
 			display: flex;
 			align-items: center;
 			gap: 1rem;
+		}
+
+		/* Narrow screens: wordmark and tools in one row, the navigation as one
+		   scrollable line below, so the sticky bar stays low. */
+		@media (max-width: 56rem) {
+			& .inner {
+				gap: 0.4rem 1rem;
+				min-height: 0;
+				padding-top: 0.5rem;
+				padding-bottom: 0.4rem;
+			}
+
+			& .home {
+				order: 1;
+			}
+
+			& .tools {
+				order: 2;
+				margin-left: auto;
+			}
+
+			& nav {
+				order: 3;
+				flex: 1 1 100%;
+				flex-wrap: nowrap;
+				gap: 1.1rem;
+				margin-left: 0;
+				overflow-x: auto;
+				scrollbar-width: none;
+
+				& a {
+					white-space: nowrap;
+				}
+			}
 		}
 
 		& .login,
