@@ -4,17 +4,13 @@
 		{
 			"name": "daily-dev",
 			"runtimeExecutable": "pnpm",
-			"runtimeArgs": [
-				"dev"
-			],
+			"runtimeArgs": ["dev"],
 			"port": 5174
 		},
 		{
 			"name": "daily-static",
 			"runtimeExecutable": "pnpm",
-			"runtimeArgs": [
-				"preview:static"
-			],
+			"runtimeArgs": ["preview:static"],
 			"port": 4175
 		}
 	]
