@@ -24,6 +24,10 @@ entries stay in your browser).
 
   Registers and workflows keep records over time, with history, deadlines, CSV export and a
   print version (beta):
+  - Record of processing activities (Art. 30 DSGVO) – completeness per letter, takes the DPIA
+    decision over from the DPIA screening
+  - Data subject requests (Art. 12, 15–22 DSGVO) – one-month period with extension, checklist
+    per right
   - AI system register (Art. 3, 6, 26 KI-VO) – takes the risk class over from the risk
     classification
   - Personal data breach (Art. 33, 34 DSGVO) – 72-hour clock from awareness, risk assessment,
@@ -32,6 +36,8 @@ entries stay in your browser).
   More are planned and listed in the catalogue.
 
 - **Fristen** – open deadlines from all registers in one list, with a calendar file (`.ics`).
+- **Mandanten** – external officers add client organisations and switch between them; every
+  assessment, register entry and deadline belongs to the active one.
 
 - **Notizen** – a notebook tied to news items and assessments (in progress).
 
