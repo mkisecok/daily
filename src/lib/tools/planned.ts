@@ -23,19 +23,6 @@ export const planned: ToolManifest[] = [
 			{ law: 'DSGVO', ref: 'Art. 36' }
 		]
 	},
-	{
-		slug: 'schulungsnachweis',
-		category: 'datenschutz',
-		status: 'planned',
-		shape: 'register',
-		version: 0,
-		name: { de: 'Schulungsnachweis', en: 'Training log' },
-		summary: {
-			de: 'Schulungen je Mandant und Beschäftigten, Wiederholungsfristen als Fristen.',
-			en: 'Training per client and employee, renewal dates as deadlines.'
-		},
-		legalBasis: [{ law: 'DSGVO', ref: 'Art. 39 Abs. 1 lit. b' }]
-	},
 	// ---------- Künstliche Intelligenz ----------
 	{
 		slug: 'grundrechte-folgenabschaetzung',

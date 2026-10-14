@@ -22,6 +22,7 @@ import type { RecordTool } from '../records/types.js';
 import { avvPruefung } from './avv-pruefung/tool.js';
 import { tomKatalog } from './tom-katalog/tool.js';
 import { loeschkonzept } from './loeschkonzept/tool.js';
+import { schulungsnachweis } from './schulungsnachweis/tool.js';
 import { planned } from './planned.js';
 
 /**
@@ -42,6 +43,7 @@ export const tools: readonly ToolManifest[] = [
 	avvPruefung.manifest,
 	tomKatalog.manifest,
 	loeschkonzept.manifest,
+	schulungsnachweis.manifest,
 	kiDsgvoSchnittstelle.manifest,
 	technischeDokumentation.manifest,
 	kiNutzungsrichtlinie.manifest,
@@ -112,6 +114,7 @@ export function getQuestionnaire(slug: string) {
 
 /** Register and workflow tools: definition + engine, keyed by slug. */
 const recordTools: Record<string, RecordTool> = {
+	[schulungsnachweis.manifest.slug]: schulungsnachweis,
 	[loeschkonzept.manifest.slug]: loeschkonzept,
 	[tomKatalog.manifest.slug]: tomKatalog,
 	[avvPruefung.manifest.slug]: avvPruefung,
