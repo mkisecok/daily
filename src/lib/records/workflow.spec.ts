@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { toCsv } from './csv.js';
-import { addHours, addMonths, computeDeadlines } from './deadlines.js';
+import { addHours, addMonths, computeDeadlines, monthsAfterDay } from './deadlines.js';
 import { testDefinition as def } from './fixtures.js';
 import { formatValue } from './format.js';
 import { toIcs } from './ics.js';
@@ -87,6 +87,15 @@ describe('deadline maths', () => {
 		expect(addMonths('2026-10-14T09:00:00.000Z', 1)).toBe('2026-11-14T09:00:00.000Z');
 		expect(addMonths('2026-01-31T09:00:00.000Z', 1)).toBe('2026-02-28T09:00:00.000Z');
 		expect(addMonths('2026-12-31T09:00:00.000Z', 2)).toBe('2027-02-28T09:00:00.000Z');
+	});
+
+	it('counts months on the German calendar day and ends at 23:59', () => {
+		// 31 January, 10:00 → 28 February, 23:59 (CET).
+		expect(monthsAfterDay('2026-01-31T09:00:00.000Z', 1)).toBe('2026-02-28T22:59:00.000Z');
+		// 31 March, 00:30 in Berlin is still 30 March in UTC; the German day counts.
+		expect(monthsAfterDay('2026-03-30T22:30:00.000Z', 1)).toBe('2026-04-30T21:59:00.000Z');
+		// Three months across the end of daylight saving.
+		expect(monthsAfterDay('2026-08-14T10:00:00.000Z', 3)).toBe('2026-11-14T22:59:00.000Z');
 	});
 
 	it('takes deadlines from the engine and drops them in terminal states', () => {

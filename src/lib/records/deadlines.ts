@@ -1,3 +1,4 @@
+import { dayKey, fromBerlinInput } from '../i18n/date.js';
 import type { Deadline, RecordTool, StoredRecord } from './types.js';
 import { isTerminal } from './workflow.js';
 
@@ -24,6 +25,16 @@ export function addMonths(iso: string, months: number): string {
 	const lastDay = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0)).getUTCDate();
 	date.setUTCDate(Math.min(day, lastDay));
 	return date.toISOString();
+}
+
+/**
+ * A period of months counted from the German calendar day of an event and
+ * ending at the end of the corresponding day (23:59 German time), e.g.
+ * Art. 12(3): a request received on 31 January is due on 28 February.
+ */
+export function monthsAfterDay(iso: string, months: number): string {
+	const day = addMonths(`${dayKey(iso)}T00:00:00.000Z`, months).slice(0, 10);
+	return fromBerlinInput(`${day}T23:59`);
 }
 
 /**
