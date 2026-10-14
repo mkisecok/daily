@@ -9,9 +9,16 @@ with fresh news; sign-in, notes and saved assessments are switched off there).
 - **Nachrichten** – news from the EDPB, CJEU, BfDI, DSK, state authorities and the legal press,
   tagged by regulation and kind. Title, excerpt and link only; the text stays with the source.
 - **Werkzeuge** – tools that turn one legal duty into a documented, citable result. Available:
-  DPIA screening (Art. 35 DSGVO, WP 248, DSK must-list) and AI Act risk classification (Art. 5,
-  Annex I/III, Art. 6(3), Art. 50, dates after Omnibus Regulation (EU) 2026/1744). Over twenty
-  more are planned and listed in the catalogue.
+  - DPIA screening (Art. 35 DSGVO, WP 248, DSK must-list)
+  - Legitimate interests assessment (Art. 6(1)(f) DSGVO, EDPB Guidelines 1/2024)
+  - Cookie and consent check (§ 25 TDDDG, Art. 7 DSGVO, Planet49)
+  - AI Act risk classification (Art. 5, Annex I/III, Art. 6(3), Art. 50, dates after Omnibus
+    Regulation (EU) 2026/1744)
+  - AI Act transparency obligations (Art. 50)
+  - Deployer obligations for high-risk AI (Art. 26, 4, 27, 86)
+
+  More are planned and listed in the catalogue.
+
 - **Notizen** – a notebook tied to news items and assessments (in progress).
 
 Not legal advice.
