@@ -119,3 +119,71 @@ test('Datenpanne: 72-hour deadline on Fristen and the workflow to closure', asyn
 	await expect(page.locator('h1')).toHaveText('Fristen');
 	await expect(page.locator('.deadlines li', { hasText: title })).toHaveCount(0);
 });
+
+test('VVT: completeness check and DSFA screening handoff', async ({ page }) => {
+	const name = `E2E-Verarbeitung ${Date.now()}`;
+	await signIn(page, '/werkzeuge/vvt/eintraege?neu=1');
+	await expect(page).toHaveURL(/\/werkzeuge\/vvt\/eintraege\?neu=1$/);
+
+	const group = (label: string) => page.locator('fieldset', { hasText: label });
+	await page.getByLabel('Bezeichnung').fill(name);
+	await page.locator('#field-rolle').selectOption('verantwortlicher');
+	await page.getByLabel('Zwecke der Verarbeitung').fill('Versand des Newsletters');
+	await group('Kategorien betroffener Personen').getByLabel('Kunden', { exact: true }).check();
+	await group('Kategorien personenbezogener Daten').getByLabel('Kontaktdaten').check();
+	await group('Kategorien von Empfängern').getByLabel('Interne Stellen').check();
+	await page.locator('#field-status').selectOption('aktiv');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+
+	await expect(page.locator('.verdict .headline')).toHaveText('Eintrag unvollständig.');
+	await expect(page.locator('.verdict .reasons')).toContainText('Fristen für die Löschung');
+	await expect(page.locator('.verdict .reasons')).toContainText('Art. 30 Abs. 1 lit. g DSGVO');
+
+	await page
+		.getByRole('link', { name: /Prüfung durchführen/ })
+		.last()
+		.click();
+	await expect(page.getByText(`Prüfung für den Eintrag „${name}“`)).toBeVisible();
+	for (const fieldset of await page.locator('form fieldset').all()) {
+		await fieldset.locator('input[value="no"]').check();
+	}
+	await page.getByRole('button', { name: 'Auswerten' }).click();
+	await expect(page.locator('.verdict .headline')).toHaveText('Keine DSFA erforderlich.');
+	await page.getByRole('button', { name: /übernehmen/ }).click();
+
+	await expect(page).toHaveURL(/\/werkzeuge\/vvt\/eintraege\?eintrag=/);
+	await expect(page.locator('.record-view')).toContainText('Nicht erforderlich');
+	await expect(page.locator('.history')).toContainText('Bewertung übernommen');
+});
+
+test('Betroffenenanfrage: reply deadline on Fristen and closing as answered', async ({ page }) => {
+	const title = `E2E-Auskunft ${Date.now()}`;
+	await signIn(page, '/werkzeuge/betroffenenanfrage/eintraege?neu=1');
+	await expect(page).toHaveURL(/\/werkzeuge\/betroffenenanfrage\/eintraege\?neu=1$/);
+
+	await page.getByLabel('Bezeichnung').fill(title);
+	await page.getByLabel('Eingang am').fill(berlinInput(new Date()));
+	await page.getByLabel('Auskunft (Art. 15)').check();
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page.locator('.verdict .headline')).toContainText('Antwort fällig bis');
+	await expect(page.locator('.verdict .notes')).toContainText('Auskunft (Art. 15)');
+
+	await page.getByRole('link', { name: 'Fristen' }).click();
+	await expect(page.locator('.deadlines li', { hasText: title })).toContainText(
+		'Antwort an die betroffene Person'
+	);
+	await page
+		.locator('.deadlines li', { hasText: title })
+		.getByRole('link', { name: title })
+		.click();
+
+	await page.getByRole('button', { name: 'Bearbeitung beginnen' }).click();
+	await expect(page.locator('[aria-current="step"]')).toHaveText('In Bearbeitung');
+	await page.getByRole('button', { name: 'Bearbeiten' }).click();
+	await page.getByLabel('Durchgeführte Maßnahmen').fill('Auskunft mit Kopie erteilt');
+	await page.getByLabel('Antwort versandt am').fill(berlinInput(new Date()));
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page.locator('.verdict .headline')).toHaveText('Fristgerecht beantwortet.');
+	await page.getByRole('button', { name: 'Als beantwortet abschließen' }).click();
+	await expect(page.locator('[aria-current="step"]')).toHaveText('Beantwortet');
+});
