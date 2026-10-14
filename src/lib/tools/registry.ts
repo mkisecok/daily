@@ -20,6 +20,7 @@ import { kiNutzungsrichtlinie } from './ki-nutzungsrichtlinie/tool.js';
 import { kiRegister } from './ki-register/tool.js';
 import type { RecordTool } from '../records/types.js';
 import { avvPruefung } from './avv-pruefung/tool.js';
+import { tomKatalog } from './tom-katalog/tool.js';
 import { planned } from './planned.js';
 
 /**
@@ -38,6 +39,7 @@ export const tools: readonly ToolManifest[] = [
 	datenpanne.manifest,
 	betroffenenanfrage.manifest,
 	avvPruefung.manifest,
+	tomKatalog.manifest,
 	kiDsgvoSchnittstelle.manifest,
 	technischeDokumentation.manifest,
 	kiNutzungsrichtlinie.manifest,
@@ -108,6 +110,7 @@ export function getQuestionnaire(slug: string) {
 
 /** Register and workflow tools: definition + engine, keyed by slug. */
 const recordTools: Record<string, RecordTool> = {
+	[tomKatalog.manifest.slug]: tomKatalog,
 	[avvPruefung.manifest.slug]: avvPruefung,
 	[vvt.manifest.slug]: vvt,
 	[datenpanne.manifest.slug]: datenpanne,

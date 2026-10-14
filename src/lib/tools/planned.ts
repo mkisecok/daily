@@ -24,19 +24,6 @@ export const planned: ToolManifest[] = [
 		]
 	},
 	{
-		slug: 'tom-katalog',
-		category: 'datenschutz',
-		status: 'planned',
-		shape: 'register',
-		version: 0,
-		name: { de: 'TOM-Katalog', en: 'Technical and organisational measures' },
-		summary: {
-			de: 'Maßnahmenkatalog nach SDM-Bausteinen je System; speist VVT und DSFA.',
-			en: 'Measures catalogue per system based on the SDM building blocks; feeds the record and the DPIA.'
-		},
-		legalBasis: [{ law: 'DSGVO', ref: 'Art. 32' }]
-	},
-	{
 		slug: 'loeschkonzept',
 		category: 'datenschutz',
 		status: 'planned',
