@@ -3,18 +3,12 @@ import { db } from '#lib/server/db/index.js';
 import { toolRuns } from '#lib/server/db/schema.js';
 import { getActiveOrganisationId } from '#lib/server/org.js';
 import { localizeHref } from '#lib/paraglide/runtime.js';
+import { readAnswers } from '#lib/tools/answers.js';
 import { getQuestionnaire, getTool } from '#lib/tools/registry.js';
-import type { Answers, YesNoAnswer } from '#lib/tools/types.js';
 import type { Actions, PageServerLoad } from './$types';
 
 /** Needs a signed-in user and the database; never part of a static build. */
 export const prerender = false;
-
-const ANSWER_PREFIX = 'answer.';
-
-function isYesNo(value: FormDataEntryValue | null): value is YesNoAnswer {
-	return value === 'yes' || value === 'no' || value === 'unknown';
-}
 
 export const load: PageServerLoad = ({ params }) => {
 	const tool = getTool(params.slug);
@@ -32,16 +26,7 @@ export const actions: Actions = {
 		const organisationId = await getActiveOrganisationId(locals.user.id);
 		if (!organisationId) error(403, 'Keine Organisation');
 
-		const form = await request.formData();
-		const answers: Answers = {};
-		const missing: string[] = [];
-		for (const section of questionnaire.catalog.sections) {
-			for (const question of section.questions) {
-				const value = form.get(ANSWER_PREFIX + question.id);
-				if (isYesNo(value)) answers[question.id] = value;
-				else missing.push(question.id);
-			}
-		}
+		const { answers, missing } = readAnswers(questionnaire.catalog, await request.formData());
 		if (missing.length > 0) return fail(400, { missing, answers });
 
 		const result = questionnaire.engine(questionnaire.catalog, answers);
