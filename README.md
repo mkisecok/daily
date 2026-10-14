@@ -4,7 +4,8 @@ A daily workplace for data protection officers, AI officers and auditors working
 GDPR (DSGVO) and the EU AI Act (KI-VO). German first, English included.
 
 **Public preview:** https://mkisecok.github.io/daily/ (static build, rebuilt four times a day
-with fresh news; sign-in, notes and saved assessments are switched off there).
+with fresh news; sign-in, notes and saved assessments are switched off there, and register
+entries stay in your browser).
 
 - **Nachrichten** – news from the EDPB, CJEU, BfDI, DSK, state authorities and the legal press,
   tagged by regulation and kind. Title, excerpt and link only; the text stays with the source.
@@ -21,7 +22,16 @@ with fresh news; sign-in, notes and saved assessments are switched off there).
   - AI and GDPR interface check (Art. 5, 6, 22, 35 DSGVO, EDPB Opinion 28/2024)
   - AI usage policy generator (Art. 4 KI-VO, DSGVO, BetrVG)
 
+  Registers and workflows keep records over time, with history, deadlines, CSV export and a
+  print version (beta):
+  - AI system register (Art. 3, 6, 26 KI-VO) – takes the risk class over from the risk
+    classification
+  - Personal data breach (Art. 33, 34 DSGVO) – 72-hour clock from awareness, risk assessment,
+    status from recording to closure
+
   More are planned and listed in the catalogue.
+
+- **Fristen** – open deadlines from all registers in one list, with a calendar file (`.ics`).
 
 - **Notizen** – a notebook tied to news items and assessments (in progress).
 
@@ -54,14 +64,17 @@ Those credentials only exist on your machine.
 pnpm check                  # svelte-check
 pnpm lint                   # prettier + eslint
 pnpm vitest run --project server
+pnpm test:db                # repository against the compose Postgres
 pnpm test:e2e               # needs the compose stack running
+pnpm test:e2e:preview       # static preview under /daily, records in the browser
 ```
 
 ## Static preview
 
 `pnpm build:static` builds a public preview without server, database or sign-in: every page is
 prerendered, news is fetched from the sources at build time and filtered in the browser, and
-the tools run in the browser without saving. Settings live in `.env.static`; set
+the tools run in the browser without saving. Register entries are kept in the browser's
+`localStorage` and never leave the device. Settings live in `.env.static`; set
 `PUBLIC_BASE_PATH` (for example `/daily`) when the site is served from a sub-path.
 
 ```sh
@@ -72,4 +85,6 @@ PUBLIC_BASE_PATH=/daily pnpm preview:static   # http://localhost:4175/daily/
 ## Documentation
 
 The product plan and design decisions are in
-[`docs/superpowers/specs/2026-10-13-daily-design.md`](docs/superpowers/specs/2026-10-13-daily-design.md).
+[`docs/superpowers/specs/2026-10-13-daily-design.md`](docs/superpowers/specs/2026-10-13-daily-design.md),
+the records framework for registers and workflows in
+[`docs/superpowers/specs/2026-10-14-records-design.md`](docs/superpowers/specs/2026-10-14-records-design.md).
