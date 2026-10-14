@@ -139,3 +139,8 @@ const recordTools: Record<string, RecordTool> = {
 export function getRecordTool(slug: string): RecordTool | undefined {
 	return recordTools[slug];
 }
+
+/** Every register and workflow tool. */
+export function listRecordTools(): RecordTool[] {
+	return Object.values(recordTools);
+}
