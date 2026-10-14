@@ -5,13 +5,15 @@
 	import { formatShortDate } from '#lib/i18n/date.js';
 	import { localized } from '#lib/i18n/links.js';
 	import { text } from '#lib/tools/i18n.js';
-	import { getQuestionnaire } from '#lib/tools/registry.js';
+	import { getQuestionnaire, getRecordTool } from '#lib/tools/registry.js';
 	import ToolHeader from '#lib/tools/_shared/ToolHeader.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 
 	const questionnaire = $derived(getQuestionnaire(data.tool.slug));
+	const recordTool = $derived(getRecordTool(data.tool.slug));
+	const recordsHref = $derived(resolve(localized(`/werkzeuge/${data.tool.slug}/eintraege`)));
 	const checkHref = $derived(resolve(localized(`/werkzeuge/${data.tool.slug}/pruefen`)));
 	const saveHref = $derived(resolve(localized(`/werkzeuge/${data.tool.slug}/neu`)));
 	const loginHref = $derived(
@@ -30,11 +32,18 @@
 	<p class="measure lead">{text(data.tool.summary)}</p>
 	{#if questionnaire}
 		<p class="measure">{text(questionnaire.catalog.intro)}</p>
+	{:else if recordTool}
+		<p class="measure">{text(recordTool.definition.intro)}</p>
 	{/if}
 	<p class="action">
-		<a class="start" href={checkHref}>{m.tool_start()} →</a>
-		{#if PUBLIC_PREVIEW}
-			<!-- no accounts in the static preview -->
+		{#if recordTool}
+			<!-- records live on their own page; saving is built in -->
+			<a class="start" href={recordsHref}>{m.records_open()} →</a>
+		{:else}
+			<a class="start" href={checkHref}>{m.tool_start()} →</a>
+		{/if}
+		{#if PUBLIC_PREVIEW || recordTool}
+			<!-- no accounts in the static preview; record tools save on their own page -->
 		{:else if data.user}
 			<a class="secondary" href={saveHref}>{m.tool_save()}</a>
 		{:else}
@@ -43,7 +52,7 @@
 	</p>
 </section>
 
-{#if data.user}
+{#if data.user && !recordTool}
 	<section class="runs">
 		<h2 class="eyebrow">{m.tool_runs()}</h2>
 		{#if data.runs.length === 0}
