@@ -274,3 +274,38 @@ test('Vorfallmeldung: a death shortens the reporting period to 10 days', async (
 		'Meldung an die Marktüberwachungsbehörde (spätestens 10 Tage)'
 	);
 });
+
+test('dialogs: archiving needs the typed word, Esc cancels, citations explain themselves', async ({
+	page
+}) => {
+	const title = `E2E-Dialog ${Date.now()}`;
+	await signIn(page, '/werkzeuge/datenpanne/eintraege?neu=1');
+	await expect(page).toHaveURL(/\/werkzeuge\/datenpanne\/eintraege\?neu=1$/);
+	await page.getByLabel('Bezeichnung').fill(title);
+	await page.getByLabel('Kenntnis am').fill(berlinInput(new Date()));
+	await page.getByLabel('Was ist geschehen?').fill('Test');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	const citation = page.locator('.citation-link').first();
+	await citation.focus();
+	await expect(page.getByRole('tooltip', { name: 'In den Normen öffnen' })).toBeVisible();
+	await page.keyboard.press('Escape');
+	await expect(page.getByRole('tooltip')).toBeHidden();
+
+	await page.getByRole('button', { name: 'Archivieren' }).click();
+	const dialog = page.getByRole('dialog', { name: 'Eintrag archivieren?' });
+	await expect(dialog).toBeVisible();
+	const confirm = dialog.getByRole('button', { name: 'Archivieren' });
+	await expect(confirm).toBeDisabled();
+	await page.keyboard.press('Escape');
+	await expect(dialog).toBeHidden();
+	await expect(page.getByText(/Archiviert am/)).toHaveCount(0);
+
+	await page.getByRole('button', { name: 'Archivieren' }).click();
+	await dialog.getByLabel('Zur Bestätigung „archivieren“ eingeben').fill(' Archivieren ');
+	await expect(confirm).toBeEnabled();
+	await confirm.click();
+	await expect(page).toHaveURL(/\/werkzeuge\/datenpanne\/eintraege$/);
+	await expect(page.getByRole('link', { name: title })).toHaveCount(0);
+});

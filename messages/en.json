@@ -104,8 +104,7 @@
 	"records_edit": "Edit",
 	"records_back": "Back to the list",
 	"records_archive": "Archive",
-	"records_archive_confirm": "Archive? The entry leaves the list but is kept with its history.",
-	"records_archive_yes": "Yes, archive",
+	"records_archive_confirm": "The entry leaves the list but is kept with its history (Art. 5(2) GDPR).",
 	"records_archived": "Archived on {date}.",
 	"records_csv": "Export CSV",
 	"records_print": "Print",
@@ -133,7 +132,6 @@
 	"records_local": "Stored in this browser only. Nothing leaves the device; other browsers and devices do not see these entries.",
 	"records_local_clear": "Delete local data",
 	"records_local_clear_confirm": "Delete all entries of all tools stored in this browser?",
-	"records_local_clear_yes": "Yes, delete everything",
 	"deadlines_title": "Deadlines",
 	"deadlines_empty": "No open deadlines.",
 	"deadlines_overdue": "Overdue",
@@ -230,5 +228,12 @@
 	"reports_runs_preview": "Saved assessments exist only in the full installation.",
 	"reports_registers": "Registers and workflows",
 	"confirm_type": "Type “{word}” to confirm",
-	"dialog_cancel": "Cancel"
+	"dialog_cancel": "Cancel",
+	"records_archive_title": "Archive entry?",
+	"records_archive_word": "archive",
+	"records_local_clear_title": "Delete local data?",
+	"records_local_clear_word": "delete",
+	"records_transition_title": "Change status?",
+	"records_transition_body": "{from} → {to}. The change is recorded in the history.",
+	"notes_archive_title": "Archive note?"
 }

@@ -104,8 +104,7 @@
 	"records_edit": "Bearbeiten",
 	"records_back": "Zur Übersicht",
 	"records_archive": "Archivieren",
-	"records_archive_confirm": "Archivieren? Der Eintrag verschwindet aus der Übersicht, bleibt aber mit Verlauf erhalten.",
-	"records_archive_yes": "Ja, archivieren",
+	"records_archive_confirm": "Der Eintrag verschwindet aus der Übersicht, bleibt aber mit Verlauf erhalten (Art. 5 Abs. 2 DSGVO).",
 	"records_archived": "Archiviert am {date}.",
 	"records_csv": "CSV exportieren",
 	"records_print": "Drucken",
@@ -133,7 +132,6 @@
 	"records_local": "Nur in diesem Browser gespeichert. Nichts verlässt das Gerät; andere Browser und Geräte sehen diese Einträge nicht.",
 	"records_local_clear": "Lokale Daten löschen",
 	"records_local_clear_confirm": "Alle in diesem Browser gespeicherten Einträge aller Werkzeuge löschen?",
-	"records_local_clear_yes": "Ja, alles löschen",
 	"deadlines_title": "Fristen",
 	"deadlines_empty": "Keine offenen Fristen.",
 	"deadlines_overdue": "Überfällig",
@@ -230,5 +228,12 @@
 	"reports_runs_preview": "Gespeicherte Prüfungen gibt es nur in der vollständigen Installation.",
 	"reports_registers": "Register und Abläufe",
 	"confirm_type": "Zur Bestätigung „{word}“ eingeben",
-	"dialog_cancel": "Abbrechen"
+	"dialog_cancel": "Abbrechen",
+	"records_archive_title": "Eintrag archivieren?",
+	"records_archive_word": "archivieren",
+	"records_local_clear_title": "Lokale Daten löschen?",
+	"records_local_clear_word": "löschen",
+	"records_transition_title": "Status ändern?",
+	"records_transition_body": "{from} → {to}. Die Änderung wird im Verlauf festgehalten.",
+	"notes_archive_title": "Notiz archivieren?"
 }

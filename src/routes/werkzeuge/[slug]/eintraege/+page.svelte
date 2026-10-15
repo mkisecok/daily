@@ -24,6 +24,7 @@
 	import { getRecordTool } from '#lib/tools/registry.js';
 	import ToolHeader from '#lib/tools/_shared/ToolHeader.svelte';
 	import Verdict from '#lib/tools/_shared/Verdict.svelte';
+	import ConfirmDialog from '#lib/ui/ConfirmDialog.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -142,7 +143,6 @@
 
 	async function clearLocal() {
 		store.clear?.();
-		confirmClear = false;
 		await invalidate('records:data');
 	}
 </script>
@@ -159,21 +159,21 @@
 {#if data.preview}
 	<aside class="local no-print">
 		<p>{m.records_local()}</p>
-		{#if confirmClear}
-			<p class="toolbar">
-				<span class="confirm">{m.records_local_clear_confirm()}</span>
-				<button type="button" onclick={clearLocal}>{m.records_local_clear_yes()}</button>
-				<button type="button" class="quiet" onclick={() => (confirmClear = false)}>
-					{m.records_cancel()}
-				</button>
-			</p>
-		{:else}
-			<p class="toolbar">
-				<button type="button" class="quiet" onclick={() => (confirmClear = true)}>
-					{m.records_local_clear()}
-				</button>
-			</p>
-		{/if}
+		<p class="toolbar">
+			<button type="button" class="quiet" onclick={() => (confirmClear = true)}>
+				{m.records_local_clear()}
+			</button>
+		</p>
+		<ConfirmDialog
+			bind:open={confirmClear}
+			title={m.records_local_clear_title()}
+			body={m.records_local_clear_confirm()}
+			confirmLabel={m.records_local_clear()}
+			tone="danger"
+			icon="trash"
+			typeToConfirm={m.records_local_clear_word()}
+			onconfirm={clearLocal}
+		/>
 	</aside>
 {/if}
 
@@ -307,19 +307,24 @@
 					)}>{m.notes_from_record()}</a
 				>
 				{#if !record.archivedAt}
-					{#if confirmArchive}
-						<span class="confirm">{m.records_archive_confirm()}</span>
-						<button type="button" onclick={() => archive(record)} disabled={busy}
-							>{m.records_archive_yes()}</button
-						>
-						<button type="button" class="quiet" onclick={() => (confirmArchive = false)}>
-							{m.records_cancel()}
-						</button>
-					{:else}
-						<button type="button" class="quiet" onclick={() => (confirmArchive = true)}>
-							{m.records_archive()}
-						</button>
-					{/if}
+					<button
+						type="button"
+						class="quiet"
+						disabled={busy}
+						onclick={() => (confirmArchive = true)}
+					>
+						{m.records_archive()}
+					</button>
+					<ConfirmDialog
+						bind:open={confirmArchive}
+						title={m.records_archive_title()}
+						body={m.records_archive_confirm()}
+						confirmLabel={m.records_archive()}
+						tone="danger"
+						icon="archive"
+						typeToConfirm={m.records_archive_word()}
+						onconfirm={() => archive(record)}
+					/>
 				{/if}
 			</div>
 
@@ -448,14 +453,6 @@
 
 	.actions {
 		margin-top: 2rem;
-	}
-
-	.confirm {
-		font-family: var(--sans);
-		font-size: 14px;
-		letter-spacing: 0;
-		text-transform: none;
-		color: var(--ink);
 	}
 
 	.quiet-text {
