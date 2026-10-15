@@ -235,5 +235,9 @@
 	"records_local_clear_word": "delete",
 	"records_transition_title": "Change status?",
 	"records_transition_body": "{from} → {to}. The change is recorded in the history.",
-	"notes_archive_title": "Archive note?"
+	"notes_archive_title": "Archive note?",
+	"date_open_calendar": "Open calendar",
+	"date_previous_month": "Previous month",
+	"date_next_month": "Next month",
+	"control_no_match": "No matches"
 }

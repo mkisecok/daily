@@ -10,6 +10,10 @@
 	import type { FieldError } from '../validate.js';
 	import type { FieldDef, Option } from '../types.js';
 	import type { FormValue } from './inputs.js';
+	import Chips from '#lib/ui/form/Chips.svelte';
+	import Combobox from '#lib/ui/form/Combobox.svelte';
+	import DatePicker from '#lib/ui/form/DatePicker.svelte';
+	import Select from '#lib/ui/form/Select.svelte';
 
 	let {
 		field,
@@ -30,39 +34,48 @@
 			undefined
 	);
 
-	function toggle(option: string, checked: boolean) {
-		const list = Array.isArray(value) ? value : [];
-		value = checked ? [...list, option] : list.filter((v) => v !== option);
-	}
+	/** single-value controls work on strings; an empty one stands for no value */
+	const asText = () => (typeof value === 'string' ? value : value == null ? '' : String(value));
+	const setText = (next: string) => (value = next);
+	const asList = () => (Array.isArray(value) ? value : []);
+	const setList = (next: string[]) => (value = next);
 </script>
 
 <div class="field" data-type={field.type} class:invalid={error}>
-	{#if field.type === 'multiselect' || field.type === 'boolean'}
+	{#if field.type === 'multiselect'}
+		<span class="label-row">
+			<span class="label" id="{id}-label">{text(field.label)}</span>{#if field.required}<span
+					class="req"
+					aria-hidden="true">*</span
+				>{/if}
+		</span>
+		<Chips
+			bind:value={asList, setList}
+			items={field.options.map((o) => ({ value: o.value, label: text(o.label) }))}
+			labelledBy="{id}-label"
+			{describedBy}
+		/>
+	{:else if field.type === 'date' || field.type === 'datetime'}
+		<DatePicker
+			bind:value={asText, setText}
+			label={text(field.label)}
+			granularity={field.type === 'date' ? 'day' : 'minute'}
+			{describedBy}
+			invalid={!!error}
+			required={field.required}
+		/>
+	{:else if field.type === 'boolean'}
 		<fieldset aria-describedby={describedBy}>
 			<legend class="label">
 				{text(field.label)}{#if field.required}<span class="req" aria-hidden="true">*</span>{/if}
 			</legend>
 			<div class="choices">
-				{#if field.type === 'multiselect'}
-					{#each field.options as option (option.value)}
-						<label>
-							<input
-								type="checkbox"
-								value={option.value}
-								checked={Array.isArray(value) && value.includes(option.value)}
-								onchange={(event) => toggle(option.value, event.currentTarget.checked)}
-							/>
-							<span>{text(option.label)}</span>
-						</label>
-					{/each}
-				{:else}
-					<label
-						><input type="radio" name={id} value="true" bind:group={value} />{m.answer_yes()}</label
-					>
-					<label
-						><input type="radio" name={id} value="false" bind:group={value} />{m.answer_no()}</label
-					>
-				{/if}
+				<label
+					><input type="radio" name={id} value="true" bind:group={value} />{m.answer_yes()}</label
+				>
+				<label
+					><input type="radio" name={id} value="false" bind:group={value} />{m.answer_no()}</label
+				>
 			</div>
 		</fieldset>
 	{:else}
@@ -82,31 +95,26 @@
 				aria-invalid={!!error}
 				aria-required={field.required || undefined}></textarea>
 		{:else if field.type === 'reference'}
-			<select
+			<Combobox
 				{id}
-				bind:value
-				aria-describedby={describedBy}
-				aria-invalid={!!error}
-				aria-required={field.required || undefined}
-			>
-				<option value="">{m.records_select()}</option>
-				{#each choices as choice (choice.value)}
-					<option value={choice.value}>{text(choice.label)}</option>
-				{/each}
-			</select>
+				bind:value={asText, setText}
+				items={choices.map((c) => ({ value: c.value, label: text(c.label) }))}
+				placeholder={m.records_select()}
+				empty={m.control_no_match()}
+				{describedBy}
+				invalid={!!error}
+				required={field.required}
+			/>
 		{:else if field.type === 'select'}
-			<select
+			<Select
 				{id}
-				bind:value
-				aria-describedby={describedBy}
-				aria-invalid={!!error}
-				aria-required={field.required || undefined}
-			>
-				<option value="">{m.records_select()}</option>
-				{#each field.options as option (option.value)}
-					<option value={option.value}>{text(option.label)}</option>
-				{/each}
-			</select>
+				bind:value={asText, setText}
+				items={field.options.map((o) => ({ value: o.value, label: text(o.label) }))}
+				placeholder={m.records_select()}
+				{describedBy}
+				invalid={!!error}
+				required={field.required}
+			/>
 		{:else if field.type === 'number'}
 			<span class="with-unit">
 				<input
@@ -120,24 +128,6 @@
 				/>
 				{#if field.unit}<span class="unit">{text(field.unit)}</span>{/if}
 			</span>
-		{:else if field.type === 'date'}
-			<input
-				{id}
-				type="date"
-				bind:value
-				aria-describedby={describedBy}
-				aria-invalid={!!error}
-				aria-required={field.required || undefined}
-			/>
-		{:else if field.type === 'datetime'}
-			<input
-				{id}
-				type="datetime-local"
-				bind:value
-				aria-describedby={describedBy}
-				aria-invalid={!!error}
-				aria-required={field.required || undefined}
-			/>
 		{:else}
 			<input
 				{id}
@@ -219,15 +209,12 @@
 		}
 
 		& input:not([type='checkbox'], [type='radio']),
-		& select,
 		& textarea {
 			width: 100%;
 			max-width: var(--measure);
 		}
 
-		&[data-type='number'] input,
-		&[data-type='date'] input,
-		&[data-type='datetime'] input {
+		&[data-type='number'] input {
 			width: auto;
 		}
 

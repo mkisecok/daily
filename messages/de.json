@@ -235,5 +235,9 @@
 	"records_local_clear_word": "löschen",
 	"records_transition_title": "Status ändern?",
 	"records_transition_body": "{from} → {to}. Die Änderung wird im Verlauf festgehalten.",
-	"notes_archive_title": "Notiz archivieren?"
+	"notes_archive_title": "Notiz archivieren?",
+	"date_open_calendar": "Kalender öffnen",
+	"date_previous_month": "Vorheriger Monat",
+	"date_next_month": "Nächster Monat",
+	"control_no_match": "Keine Treffer"
 }

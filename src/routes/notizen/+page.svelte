@@ -11,6 +11,7 @@
 	import { getStore } from '#lib/records/store/index.js';
 	import type { StoredRecord } from '#lib/records/types.js';
 	import ConfirmDialog from '#lib/ui/ConfirmDialog.svelte';
+	import DatePicker from '#lib/ui/form/DatePicker.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -162,10 +163,9 @@
 			</label>
 		{/if}
 		<div class="row">
-			<label class="field">
-				<span>{m.notes_day()}</span>
-				<input type="date" bind:value={draft.tag} />
-			</label>
+			<div class="field">
+				<DatePicker bind:value={draft.tag} label={m.notes_day()} granularity="day" />
+			</div>
 			<label class="field grow">
 				<span>{m.notes_tags()}</span>
 				<input type="text" bind:value={draft.schlagworte} />

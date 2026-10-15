@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Switch from '#lib/ui/form/Switch.svelte';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { downloadText } from '#lib/records/ui/download.js';
 	import { ask } from '#lib/tools/guardrail-test/endpoint.js';
@@ -137,12 +138,11 @@
 
 	<fieldset>
 		<legend>{text(T.sets)}</legend>
-		<div class="choices">
+		<div class="switches">
 			{#each Object.entries(SETS) as [id, set] (id)}
-				<label>
-					<input type="checkbox" bind:checked={chosen[id as SetId]} />
-					<span><strong>{text(set.label)}</strong> — {text(set.help)}</span>
-				</label>
+				<Switch id="set-{id}" bind:checked={chosen[id as SetId]}>
+					<strong>{text(set.label)}</strong> — {text(set.help)}
+				</Switch>
 			{/each}
 		</div>
 	</fieldset>
@@ -274,6 +274,12 @@
 
 			& .choices {
 				margin-top: 0.5rem;
+			}
+
+			& .switches {
+				display: grid;
+				gap: 0.7rem;
+				margin-top: 0.6rem;
 			}
 		}
 
