@@ -55,12 +55,18 @@
 	<DatePicker.Input
 		class="daily-control daily-date-input"
 		aria-describedby={describedBy}
-		aria-invalid={invalid || undefined}
+		data-invalid={invalid ? '' : undefined}
 	>
 		{#snippet children({ segments })}
 			<span class="daily-segments">
 				{#each segments as { part, value: text }, i (i)}
-					<DatePicker.Segment {part} class="daily-segment">{text}</DatePicker.Segment>
+					<DatePicker.Segment
+						{part}
+						class="daily-segment"
+						aria-required={required && part !== 'literal' ? 'true' : undefined}
+						aria-invalid={invalid && part !== 'literal' ? 'true' : undefined}
+						>{text}</DatePicker.Segment
+					>
 				{/each}
 			</span>
 			<DatePicker.Trigger class="daily-icon-button" aria-label={m.date_open_calendar()}>
