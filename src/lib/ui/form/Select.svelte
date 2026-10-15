@@ -28,16 +28,17 @@
 		required?: boolean;
 	} = $props();
 
+	// optional fields offer the placeholder as an item, so a choice can be taken back
+	const options = $derived(required ? items : [{ value: '', label: placeholder }, ...items]);
 	const selected = $derived(items.find((item) => item.value === value));
 </script>
 
-<Select.Root type="single" bind:value {items} allowDeselect={!required}>
+<Select.Root type="single" bind:value items={options}>
 	<Select.Trigger
 		{id}
 		class="daily-control"
 		aria-describedby={describedBy}
 		aria-invalid={invalid || undefined}
-		aria-required={required || undefined}
 	>
 		<span class="daily-control-value" data-placeholder={selected ? undefined : ''}
 			>{selected?.label ?? placeholder}</span
@@ -47,7 +48,7 @@
 	<Select.Portal>
 		<Select.Content class="daily-popover" sideOffset={4}>
 			<Select.Viewport class="daily-listbox">
-				{#each items as item (item.value)}
+				{#each options as item (item.value)}
 					<Select.Item value={item.value} label={item.label} class="daily-option">
 						{#snippet children({ selected: isSelected })}
 							<span class="daily-control-mark"
