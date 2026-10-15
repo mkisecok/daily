@@ -182,67 +182,67 @@
 <style>
 	.input {
 		padding: 1.5rem 0;
-	}
 
-	.intro {
-		margin-bottom: 1.25rem;
-		font-size: 15px;
-		color: var(--ink2);
-	}
+		& .intro {
+			margin-bottom: 1.25rem;
+			font-size: 15px;
+			color: var(--ink2);
+		}
 
-	label.button {
-		position: relative;
-		cursor: pointer;
-
-		& input {
-			position: absolute;
-			inset: 0;
-			opacity: 0;
+		& label.button {
+			position: relative;
 			cursor: pointer;
+
+			& input {
+				position: absolute;
+				inset: 0;
+				opacity: 0;
+				cursor: pointer;
+			}
+
+			&:focus-within {
+				outline: 2px solid var(--navy);
+				outline-offset: 2px;
+			}
 		}
 
-		&:focus-within {
-			outline: 2px solid var(--navy);
-			outline-offset: 2px;
+		& .status {
+			font-family: var(--sans);
+			font-size: 13px;
+			letter-spacing: 0;
+			text-transform: none;
+			color: var(--ink3);
 		}
-	}
 
-	.status {
-		font-family: var(--sans);
-		font-size: 13px;
-		letter-spacing: 0;
-		text-transform: none;
-		color: var(--ink3);
-	}
-
-	.paste-label {
-		display: block;
-		margin-top: 1.5rem;
-		font-family: var(--serif);
-		font-size: 16px;
-	}
-
-	textarea,
-	.paste-name input {
-		width: 100%;
-		margin-top: 0.4rem;
-		padding: 0.5rem 0.6rem;
-		font-family: var(--mono);
-		font-size: 13px;
-		color: var(--ink);
-		background: var(--sheet);
-		border: 1px solid var(--rule);
-	}
-
-	.paste-name {
-		display: block;
-		margin-top: 0.75rem;
-		font-size: 13px;
-		color: var(--ink2);
-
-		& input {
-			max-width: 24rem;
+		& .paste-label {
 			display: block;
+			margin-top: 1.5rem;
+			font-family: var(--serif);
+			font-size: 16px;
+		}
+
+		& textarea,
+		& .paste-name input {
+			width: 100%;
+			margin-top: 0.4rem;
+			padding: 0.5rem 0.6rem;
+			font-family: var(--mono);
+			font-size: 13px;
+			color: var(--ink);
+			background: var(--sheet);
+			border: 1px solid var(--rule);
+		}
+
+		& .paste-name {
+			display: block;
+			margin-top: 0.75rem;
+			font-size: 13px;
+			color: var(--ink2);
+
+			& input {
+				max-width: 24rem;
+				display: block;
+			}
 		}
 	}
 
@@ -253,40 +253,40 @@
 	.scroll {
 		overflow-x: auto;
 		margin-top: 1.5rem;
-	}
 
-	.findings {
-		width: 100%;
-		border-collapse: collapse;
-		font-size: 13px;
+		& .findings {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 13px;
 
-		& th,
-		& td {
-			padding: 0.5rem 1rem 0.5rem 0;
-			text-align: left;
-			vertical-align: baseline;
-			border-bottom: 1px solid var(--rule2);
-		}
+			& th,
+			& td {
+				padding: 0.5rem 1rem 0.5rem 0;
+				text-align: left;
+				vertical-align: baseline;
+				border-bottom: 1px solid var(--rule2);
+			}
 
-		& th {
-			font-family: var(--mono);
-			font-size: 11px;
-			font-weight: 500;
-			letter-spacing: 0.1em;
-			text-transform: uppercase;
-			color: var(--ink3);
-			border-bottom: 1px solid var(--ink);
-		}
+			& th {
+				font-family: var(--mono);
+				font-size: 11px;
+				font-weight: 500;
+				letter-spacing: 0.1em;
+				text-transform: uppercase;
+				color: var(--ink3);
+				border-bottom: 1px solid var(--ink);
+			}
 
-		& tr[data-category='geheimnis'] .category {
-			color: var(--wax);
-		}
+			& tr[data-category='geheimnis'] .category {
+				color: var(--wax);
+			}
 
-		& .place,
-		& code {
-			font-family: var(--mono);
-			font-size: 12px;
-			word-break: break-all;
+			& .place,
+			& code {
+				font-family: var(--mono);
+				font-size: 12px;
+				word-break: break-all;
+			}
 		}
 	}
 

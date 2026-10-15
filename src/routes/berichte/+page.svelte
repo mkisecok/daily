@@ -215,12 +215,12 @@
 		& h1 {
 			font-size: clamp(28px, 4vw, 40px);
 		}
-	}
 
-	.intro {
-		margin-top: 0.75rem;
-		font-size: 15px;
-		color: var(--ink2);
+		& .intro {
+			margin-top: 0.75rem;
+			font-size: 15px;
+			color: var(--ink2);
+		}
 	}
 
 	.settings {
@@ -265,137 +265,137 @@
 			margin-top: 0;
 			border-top: 0;
 		}
-	}
 
-	.cover {
-		padding: 1.5rem 0;
-		border-bottom: 1px solid var(--rule);
-
-		& h2 {
-			margin: 0.3rem 0 0.5rem;
-			font-size: clamp(26px, 3.5vw, 34px);
-		}
-
-		& p {
-			font-size: 15px;
-		}
-
-		& .generated {
-			margin-top: 0.4rem;
-			font-size: 13px;
-			color: var(--ink3);
-		}
-	}
-
-	section {
-		padding-top: 1.75rem;
-
-		& h3 {
-			font-size: 20px;
-			padding-bottom: 0.4rem;
+		& .cover {
+			padding: 1.5rem 0;
 			border-bottom: 1px solid var(--rule);
-		}
-	}
 
-	.free p {
-		margin-top: 0.75rem;
-		max-width: var(--measure);
-		white-space: pre-line;
-		font-family: var(--serif);
-		font-size: 16px;
-	}
+			& h2 {
+				margin: 0.3rem 0 0.5rem;
+				font-size: clamp(26px, 3.5vw, 34px);
+			}
 
-	.tool {
-		padding: 1rem 0;
-		border-bottom: 1px solid var(--rule2);
-		break-inside: avoid;
+			& p {
+				font-size: 15px;
+			}
 
-		& h4 {
-			font-size: 17px;
-		}
-	}
-
-	.summary,
-	.count {
-		font-size: 13px;
-		color: var(--ink2);
-	}
-
-	.row {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.3rem 1rem;
-		align-items: baseline;
-		margin-top: 0.5rem;
-		font-size: 14px;
-
-		& .terminal {
-			color: var(--khaki);
-		}
-	}
-
-	.outcomes {
-		list-style: none;
-		margin-top: 0.5rem;
-		font-family: var(--serif);
-		font-size: 15px;
-
-		& li[data-level='positive'] {
-			color: var(--wax);
+			& .generated {
+				margin-top: 0.4rem;
+				font-size: 13px;
+				color: var(--ink3);
+			}
 		}
 
-		& li[data-level='conditional'] {
-			color: var(--navy);
+		& section {
+			padding-top: 1.75rem;
+
+			& h3 {
+				font-size: 20px;
+				padding-bottom: 0.4rem;
+				border-bottom: 1px solid var(--rule);
+			}
+
+			&.free p {
+				margin-top: 0.75rem;
+				max-width: var(--measure);
+				white-space: pre-line;
+				font-family: var(--serif);
+				font-size: 16px;
+			}
+
+			& .tool {
+				padding: 1rem 0;
+				border-bottom: 1px solid var(--rule2);
+				break-inside: avoid;
+
+				& h4 {
+					font-size: 17px;
+				}
+
+				& .summary,
+				& .count {
+					font-size: 13px;
+					color: var(--ink2);
+				}
+
+				& .row {
+					display: flex;
+					flex-wrap: wrap;
+					gap: 0.3rem 1rem;
+					align-items: baseline;
+					margin-top: 0.5rem;
+					font-size: 14px;
+
+					& .terminal {
+						color: var(--khaki);
+					}
+				}
+
+				& .outcomes {
+					list-style: none;
+					margin-top: 0.5rem;
+					font-family: var(--serif);
+					font-size: 15px;
+
+					& li[data-level='positive'] {
+						color: var(--wax);
+					}
+
+					& li[data-level='conditional'] {
+						color: var(--navy);
+					}
+
+					& li[data-level='negative'] {
+						color: var(--khaki);
+					}
+
+					& strong {
+						margin-left: 0.4rem;
+						font-family: var(--mono);
+						font-size: 13px;
+					}
+				}
+
+				& details {
+					margin-top: 0.5rem;
+					font-size: 14px;
+
+					& summary {
+						cursor: pointer;
+						color: var(--ink2);
+					}
+
+					& .items {
+						list-style: none;
+						margin-top: 0.4rem;
+
+						& li {
+							display: flex;
+							flex-wrap: wrap;
+							gap: 0.2rem 1rem;
+							padding: 0.3rem 0;
+
+							& .state {
+								font-family: var(--mono);
+								font-size: 11px;
+								letter-spacing: 0.08em;
+								text-transform: uppercase;
+								color: var(--navy);
+							}
+
+							& .date {
+								color: var(--ink3);
+							}
+						}
+					}
+				}
+			}
+
+			& .quiet-text {
+				margin-top: 0.75rem;
+				font-size: 14px;
+				color: var(--ink3);
+			}
 		}
-
-		& li[data-level='negative'] {
-			color: var(--khaki);
-		}
-
-		& strong {
-			margin-left: 0.4rem;
-			font-family: var(--mono);
-			font-size: 13px;
-		}
-	}
-
-	details {
-		margin-top: 0.5rem;
-		font-size: 14px;
-
-		& summary {
-			cursor: pointer;
-			color: var(--ink2);
-		}
-	}
-
-	.items {
-		list-style: none;
-		margin-top: 0.4rem;
-
-		& li {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 0.2rem 1rem;
-			padding: 0.3rem 0;
-		}
-	}
-
-	.state {
-		font-family: var(--mono);
-		font-size: 11px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--navy);
-	}
-
-	.date {
-		color: var(--ink3);
-	}
-
-	.quiet-text {
-		margin-top: 0.75rem;
-		font-size: 14px;
-		color: var(--ink3);
 	}
 </style>

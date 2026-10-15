@@ -89,12 +89,12 @@
 		& h1 {
 			font-size: clamp(28px, 4vw, 40px);
 		}
-	}
 
-	.intro {
-		margin-top: 0.75rem;
-		font-size: 15px;
-		color: var(--ink2);
+		& .intro {
+			margin-top: 0.75rem;
+			font-size: 15px;
+			color: var(--ink2);
+		}
 	}
 
 	.message {
@@ -120,29 +120,29 @@
 			@media (max-width: 40rem) {
 				grid-template-columns: 1fr;
 			}
+
+			& .name {
+				font-family: var(--serif);
+				font-size: 18px;
+			}
+
+			& .kind,
+			& .current {
+				font-family: var(--mono);
+				font-size: 11px;
+				letter-spacing: 0.1em;
+				text-transform: uppercase;
+				color: var(--ink3);
+			}
+
+			& .current {
+				color: var(--navy);
+			}
+
+			&.active .name {
+				color: var(--navy);
+			}
 		}
-
-		& li.active .name {
-			color: var(--navy);
-		}
-	}
-
-	.name {
-		font-family: var(--serif);
-		font-size: 18px;
-	}
-
-	.kind,
-	.current {
-		font-family: var(--mono);
-		font-size: 11px;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		color: var(--ink3);
-	}
-
-	.current {
-		color: var(--navy);
 	}
 
 	.rename,
@@ -152,6 +152,32 @@
 		align-items: center;
 		gap: 0.75rem 1rem;
 		grid-column: 1 / -1;
+
+		& input:not([type='hidden']) {
+			flex: 1 1 18rem;
+			max-width: 32rem;
+			padding: 0.5rem 0.6rem;
+			font: inherit;
+			font-size: 15px;
+			color: var(--ink);
+			background: var(--sheet);
+			border: 1px solid var(--rule);
+		}
+
+		& .invalid {
+			width: 100%;
+			font-size: 13px;
+			color: var(--wax);
+		}
+
+		& .visually-hidden {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip-path: inset(50%);
+			white-space: nowrap;
+		}
 	}
 
 	.create {
@@ -162,31 +188,5 @@
 			font-family: var(--serif);
 			font-size: 18px;
 		}
-	}
-
-	input:not([type='hidden']) {
-		flex: 1 1 18rem;
-		max-width: 32rem;
-		padding: 0.5rem 0.6rem;
-		font: inherit;
-		font-size: 15px;
-		color: var(--ink);
-		background: var(--sheet);
-		border: 1px solid var(--rule);
-	}
-
-	.invalid {
-		width: 100%;
-		font-size: 13px;
-		color: var(--wax);
-	}
-
-	.visually-hidden {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		overflow: hidden;
-		clip-path: inset(50%);
-		white-space: nowrap;
 	}
 </style>

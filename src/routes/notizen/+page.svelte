@@ -202,7 +202,7 @@
 				<span>{m.notes_updated({ date: formatShortDate(record.updatedAt, locale) })}</span>
 				{#each tags(record.data.schlagworte) as tag (tag)}<span class="tag">{tag}</span>{/each}
 			</p>
-			<Markdown source={str(record.data.text)} />
+			<div class="text"><Markdown source={str(record.data.text)} /></div>
 			{#if record.data.quelle}
 				<p class="source">
 					{m.notes_source()}:
@@ -285,12 +285,12 @@
 		& h1 {
 			font-size: clamp(28px, 4vw, 40px);
 		}
-	}
 
-	.intro {
-		margin-top: 0.75rem;
-		font-size: 15px;
-		color: var(--ink2);
+		& .intro {
+			margin-top: 0.75rem;
+			font-size: 15px;
+			color: var(--ink2);
+		}
 	}
 
 	.message {
@@ -305,15 +305,17 @@
 		margin-top: 1.5rem;
 	}
 
-	.search input {
-		width: 100%;
-		max-width: var(--measure);
-		margin-top: 1.25rem;
-		padding: 0.55rem 0.7rem;
-		font: inherit;
-		color: var(--ink);
-		background: var(--sheet);
-		border: 1px solid var(--rule);
+	.search {
+		& input {
+			width: 100%;
+			max-width: var(--measure);
+			margin-top: 1.25rem;
+			padding: 0.55rem 0.7rem;
+			font: inherit;
+			color: var(--ink);
+			background: var(--sheet);
+			border: 1px solid var(--rule);
+		}
 	}
 
 	.notes {
@@ -324,11 +326,21 @@
 		& li {
 			padding: 0.9rem 0;
 			border-bottom: 1px solid var(--rule2);
-		}
 
-		& a {
-			font-family: var(--serif);
-			font-size: 18px;
+			& a {
+				font-family: var(--serif);
+				font-size: 18px;
+			}
+
+			& .date {
+				margin-left: 0.75rem;
+			}
+
+			& .snippet {
+				margin-top: 0.25rem;
+				font-size: 14px;
+				color: var(--ink2);
+			}
 		}
 	}
 
@@ -336,16 +348,6 @@
 	.meta {
 		font-size: 13px;
 		color: var(--ink3);
-	}
-
-	.date {
-		margin-left: 0.75rem;
-	}
-
-	.snippet {
-		margin-top: 0.25rem;
-		font-size: 14px;
-		color: var(--ink2);
 	}
 
 	.tags,
@@ -371,108 +373,108 @@
 			font-size: clamp(24px, 3vw, 30px);
 		}
 
-		& :global(.markdown) {
+		& .text {
 			margin-top: 1.25rem;
 		}
-	}
 
-	.source {
-		margin-top: 1.5rem;
-		font-size: 13px;
-		color: var(--ink2);
-		word-break: break-all;
+		& .source {
+			margin-top: 1.5rem;
+			font-size: 13px;
+			color: var(--ink2);
+			word-break: break-all;
+		}
 	}
 
 	.editor {
 		margin-top: 1.5rem;
 		max-width: var(--measure);
-	}
 
-	.field {
-		display: block;
-		margin-top: 1rem;
-
-		& span {
+		& .field {
 			display: block;
-			font-family: var(--serif);
-			font-size: 15px;
+			margin-top: 1rem;
+
+			& span {
+				display: block;
+				font-family: var(--serif);
+				font-size: 15px;
+			}
+
+			& input,
+			& textarea {
+				width: 100%;
+				margin-top: 0.3rem;
+				padding: 0.5rem 0.6rem;
+				font: inherit;
+				font-size: 15px;
+				color: var(--ink);
+				background: var(--sheet);
+				border: 1px solid var(--rule);
+			}
+
+			& textarea {
+				font-family: var(--mono);
+				font-size: 14px;
+				line-height: 1.5;
+				resize: vertical;
+			}
+
+			& small {
+				display: block;
+				margin-top: 0.3rem;
+				font-size: 12px;
+				color: var(--ink3);
+			}
 		}
 
-		& input,
-		& textarea {
-			width: 100%;
-			margin-top: 0.3rem;
-			padding: 0.5rem 0.6rem;
-			font: inherit;
-			font-size: 15px;
-			color: var(--ink);
-			background: var(--sheet);
-			border: 1px solid var(--rule);
+		& .row {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0 1.5rem;
+
+			& .grow {
+				flex: 1 1 16rem;
+			}
 		}
 
-		& textarea {
+		& .tabs {
+			display: flex;
+			gap: 1.25rem;
+			margin-top: 1.25rem;
 			font-family: var(--mono);
-			font-size: 14px;
-			line-height: 1.5;
-			resize: vertical;
-		}
-
-		& small {
-			display: block;
-			margin-top: 0.3rem;
 			font-size: 12px;
-			color: var(--ink3);
-		}
-	}
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
 
-	.row {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0 1.5rem;
+			& button {
+				padding: 0.2rem 0;
+				color: var(--ink3);
+				border-bottom: 2px solid transparent;
 
-		& .grow {
-			flex: 1 1 16rem;
-		}
-	}
-
-	.tabs {
-		display: flex;
-		gap: 1.25rem;
-		margin-top: 1.25rem;
-		font-family: var(--mono);
-		font-size: 12px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-
-		& button {
-			padding: 0.2rem 0;
-			color: var(--ink3);
-			border-bottom: 2px solid transparent;
+				&[aria-selected='true'] {
+					color: var(--ink);
+					border-bottom-color: var(--ink);
+				}
+			}
 		}
 
-		& button[aria-selected='true'] {
-			color: var(--ink);
-			border-bottom-color: var(--ink);
+		& .preview {
+			margin-top: 0.75rem;
+			min-height: 10rem;
+			padding: 0.75rem 0;
+			border-top: 1px solid var(--rule2);
+			border-bottom: 1px solid var(--rule2);
 		}
-	}
-
-	.preview {
-		margin-top: 0.75rem;
-		min-height: 10rem;
-		padding: 0.75rem 0;
-		border-top: 1px solid var(--rule2);
-		border-bottom: 1px solid var(--rule2);
 	}
 
 	.actions {
 		margin-top: 2rem;
-	}
 
-	.confirm {
-		font-family: var(--sans);
-		font-size: 14px;
-		letter-spacing: 0;
-		text-transform: none;
+		& .confirm {
+			font-family: var(--sans);
+			font-size: 14px;
+			letter-spacing: 0;
+			text-transform: none;
+		}
 	}
 
 	.quiet-text {

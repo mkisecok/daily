@@ -389,10 +389,12 @@
 		font-size: 14px;
 	}
 
-	.intro {
-		margin: 1.5rem 0;
-		font-size: 16px;
-		color: var(--ink2);
+	.list {
+		& .intro {
+			margin: 1.5rem 0;
+			font-size: 16px;
+			color: var(--ink2);
+		}
 	}
 
 	.mode-title,
@@ -401,10 +403,12 @@
 		font-size: clamp(24px, 3vw, 30px);
 	}
 
-	.archived {
-		margin-top: 0.5rem;
-		font-size: 14px;
-		color: var(--wax);
+	.record-head {
+		& .archived {
+			margin-top: 0.5rem;
+			font-size: 14px;
+			color: var(--wax);
+		}
 	}
 
 	.deadlines {
@@ -420,26 +424,26 @@
 			margin-top: 1.5rem;
 			font-size: 18px;
 		}
-	}
 
-	.composed-record {
-		margin-top: 1rem;
-		padding-left: 1rem;
-		border-left: 2px solid var(--rule);
-		break-inside: avoid;
+		& .composed-record {
+			margin-top: 1rem;
+			padding-left: 1rem;
+			border-left: 2px solid var(--rule);
+			break-inside: avoid;
 
-		& h4 {
-			font-size: 16px;
+			& h4 {
+				font-size: 16px;
+
+				& .composed-state {
+					margin-left: 0.75rem;
+					font-family: var(--mono);
+					font-size: 11px;
+					letter-spacing: 0.08em;
+					text-transform: uppercase;
+					color: var(--navy);
+				}
+			}
 		}
-	}
-
-	.composed-state {
-		margin-left: 0.75rem;
-		font-family: var(--mono);
-		font-size: 11px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--navy);
 	}
 
 	.actions {

@@ -49,13 +49,13 @@
 		& h1 {
 			font-size: clamp(28px, 4vw, 40px);
 		}
-	}
 
-	.local {
-		margin-top: 0.75rem;
-		font-size: 14px;
-		color: var(--ink2);
-		max-width: var(--measure);
+		& .local {
+			margin-top: 0.75rem;
+			font-size: 14px;
+			color: var(--ink2);
+			max-width: var(--measure);
+		}
 	}
 
 	.toolbar {

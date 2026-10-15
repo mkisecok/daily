@@ -71,13 +71,13 @@
 			margin-top: 0.4rem;
 			font-size: clamp(26px, 3.5vw, 36px);
 		}
-	}
 
-	.source {
-		margin-top: 0.75rem;
-		font-size: 13px;
-		color: var(--ink3);
-		max-width: var(--measure);
+		& .source {
+			margin-top: 0.75rem;
+			font-size: 13px;
+			color: var(--ink3);
+			max-width: var(--measure);
+		}
 	}
 
 	.toc section {
@@ -101,23 +101,23 @@
 			padding: 0.3rem 0;
 			font-family: var(--serif);
 			font-size: 15px;
+
+			& .ref {
+				display: inline-block;
+				min-width: 4.5rem;
+				font-family: var(--mono);
+				font-size: 12px;
+				color: var(--ink3);
+			}
 		}
-	}
 
-	.ref {
-		display: inline-block;
-		min-width: 4.5rem;
-		font-family: var(--mono);
-		font-size: 12px;
-		color: var(--ink3);
-	}
-
-	.recitals {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.2rem 0.9rem;
-		margin-top: 0.5rem;
-		font-family: var(--mono);
-		font-size: 13px;
+		& .recitals {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.2rem 0.9rem;
+			margin-top: 0.5rem;
+			font-family: var(--mono);
+			font-size: 13px;
+		}
 	}
 </style>

@@ -89,12 +89,12 @@
 		& h1 {
 			font-size: clamp(28px, 4vw, 40px);
 		}
-	}
 
-	.intro {
-		margin-top: 0.75rem;
-		font-size: 15px;
-		color: var(--ink2);
+		& .intro {
+			margin-top: 0.75rem;
+			font-size: 15px;
+			color: var(--ink2);
+		}
 	}
 
 	.laws {
@@ -112,18 +112,18 @@
 			@media (max-width: 40rem) {
 				grid-template-columns: 1fr;
 			}
+
+			& .name {
+				font-family: var(--mono);
+				font-size: 15px;
+				font-weight: 600;
+			}
+
+			& .full {
+				font-family: var(--serif);
+				font-size: 17px;
+			}
 		}
-	}
-
-	.name {
-		font-family: var(--mono);
-		font-size: 15px;
-		font-weight: 600;
-	}
-
-	.full {
-		font-family: var(--serif);
-		font-size: 17px;
 	}
 
 	.count,
@@ -156,34 +156,34 @@
 		& .status {
 			margin-top: 0.75rem;
 		}
-	}
 
-	.hits {
-		list-style: none;
-		margin-top: 0.5rem;
-		max-width: var(--measure);
+		& .hits {
+			list-style: none;
+			margin-top: 0.5rem;
+			max-width: var(--measure);
 
-		& li {
-			padding: 0.75rem 0;
-			border-bottom: 1px solid var(--rule2);
+			& li {
+				padding: 0.75rem 0;
+				border-bottom: 1px solid var(--rule2);
+			}
+
+			& a {
+				font-family: var(--serif);
+				font-size: 16px;
+
+				& .ref {
+					display: block;
+					font-family: var(--mono);
+					font-size: 12px;
+					color: var(--ink3);
+				}
+			}
+
+			& .snippet {
+				margin-top: 0.25rem;
+				font-size: 14px;
+				color: var(--ink2);
+			}
 		}
-
-		& a {
-			font-family: var(--serif);
-			font-size: 16px;
-		}
-	}
-
-	.ref {
-		display: block;
-		font-family: var(--mono);
-		font-size: 12px;
-		color: var(--ink3);
-	}
-
-	.snippet {
-		margin-top: 0.25rem;
-		font-size: 14px;
-		color: var(--ink2);
 	}
 </style>

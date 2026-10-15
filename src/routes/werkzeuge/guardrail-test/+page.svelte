@@ -255,140 +255,140 @@
 <style>
 	.setup {
 		padding: 1.5rem 0;
-	}
 
-	.intro {
-		margin-bottom: 1rem;
-		font-size: 15px;
-		color: var(--ink2);
-	}
-
-	fieldset {
-		margin-top: 1.25rem;
-		padding: 0;
-		border: 0;
-
-		& legend {
-			font-family: var(--serif);
-			font-size: 17px;
-		}
-	}
-
-	.choice {
-		display: flex;
-		gap: 0.5rem;
-		align-items: baseline;
-		margin-top: 0.4rem;
-		font-size: 14px;
-		color: var(--ink2);
-
-		& input {
-			accent-color: var(--navy);
-		}
-	}
-
-	.field {
-		margin-top: 1rem;
-		max-width: var(--measure);
-
-		& label {
-			display: block;
-			font-family: var(--serif);
+		& .intro {
+			margin-bottom: 1rem;
 			font-size: 15px;
+			color: var(--ink2);
 		}
 
-		& input,
-		& textarea {
-			width: 100%;
-			margin-top: 0.3rem;
-			padding: 0.45rem 0.6rem;
-			font: inherit;
-			font-size: 14px;
-			color: var(--ink);
-			background: var(--sheet);
-			border: 1px solid var(--rule);
-		}
-	}
+		& fieldset {
+			margin-top: 1.25rem;
+			padding: 0;
+			border: 0;
 
-	.inline {
-		display: flex;
-		gap: 1rem;
-		align-items: center;
+			& legend {
+				font-family: var(--serif);
+				font-size: 17px;
+			}
 
-		& input {
-			font-family: var(--mono);
-			max-width: 22rem;
-		}
-	}
+			& .choice {
+				display: flex;
+				gap: 0.5rem;
+				align-items: baseline;
+				margin-top: 0.4rem;
+				font-size: 14px;
+				color: var(--ink2);
 
-	.link {
-		font-family: var(--mono);
-		font-size: 12px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--navy);
-		white-space: nowrap;
-	}
-
-	.help {
-		margin-top: 0.3rem;
-		font-size: 13px;
-		color: var(--ink3);
-	}
-
-	.status {
-		font-family: var(--sans);
-		font-size: 13px;
-		letter-spacing: 0;
-		text-transform: none;
-		color: var(--ink3);
-	}
-
-	.prompts {
-		margin: 1.5rem 0 1rem 1.25rem;
-
-		& li {
-			padding: 0.75rem 0;
-			border-bottom: 1px solid var(--rule2);
+				& input {
+					accent-color: var(--navy);
+				}
+			}
 		}
 
-		& textarea {
-			width: 100%;
-			margin-top: 0.3rem;
-			padding: 0.45rem 0.6rem;
-			font: inherit;
-			font-size: 14px;
-			color: var(--ink);
-			background: var(--sheet);
-			border: 1px solid var(--rule);
+		& .field {
+			margin-top: 1rem;
+			max-width: var(--measure);
+
+			& label {
+				display: block;
+				font-family: var(--serif);
+				font-size: 15px;
+			}
+
+			& input,
+			& textarea {
+				width: 100%;
+				margin-top: 0.3rem;
+				padding: 0.45rem 0.6rem;
+				font: inherit;
+				font-size: 14px;
+				color: var(--ink);
+				background: var(--sheet);
+				border: 1px solid var(--rule);
+			}
+
+			& .inline {
+				display: flex;
+				gap: 1rem;
+				align-items: center;
+
+				& input {
+					font-family: var(--mono);
+					max-width: 22rem;
+				}
+
+				& .link {
+					font-family: var(--mono);
+					font-size: 12px;
+					letter-spacing: 0.08em;
+					text-transform: uppercase;
+					color: var(--navy);
+					white-space: nowrap;
+				}
+			}
+
+			& .help {
+				margin-top: 0.3rem;
+				font-size: 13px;
+				color: var(--ink3);
+			}
 		}
-	}
 
-	.prompt {
-		font-family: var(--serif);
-		font-size: 15px;
-	}
+		& .status {
+			font-family: var(--sans);
+			font-size: 13px;
+			letter-spacing: 0;
+			text-transform: none;
+			color: var(--ink3);
+		}
 
-	.set {
-		display: block;
-		font-family: var(--mono);
-		font-size: 11px;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		color: var(--ink3);
-	}
+		& .prompts {
+			margin: 1.5rem 0 1rem 1.25rem;
 
-	.answer-label {
-		display: block;
-		margin-top: 0.5rem;
-		font-size: 13px;
-		color: var(--ink2);
-	}
+			& li {
+				padding: 0.75rem 0;
+				border-bottom: 1px solid var(--rule2);
+			}
 
-	.error {
-		margin-top: 0.3rem;
-		font-size: 13px;
-		color: var(--wax);
+			& textarea {
+				width: 100%;
+				margin-top: 0.3rem;
+				padding: 0.45rem 0.6rem;
+				font: inherit;
+				font-size: 14px;
+				color: var(--ink);
+				background: var(--sheet);
+				border: 1px solid var(--rule);
+			}
+
+			& .prompt {
+				font-family: var(--serif);
+				font-size: 15px;
+
+				& .set {
+					display: block;
+					font-family: var(--mono);
+					font-size: 11px;
+					letter-spacing: 0.1em;
+					text-transform: uppercase;
+					color: var(--ink3);
+				}
+			}
+
+			& .answer-label {
+				display: block;
+				margin-top: 0.5rem;
+				font-size: 13px;
+				color: var(--ink2);
+			}
+
+			& .error {
+				margin-top: 0.3rem;
+				font-size: 13px;
+				color: var(--wax);
+			}
+		}
 	}
 
 	.actions {
@@ -398,33 +398,33 @@
 	.scroll {
 		overflow-x: auto;
 		margin-top: 1.5rem;
-	}
 
-	.outcomes {
-		width: 100%;
-		border-collapse: collapse;
-		font-size: 13px;
+		& .outcomes {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 13px;
 
-		& th,
-		& td {
-			padding: 0.5rem 1rem 0.5rem 0;
-			text-align: left;
-			vertical-align: baseline;
-			border-bottom: 1px solid var(--rule2);
-		}
+			& th,
+			& td {
+				padding: 0.5rem 1rem 0.5rem 0;
+				text-align: left;
+				vertical-align: baseline;
+				border-bottom: 1px solid var(--rule2);
+			}
 
-		& th {
-			font-family: var(--mono);
-			font-size: 11px;
-			font-weight: 500;
-			letter-spacing: 0.1em;
-			text-transform: uppercase;
-			color: var(--ink3);
-			border-bottom: 1px solid var(--ink);
-		}
+			& th {
+				font-family: var(--mono);
+				font-size: 11px;
+				font-weight: 500;
+				letter-spacing: 0.1em;
+				text-transform: uppercase;
+				color: var(--ink3);
+				border-bottom: 1px solid var(--ink);
+			}
 
-		& tr[data-passed='false'] .passed {
-			color: var(--wax);
+			& tr[data-passed='false'] .passed {
+				color: var(--wax);
+			}
 		}
 	}
 </style>

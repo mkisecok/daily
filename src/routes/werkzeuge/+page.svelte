@@ -80,72 +80,72 @@
 			font-size: 22px;
 			padding-bottom: 0.75rem;
 			border-bottom: 1px solid var(--rule);
-		}
 
-		& .numeral {
-			color: var(--ink3);
-			margin-right: 0.5rem;
-		}
-	}
-
-	.list {
-		list-style: none;
-	}
-
-	.tool {
-		display: grid;
-		grid-template-columns: minmax(14rem, 18rem) 1fr;
-		gap: 0.5rem 2.5rem;
-		padding: 1.25rem 0;
-		border-bottom: 1px solid var(--rule2);
-
-		@media (max-width: 48rem) {
-			grid-template-columns: 1fr;
-		}
-
-		&[data-status='planned'] {
-			& .title {
-				color: var(--ink2);
-			}
-
-			& .summary {
+			& .numeral {
 				color: var(--ink3);
+				margin-right: 0.5rem;
 			}
 		}
 
-		& .name {
-			display: flex;
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 0.4rem;
-		}
+		& .list {
+			list-style: none;
 
-		& .title {
-			font-family: var(--serif);
-			font-size: 18px;
-			font-weight: 600;
-			color: var(--ink);
-		}
+			& .tool {
+				display: grid;
+				grid-template-columns: minmax(14rem, 18rem) 1fr;
+				gap: 0.5rem 2.5rem;
+				padding: 1.25rem 0;
+				border-bottom: 1px solid var(--rule2);
 
-		& .summary {
-			font-size: 14px;
-			color: var(--ink2);
-			max-width: var(--measure);
-		}
+				@media (max-width: 48rem) {
+					grid-template-columns: 1fr;
+				}
 
-		& .basis {
-			grid-column: 2;
-			display: flex;
-			flex-wrap: wrap;
-			gap: 0.6rem;
+				& .name {
+					display: flex;
+					flex-direction: column;
+					align-items: flex-start;
+					gap: 0.4rem;
+				}
 
-			@media (max-width: 48rem) {
-				grid-column: 1;
+				& .title {
+					font-family: var(--serif);
+					font-size: 18px;
+					font-weight: 600;
+					color: var(--ink);
+				}
+
+				& .summary {
+					font-size: 14px;
+					color: var(--ink2);
+					max-width: var(--measure);
+				}
+
+				& .basis {
+					grid-column: 2;
+					display: flex;
+					flex-wrap: wrap;
+					gap: 0.6rem;
+
+					@media (max-width: 48rem) {
+						grid-column: 1;
+					}
+
+					& .sep {
+						color: var(--ink3);
+					}
+				}
+
+				&[data-status='planned'] {
+					& .title {
+						color: var(--ink2);
+					}
+
+					& .summary {
+						color: var(--ink3);
+					}
+				}
 			}
-		}
-
-		& .sep {
-			color: var(--ink3);
 		}
 	}
 </style>
