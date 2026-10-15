@@ -9,6 +9,7 @@
 	import { localized } from '#lib/i18n/links.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { citationPath } from '#lib/normen/cite.js';
+	import Tooltip from '#lib/ui/Tooltip.svelte';
 	import { cite } from '../i18n.js';
 	import type { LegalBasis } from '../types.js';
 
@@ -18,13 +19,11 @@
 </script>
 
 {#if path}
-	<a
-		class="citation-link"
-		href={resolve(localized(path))}
-		target="_blank"
-		rel="noopener"
-		title={m.normen_open()}><cite class="citation">{cite(basis)}</cite></a
-	>
+	<Tooltip text={m.normen_open()}>
+		<a class="citation-link" href={resolve(localized(path))} target="_blank" rel="noopener"
+			><cite class="citation">{cite(basis)}</cite></a
+		>
+	</Tooltip>
 {:else}
 	<cite class="citation">{cite(basis)}</cite>
 {/if}

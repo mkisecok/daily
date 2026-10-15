@@ -13,6 +13,7 @@
 	import Wordmark from './Wordmark.svelte';
 	import LangSwitch from './LangSwitch.svelte';
 	import ThemeSwitch from './ThemeSwitch.svelte';
+	import Tooltip from './Tooltip.svelte';
 
 	let {
 		theme,
@@ -71,12 +72,11 @@
 				<form class="account" method="post" action={resolve('/auth/logout')}>
 					<span class="name">{user.displayName}</span>
 					{#if organisation}
-						<a
-							class="org"
-							href={resolve(localized('/mandanten'))}
-							title={m.org_working_in({ name: organisation.name })}
-							data-kind={organisation.kind}>{organisation.name}</a
-						>
+						<Tooltip text={m.org_working_in({ name: organisation.name })}>
+							<a class="org" href={resolve(localized('/mandanten'))} data-kind={organisation.kind}
+								>{organisation.name}</a
+							>
+						</Tooltip>
 					{/if}
 					<button type="submit">{m.nav_logout()}</button>
 				</form>
