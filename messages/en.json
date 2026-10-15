@@ -228,5 +228,7 @@
 	"reports_runs": "Assessments carried out",
 	"reports_runs_count": "{count} runs",
 	"reports_runs_preview": "Saved assessments exist only in the full installation.",
-	"reports_registers": "Registers and workflows"
+	"reports_registers": "Registers and workflows",
+	"confirm_type": "Type “{word}” to confirm",
+	"dialog_cancel": "Cancel"
 }

@@ -228,5 +228,7 @@
 	"reports_runs": "Durchgeführte Prüfungen",
 	"reports_runs_count": "{count} Durchläufe",
 	"reports_runs_preview": "Gespeicherte Prüfungen gibt es nur in der vollständigen Installation.",
-	"reports_registers": "Register und Abläufe"
+	"reports_registers": "Register und Abläufe",
+	"confirm_type": "Zur Bestätigung „{word}“ eingeben",
+	"dialog_cancel": "Abbrechen"
 }
