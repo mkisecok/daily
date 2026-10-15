@@ -207,10 +207,7 @@
 		}
 
 		& .status {
-			font-family: var(--sans);
 			font-size: 13px;
-			letter-spacing: 0;
-			text-transform: none;
 			color: var(--ink3);
 		}
 
@@ -221,16 +218,13 @@
 			font-size: 16px;
 		}
 
+		/* code and file names stay in mono */
 		& textarea,
 		& .paste-name input {
 			width: 100%;
 			margin-top: 0.4rem;
-			padding: 0.5rem 0.6rem;
 			font-family: var(--mono);
 			font-size: 13px;
-			color: var(--ink);
-			background: var(--sheet);
-			border: 1px solid var(--rule);
 		}
 
 		& .paste-name {

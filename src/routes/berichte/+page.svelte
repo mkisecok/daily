@@ -240,12 +240,6 @@
 		& input,
 		& textarea {
 			margin-top: 0.3rem;
-			padding: 0.45rem 0.6rem;
-			font: inherit;
-			font-size: 14px;
-			color: var(--ink);
-			background: var(--sheet);
-			border: 1px solid var(--rule);
 		}
 
 		& .wide {

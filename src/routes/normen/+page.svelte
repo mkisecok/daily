@@ -145,12 +145,6 @@
 			width: 100%;
 			max-width: var(--measure);
 			margin-top: 0.5rem;
-			padding: 0.6rem 0.7rem;
-			font: inherit;
-			font-size: 16px;
-			color: var(--ink);
-			background: var(--sheet);
-			border: 1px solid var(--rule);
 		}
 
 		& .status {

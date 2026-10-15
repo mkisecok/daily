@@ -137,29 +137,29 @@
 
 	<fieldset>
 		<legend>{text(T.sets)}</legend>
-		{#each Object.entries(SETS) as [id, set] (id)}
-			<label class="choice">
-				<input type="checkbox" bind:checked={chosen[id as SetId]} />
-				<span><strong>{text(set.label)}</strong> — {text(set.help)}</span>
-			</label>
-		{/each}
+		<div class="choices">
+			{#each Object.entries(SETS) as [id, set] (id)}
+				<label>
+					<input type="checkbox" bind:checked={chosen[id as SetId]} />
+					<span><strong>{text(set.label)}</strong> — {text(set.help)}</span>
+				</label>
+			{/each}
+		</div>
 	</fieldset>
 
 	<fieldset>
 		<legend>{text(T.mode)}</legend>
-		<label class="choice"
-			><input type="radio" value="manual" bind:group={mode} />{text(T.manual)}</label
-		>
-		<label class="choice"
-			><input type="radio" value="endpoint" bind:group={mode} />{text(T.endpoint)}</label
-		>
+		<div class="choices">
+			<label><input type="radio" value="manual" bind:group={mode} />{text(T.manual)}</label>
+			<label><input type="radio" value="endpoint" bind:group={mode} />{text(T.endpoint)}</label>
+		</div>
 	</fieldset>
 
 	<div class="field">
 		<label for="canary">{text(T.canary)}</label>
 		<span class="inline">
 			<input id="canary" type="text" bind:value={canary} />
-			<button type="button" class="link" onclick={() => (canary = newCanary())}
+			<button type="button" class="button ghost" onclick={() => (canary = newCanary())}
 				>{text(T.newCanary)}</button
 			>
 		</span>
@@ -272,17 +272,8 @@
 				font-size: 17px;
 			}
 
-			& .choice {
-				display: flex;
-				gap: 0.5rem;
-				align-items: baseline;
-				margin-top: 0.4rem;
-				font-size: 14px;
-				color: var(--ink2);
-
-				& input {
-					accent-color: var(--navy);
-				}
+			& .choices {
+				margin-top: 0.5rem;
 			}
 		}
 
@@ -300,12 +291,6 @@
 			& textarea {
 				width: 100%;
 				margin-top: 0.3rem;
-				padding: 0.45rem 0.6rem;
-				font: inherit;
-				font-size: 14px;
-				color: var(--ink);
-				background: var(--sheet);
-				border: 1px solid var(--rule);
 			}
 
 			& .inline {
@@ -313,17 +298,14 @@
 				gap: 1rem;
 				align-items: center;
 
+				/* the canary is a code value, so it stays in mono */
 				& input {
 					font-family: var(--mono);
 					max-width: 22rem;
 				}
 
-				& .link {
-					font-family: var(--mono);
-					font-size: 12px;
-					letter-spacing: 0.08em;
-					text-transform: uppercase;
-					color: var(--navy);
+				& .button {
+					margin-top: 0.3rem;
 					white-space: nowrap;
 				}
 			}
@@ -336,10 +318,7 @@
 		}
 
 		& .status {
-			font-family: var(--sans);
 			font-size: 13px;
-			letter-spacing: 0;
-			text-transform: none;
 			color: var(--ink3);
 		}
 
@@ -354,12 +333,6 @@
 			& textarea {
 				width: 100%;
 				margin-top: 0.3rem;
-				padding: 0.45rem 0.6rem;
-				font: inherit;
-				font-size: 14px;
-				color: var(--ink);
-				background: var(--sheet);
-				border: 1px solid var(--rule);
 			}
 
 			& .prompt {

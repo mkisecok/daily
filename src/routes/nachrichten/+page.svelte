@@ -404,6 +404,10 @@
 							color: var(--navy);
 							padding: 0;
 
+							&:hover {
+								text-decoration: underline;
+							}
+
 							&[aria-pressed='true'] {
 								color: var(--khaki);
 							}

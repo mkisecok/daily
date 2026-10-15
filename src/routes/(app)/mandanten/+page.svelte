@@ -156,12 +156,6 @@
 		& input:not([type='hidden']) {
 			flex: 1 1 18rem;
 			max-width: 32rem;
-			padding: 0.5rem 0.6rem;
-			font: inherit;
-			font-size: 15px;
-			color: var(--ink);
-			background: var(--sheet);
-			border: 1px solid var(--rule);
 		}
 
 		& .invalid {

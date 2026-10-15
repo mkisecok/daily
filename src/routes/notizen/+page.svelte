@@ -310,11 +310,6 @@
 			width: 100%;
 			max-width: var(--measure);
 			margin-top: 1.25rem;
-			padding: 0.55rem 0.7rem;
-			font: inherit;
-			color: var(--ink);
-			background: var(--sheet);
-			border: 1px solid var(--rule);
 		}
 	}
 
@@ -403,18 +398,13 @@
 			& textarea {
 				width: 100%;
 				margin-top: 0.3rem;
-				padding: 0.5rem 0.6rem;
-				font: inherit;
-				font-size: 15px;
-				color: var(--ink);
-				background: var(--sheet);
-				border: 1px solid var(--rule);
 			}
 
+			/* markdown source is written in mono on purpose */
 			& textarea {
+				min-height: 14lh;
 				font-family: var(--mono);
 				font-size: 14px;
-				line-height: 1.5;
 				resize: vertical;
 			}
 
@@ -440,19 +430,23 @@
 			display: flex;
 			gap: 1.25rem;
 			margin-top: 1.25rem;
-			font-family: var(--mono);
-			font-size: 12px;
-			letter-spacing: 0.08em;
-			text-transform: uppercase;
+			font-family: var(--sans);
+			font-size: 14px;
+			font-weight: 500;
 
+			/* the chosen tab carries the khaki rule, like a checked choice */
 			& button {
 				padding: 0.2rem 0;
 				color: var(--ink3);
 				border-bottom: 2px solid transparent;
 
+				&:hover {
+					color: var(--ink);
+				}
+
 				&[aria-selected='true'] {
 					color: var(--ink);
-					border-bottom-color: var(--ink);
+					border-bottom-color: var(--khaki);
 				}
 			}
 		}
