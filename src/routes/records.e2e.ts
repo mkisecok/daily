@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { choose, pickDate, chip } from './e2e-helpers.js';
 
 /** requires the local stack from compose.yaml; see auth.e2e.ts */
 const username = process.env.E2E_USER ?? 'test@dai-ly.de';
@@ -52,8 +53,8 @@ test('KI-Register: create, edit, history, CSV and handoff from the risk classifi
 
 	await page.getByLabel('Bezeichnung').fill(name);
 	await page.getByLabel('Zweck und Einsatzbereich').fill('Vorsortierung von Bewerbungen');
-	await page.getByLabel('Rolle der Organisation').selectOption('betreiber');
-	await page.locator('#field-status').selectOption('aktiv');
+	await choose(page.getByLabel('Rolle der Organisation'), 'betreiber');
+	await choose(page.locator('#field-status'), 'aktiv');
 	await page.getByRole('button', { name: 'Speichern' }).click();
 
 	await expect(page).toHaveURL(/eintrag=/);
@@ -98,7 +99,7 @@ test('Datenpanne: 72-hour deadline on Fristen and the workflow to closure', asyn
 	await expect(page).toHaveURL(/\/werkzeuge\/datenpanne\/eintraege\?neu=1$/);
 
 	await page.getByLabel('Bezeichnung').fill(title);
-	await page.getByLabel('Kenntnis am').fill(berlinInput(aware));
+	await pickDate(page, 'Kenntnis am', berlinInput(aware));
 	await page.getByLabel('Was ist geschehen?').fill('Liste an falschen Empfänger gesendet.');
 	await page.getByRole('button', { name: 'Speichern' }).click();
 	await expect(page.locator('[aria-current="step"]')).toHaveText('Erfasst');
@@ -109,7 +110,7 @@ test('Datenpanne: 72-hour deadline on Fristen and the workflow to closure', asyn
 	await row.getByRole('link', { name: title }).click();
 
 	await page.getByRole('button', { name: 'Bearbeiten' }).click();
-	await page.getByLabel('Risiko für die Rechte und Freiheiten').selectOption('kein');
+	await choose(page.getByLabel('Risiko für die Rechte und Freiheiten'), 'kein');
 	await page.getByLabel('Begründung der Bewertung').fill('Empfänger ist Auftragsverarbeiter.');
 	await page.getByLabel('Ergriffene und vorgeschlagene Maßnahmen').fill('Löschung bestätigt.');
 	await page.getByRole('button', { name: 'Speichern' }).click();
@@ -134,14 +135,14 @@ test('VVT: completeness check and DSFA screening handoff', async ({ page }) => {
 	await signIn(page, '/werkzeuge/vvt/eintraege?neu=1');
 	await expect(page).toHaveURL(/\/werkzeuge\/vvt\/eintraege\?neu=1$/);
 
-	const group = (label: string) => page.locator('fieldset', { hasText: label });
+	const group = (label: string) => page.getByRole('group', { name: label });
 	await page.getByLabel('Bezeichnung').fill(name);
-	await page.locator('#field-rolle').selectOption('verantwortlicher');
+	await choose(page.locator('#field-rolle'), 'verantwortlicher');
 	await page.getByLabel('Zwecke der Verarbeitung').fill('Versand des Newsletters');
-	await group('Kategorien betroffener Personen').getByLabel('Kunden', { exact: true }).check();
-	await group('Kategorien personenbezogener Daten').getByLabel('Kontaktdaten').check();
-	await group('Kategorien von Empfängern').getByLabel('Interne Stellen').check();
-	await page.locator('#field-status').selectOption('aktiv');
+	await chip(group('Kategorien betroffener Personen'), 'Kunden');
+	await chip(group('Kategorien personenbezogener Daten'), 'Kontaktdaten');
+	await chip(group('Kategorien von Empfängern'), 'Interne Stellen');
+	await choose(page.locator('#field-status'), 'aktiv');
 	await page.getByRole('button', { name: 'Speichern' }).click();
 
 	await expect(page.locator('.verdict .headline')).toHaveText('Eintrag unvollständig.');
@@ -171,8 +172,8 @@ test('Betroffenenanfrage: reply deadline on Fristen and closing as answered', as
 	await expect(page).toHaveURL(/\/werkzeuge\/betroffenenanfrage\/eintraege\?neu=1$/);
 
 	await page.getByLabel('Bezeichnung').fill(title);
-	await page.getByLabel('Eingang am').fill(berlinInput(new Date()));
-	await page.getByLabel('Auskunft (Art. 15)').check();
+	await pickDate(page, 'Eingang am', berlinInput(new Date()));
+	await chip(page, 'Auskunft (Art. 15)');
 	await page.getByRole('button', { name: 'Speichern' }).click();
 	await expect(page.locator('.verdict .headline')).toContainText('Antwort fällig bis');
 	await expect(page.locator('.verdict .notes')).toContainText('Auskunft (Art. 15)');
@@ -190,7 +191,7 @@ test('Betroffenenanfrage: reply deadline on Fristen and closing as answered', as
 	await expect(page.locator('[aria-current="step"]')).toHaveText('In Bearbeitung');
 	await page.getByRole('button', { name: 'Bearbeiten' }).click();
 	await page.getByLabel('Durchgeführte Maßnahmen').fill('Auskunft mit Kopie erteilt');
-	await page.getByLabel('Antwort versandt am').fill(berlinInput(new Date()));
+	await pickDate(page, 'Antwort versandt am', berlinInput(new Date()));
 	await page.getByRole('button', { name: 'Speichern' }).click();
 	await expect(page.locator('.verdict .headline')).toHaveText('Fristgerecht beantwortet.');
 	await step(page, 'Als beantwortet abschließen');
@@ -206,7 +207,7 @@ test('AVV-Prüfung reports a missing clause; a training refresher appears on Fri
 
 	await page.getByLabel('Auftragsverarbeiter', { exact: true }).fill(processor);
 	await page.getByLabel('Leistung und Gegenstand der Verarbeitung').fill('Hosting der Website');
-	await page.locator('#field-status').selectOption('pruefung');
+	await choose(page.locator('#field-status'), 'pruefung');
 	for (const id of ['grundlagen', 'lit_a', 'lit_b', 'lit_c', 'lit_d', 'lit_e', 'lit_f', 'lit_h']) {
 		await page.locator(`input[name="field-${id}"][value="true"]`).check();
 	}
@@ -220,7 +221,7 @@ test('AVV-Prüfung reports a missing clause; a training refresher appears on Fri
 	const training = `E2E-Unterweisung ${Date.now()}`;
 	await page.goto('/werkzeuge/schulungsnachweis/eintraege?neu=1');
 	await page.getByLabel('Titel').fill(training);
-	await page.getByLabel('Datum').fill('2026-01-15');
+	await pickDate(page, 'Datum', '2026-01-15');
 	await page.getByLabel('Wiederholung nach').fill('12');
 	await page.getByRole('button', { name: 'Speichern' }).click();
 	await expect(page.locator('.verdict .headline')).toHaveText('Schulung ohne Nachweis.');
@@ -243,11 +244,11 @@ test('DSFA: a high residual risk blocks sign-off until the authority is consulte
 	await page.getByLabel('Zwecke und berechtigte Interessen').fill('Diebstahlschutz');
 	await page.getByLabel('Notwendigkeit und Verhältnismäßigkeit').fill('Mildere Mittel geprüft');
 	for (const id of ['vertraulichkeit', 'integritaet', 'verfuegbarkeit', 'zweck', 'rechte']) {
-		await page.locator(`#field-${id}_w`).selectOption('2');
-		await page.locator(`#field-${id}_s`).selectOption('2');
+		await choose(page.locator(`#field-${id}_w`), '2');
+		await choose(page.locator(`#field-${id}_s`), '2');
 	}
-	await page.locator('#field-vertraulichkeit_w').selectOption('4');
-	await page.locator('#field-vertraulichkeit_s').selectOption('4');
+	await choose(page.locator('#field-vertraulichkeit_w'), '4');
+	await choose(page.locator('#field-vertraulichkeit_s'), '4');
 	await page.locator('#field-vertraulichkeit_massnahmen').fill('Verschlüsselung');
 	await page.getByLabel('Entscheidung des Verantwortlichen').fill('Freigabe unter Auflagen');
 	await page.getByRole('button', { name: 'Speichern' }).click();
@@ -267,12 +268,12 @@ test('Vorfallmeldung: a death shortens the reporting period to 10 days', async (
 	await expect(page).toHaveURL(/\/werkzeuge\/vorfallmeldung\/eintraege\?neu=1$/);
 
 	await page.getByLabel('Bezeichnung').fill(title);
-	await page.locator('#field-rolle').selectOption('anbieter');
-	await page.getByLabel('Kenntnis am').fill(berlinInput(new Date()));
+	await choose(page.locator('#field-rolle'), 'anbieter');
+	await pickDate(page, 'Kenntnis am', berlinInput(new Date()));
 	await page.getByLabel('Was ist geschehen?').fill('Fehlklassifikation in der Triage');
-	await page.getByLabel('Tod oder schwere Schädigung der Gesundheit (lit. a)').check();
+	await chip(page, 'Tod oder schwere Schädigung der Gesundheit (lit. a)');
 	await page.locator('input[name="field-todesfall"][value="true"]').check();
-	await page.locator('#field-kausalitaet').selectOption('wahrscheinlich');
+	await choose(page.locator('#field-kausalitaet'), 'wahrscheinlich');
 	await page.getByRole('button', { name: 'Speichern' }).click();
 
 	await expect(page.locator('.verdict .headline')).toHaveText(
@@ -291,7 +292,7 @@ test('dialogs: archiving needs the typed word, Esc cancels, citations explain th
 	await signIn(page, '/werkzeuge/datenpanne/eintraege?neu=1');
 	await expect(page).toHaveURL(/\/werkzeuge\/datenpanne\/eintraege\?neu=1$/);
 	await page.getByLabel('Bezeichnung').fill(title);
-	await page.getByLabel('Kenntnis am').fill(berlinInput(new Date()));
+	await pickDate(page, 'Kenntnis am', berlinInput(new Date()));
 	await page.getByLabel('Was ist geschehen?').fill('Test');
 	await page.getByRole('button', { name: 'Speichern' }).click();
 	await expect(page).toHaveURL(/eintrag=/);

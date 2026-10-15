@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { choose, pickDate, chip } from './e2e-helpers.js';
 
 /** requires the local stack from compose.yaml; see auth.e2e.ts */
 const username = process.env.E2E_USER ?? 'test@dai-ly.de';
@@ -17,24 +18,24 @@ test('an audit report composes the audit with its checklist and findings', async
 	await expect(page).toHaveURL(/\/werkzeuge\/auditprogramm\/eintraege\?neu=1$/);
 	await page.getByLabel('Titel').fill(audit);
 	await page.getByLabel('Gegenstand und Umfang').fill('Personalverwaltung');
-	await page.getByLabel('DSGVO', { exact: true }).check();
-	await page.getByLabel('Geplant am').fill('2026-11-10');
+	await chip(page, 'DSGVO');
+	await pickDate(page, 'Geplant am', '2026-11-10');
 	await page.getByRole('button', { name: 'Speichern' }).click();
 	await expect(page.locator('.verdict .headline')).toHaveText('Audit geplant.');
 
 	await page.goto('/werkzeuge/feststellungen/eintraege?neu=1');
 	await page.getByLabel('Kurzbezeichnung').fill(finding);
-	await page.locator('#field-audit').selectOption({ label: audit });
-	await page.locator('#field-kategorie').selectOption('gering');
+	await choose(page.locator('#field-audit'), { label: audit });
+	await choose(page.locator('#field-kategorie'), 'gering');
 	await page.getByLabel('Sachverhalt').fill('Löschfristen nicht dokumentiert');
-	await page.getByLabel('Umsetzen bis').fill('2026-12-15');
+	await pickDate(page, 'Umsetzen bis', '2026-12-15');
 	await page.getByRole('button', { name: 'Speichern' }).click();
 	await expect(page.locator('.verdict .headline')).toHaveText('Geringfügige Abweichung offen.');
 	await expect(page.locator('.record-view')).toContainText(audit);
 
 	await page.goto('/werkzeuge/auditbericht/eintraege?neu=1');
 	await page.getByLabel('Titel').fill(report);
-	await page.locator('#field-audit').selectOption({ label: audit });
+	await choose(page.locator('#field-audit'), { label: audit });
 	await page.getByLabel('Zusammenfassung').fill('Grundsätzlich wirksam, eine Abweichung');
 	await page.getByRole('button', { name: 'Speichern' }).click();
 

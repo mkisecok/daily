@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { choose } from './e2e-helpers.js';
 
 /** requires the local stack from compose.yaml; see auth.e2e.ts */
 const username = process.env.E2E_USER ?? 'test@dai-ly.de';
@@ -31,8 +32,8 @@ test('client organisations keep records apart and the masthead names the workspa
 	await page.goto('/werkzeuge/ki-register/eintraege?neu=1');
 	await page.getByLabel('Bezeichnung').fill(system);
 	await page.getByLabel('Zweck und Einsatzbereich').fill('Nur beim Mandanten');
-	await page.getByLabel('Rolle der Organisation').selectOption('betreiber');
-	await page.locator('#field-status').selectOption('geplant');
+	await choose(page.getByLabel('Rolle der Organisation'), 'betreiber');
+	await choose(page.locator('#field-status'), 'geplant');
 	await page.getByRole('button', { name: 'Speichern' }).click();
 	await expect(page).toHaveURL(/eintrag=/);
 

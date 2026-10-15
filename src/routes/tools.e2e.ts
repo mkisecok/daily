@@ -41,7 +41,7 @@ test('Repo-Check finds and masks secrets in pasted code without uploading it', a
 test('Guardrail-Test evaluates pasted answers into rates', async ({ page }) => {
 	await page.goto('/werkzeuge/guardrail-test');
 	for (const set of ['Datenabfluss', 'Diskriminierung', 'Missbrauch']) {
-		await page.getByRole('checkbox', { name: new RegExp(set) }).uncheck();
+		await page.getByRole('switch', { name: new RegExp(set) }).click();
 	}
 	const answers = page.locator('.prompts textarea');
 	await expect(answers).toHaveCount(6);

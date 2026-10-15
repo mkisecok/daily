@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { pickDate } from './e2e-helpers.js';
 
 /** requires the local stack from compose.yaml; see auth.e2e.ts */
 const username = process.env.E2E_USER ?? 'test@dai-ly.de';
@@ -13,7 +14,7 @@ test('the data protection report lists this year’s records with status and ass
 	await page.locator('#password').fill(password);
 	await page.locator('#kc-login').click();
 	await page.getByLabel('Bezeichnung').fill(title);
-	await page.getByLabel('Kenntnis am').fill('2026-10-14T09:00');
+	await pickDate(page, 'Kenntnis am', '2026-10-14T09:00');
 	await page.getByLabel('Was ist geschehen?').fill('Test für den Bericht');
 	await page.getByRole('button', { name: 'Speichern' }).click();
 	await expect(page).toHaveURL(/eintrag=/);
