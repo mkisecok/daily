@@ -89,12 +89,12 @@
 			line-height: 1.4;
 			color: var(--ink);
 			max-width: var(--measure);
-		}
 
-		& .number {
-			color: var(--ink3);
-			flex-shrink: 0;
-			min-width: 1.6rem;
+			& .number {
+				color: var(--ink3);
+				flex-shrink: 0;
+				min-width: 1.6rem;
+			}
 		}
 
 		& .help {

@@ -80,31 +80,33 @@
 </form>
 
 <style>
-	.errors {
-		margin-top: 1.5rem;
-		padding: 0.75rem 1rem;
-		border-left: 3px solid var(--wax);
-		background: var(--wax-soft);
-		font-size: 14px;
-	}
-
-	.section {
-		padding-top: 2rem;
-
-		& h2 {
-			font-size: 20px;
-			padding-bottom: 0.5rem;
-			border-bottom: 1px solid var(--rule);
-		}
-
-		& .intro {
-			margin-top: 0.75rem;
+	.record-form {
+		& .errors {
+			margin-top: 1.5rem;
+			padding: 0.75rem 1rem;
+			border-left: 3px solid var(--wax);
+			background: var(--wax-soft);
 			font-size: 14px;
-			color: var(--ink2);
 		}
-	}
 
-	.actions {
-		margin-top: 2rem;
+		& .section {
+			padding-top: 2rem;
+
+			& h2 {
+				font-size: 20px;
+				padding-bottom: 0.5rem;
+				border-bottom: 1px solid var(--rule);
+			}
+
+			& .intro {
+				margin-top: 0.75rem;
+				font-size: 14px;
+				color: var(--ink2);
+			}
+		}
+
+		& .actions {
+			margin-top: 2rem;
+		}
 	}
 </style>

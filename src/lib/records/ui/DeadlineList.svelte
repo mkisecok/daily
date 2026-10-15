@@ -86,46 +86,46 @@
 			@media (max-width: 40rem) {
 				grid-template-columns: 1fr;
 			}
+
+			& .due {
+				display: grid;
+				font-family: var(--mono);
+				font-size: 13px;
+
+				& .time {
+					font-size: 12px;
+					color: var(--ink3);
+				}
+			}
+
+			& .body {
+				display: flex;
+				flex-direction: column;
+				gap: 0.15rem;
+				font-size: 14px;
+
+				& .label {
+					font-family: var(--serif);
+					font-size: 16px;
+				}
+			}
+
+			& .flag,
+			& .tool {
+				font-family: var(--mono);
+				font-size: 11px;
+				letter-spacing: 0.1em;
+				text-transform: uppercase;
+				color: var(--ink3);
+			}
+
+			&[data-urgency='overdue'] :is(.date, .time, .flag) {
+				color: var(--wax);
+			}
+
+			&[data-urgency='soon'] :is(.date, .time, .flag) {
+				color: var(--navy);
+			}
 		}
-
-		& li[data-urgency='overdue'] :is(.date, .time, .flag) {
-			color: var(--wax);
-		}
-
-		& li[data-urgency='soon'] :is(.date, .time, .flag) {
-			color: var(--navy);
-		}
-	}
-
-	.due {
-		display: grid;
-		font-family: var(--mono);
-		font-size: 13px;
-
-		& .time {
-			font-size: 12px;
-			color: var(--ink3);
-		}
-	}
-
-	.body {
-		display: flex;
-		flex-direction: column;
-		gap: 0.15rem;
-		font-size: 14px;
-
-		& .label {
-			font-family: var(--serif);
-			font-size: 16px;
-		}
-	}
-
-	.flag,
-	.tool {
-		font-family: var(--mono);
-		font-size: 11px;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		color: var(--ink3);
 	}
 </style>

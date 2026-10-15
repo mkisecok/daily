@@ -31,20 +31,20 @@
 			flex-wrap: wrap;
 			gap: 1.5rem;
 			align-items: baseline;
-		}
 
-		& nav {
-			display: flex;
-			gap: 1.25rem;
+			& nav {
+				display: flex;
+				gap: 1.25rem;
 
-			& a {
-				color: var(--ink2);
+				& a {
+					color: var(--ink2);
+				}
 			}
-		}
 
-		& .note {
-			margin-left: auto;
-			font-style: italic;
+			& .note {
+				margin-left: auto;
+				font-style: italic;
+			}
 		}
 	}
 </style>

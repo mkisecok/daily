@@ -75,39 +75,39 @@
 	.state-bar {
 		padding: 1.25rem 0;
 		border-bottom: 1px solid var(--rule);
-	}
 
-	.states {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.25rem 0;
-		list-style: none;
-		font-family: var(--mono);
-		font-size: 11px;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		color: var(--ink3);
+		& .states {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.25rem 0;
+			list-style: none;
+			font-family: var(--mono);
+			font-size: 11px;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			color: var(--ink3);
 
-		& li + li::before {
-			content: '→';
-			margin: 0 0.75rem;
-			color: var(--rule);
+			& li + li::before {
+				content: '→';
+				margin: 0 0.75rem;
+				color: var(--rule);
+			}
+
+			& li[aria-current='step'] {
+				color: var(--navy);
+				font-weight: 600;
+			}
 		}
 
-		& li[aria-current='step'] {
-			color: var(--navy);
-			font-weight: 600;
+		& .next {
+			display: grid;
+			gap: 0.6rem;
+			margin-top: 1rem;
+
+			& .missing {
+				font-size: 13px;
+				color: var(--ink3);
+			}
 		}
-	}
-
-	.next {
-		display: grid;
-		gap: 0.6rem;
-		margin-top: 1rem;
-	}
-
-	.missing {
-		font-size: 13px;
-		color: var(--ink3);
 	}
 </style>

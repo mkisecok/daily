@@ -34,33 +34,34 @@
 <style>
 	.blocks {
 		max-width: var(--measure);
-	}
+		margin-top: 1rem;
 
-	.block {
-		margin-top: 0.75rem;
+		& .block {
+			margin-top: 0.75rem;
 
-		&.labelled {
-			display: grid;
-			grid-template-columns: 2.5rem 1fr;
-			gap: 0 0.5rem;
+			&.labelled {
+				display: grid;
+				grid-template-columns: 2.5rem 1fr;
+				gap: 0 0.5rem;
+			}
+
+			& .label {
+				font-family: var(--mono);
+				font-size: 13px;
+				color: var(--ink3);
+				padding-top: 0.15rem;
+			}
+
+			& p {
+				font-family: var(--serif);
+				font-size: 16px;
+				line-height: 1.6;
+				color: var(--ink);
+			}
 		}
-	}
 
-	.nested .block {
-		margin-top: 0.4rem;
-	}
-
-	.label {
-		font-family: var(--mono);
-		font-size: 13px;
-		color: var(--ink3);
-		padding-top: 0.15rem;
-	}
-
-	p {
-		font-family: var(--serif);
-		font-size: 16px;
-		line-height: 1.6;
-		color: var(--ink);
+		&.nested .block {
+			margin-top: 0.4rem;
+		}
 	}
 </style>

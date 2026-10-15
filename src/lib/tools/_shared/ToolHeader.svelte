@@ -59,10 +59,10 @@
 			flex-wrap: wrap;
 			gap: 0.6rem;
 			align-items: baseline;
-		}
 
-		& .sep {
-			color: var(--ink3);
+			& .sep {
+				color: var(--ink3);
+			}
 		}
 	}
 </style>

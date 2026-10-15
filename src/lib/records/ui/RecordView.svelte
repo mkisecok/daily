@@ -75,72 +75,74 @@
 </div>
 
 <style>
-	.section {
-		padding-top: 2rem;
+	.record-view {
+		& .section {
+			padding-top: 2rem;
 
-		& h2 {
-			font-size: 20px;
-			padding-bottom: 0.5rem;
-			border-bottom: 1px solid var(--rule);
-		}
-	}
-
-	.row {
-		display: grid;
-		grid-template-columns: minmax(12rem, 1fr) 2fr;
-		gap: 0.25rem 2rem;
-		padding: 0.7rem 0;
-		border-bottom: 1px solid var(--rule2);
-
-		@media (max-width: 40rem) {
-			grid-template-columns: 1fr;
-		}
-	}
-
-	dt {
-		display: flex;
-		flex-direction: column;
-		gap: 0.15rem;
-		font-size: 14px;
-		color: var(--ink2);
-	}
-
-	dd {
-		font-family: var(--serif);
-		font-size: 16px;
-		white-space: pre-line;
-	}
-
-	.assessment {
-		display: block;
-
-		&[data-level='positive'] {
-			color: var(--wax);
+			& h2 {
+				font-size: 20px;
+				padding-bottom: 0.5rem;
+				border-bottom: 1px solid var(--rule);
+			}
 		}
 
-		&[data-level='conditional'] {
-			color: var(--navy);
+		& .row {
+			display: grid;
+			grid-template-columns: minmax(12rem, 1fr) 2fr;
+			gap: 0.25rem 2rem;
+			padding: 0.7rem 0;
+			border-bottom: 1px solid var(--rule2);
+
+			@media (max-width: 40rem) {
+				grid-template-columns: 1fr;
+			}
+
+			& dt {
+				display: flex;
+				flex-direction: column;
+				gap: 0.15rem;
+				font-size: 14px;
+				color: var(--ink2);
+			}
+
+			& dd {
+				font-family: var(--serif);
+				font-size: 16px;
+				white-space: pre-line;
+
+				& .assessment {
+					display: block;
+
+					&[data-level='positive'] {
+						color: var(--wax);
+					}
+
+					&[data-level='conditional'] {
+						color: var(--navy);
+					}
+
+					&[data-level='negative'] {
+						color: var(--khaki);
+					}
+				}
+
+				& .assessed,
+				& .none {
+					display: block;
+					font-family: var(--sans);
+					font-size: 13px;
+					color: var(--ink3);
+				}
+
+				& .assess {
+					display: inline-block;
+					margin-top: 0.35rem;
+					font-family: var(--mono);
+					font-size: 12px;
+					letter-spacing: 0.08em;
+					text-transform: uppercase;
+				}
+			}
 		}
-
-		&[data-level='negative'] {
-			color: var(--khaki);
-		}
-	}
-
-	.assessed,
-	.none {
-		display: block;
-		font-family: var(--sans);
-		font-size: 13px;
-		color: var(--ink3);
-	}
-
-	.assess {
-		display: inline-block;
-		margin-top: 0.35rem;
-		font-family: var(--mono);
-		font-size: 12px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
 	}
 </style>

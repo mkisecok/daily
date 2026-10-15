@@ -64,14 +64,14 @@
 			border-bottom: 1px solid var(--rule2);
 			font-family: var(--serif);
 			font-size: 15px;
-		}
-	}
 
-	.state {
-		font-family: var(--mono);
-		font-size: 11px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--navy);
+			& .state {
+				font-family: var(--mono);
+				font-size: 11px;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--navy);
+			}
+		}
 	}
 </style>

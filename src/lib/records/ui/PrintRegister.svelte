@@ -77,10 +77,6 @@
 			font-size: 11pt;
 		}
 
-		& .cite {
-			font-size: 8pt;
-		}
-
 		& .meta {
 			margin-bottom: 8mm;
 			font-size: 9pt;
@@ -90,26 +86,30 @@
 			break-inside: avoid;
 			padding: 4mm 0;
 			border-top: 1px solid #000;
-		}
 
-		& h2 {
-			font-size: 12pt;
-			margin-bottom: 2mm;
-		}
+			& h2 {
+				font-size: 12pt;
+				margin-bottom: 2mm;
+			}
 
-		& dl {
-			display: grid;
-			grid-template-columns: 55mm 1fr;
-			gap: 1mm 5mm;
-			font-size: 9.5pt;
-		}
+			& dl {
+				display: grid;
+				grid-template-columns: 55mm 1fr;
+				gap: 1mm 5mm;
+				font-size: 9.5pt;
 
-		& dt {
-			color: #444;
-		}
+				& dt {
+					color: #444;
 
-		& dd {
-			white-space: pre-line;
+					& .cite {
+						font-size: 8pt;
+					}
+				}
+
+				& dd {
+					white-space: pre-line;
+				}
+			}
 		}
 	}
 </style>

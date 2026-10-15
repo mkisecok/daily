@@ -186,112 +186,112 @@
 				grid-row: auto;
 			}
 		}
-	}
 
-	fieldset {
-		border: 0;
-		padding: 0;
-		margin: 0;
-	}
+		& fieldset {
+			border: 0;
+			padding: 0;
+			margin: 0;
 
-	.label-row {
-		display: block;
-	}
+			& .choices {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem 1.5rem;
+				margin-top: 0.4rem;
 
-	.label {
-		display: block;
-		padding: 0;
-		font-family: var(--serif);
-		font-size: 16px;
-		color: var(--ink);
-	}
+				& label {
+					display: inline-flex;
+					align-items: center;
+					gap: 0.4rem;
+					font-size: 14px;
+					color: var(--ink2);
+					cursor: pointer;
 
-	.label-row .label {
-		display: inline;
-	}
+					&:has(input:checked) {
+						color: var(--ink);
+					}
+				}
 
-	.req {
-		margin-left: 0.2rem;
-		color: var(--wax);
-	}
-
-	input:not([type='checkbox'], [type='radio']),
-	select,
-	textarea {
-		width: 100%;
-		max-width: var(--measure);
-		padding: 0.5rem 0.6rem;
-		font: inherit;
-		font-size: 15px;
-		color: var(--ink);
-		background: var(--sheet);
-		border: 1px solid var(--rule);
-		border-radius: 0;
-
-		&:focus {
-			border-color: var(--navy);
-		}
-	}
-
-	[data-type='number'] input,
-	[data-type='date'] input,
-	[data-type='datetime'] input {
-		width: auto;
-	}
-
-	textarea {
-		resize: vertical;
-		line-height: 1.45;
-	}
-
-	.with-unit {
-		display: inline-flex;
-		align-items: baseline;
-		gap: 0.5rem;
-	}
-
-	.unit {
-		font-size: 14px;
-		color: var(--ink2);
-	}
-
-	.choices {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem 1.5rem;
-		margin-top: 0.4rem;
-
-		& label {
-			display: inline-flex;
-			align-items: center;
-			gap: 0.4rem;
-			font-size: 14px;
-			color: var(--ink2);
-			cursor: pointer;
-
-			&:has(input:checked) {
-				color: var(--ink);
+				& input {
+					accent-color: var(--navy);
+					margin: 0;
+				}
 			}
 		}
 
-		& input {
-			accent-color: var(--navy);
-			margin: 0;
+		& .label {
+			display: block;
+			padding: 0;
+			font-family: var(--serif);
+			font-size: 16px;
+			color: var(--ink);
 		}
-	}
 
-	.help {
-		font-size: 13px;
-		color: var(--ink2);
-		max-width: var(--measure);
-	}
+		& .label-row {
+			display: block;
 
-	.error {
-		font-size: 13px;
-		color: var(--wax);
-	}
+			& .label {
+				display: inline;
+			}
+		}
 
-	.invalid :is(input, select, textarea) {
-		border-color: var(--wax);
+		& .req {
+			margin-left: 0.2rem;
+			color: var(--wax);
+		}
+
+		& input:not([type='checkbox'], [type='radio']),
+		& select,
+		& textarea {
+			width: 100%;
+			max-width: var(--measure);
+			padding: 0.5rem 0.6rem;
+			font: inherit;
+			font-size: 15px;
+			color: var(--ink);
+			background: var(--sheet);
+			border: 1px solid var(--rule);
+			border-radius: 0;
+
+			&:focus {
+				border-color: var(--navy);
+			}
+		}
+
+		&[data-type='number'] input,
+		&[data-type='date'] input,
+		&[data-type='datetime'] input {
+			width: auto;
+		}
+
+		& textarea {
+			resize: vertical;
+			line-height: 1.45;
+		}
+
+		& .with-unit {
+			display: inline-flex;
+			align-items: baseline;
+			gap: 0.5rem;
+
+			& .unit {
+				font-size: 14px;
+				color: var(--ink2);
+			}
+		}
+
+		& .help {
+			font-size: 13px;
+			color: var(--ink2);
+			max-width: var(--measure);
+		}
+
+		& .error {
+			font-size: 13px;
+			color: var(--wax);
+		}
+
+		&.invalid :is(input, select, textarea) {
+			border-color: var(--wax);
+		}
 	}
 </style>

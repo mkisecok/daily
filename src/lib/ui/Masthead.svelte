@@ -104,71 +104,10 @@
 			flex-wrap: wrap;
 			padding-top: 0.75rem;
 			padding-bottom: 0.75rem;
-		}
 
-		& .home {
-			display: flex;
-			align-items: baseline;
-			gap: 0.75rem;
-			color: inherit;
-
-			&:hover {
-				text-decoration: none;
-			}
-		}
-
-		& .tagline {
-			font-family: var(--mono);
-			font-size: 11px;
-			letter-spacing: 0.12em;
-			text-transform: uppercase;
-			color: var(--ink3);
-
-			@media (max-width: 40rem) {
-				display: none;
-			}
-		}
-
-		& nav {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 1.5rem;
-			margin-left: auto;
-
-			@media (max-width: 40rem) {
-				margin-left: 0;
-				gap: 1rem;
-			}
-
-			& a {
-				font-size: 14px;
-				color: var(--ink2);
-				padding: 0.25rem 0;
-				border-bottom: 1px solid transparent;
-
-				&:hover {
-					color: var(--ink);
-					text-decoration: none;
-					border-bottom-color: var(--rule);
-				}
-
-				&[aria-current='page'] {
-					color: var(--ink);
-					border-bottom-color: var(--ink);
-				}
-			}
-		}
-
-		& .tools {
-			display: flex;
-			align-items: center;
-			gap: 1rem;
-		}
-
-		/* narrow screens: wordmark and tools in one row, the navigation as one
-		   scrollable line below, so the sticky bar stays low. */
-		@media (max-width: 56rem) {
-			& .inner {
+			/* narrow screens: wordmark and tools in one row, the navigation as one
+			   scrollable line below, so the sticky bar stays low. */
+			@media (max-width: 56rem) {
 				gap: 0.4rem 1rem;
 				min-height: 0;
 				padding-top: 0.5rem;
@@ -176,74 +115,133 @@
 			}
 
 			& .home {
-				order: 1;
-			}
+				display: flex;
+				align-items: baseline;
+				gap: 0.75rem;
+				color: inherit;
 
-			& .tools {
-				order: 2;
-				margin-left: auto;
+				&:hover {
+					text-decoration: none;
+				}
+
+				@media (max-width: 56rem) {
+					order: 1;
+				}
+
+				& .tagline {
+					font-family: var(--mono);
+					font-size: 11px;
+					letter-spacing: 0.12em;
+					text-transform: uppercase;
+					color: var(--ink3);
+
+					@media (max-width: 40rem) {
+						display: none;
+					}
+				}
 			}
 
 			& nav {
-				order: 3;
-				flex: 1 1 100%;
-				flex-wrap: nowrap;
-				gap: 1.1rem;
-				margin-left: 0;
-				overflow-x: auto;
-				scrollbar-width: none;
-
-				& a {
-					white-space: nowrap;
-				}
-			}
-		}
-
-		& .login,
-		& .account button {
-			font-family: var(--mono);
-			font-size: 11px;
-			letter-spacing: 0.08em;
-			text-transform: uppercase;
-			color: var(--ink2);
-			padding: 0.3rem 0.6rem;
-			border: 1px solid var(--rule);
-
-			&:hover {
-				color: var(--ink);
-				border-color: var(--ink3);
-				text-decoration: none;
-			}
-		}
-
-		& .account {
-			display: flex;
-			align-items: center;
-			gap: 0.75rem;
-
-			& .name {
-				font-family: var(--serif);
-				font-size: 14px;
-				color: var(--ink2);
+				display: flex;
+				flex-wrap: wrap;
+				gap: 1.5rem;
+				margin-left: auto;
 
 				@media (max-width: 40rem) {
-					display: none;
+					margin-left: 0;
+					gap: 1rem;
+				}
+
+				@media (max-width: 56rem) {
+					order: 3;
+					flex: 1 1 100%;
+					flex-wrap: nowrap;
+					gap: 1.1rem;
+					margin-left: 0;
+					overflow-x: auto;
+					scrollbar-width: none;
+				}
+
+				& a {
+					font-size: 14px;
+					color: var(--ink2);
+					padding: 0.25rem 0;
+					border-bottom: 1px solid transparent;
+
+					&:hover {
+						color: var(--ink);
+						text-decoration: none;
+						border-bottom-color: var(--rule);
+					}
+
+					&[aria-current='page'] {
+						color: var(--ink);
+						border-bottom-color: var(--ink);
+					}
+
+					@media (max-width: 56rem) {
+						white-space: nowrap;
+					}
 				}
 			}
 
-			& .org {
-				max-width: 14rem;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-				font-family: var(--mono);
-				font-size: 11px;
-				letter-spacing: 0.06em;
-				color: var(--ink2);
+			& .tools {
+				display: flex;
+				align-items: center;
+				gap: 1rem;
 
-				/* a client workspace is marked so nobody files into the wrong one */
-				&[data-kind='mandant'] {
-					color: var(--navy);
+				@media (max-width: 56rem) {
+					order: 2;
+					margin-left: auto;
+				}
+
+				& .login,
+				& .account button {
+					font-family: var(--mono);
+					font-size: 11px;
+					letter-spacing: 0.08em;
+					text-transform: uppercase;
+					color: var(--ink2);
+					padding: 0.3rem 0.6rem;
+					border: 1px solid var(--rule);
+
+					&:hover {
+						color: var(--ink);
+						border-color: var(--ink3);
+						text-decoration: none;
+					}
+				}
+
+				& .account {
+					display: flex;
+					align-items: center;
+					gap: 0.75rem;
+
+					& .name {
+						font-family: var(--serif);
+						font-size: 14px;
+						color: var(--ink2);
+
+						@media (max-width: 40rem) {
+							display: none;
+						}
+					}
+
+					& .org {
+						max-width: 14rem;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+						font-family: var(--mono);
+						font-size: 11px;
+						letter-spacing: 0.06em;
+						color: var(--ink2);
+
+						/* a client workspace is marked so nobody files into the wrong one */
+						&[data-kind='mandant'] {
+							color: var(--navy);
+						}
+					}
 				}
 			}
 		}

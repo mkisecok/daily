@@ -70,50 +70,50 @@
 	.scroll {
 		overflow-x: auto;
 		margin-top: 1.5rem;
-	}
 
-	table {
-		width: 100%;
-		border-collapse: collapse;
-		font-size: 14px;
-	}
+		& table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 14px;
 
-	th,
-	td {
-		padding: 0.65rem 1rem 0.65rem 0;
-		text-align: left;
-		vertical-align: baseline;
-		border-bottom: 1px solid var(--rule2);
-	}
+			& th,
+			& td {
+				padding: 0.65rem 1rem 0.65rem 0;
+				text-align: left;
+				vertical-align: baseline;
+				border-bottom: 1px solid var(--rule2);
+			}
 
-	thead th {
-		font-family: var(--mono);
-		font-size: 11px;
-		font-weight: 500;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		color: var(--ink3);
-		border-bottom: 1px solid var(--ink);
-		white-space: nowrap;
-	}
+			& thead th {
+				font-family: var(--mono);
+				font-size: 11px;
+				font-weight: 500;
+				letter-spacing: 0.1em;
+				text-transform: uppercase;
+				color: var(--ink3);
+				border-bottom: 1px solid var(--ink);
+				white-space: nowrap;
+			}
 
-	tbody th {
-		font-family: var(--serif);
-		font-size: 16px;
-		font-weight: 400;
-	}
+			& tbody th {
+				font-family: var(--serif);
+				font-size: 16px;
+				font-weight: 400;
+			}
 
-	.state {
-		font-family: var(--mono);
-		font-size: 11px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--navy);
-		white-space: nowrap;
-	}
+			& .state {
+				font-family: var(--mono);
+				font-size: 11px;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--navy);
+				white-space: nowrap;
+			}
 
-	.date {
-		white-space: nowrap;
-		color: var(--ink2);
+			& .date {
+				white-space: nowrap;
+				color: var(--ink2);
+			}
+		}
 	}
 </style>
