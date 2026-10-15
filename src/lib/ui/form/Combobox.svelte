@@ -32,12 +32,25 @@
 
 	let search = $state('');
 	let open = $state(false);
+	let input = $state<HTMLInputElement | null>(null);
 	const matches = $derived(
 		search === ''
 			? items
 			: items.filter((item) => item.label.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
 	);
-	const selectedLabel = $derived(items.find((item) => item.value === value)?.label ?? '');
+	const labelOf = (v: string) => items.find((item) => item.value === v)?.label ?? '';
+
+	/**
+	 * keeps the text and the stored value in step when the user leaves the
+	 * field: an emptied optional field stores nothing, anything else shows the
+	 * chosen item's label again (typed filters that matched nothing included)
+	 */
+	function settle() {
+		if (!input) return;
+		if (input.value.trim() === '' && !required) value = '';
+		input.value = labelOf(value);
+		search = '';
+	}
 </script>
 
 <Combobox.Root
@@ -46,21 +59,26 @@
 	bind:open
 	{items}
 	allowDeselect={!required}
-	onOpenChange={(open) => {
-		if (!open) search = '';
+	onOpenChange={(isOpen) => {
+		if (!isOpen) settle();
 	}}
 >
 	<div class="daily-control daily-combobox">
 		<Combobox.Input
 			{id}
+			bind:ref={input}
 			class="daily-combobox-input"
-			defaultValue={selectedLabel}
+			defaultValue={labelOf(value)}
+			clearOnDeselect
 			{placeholder}
 			aria-describedby={describedBy}
 			aria-invalid={invalid || undefined}
 			aria-required={required || undefined}
 			oninput={(event) => (search = event.currentTarget.value)}
 			onclick={() => (open = true)}
+			onblur={() => {
+				if (!open) settle();
+			}}
 		/>
 		<Combobox.Trigger class="daily-icon-button" aria-label={placeholder}>
 			<Icon name="selector" size={16} />
