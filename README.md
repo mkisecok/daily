@@ -80,7 +80,7 @@ Requires Node 22+, pnpm and Docker.
 ```sh
 pnpm install
 cp .env.example .env
-docker compose up -d        # Postgres on 5433, Keycloak on 8080 with the "daily" realm
+docker compose up -d        # Postgres on 5433, Keycloak on 8080 with the "daily" realm, Adminer on 8081
 pnpm db:migrate
 pnpm worker:once            # fetch the news sources once
 pnpm dev                    # http://localhost:5174
@@ -88,6 +88,11 @@ pnpm dev                    # http://localhost:5174
 
 The imported realm contains a local test user; see `infra/keycloak/realm-daily.json`.
 Those credentials only exist on your machine.
+
+To browse the database, open Adminer at http://localhost:8081 (only reachable from this machine).
+Sign in with system "PostgreSQL", server `postgres`, and the user, password and database from
+`compose.yaml`. Users and logins are managed in the Keycloak admin console at
+http://localhost:8080/admin/.
 
 ## Checks
 
