@@ -7,6 +7,8 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { dayKey, formatLongDate, formatTime } from '#lib/i18n/date.js';
 	import { localized, type RoutePath } from '#lib/i18n/links.js';
+	import Icon from '#lib/ui/Icon.svelte';
+	import Tooltip from '#lib/ui/Tooltip.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -252,7 +254,13 @@
 		{#each data.sources as source (source.slug)}
 			<li>
 				<a href={resolve(link({ quelle: source.slug }))}>{source.name}</a>
-				{#if source.lastError}<span class="error" title={source.lastError}>!</span>{/if}
+				{#if source.lastError}
+					<Tooltip text={source.lastError}>
+						<span class="error"
+							><Icon name="alert-triangle" size={14} label={source.lastError} /></span
+						>
+					</Tooltip>
+				{/if}
 			</li>
 		{/each}
 	</ul>
@@ -446,7 +454,6 @@
 			& .error {
 				margin-left: 0.3rem;
 				color: var(--wax);
-				font-family: var(--mono);
 			}
 		}
 	}
