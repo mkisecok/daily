@@ -33,7 +33,7 @@
 		<h2><span class="numeral">{numerals[index]}</span> {labels[category]()}</h2>
 		<ol class="list">
 			{#each toolsByCategory(category) as tool (tool.slug)}
-				<li class="tool" data-status={tool.status}>
+				<li class="tool card" data-status={tool.status}>
 					<div class="name">
 						{#if tool.status === 'planned'}
 							<span class="title">{text(tool.name)}</span>
@@ -87,49 +87,62 @@
 			}
 		}
 
+		/* cards on a shared row grid, so names, summaries and citations line up across a row */
 		& .list {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+			gap: 1rem;
+			margin-top: 1.25rem;
 			list-style: none;
 
 			& .tool {
 				display: grid;
-				grid-template-columns: minmax(14rem, 18rem) 1fr;
-				gap: 0.5rem 2.5rem;
-				padding: 1.25rem 0;
-				border-bottom: 1px solid var(--rule2);
+				grid-row: span 3;
+				grid-template-rows: subgrid;
+				gap: 0.6rem;
+				transition: border-color 0.12s ease;
 
-				@media (max-width: 48rem) {
-					grid-template-columns: 1fr;
+				&:hover {
+					border-color: var(--ink3);
+				}
+
+				&:has(.title:focus-visible) {
+					border-color: var(--navy);
+					box-shadow: 0 0 0 3px var(--navy-soft);
 				}
 
 				& .name {
 					display: flex;
-					flex-direction: column;
-					align-items: flex-start;
-					gap: 0.4rem;
+					flex-wrap: wrap;
+					align-items: baseline;
+					justify-content: space-between;
+					gap: 0.4rem 0.75rem;
 				}
 
 				& .title {
 					font-family: var(--serif);
 					font-size: 18px;
 					font-weight: 600;
+					line-height: 1.25;
 					color: var(--ink);
+
+					&:focus-visible {
+						outline: none;
+					}
 				}
 
 				& .summary {
 					font-size: 14px;
 					color: var(--ink2);
-					max-width: var(--measure);
 				}
 
 				& .basis {
-					grid-column: 2;
 					display: flex;
 					flex-wrap: wrap;
-					gap: 0.6rem;
-
-					@media (max-width: 48rem) {
-						grid-column: 1;
-					}
+					align-content: flex-end;
+					gap: 0.25rem 0.6rem;
+					padding-top: 0.6rem;
+					border-top: 1px solid var(--rule2);
 
 					& .sep {
 						color: var(--ink3);

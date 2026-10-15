@@ -110,7 +110,7 @@
 				<p class="quiet-text">{m.reports_empty()}</p>
 			{/if}
 			{#each report.sections as section (section.slug)}
-				<div class="tool">
+				<div class="tool card">
 					<h4>{text(section.name)}</h4>
 					<p class="summary">
 						{m.reports_summary({
@@ -162,7 +162,7 @@
 				<p class="quiet-text">{m.reports_empty()}</p>
 			{:else}
 				{#each report.runs as run (run.slug)}
-					<div class="tool">
+					<div class="tool card">
 						<h4>
 							{text(run.name)}
 							<span class="count">{m.reports_runs_count({ count: run.count })}</span>
@@ -298,8 +298,7 @@
 			}
 
 			& .tool {
-				padding: 1rem 0;
-				border-bottom: 1px solid var(--rule2);
+				margin-top: 0.75rem;
 				break-inside: avoid;
 
 				& h4 {

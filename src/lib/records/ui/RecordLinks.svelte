@@ -24,7 +24,7 @@
 	const locale = getLocale();
 </script>
 
-<section class="links">
+<section class="links card">
 	<h2 class="eyebrow">{m.records_links()}</h2>
 	{#each backlinks as group (group.tool.manifest.slug)}
 		<h3>{text(group.tool.manifest.name)}</h3>
@@ -43,7 +43,7 @@
 
 <style>
 	.links {
-		padding-top: 2rem;
+		margin-top: 2rem;
 
 		& h3 {
 			margin-top: 0.75rem;
@@ -62,6 +62,10 @@
 			align-items: baseline;
 			padding: 0.45rem 0;
 			border-bottom: 1px solid var(--rule2);
+
+			&:last-child {
+				border-bottom: 0;
+			}
 			font-family: var(--serif);
 			font-size: 15px;
 
