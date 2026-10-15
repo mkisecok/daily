@@ -9,11 +9,14 @@
 	import { getLocale, locales } from '#lib/paraglide/runtime.js';
 	import { inLocale } from '#lib/i18n/links.js';
 
+	/** `large` gives finger-sized targets, e.g. in the phone menu */
+	let { size = 'default' }: { size?: 'default' | 'large' } = $props();
+
 	const labels: Record<string, string> = { de: 'DE', en: 'EN' };
 	const current = $derived(getLocale());
 </script>
 
-<nav class="lang" aria-label="Sprache / Language">
+<nav class="lang" data-size={size} aria-label="Sprache / Language">
 	{#each locales as locale, index (locale)}
 		{#if index > 0}<span class="sep" aria-hidden="true">/</span>{/if}
 		<a
@@ -42,6 +45,18 @@
 
 			&[aria-current='true'] {
 				color: var(--ink);
+			}
+		}
+
+		&[data-size='large'] {
+			gap: 0;
+			font-size: 13px;
+
+			& a {
+				display: inline-grid;
+				place-items: center;
+				min-width: 44px;
+				min-height: 44px;
 			}
 		}
 

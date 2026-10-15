@@ -8,7 +8,14 @@
 	import { THEME_COOKIE, type Theme, type ThemeSetting } from '#lib/theme.js';
 	import Tooltip from './Tooltip.svelte';
 
-	let { initial }: { initial: ThemeSetting } = $props();
+	let {
+		initial,
+		size = 'default'
+	}: {
+		initial: ThemeSetting;
+		/** `large` gives a finger-sized target, e.g. in the phone menu */
+		size?: 'default' | 'large';
+	} = $props();
 
 	// deliberately captures the server-rendered value once; after hydration the
 	// attachment below reads what the inline script in app.html resolved
@@ -32,6 +39,7 @@
 	<button
 		type="button"
 		class="switch"
+		data-size={size}
 		onclick={toggle}
 		aria-label={theme === 'dark' ? m.theme_to_light() : m.theme_to_dark()}
 		{@attach syncFromDocument}
@@ -59,6 +67,11 @@
 		width: 28px;
 		height: 28px;
 		color: var(--ink3);
+
+		&[data-size='large'] {
+			width: 44px;
+			height: 44px;
+		}
 
 		&:hover {
 			color: var(--ink);

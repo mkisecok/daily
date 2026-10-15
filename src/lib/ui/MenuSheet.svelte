@@ -103,8 +103,8 @@
 		{/if}
 
 		<div class="foot">
-			<LangSwitch />
-			<ThemeSwitch initial={theme} />
+			<LangSwitch size="large" />
+			<ThemeSwitch initial={theme} size="large" />
 		</div>
 	</div>
 </dialog>
