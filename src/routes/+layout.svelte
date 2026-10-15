@@ -5,6 +5,7 @@
 	import '../styles/tokens.css';
 	import '../styles/base.css';
 	import '../styles/primitives.css';
+	import '../styles/forms.css';
 	import '../styles/print.css';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';

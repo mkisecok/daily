@@ -1,0 +1,204 @@
+/**
+ * form controls: fields, dropdowns, checkboxes, radios and choice tiles
+ *
+ * Base rules sit in :where() so they carry no specificity: components keep
+ * control over layout (width, margins) without fighting these rules. Chosen
+ * and checked states are khaki (act), focus is navy (navigate), invalid is
+ * wax (warn).
+ */
+
+:where(
+	input:not([type='checkbox'], [type='radio'], [type='file'], [type='hidden'], [type='range']),
+	select,
+	textarea
+) {
+	padding: 0.55rem 0.7rem;
+	font: inherit;
+	font-size: 15px;
+	color: var(--ink);
+	background: var(--sheet);
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
+	transition:
+		border-color 0.12s ease,
+		box-shadow 0.12s ease;
+
+	&::placeholder {
+		color: var(--ink3);
+	}
+
+	&:hover {
+		border-color: var(--ink3);
+	}
+
+	&:focus {
+		outline: none;
+		border-color: var(--navy);
+		box-shadow: 0 0 0 3px var(--navy-soft);
+	}
+
+	&[aria-invalid='true'] {
+		border-color: var(--wax);
+	}
+
+	&:disabled {
+		color: var(--ink3);
+		background: var(--paper);
+		cursor: not-allowed;
+	}
+}
+
+:where(textarea) {
+	min-height: 4lh;
+	line-height: 1.5;
+	resize: vertical;
+
+	@supports (field-sizing: content) {
+		field-sizing: content;
+	}
+}
+
+/* chevron: Tabler "selector", drawn in --ink3 */
+:where(select) {
+	appearance: none;
+	padding-right: 2.2rem;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a857b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 9l4 -4l4 4'/%3E%3Cpath d='M16 15l-4 4l-4 -4'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 0.6rem center;
+	background-size: 16px;
+	cursor: pointer;
+
+	/* browsers with customisable selects also get a styled list */
+	@supports (appearance: base-select) {
+		&,
+		&::picker(select) {
+			appearance: base-select;
+		}
+
+		&::picker-icon {
+			display: none;
+		}
+
+		&::picker(select) {
+			margin-top: 4px;
+			padding: 0.25rem;
+			background: var(--sheet);
+			border: 1px solid var(--rule);
+			border-radius: var(--radius);
+			box-shadow: var(--shadow-float);
+		}
+
+		& option {
+			padding: 0.45rem 0.6rem;
+			border-radius: 2px;
+
+			&::checkmark {
+				color: var(--khaki);
+			}
+
+			&:hover,
+			&:focus-visible {
+				background: var(--navy-soft);
+			}
+
+			&:checked {
+				font-weight: 500;
+			}
+		}
+	}
+}
+
+:where(input[type='checkbox'], input[type='radio']) {
+	appearance: none;
+	flex: none;
+	width: 16px;
+	height: 16px;
+	margin: 0;
+	background: var(--sheet);
+	border: 1px solid var(--ink3);
+	cursor: pointer;
+	transition:
+		background-color 0.12s ease,
+		border-color 0.12s ease;
+
+	&:hover {
+		border-color: var(--ink);
+	}
+
+	&:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 3px var(--navy-soft);
+		border-color: var(--navy);
+	}
+
+	&:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
+	}
+}
+
+/* check mark: Tabler "check" in --on-khaki */
+:where(input[type='checkbox']) {
+	border-radius: 2px;
+
+	&:checked {
+		background: var(--khaki)
+			url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fffdf9' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5l10 -10'/%3E%3C/svg%3E")
+			center / 12px no-repeat;
+		border-color: var(--khaki);
+	}
+}
+
+html[data-theme='dark'] :where(input[type='checkbox']):checked {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23141311' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5l10 -10'/%3E%3C/svg%3E");
+}
+
+:where(input[type='radio']) {
+	border-radius: 50%;
+
+	&:checked {
+		border: 5px solid var(--khaki);
+	}
+}
+
+/** choice tiles: one bordered row per option, the chosen one in khaki */
+.choices {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+
+	& label {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		padding: 0.55rem 0.85rem;
+		font-family: var(--serif);
+		font-size: 15px;
+		color: var(--ink2);
+		background: var(--sheet);
+		border: 1px solid var(--rule);
+		border-radius: var(--radius);
+		cursor: pointer;
+		transition:
+			border-color 0.12s ease,
+			background-color 0.12s ease;
+
+		&:hover {
+			border-color: var(--ink3);
+		}
+
+		&:has(:checked) {
+			color: var(--ink);
+			background: var(--khaki-soft);
+			border-color: var(--khaki);
+		}
+
+		&:has(:focus-visible) {
+			box-shadow: 0 0 0 3px var(--navy-soft);
+		}
+
+		@media (max-width: 40rem) {
+			flex: 1 1 100%;
+		}
+	}
+}
