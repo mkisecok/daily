@@ -31,6 +31,8 @@ test('preview keeps records in the browser across reloads and can delete them', 
 	await page.goto('werkzeuge/ki-register/eintraege/');
 	await expect(page.getByRole('link', { name: 'Chatbot Kundenservice' })).toBeVisible();
 	await page.getByRole('button', { name: 'Lokale Daten löschen' }).click();
-	await page.getByRole('button', { name: 'Ja, alles löschen' }).click();
+	const dialog = page.getByRole('dialog', { name: 'Lokale Daten löschen?' });
+	await dialog.getByLabel('Zur Bestätigung „löschen“ eingeben').fill('löschen');
+	await dialog.getByRole('button', { name: 'Lokale Daten löschen' }).click();
 	await expect(page.getByText('Noch keine Einträge.')).toBeVisible();
 });
