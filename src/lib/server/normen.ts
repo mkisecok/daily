@@ -17,7 +17,7 @@ const RAW: Record<LawId, string> = {
 };
 const cache = new Map<LawId, LawText>();
 
-/** A law's text, parsed once per process. */
+/** a law's text, parsed once per process */
 export function lawText(id: LawId): LawText {
 	let law = cache.get(id);
 	if (!law) {
@@ -34,7 +34,7 @@ export function hasProvision(law: LawId, id: string): boolean {
 export type TocEntry = { id: string; label: string; title: string };
 export type Toc = {
 	chapters: { title: string; entries: TocEntry[] }[];
-	/** Provisions outside chapters: annexes, then recitals. */
+	/** provisions outside chapters: annexes, then recitals */
 	annexes: TocEntry[];
 	recitals: TocEntry[];
 };
@@ -63,7 +63,7 @@ export function tableOfContents(id: LawId, lang: Lang): Toc {
 	};
 }
 
-/** Provisions in reading order: articles/paragraphs, annexes, recitals. */
+/** provisions in reading order: articles/paragraphs, annexes, recitals */
 function ordered(law: LawText): Provision[] {
 	return KIND_ORDER.flatMap((kind) => law.provisions.filter((p) => p.kind === kind));
 }
@@ -89,7 +89,7 @@ export function provisionPage(lawId: LawId, id: string, lang: Lang) {
 			),
 			chapter:
 				provision.chapter !== undefined ? pick(law.chapters[provision.chapter].title, lang) : null,
-			/** English page showing the German text because no English one exists. */
+			/** English page showing the German text because no English one exists */
 			fallback: lang === 'en' && !english
 		},
 		prev: neighbour(list[index - 1]),
@@ -100,7 +100,7 @@ export function provisionPage(lawId: LawId, id: string, lang: Lang) {
 	};
 }
 
-/** Blocks with cross-references resolved into links, ready for the page. */
+/** blocks with cross-references resolved into links, ready for the page */
 function render(blocks: Block[], law: LawId): RenderedBlock[] {
 	return blocks.map((b) => ({
 		...(b.label ? { label: b.label } : {}),
@@ -123,7 +123,7 @@ function flatten(blocks: Block[]): string {
 
 export type SearchEntry = { law: LawId; id: string; label: string; title: string; text: string };
 
-/** Everything the client-side search needs, per language. */
+/** everything the client-side search needs, per language */
 export function searchIndex(lang: Lang): SearchEntry[] {
 	return ALL_LAWS.flatMap((law) =>
 		lawText(law).provisions.map((p) => ({
@@ -138,7 +138,7 @@ export function searchIndex(lang: Lang): SearchEntry[] {
 
 let index: Map<string, CitingTool[]> | undefined;
 
-/** Every citation in manifests, questionnaire catalogs and record definitions. */
+/** every citation in manifests, questionnaire catalogs and record definitions */
 function toolCitations(): ToolCitations[] {
 	return tools.map((tool) => {
 		const catalog = getQuestionnaire(tool.slug)?.catalog;

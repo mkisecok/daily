@@ -2,7 +2,7 @@ import type { RecordToolDefinition } from '../../records/types.js';
 
 const L = (de: string, en: string) => ({ de, en });
 
-/** AI literacy per role or group of people: what they use, what they learn, when. */
+/** AI literacy per role or group of people: what they use, what they learn, when */
 export const definition: RecordToolDefinition = {
 	slug: 'ki-kompetenz',
 	version: 1,

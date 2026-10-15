@@ -1,5 +1,5 @@
 /**
- * Feed worker: polls the sources every 30 minutes and on start.
+ * feed worker: polls the sources every 30 minutes and on start.
  *
  *   pnpm worker            (development, via tsx)
  *   node build-worker/index.js   (production bundle via pnpm build:worker)

@@ -7,7 +7,7 @@ import type { RequestHandler } from './$types';
 const UUID = /^[0-9a-f-]{36}$/;
 
 /**
- * Toggles a bookmark. Called with fetch (JSON reply) from the news page, or
+ * toggles a bookmark. Called with fetch (JSON reply) from the news page, or
  * as a plain form post without JavaScript (redirect back to `back`). An
  * endpoint instead of a form action keeps the news page prerenderable.
  */

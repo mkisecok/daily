@@ -6,7 +6,7 @@ import { evaluate } from './engine.js';
 const catalog = catalogJson as QuestionnaireCatalog;
 const ids = catalog.sections.flatMap((s) => s.questions.map((q) => q.id));
 
-/** Everything fulfilled; override single answers. */
+/** everything fulfilled; override single answers */
 function answers(overrides: Answers = {}): Answers {
 	return { ...(Object.fromEntries(ids.map((id) => [id, 'yes'])) as Answers), ...overrides };
 }

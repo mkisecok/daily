@@ -4,7 +4,7 @@ import { validateRecord } from '../../records/validate.js';
 import { applyTransition } from '../../records/workflow.js';
 import { definition, engine, reportingDays } from './engine.js';
 
-/** Friday 23 October 2026, 12:00 in Berlin; daylight saving ends two days later. */
+/** Friday 23 October 2026, 12:00 in Berlin; daylight saving ends two days later */
 const AWARE = '2026-10-23T10:00:00.000Z';
 
 function view(data: RecordData, state = 'erfasst') {

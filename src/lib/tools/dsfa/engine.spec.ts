@@ -8,7 +8,7 @@ function view(data: RecordData, state = 'entwurf') {
 	return { state, data: validateRecord(definition, data).data };
 }
 
-/** Every risk rated 3/3 (high) before and 2/2 (low) after measures. */
+/** every risk rated 3/3 (high) before and 2/2 (low) after measures */
 const rated: RecordData = Object.fromEntries(
 	RISKS.flatMap(({ id }) => [
 		[`${id}_w`, '3'],

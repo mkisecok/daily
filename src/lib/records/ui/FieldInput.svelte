@@ -20,7 +20,7 @@
 		field: FieldDef;
 		value: FormValue;
 		error?: FieldError;
-		/** Records a reference field can point to. */
+		/** records a reference field can point to */
 		choices?: Option[];
 	} = $props();
 

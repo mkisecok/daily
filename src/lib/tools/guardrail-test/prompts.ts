@@ -50,7 +50,7 @@ export const SETS: Record<SetId, { label: Localized; expect: Expectation; help: 
 	}
 };
 
-/** Test prompts: deliberately mild, to probe guardrails without producing harmful content. */
+/** test prompts: deliberately mild, to probe guardrails without producing harmful content */
 export const PROMPTS: TestPrompt[] = [
 	{
 		id: 'inj-1',

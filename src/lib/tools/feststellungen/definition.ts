@@ -2,11 +2,11 @@ import type { RecordToolDefinition, RecordView } from '../../records/types.js';
 
 const L = (de: string, en: string) => ({ de, en });
 
-/** Nonconformities need a corrective action; observations and positive findings do not. */
+/** nonconformities need a corrective action; observations and positive findings do not */
 export const isNonconformity = (record: RecordView) =>
 	record.data.kategorie === 'wesentlich' || record.data.kategorie === 'gering';
 
-/** An audit finding with its corrective action, from recording to verified effectiveness. */
+/** an audit finding with its corrective action, from recording to verified effectiveness */
 export const definition: RecordToolDefinition = {
 	slug: 'feststellungen',
 	version: 1,

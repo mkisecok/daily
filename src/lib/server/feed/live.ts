@@ -20,7 +20,7 @@ export type LiveSource = {
 let cached: Promise<{ items: FeedRow[]; sources: LiveSource[] }> | undefined;
 
 /**
- * Fetches every source directly, without the database: used by the static
+ * fetches every source directly, without the database: used by the static
  * preview at build time. Cached for the process, so the German and English
  * pages of one build show the same items.
  */

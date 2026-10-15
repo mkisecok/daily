@@ -9,7 +9,7 @@ import { deadlines, memberships, organisations, users } from './db/schema.js';
 import { createRecordRepository } from './records.js';
 
 /**
- * Runs against the migrated compose Postgres from `.env`, only through
+ * runs against the migrated compose Postgres from `.env`, only through
  * `pnpm test:db`; skipped otherwise, so CI without a database stays green.
  */
 const url =

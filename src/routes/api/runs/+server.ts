@@ -8,7 +8,7 @@ import type { RequestHandler } from './$types';
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 
-/** `GET /api/runs?from=YYYY-MM-DD&to=YYYY-MM-DD`: saved questionnaire runs of the active organisation. */
+/** `GET /api/runs?from=YYYY-MM-DD&to=YYYY-MM-DD`: saved questionnaire runs of the active organisation */
 export const GET: RequestHandler = async ({ url, locals }) => {
 	if (!locals.user) error(401, 'Not signed in');
 	if (!locals.organisation) error(403, 'No organisation');

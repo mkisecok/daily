@@ -17,7 +17,7 @@ export function required(record: RecordView): boolean {
 	);
 }
 
-/** The elements of Art. 27(1)(a)–(f), in order. */
+/** the elements of Art. 27(1)(a)–(f), in order */
 export const ELEMENTS = [
 	{ id: 'prozesse', ref: 'Art. 27 Abs. 1 lit. a' },
 	{ id: 'zeitraum', ref: 'Art. 27 Abs. 1 lit. b' },
@@ -27,7 +27,7 @@ export const ELEMENTS = [
 	{ id: 'massnahmen', ref: 'Art. 27 Abs. 1 lit. f' }
 ] as const;
 
-/** A fundamental rights impact assessment before a high-risk system is first used (Art. 27). */
+/** a fundamental rights impact assessment before a high-risk system is first used (Art. 27) */
 export const definition: RecordToolDefinition = {
 	slug: 'grundrechte-folgenabschaetzung',
 	version: 1,

@@ -4,16 +4,16 @@ import { getStore } from '#lib/records/store/index.js';
 import type { StoredRecord } from '#lib/records/types.js';
 import type { PageLoad } from './$types';
 
-/** Notes come from the store, so the page renders on the client only. */
+/** notes come from the store, so the page renders on the client only */
 export const ssr = false;
 
 export type Prefill = { titel: string; quelle: string; text: string };
 
-/** `?notiz=<id>` shows a note, `?neu=1` the editor (prefilled from the query), otherwise the list. */
+/** `?notiz=<id>` shows a note, `?neu=1` the editor (prefilled from the query), otherwise the list */
 export const load: PageLoad = async ({ data, url, depends }) => {
 	depends('records:data');
 	const base = { ...data, notes: [] as StoredRecord[] };
-	// Prerendering still calls load; the browser loads again.
+	// prerendering still calls load; the browser loads again
 	if (!browser) return { ...base, view: 'list' as const };
 	const store = getStore();
 	const id = url.searchParams.get('notiz');

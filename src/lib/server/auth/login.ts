@@ -2,7 +2,7 @@ import type { Cookies } from '@sveltejs/kit';
 import { dev } from '$app/env';
 import { APP_ORIGIN } from '$app/env/private';
 
-/** Short-lived cookie carrying the PKCE verifier and state across the redirect. */
+/** short-lived cookie carrying the PKCE verifier and state across the redirect */
 export const LOGIN_COOKIE = 'daily_login';
 const LOGIN_MAX_AGE_SECONDS = 10 * 60;
 
@@ -46,7 +46,7 @@ export function takeLoginState(cookies: Cookies): LoginState | undefined {
 	return undefined;
 }
 
-/** Only same-origin paths may be used as a post-login destination. */
+/** only same-origin paths may be used as a post-login destination */
 export function safeNextPath(candidate: string | null | undefined): string {
 	if (!candidate || !candidate.startsWith('/') || candidate.startsWith('//')) return '/';
 	return candidate;

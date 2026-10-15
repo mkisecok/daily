@@ -11,7 +11,7 @@ const listHas = (record: RecordView, field: string, value: string) => {
 	return Array.isArray(list) && list.includes(value);
 };
 
-/** The review date at 9:00 German time, unless the activity is discontinued. */
+/** the review date at 9:00 German time, unless the activity is discontinued */
 function deadlines(record: RecordView): DeadlineSpec[] {
 	const date = record.data.wiedervorlage;
 	if (typeof date !== 'string' || record.data.status === 'eingestellt') return [];
@@ -25,7 +25,7 @@ function deadlines(record: RecordView): DeadlineSpec[] {
 }
 
 /**
- * The DSFA screening sets the DSFA field: required or not. A conditional
+ * the DSFA screening sets the DSFA field: required or not. A conditional
  * result leaves the decision to the user, and a finished DSFA stays finished.
  */
 function fromAssessment(
@@ -41,7 +41,7 @@ function fromAssessment(
 	return {};
 }
 
-/** A required Art. 30 item that is empty. */
+/** a required Art. 30 item that is empty */
 function gap(record: RecordView, id: string, cite: string): Reason | null {
 	if (!isEmpty(record.data[id])) return null;
 	const field = fieldById(definition, id);
@@ -53,7 +53,7 @@ function gap(record: RecordView, id: string, cite: string): Reason | null {
 }
 
 /**
- * Completeness of the entry under Art. 30(1) or (2), then the points the
+ * completeness of the entry under Art. 30(1) or (2), then the points the
  * entry raises: transfers without a basis, special categories without an
  * exception, an open DSFA, processors without contracts.
  */

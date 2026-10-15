@@ -4,7 +4,7 @@ import { KEYCLOAK_CLIENT_ID, KEYCLOAK_CLIENT_SECRET, KEYCLOAK_ISSUER } from '$ap
 let configuration: Promise<client.Configuration> | undefined;
 
 /**
- * Discovered OIDC configuration for the Keycloak realm, cached for the
+ * discovered OIDC configuration for the Keycloak realm, cached for the
  * process lifetime. Plain http is only accepted for a localhost issuer.
  */
 export function getOidcConfiguration(): Promise<client.Configuration> {

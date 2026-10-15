@@ -9,9 +9,9 @@ export type Rule = {
 	category: Category;
 	label: Localized;
 	pattern: RegExp;
-	/** Further check on a match, e.g. a checksum, to cut false positives. */
+	/** further check on a match, e.g. a checksum, to cut false positives */
 	valid?: (match: string) => boolean;
-	/** Secrets are shown masked. */
+	/** secrets are shown masked */
 	mask?: boolean;
 	cite: LegalBasis;
 };
@@ -25,7 +25,7 @@ export type Finding = {
 	excerpt: string;
 };
 
-/** IBAN checksum (ISO 13616, mod 97). */
+/** IBAN checksum (ISO 13616, mod 97) */
 export function validIban(raw: string): boolean {
 	const iban = raw.replace(/\s/g, '').toUpperCase();
 	if (iban.length < 15 || iban.length > 34) return false;
@@ -37,7 +37,7 @@ export function validIban(raw: string): boolean {
 	return rest === 1;
 }
 
-/** Card number checksum (Luhn) for 13 to 19 digits. */
+/** card number checksum (Luhn) for 13 to 19 digits */
 export function validCard(raw: string): boolean {
 	const digits = raw.replace(/[ -]/g, '');
 	if (!/^\d{13,19}$/.test(digits) || /^(\d)\1+$/.test(digits)) return false;
@@ -235,7 +235,7 @@ const IGNORED_FILES =
 	/(\.(png|jpe?g|gif|webp|ico|svg|pdf|zip|gz|woff2?|ttf|mp4|mp3|lock)|package-lock\.json|pnpm-lock\.yaml|yarn\.lock)$/i;
 export const MAX_BYTES = 1_000_000;
 
-/** Whether a file is worth scanning: no dependencies, builds, binaries or lock files. */
+/** whether a file is worth scanning: no dependencies, builds, binaries or lock files */
 export function scannable(path: string, size: number): boolean {
 	const normalised = path.replace(/\\/g, '/');
 	return size <= MAX_BYTES && !IGNORED_DIRS.test(normalised) && !IGNORED_FILES.test(normalised);
@@ -245,7 +245,7 @@ function maskValue(value: string): string {
 	return value.length <= 6 ? '••••' : `${value.slice(0, 4)}…${'•'.repeat(4)}`;
 }
 
-/** Every rule on every line; secrets and financial numbers are masked in the excerpt. */
+/** every rule on every line; secrets and financial numbers are masked in the excerpt */
 export function scan(files: SourceFile[]): Finding[] {
 	const findings: Finding[] = [];
 	for (const file of files) {
@@ -270,7 +270,7 @@ export function scan(files: SourceFile[]): Finding[] {
 	return findings;
 }
 
-/** Counts per category, in the order of severity. */
+/** counts per category, in the order of severity */
 export function summarise(findings: Finding[]): Record<Category, number> {
 	const counts: Record<Category, number> = { geheimnis: 0, personenbezug: 0, ki: 0, tracking: 0 };
 	for (const f of findings) counts[f.rule.category]++;

@@ -5,7 +5,7 @@ import { validateRecord } from '../../records/validate.js';
 import { allowedTransitions, applyTransition } from '../../records/workflow.js';
 import { definition, engine, notificationDue } from './engine.js';
 
-/** Saturday 24 October 2026, 10:00 in Berlin; daylight saving ends the next night. */
+/** Saturday 24 October 2026, 10:00 in Berlin; daylight saving ends the next night */
 const AWARE = '2026-10-24T08:00:00.000Z';
 
 function view(data: RecordData, state = 'erfasst') {
@@ -24,7 +24,7 @@ describe('Datenpanne: deadlines', () => {
 	it('runs 72 hours in absolute time across the end of daylight saving', () => {
 		const due = notificationDue(view({}))!;
 		expect(due).toBe('2026-10-27T08:00:00.000Z');
-		// 10:00 CEST on Saturday becomes 09:00 CET on Tuesday on the wall clock.
+		// 10:00 CEST on Saturday becomes 09:00 CET on Tuesday on the wall clock
 		expect(formatTime(due, 'de')).toBe('09:00');
 	});
 

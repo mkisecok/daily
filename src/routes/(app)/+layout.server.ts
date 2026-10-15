@@ -5,7 +5,7 @@ import { localized } from '#lib/i18n/links.js';
 import type { LayoutServerLoad } from './$types';
 
 /**
- * Everything in the (app) group requires a signed-in user. The static
+ * everything in the (app) group requires a signed-in user. The static
  * preview has no sign-in, so it points to the page that explains that.
  */
 export const load: LayoutServerLoad = ({ locals, url }) => {

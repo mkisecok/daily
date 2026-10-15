@@ -2,7 +2,7 @@ import type { RecordToolDefinition } from '../../records/types.js';
 
 const L = (de: string, en: string) => ({ de, en });
 
-/** Data protection training: one record per session or e-learning campaign. */
+/** data protection training: one record per session or e-learning campaign */
 export const definition: RecordToolDefinition = {
 	slug: 'schulungsnachweis',
 	version: 1,

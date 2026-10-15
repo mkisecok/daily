@@ -7,7 +7,7 @@ import { validateRecord } from './validate.js';
 
 const L = (de: string) => ({ de, en: de });
 
-/** A tool whose records point to records of the test tool. */
+/** a tool whose records point to records of the test tool */
 const noteTool: RecordTool = {
 	manifest: { ...testTool.manifest, slug: 'notes', shape: 'register' },
 	definition: {

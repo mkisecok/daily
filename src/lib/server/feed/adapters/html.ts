@@ -3,7 +3,7 @@ import type { RawItem, SourceDefinition } from '../types.js';
 import { fetchText } from './http.js';
 
 /**
- * List-page scraper for publishers without a feed. Selectors live on the
+ * list-page scraper for publishers without a feed. Selectors live on the
  * source definition so each publisher's quirks stay data.
  */
 export async function fetchHtml(source: SourceDefinition): Promise<RawItem[]> {

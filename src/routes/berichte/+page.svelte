@@ -27,7 +27,7 @@
 	const recordPath = (slug: string, id: string) =>
 		localized(`/werkzeuge/${slug}/eintraege?eintrag=${id}`);
 
-	/** Settings live in the URL, so a report can be reloaded and shared. */
+	/** settings live in the URL, so a report can be reloaded and shared */
 	function update(change: { art?: string; von?: string; bis?: string }) {
 		const next = { art: data.kind, von: data.period.from, bis: data.period.to, ...change };
 		goto(resolve(localized(`/berichte?art=${next.art}&von=${next.von}&bis=${next.bis}`)), {

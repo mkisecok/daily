@@ -13,7 +13,7 @@ export const RISK_CLASSES = [
 ] as const;
 export type RiskClass = (typeof RISK_CLASSES)[number];
 
-/** Inventory of AI systems: one record per system, per organisation. */
+/** inventory of AI systems: one record per system, per organisation */
 export const definition: RecordToolDefinition = {
 	slug: 'ki-register',
 	version: 1,

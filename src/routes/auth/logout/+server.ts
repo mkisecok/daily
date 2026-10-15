@@ -5,7 +5,7 @@ import { POST_LOGOUT_REDIRECT_URI } from '#lib/server/auth/login.js';
 import { destroySession } from '#lib/server/auth/session.js';
 import type { RequestHandler } from './$types';
 
-/** Ends the local session, then the Keycloak SSO session (RP-initiated logout). */
+/** ends the local session, then the Keycloak SSO session (RP-initiated logout) */
 export const POST: RequestHandler = async ({ cookies, locals }) => {
 	const idToken = locals.session?.idToken;
 	await destroySession(cookies);

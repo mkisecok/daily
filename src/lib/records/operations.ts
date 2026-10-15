@@ -11,7 +11,7 @@ import { allFields, fieldById, titleOf, validateRecord } from './validate.js';
 import { applyTransition, initialState } from './workflow.js';
 
 /**
- * The decisions every store makes before writing, kept pure so the browser
+ * the decisions every store makes before writing, kept pure so the browser
  * store and the Postgres repository cannot drift apart. Each returns the
  * values to persist or the error to report.
  */
@@ -38,7 +38,7 @@ export function planCreate(
 }
 
 /**
- * Edits from the record form. Assessment fields are not part of the form, so
+ * edits from the record form. Assessment fields are not part of the form, so
  * they keep their stored value unless the input names them.
  */
 export function planUpdate(
@@ -77,7 +77,7 @@ export function planTransition(
 	return { data: current.data, title: current.title, state: result.state, changes: {} };
 }
 
-/** Stores a snapshot in an assessment field; `derived` sets further fields from it. */
+/** stores a snapshot in an assessment field; `derived` sets further fields from it */
 export function planAssessment(
 	definition: RecordToolDefinition,
 	current: StoredRecord,

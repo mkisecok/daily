@@ -14,13 +14,13 @@ import type { StoredRecord } from '#lib/records/types.js';
 import { getQuestionnaire, getRecordTool, tools } from '#lib/tools/registry.js';
 import type { PageLoad } from './$types';
 
-/** Records come from the store, so the page renders on the client only. */
+/** records come from the store, so the page renders on the client only */
 export const ssr = false;
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 const KINDS: ReportKind[] = ['gesamt', 'datenschutz', 'ki', 'audit'];
 
-/** `?art=datenschutz&von=2026-01-01&bis=2026-12-31`; defaults to this year's overall report. */
+/** `?art=datenschutz&von=2026-01-01&bis=2026-12-31`; defaults to this year's overall report */
 export const load: PageLoad = async ({ data, url, fetch, depends }) => {
 	depends('records:data');
 	const year = new Date().getFullYear();
@@ -33,7 +33,7 @@ export const load: PageLoad = async ({ data, url, fetch, depends }) => {
 		to: DAY.test(to) ? to : `${year}-12-31`
 	};
 	const base = { ...data, kind, period, report: null as Report | null };
-	// Prerendering still calls load; the browser loads again.
+	// prerendering still calls load; the browser loads again
 	if (!browser) return base;
 
 	const categories = KIND_CATEGORIES[kind];

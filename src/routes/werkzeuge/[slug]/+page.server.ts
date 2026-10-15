@@ -13,7 +13,7 @@ type RunSummary = {
 	headline: Localized | null;
 };
 
-/** Public tool page; lists the signed-in user's previous runs for this tool. */
+/** public tool page; lists the signed-in user's previous runs for this tool */
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const tool = getTool(params.slug);
 	if (!tool || tool.status === 'planned') error(404, 'Werkzeug nicht gefunden');
@@ -27,7 +27,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 					id: toolRuns.id,
 					createdAt: toolRuns.createdAt,
 					verdict: sql<VerdictLevel | null>`${toolRuns.verdict}`,
-					// Each tool words its own result; show that, not a generic label.
+					// each tool words its own result; show that, not a generic label
 					headline: sql<Localized | null>`${toolRuns.result} -> 'headline'`
 				})
 				.from(toolRuns)

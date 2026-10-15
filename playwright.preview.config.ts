@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
 /**
- * The public GitHub Pages preview: static build under /daily, no server,
+ * the public GitHub Pages preview: static build under /daily, no server,
  * records in browser storage. `pnpm test:e2e:preview`.
  */
 export default defineConfig({

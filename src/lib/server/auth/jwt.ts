@@ -1,5 +1,5 @@
 /**
- * Reads a JWT payload without verifying the signature. Only call this on
+ * reads a JWT payload without verifying the signature. Only call this on
  * tokens received directly from the token endpoint over a trusted channel.
  */
 export function decodeJwtPayload(token: string): Record<string, unknown> | undefined {
@@ -14,7 +14,7 @@ export function decodeJwtPayload(token: string): Record<string, unknown> | undef
 	}
 }
 
-/** Keycloak realm roles live in the access token under `realm_access.roles`. */
+/** Keycloak realm roles live in the access token under `realm_access.roles` */
 export function readRealmRoles(accessToken: string): string[] {
 	const payload = decodeJwtPayload(accessToken);
 	const realmAccess = payload?.realm_access;

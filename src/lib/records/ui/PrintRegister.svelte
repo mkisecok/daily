@@ -24,9 +24,9 @@
 		definition: RecordToolDefinition;
 		records: StoredRecord[];
 		title: Localized;
-		/** Whose register this is (Art. 30(1)(a)); unknown in the preview. */
+		/** whose register this is (Art. 30(1)(a)); unknown in the preview */
 		organisation?: string | null;
-		/** Titles of referenced records by id. */
+		/** titles of referenced records by id */
 		titles?: Titles;
 		now?: Date;
 	} = $props();

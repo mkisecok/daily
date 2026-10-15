@@ -18,7 +18,7 @@
 		na: m.answer_na
 	};
 
-	/** Every question with its continuous number and the stored answer. */
+	/** every question with its continuous number and the stored answer */
 	const rows = $derived.by(() => {
 		let number = 0;
 		return data.catalog.sections.flatMap((section) =>

@@ -13,12 +13,12 @@ type Clause = { title: Localized; sentences: Localized[] };
 
 const OFFICE = L('[zuständige Stelle]', '[responsible function]');
 
-/** Placeholder for a decision left open, so the draft shows the gap. */
+/** placeholder for a decision left open, so the draft shows the gap */
 function open(topic: Localized): Localized {
 	return L(`[Offen: ${topic.de}]`, `[Open: ${topic.en}]`);
 }
 
-/** Picks the sentence for a yes/no decision; "unclear" yields a placeholder. */
+/** picks the sentence for a yes/no decision; "unclear" yields a placeholder */
 function choose(answer: string | undefined, ifYes: Localized, ifNo: Localized, topic: Localized) {
 	if (answer === 'yes') return ifYes;
 	if (answer === 'no') return ifNo;
@@ -26,7 +26,7 @@ function choose(answer: string | undefined, ifYes: Localized, ifNo: Localized, t
 }
 
 /**
- * Generates a numbered draft policy from organisational choices. Choices
+ * generates a numbered draft policy from organisational choices. Choices
  * that conflict with the GDPR or the AI Act are returned as reasons; the
  * clauses themselves are the notes.
  */
@@ -219,7 +219,7 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 		en: `§ ${index + 1} ${clause.title.en}. ${clause.sentences.map((s) => s.en).join(' ')}`
 	}));
 
-	// Choices that sit badly with the law.
+	// choices that sit badly with the law
 	const warnings: Reason[] = [];
 	if (a('p_private') === 'yes') warnings.push(reasonFor(catalog, 'p_private'));
 	if (a('p_review') === 'no') warnings.push(reasonFor(catalog, 'p_review'));

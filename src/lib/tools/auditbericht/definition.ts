@@ -3,7 +3,7 @@ import type { RecordToolDefinition } from '../../records/types.js';
 const L = (de: string, en: string) => ({ de, en });
 
 /**
- * The audit report: own conclusions plus, composed on the record page, the
+ * the audit report: own conclusions plus, composed on the record page, the
  * audit with its checklists and findings. Printing the record gives the
  * complete report.
  */

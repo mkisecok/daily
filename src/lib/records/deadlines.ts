@@ -5,7 +5,7 @@ import { isTerminal } from './workflow.js';
 const HOUR = 60 * 60 * 1000;
 
 /**
- * Adds hours to an instant. Legal hour-based periods (Art. 33: 72 hours)
+ * adds hours to an instant. Legal hour-based periods (Art. 33: 72 hours)
  * run in absolute time, so a daylight-saving change does not shift them.
  */
 export function addHours(iso: string, hours: number): string {
@@ -13,7 +13,7 @@ export function addHours(iso: string, hours: number): string {
 }
 
 /**
- * Adds calendar months to a date or instant, keeping the time of day. When
+ * adds calendar months to a date or instant, keeping the time of day. When
  * the target month is shorter, the period ends on its last day (Art. 3
  * Regulation 1182/71, applied by the EDPB to Art. 12(3) GDPR).
  */
@@ -27,18 +27,18 @@ export function addMonths(iso: string, months: number): string {
 	return date.toISOString();
 }
 
-/** A calendar date (`YYYY-MM-DD`) at a time of day in German time, as an instant. */
+/** a calendar date (`YYYY-MM-DD`) at a time of day in German time, as an instant */
 export function dayAt(date: string, time = '09:00'): string {
 	return fromBerlinInput(`${date}T${time}`);
 }
 
-/** A calendar date plus whole months, clamped to the end of shorter months. */
+/** a calendar date plus whole months, clamped to the end of shorter months */
 export function dateAfterMonths(date: string, months: number): string {
 	return addMonths(`${date}T00:00:00.000Z`, months).slice(0, 10);
 }
 
 /**
- * A period of months counted from the German calendar day of an event and
+ * a period of months counted from the German calendar day of an event and
  * ending at the end of the corresponding day (23:59 German time), e.g.
  * Art. 12(3): a request received on 31 January is due on 28 February.
  */
@@ -47,7 +47,7 @@ export function monthsAfterDay(iso: string, months: number): string {
 }
 
 /**
- * Open deadlines of a record: none once a workflow reaches a terminal state
+ * open deadlines of a record: none once a workflow reaches a terminal state
  * or the record is archived; otherwise whatever the tool's engine derives.
  */
 export function computeDeadlines(tool: RecordTool, record: StoredRecord): Deadline[] {

@@ -26,7 +26,7 @@ function deadlines(record: RecordView): DeadlineSpec[] {
 }
 
 /**
- * Gaps against Art. 32(1)(b)–(d) are defects; missing encryption or
+ * gaps against Art. 32(1)(b)–(d) are defects; missing encryption or
  * pseudonymisation, protection-requirement mismatches and empty SDM goals
  * are points to consider.
  */

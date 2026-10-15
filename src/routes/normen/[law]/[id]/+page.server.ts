@@ -4,7 +4,7 @@ import { lawById } from '#lib/normen/laws.js';
 import { allProvisionIds, provisionPage } from '#lib/server/normen.js';
 import type { EntryGenerator, PageServerLoad } from './$types';
 
-/** Every provision of every law, so the static preview has them all. */
+/** every provision of every law, so the static preview has them all */
 export const entries: EntryGenerator = () => allProvisionIds();
 
 export const load: PageServerLoad = ({ params }) => {

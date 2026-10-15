@@ -13,7 +13,7 @@ export const RIGHTS = [
 	'widerruf'
 ] as const;
 
-/** A data subject request from receipt to reply or refusal (Art. 12, 15–22). */
+/** a data subject request from receipt to reply or refusal (Art. 12, 15–22) */
 export const definition: RecordToolDefinition = {
 	slug: 'betroffenenanfrage',
 	version: 1,

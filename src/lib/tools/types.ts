@@ -1,9 +1,9 @@
-/** Content strings carried by tools and catalogs (not UI chrome). */
+/** content strings carried by tools and catalogs (not UI chrome) */
 export type Localized = { de: string; en: string };
 
 export type ToolCategory = 'datenschutz' | 'ki' | 'audit' | 'entwickler';
 export type ToolStatus = 'stable' | 'beta' | 'planned';
-/** `utility`: an interactive tool with its own page, e.g. the repository scan. */
+/** `utility`: an interactive tool with its own page, e.g. the repository scan */
 export type ToolShape = 'questionnaire' | 'register' | 'workflow' | 'utility';
 
 export type Law =
@@ -19,7 +19,7 @@ export type Law =
 	| 'WP29'
 	| 'EuGH';
 
-/** A citation such as { law: 'DSGVO', ref: 'Art. 35 Abs. 3 lit. a' }. */
+/** a citation such as { law: 'DSGVO', ref: 'Art. 35 Abs. 3 lit. a' } */
 export type LegalBasis = { law: Law; ref: string; title?: Localized };
 
 export type ToolManifest = {
@@ -35,7 +35,7 @@ export type ToolManifest = {
 
 /* ---------- questionnaire shape ---------- */
 
-/** `yesnona` adds "not applicable" for duties that only exist in some situations. */
+/** `yesnona` adds "not applicable" for duties that only exist in some situations */
 export type QuestionType = 'yesno' | 'yesnona';
 export type YesNoAnswer = 'yes' | 'no' | 'unknown' | 'na';
 
@@ -45,7 +45,7 @@ export type Question = {
 	text: Localized;
 	help?: Localized;
 	cite?: LegalBasis;
-	/** Checklist questions: what to do when the answer is "no". */
+	/** checklist questions: what to do when the answer is "no" */
 	remedy?: Localized;
 };
 
@@ -67,7 +67,7 @@ export type QuestionnaireCatalog = {
 export type Answers = Record<string, YesNoAnswer>;
 
 /**
- * Severity, not truth value: `positive` means something applies that demands
+ * severity, not truth value: `positive` means something applies that demands
  * action (shown in wax red), `conditional` needs a judgement or open points
  * (navy), `negative` means nothing to do (khaki).
  */
@@ -81,14 +81,14 @@ export type Reason = {
 
 export type QuestionnaireResult = {
 	verdict: VerdictLevel;
-	/** Machine-readable outcome for tools that take the result over, e.g. `hochrisiko`. */
+	/** machine-readable outcome for tools that take the result over, e.g. `hochrisiko` */
 	outcome?: string;
 	headline: Localized;
 	explanation: Localized;
 	reasons: Reason[];
-	/** Obligations, dates or next steps that follow from the verdict. */
+	/** obligations, dates or next steps that follow from the verdict */
 	notes?: Localized[];
-	/** Heading for `notes` when "Obligations and notes" does not fit, e.g. generated clauses. */
+	/** heading for `notes` when "Obligations and notes" does not fit, e.g. generated clauses */
 	notesTitle?: Localized;
 	citations: LegalBasis[];
 };

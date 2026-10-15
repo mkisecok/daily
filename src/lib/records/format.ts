@@ -8,10 +8,10 @@ function pick(value: { de: string; en: string }, locale: Locale): string {
 	return locale === 'en' ? value.en : value.de;
 }
 
-/** Titles of referenced records by id, for reference fields. */
+/** titles of referenced records by id, for reference fields */
 export type Titles = Record<string, string>;
 
-/** A stored value as readable text, in German time and the given locale. */
+/** a stored value as readable text, in German time and the given locale */
 export function formatValue(
 	field: FieldDef,
 	value: FieldValue | undefined,

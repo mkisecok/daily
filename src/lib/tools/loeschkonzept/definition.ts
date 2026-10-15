@@ -7,7 +7,7 @@ export type Unit = 'monate' | 'jahre';
 export type Start = 'jahresende' | 'ereignis' | 'zweckwegfall' | 'erhebung';
 
 /**
- * Retention periods most data categories fall under. `period` is what the
+ * retention periods most data categories fall under. `period` is what the
  * provision sets (or common practice, marked as such in the label).
  */
 export const RETENTION: Record<string, { label: Localized; period?: [number, Unit, Start] }> = {
@@ -62,7 +62,7 @@ export const RETENTION: Record<string, { label: Localized; period?: [number, Uni
 	sonstige: { label: L('Sonstige Frist', 'Other period') }
 };
 
-/** Retention schedule: one record per data category or document class. */
+/** retention schedule: one record per data category or document class */
 export const definition: RecordToolDefinition = {
 	slug: 'loeschkonzept',
 	version: 1,

@@ -33,7 +33,7 @@
 	const regions = ['eu', 'de', 'land'];
 
 	/**
-	 * The static preview is prerendered without a query string, so it reads
+	 * the static preview is prerendered without a query string, so it reads
 	 * the URL only after hydration and filters in the browser. Before that
 	 * it renders exactly what was prerendered, so hydration matches.
 	 */
@@ -66,7 +66,7 @@
 			: data.items
 	);
 
-	/** Items grouped by publication day, newest first. */
+	/** items grouped by publication day, newest first */
 	const days = $derived.by(() => {
 		const groups: { day: string; items: typeof data.items }[] = [];
 		for (const item of items) {
@@ -78,14 +78,14 @@
 		return groups;
 	});
 
-	/** Paging needs the database; the preview shows its fixed two-week window. */
+	/** paging needs the database; the preview shows its fixed two-week window */
 	const oldest = $derived(PUBLIC_PREVIEW ? null : (data.items.at(-1)?.publishedAt ?? null));
 
 	const bookmarkEndpoint = resolve('/nachrichten/merken');
-	/** Bookmark state changed on this page since load, by item id. */
+	/** bookmark state changed on this page since load, by item id */
 	const toggled = new SvelteMap<string, boolean>();
 
-	/** Toggles without a reload; the form still works as a plain post without JS. */
+	/** toggles without a reload; the form still works as a plain post without JS */
 	async function toggleBookmark(event: SubmitEvent & { currentTarget: HTMLFormElement }) {
 		event.preventDefault();
 		const response = await fetch(bookmarkEndpoint, {
@@ -101,7 +101,7 @@
 		toggled.set(itemId, bookmarked);
 	}
 
-	/** Current query with some parameters replaced; `null` removes one. */
+	/** current query with some parameters replaced; `null` removes one */
 	function link(params: Record<string, string | null>): RoutePath {
 		const next = new SvelteURLSearchParams(search);
 		for (const [key, value] of Object.entries(params)) {

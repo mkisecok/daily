@@ -2,7 +2,7 @@ import { error, json } from '@sveltejs/kit';
 import { searchIndex } from '#lib/server/normen.js';
 import type { EntryGenerator, RequestHandler } from './$types';
 
-/** A static file in every build: the search index per language. */
+/** a static file in every build: the search index per language */
 export const prerender = true;
 
 export const entries: EntryGenerator = () => [{ lang: 'de' }, { lang: 'en' }];

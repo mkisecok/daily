@@ -9,7 +9,7 @@
 
 	let { initial }: { initial: ThemeSetting } = $props();
 
-	// Deliberately captures the server-rendered value once; after hydration the
+	// deliberately captures the server-rendered value once; after hydration the
 	// attachment below reads what the inline script in app.html resolved
 	// ('auto' becomes light or dark there), and toggle() owns it from then on.
 	// svelte-ignore state_referenced_locally

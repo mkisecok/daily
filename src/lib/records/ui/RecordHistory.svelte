@@ -28,7 +28,7 @@
 	};
 
 	function changesOf(event: RecordEvent) {
-		// Creation lists every filled field; the record itself shows them.
+		// creation lists every filled field; the record itself shows them
 		if (event.kind === 'created' || !event.changes) return [];
 		return Object.entries(event.changes).flatMap(([id, [before, after]]) => {
 			const field = fieldById(definition, id);

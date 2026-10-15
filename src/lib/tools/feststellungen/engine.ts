@@ -6,7 +6,7 @@ import { definition, isNonconformity } from './definition.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
 
-/** The action deadline until implemented, then the effectiveness check. */
+/** the action deadline until implemented, then the effectiveness check */
 function deadlines(record: RecordView): DeadlineSpec[] {
 	const specs: DeadlineSpec[] = [];
 	if (

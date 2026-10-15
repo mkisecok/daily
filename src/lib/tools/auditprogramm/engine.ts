@@ -12,7 +12,7 @@ const str = (record: RecordView, field: string) => {
 };
 
 /**
- * The audit date while planned, the report one month after the audit
+ * the audit date while planned, the report one month after the audit
  * (internal target), and the next audit once one is entered.
  */
 function deadlines(record: RecordView): DeadlineSpec[] {

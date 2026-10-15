@@ -2,13 +2,13 @@ import type { RecordToolDefinition, RecordView } from '../../records/types.js';
 
 const L = (de: string, en: string) => ({ de, en });
 
-/** Whether the incident falls under Art. 3(49) at all and is not ruled out as caused by the system. */
+/** whether the incident falls under Art. 3(49) at all and is not ruled out as caused by the system */
 export function reportable(record: RecordView): boolean {
 	const kinds = record.data.art;
 	return Array.isArray(kinds) && kinds.length > 0 && record.data.kausalitaet !== 'ausgeschlossen';
 }
 
-/** A serious incident with a high-risk AI system (Art. 3(49), Art. 73, Art. 26(5)). */
+/** a serious incident with a high-risk AI system (Art. 3(49), Art. 73, Art. 26(5)) */
 export const definition: RecordToolDefinition = {
 	slug: 'vorfallmeldung',
 	version: 1,

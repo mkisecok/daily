@@ -33,7 +33,7 @@
 		na: m.answer_na
 	};
 
-	/** Questions numbered continuously across sections. */
+	/** questions numbered continuously across sections */
 	const sections = $derived.by(() => {
 		let number = 0;
 		return data.catalog.sections.map((section) => ({
@@ -43,7 +43,7 @@
 	});
 	const rows = $derived(sections.flatMap((section) => section.questions));
 
-	/** Evaluates in the browser; nothing leaves the page. */
+	/** evaluates in the browser; nothing leaves the page */
 	function evaluate(event: SubmitEvent & { currentTarget: HTMLFormElement }) {
 		event.preventDefault();
 		if (!engine) return;

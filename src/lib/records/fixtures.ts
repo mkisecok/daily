@@ -2,7 +2,7 @@ import type { RecordTool, RecordToolDefinition } from './types.js';
 
 const L = (de: string, en: string) => ({ de, en });
 
-/** A small definition covering every field type, shared by the framework tests. */
+/** a small definition covering every field type, shared by the framework tests */
 export const testDefinition: RecordToolDefinition = {
 	slug: 'test-register',
 	version: 1,
@@ -59,7 +59,7 @@ export const testDefinition: RecordToolDefinition = {
 	}
 };
 
-/** The test definition as a tool whose engine turns `due` into a deadline. */
+/** the test definition as a tool whose engine turns `due` into a deadline */
 export const testTool: RecordTool = {
 	manifest: {
 		slug: testDefinition.slug,

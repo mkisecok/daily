@@ -5,7 +5,7 @@ const DSK_ID = 'dsk_list';
 const CRITERIA_IDS = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9'];
 
 /**
- * Decision rule, in order of precedence:
+ * decision rule, in order of precedence:
  *   1. any statutory example (Art. 35 Abs. 3) answered yes  → required
  *   2. processing is on the DSK must-list                    → required
  *   3. two or more WP 248 criteria                           → required

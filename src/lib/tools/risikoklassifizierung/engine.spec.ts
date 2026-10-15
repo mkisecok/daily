@@ -6,7 +6,7 @@ import { DATES, evaluate } from './engine.js';
 const catalog = catalogJson as QuestionnaireCatalog;
 const allIds = catalog.sections.flatMap((s) => s.questions.map((q) => q.id));
 
-/** Everything "no" except the listed ids; `s_ai` defaults to yes. */
+/** everything "no" except the listed ids; `s_ai` defaults to yes */
 function answers(yes: string[] = [], unknown: string[] = []): Answers {
 	const base = Object.fromEntries(
 		allIds.map((id) => [id, yes.includes(id) ? 'yes' : unknown.includes(id) ? 'unknown' : 'no'])

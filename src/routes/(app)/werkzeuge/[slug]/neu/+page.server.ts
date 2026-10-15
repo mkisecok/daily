@@ -6,7 +6,7 @@ import { readAnswers } from '#lib/tools/answers.js';
 import { getQuestionnaire, getTool } from '#lib/tools/registry.js';
 import type { Actions, PageServerLoad } from './$types';
 
-/** Needs a signed-in user and the database; never part of a static build. */
+/** needs a signed-in user and the database; never part of a static build */
 export const prerender = false;
 
 export const load: PageServerLoad = ({ params }) => {

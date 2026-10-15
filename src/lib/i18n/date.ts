@@ -1,5 +1,5 @@
 /**
- * Dates are shown in German time regardless of where the page is rendered
+ * dates are shown in German time regardless of where the page is rendered
  * (server, build machine or browser), so prerendered and hydrated output
  * agree and a 23:30 decision is not filed under the next day.
  */
@@ -31,26 +31,26 @@ export function formatLongDate(iso: string, locale: string): string {
 	}).format(new Date(iso));
 }
 
-/** "13.10.2026" / "13/10/2026". */
+/** "13.10.2026" / "13/10/2026" */
 export function formatShortDate(iso: string, locale: string): string {
 	return formatter(locale, { day: '2-digit', month: '2-digit', year: 'numeric' }).format(
 		new Date(iso)
 	);
 }
 
-/** "14:05". */
+/** "14:05" */
 export function formatTime(iso: string, locale: string): string {
 	return formatter(locale, { hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
 }
 
-/** Calendar day in German time as `YYYY-MM-DD`, for grouping. */
+/** calendar day in German time as `YYYY-MM-DD`, for grouping */
 export function dayKey(iso: string): string {
 	return formatter('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(
 		new Date(iso)
 	);
 }
 
-/** An instant as the value of `<input type="datetime-local">` in German time. */
+/** an instant as the value of `<input type="datetime-local">` in German time */
 export function toBerlinInput(iso: string): string {
 	const parts = Object.fromEntries(
 		formatter('en-CA', {
@@ -68,7 +68,7 @@ export function toBerlinInput(iso: string): string {
 }
 
 /**
- * A `datetime-local` value read as German time, as an ISO instant. Two
+ * a `datetime-local` value read as German time, as an ISO instant. Two
  * passes settle the offset on the days daylight saving starts or ends.
  */
 export function fromBerlinInput(value: string): string {

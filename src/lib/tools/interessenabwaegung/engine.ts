@@ -11,7 +11,7 @@ const L = (de: string, en: string): Localized => ({ de, en });
 
 const INTEREST = ['i_lawful', 'i_specific', 'i_present'];
 const NECESSITY = ['n_suitable', 'n_less', 'n_minimal'];
-/** "Yes" weighs against the processing; children count double. */
+/** "Yes" weighs against the processing; children count double */
 const AGAINST: Record<string, number> = { a_special: 1, a_children: 2, a_scale: 1, a_impact: 1 };
 /** "Yes" weighs in favour. An unexpected processing ("no" on f_expected) weighs against. */
 const FOR = ['f_expected', 'f_relationship', 'f_safeguards', 'f_objection'];
@@ -30,7 +30,7 @@ const SPECIAL = L(
 );
 
 /**
- * Three cumulative steps. Steps 1 and 2 are gates; step 3 weighs the
+ * three cumulative steps. Steps 1 and 2 are gates; step 3 weighs the
  * circumstances against each other. The result is an estimate, labelled as
  * such, never an automatic legal conclusion.
  */

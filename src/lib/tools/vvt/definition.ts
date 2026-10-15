@@ -3,7 +3,7 @@ import type { RecordToolDefinition } from '../../records/types.js';
 const L = (de: string, en: string) => ({ de, en });
 
 /**
- * Record of processing activities: one record per processing activity,
+ * record of processing activities: one record per processing activity,
  * covering Art. 30(1) for controllers and Art. 30(2) for processors.
  */
 export const definition: RecordToolDefinition = {

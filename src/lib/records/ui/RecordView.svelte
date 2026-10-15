@@ -23,11 +23,11 @@
 	}: {
 		definition: RecordToolDefinition;
 		record: StoredRecord;
-		/** Route path to the questionnaire for an assessment field; resolved here. Omit for read-only views. */
+		/** route path to the questionnaire for an assessment field; resolved here. Omit for read-only views. */
 		assessHref?: (field: FieldDef & { type: 'assessment' }) => RoutePath;
-		/** Titles of referenced records by id. */
+		/** titles of referenced records by id */
 		titles?: Titles;
-		/** Route path to a referenced record; resolved here. */
+		/** route path to a referenced record; resolved here */
 		referenceHref?: (tool: string, id: string) => RoutePath;
 	} = $props();
 

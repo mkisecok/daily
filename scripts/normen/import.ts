@@ -1,5 +1,5 @@
 /**
- * Imports the law texts for the Normen-Navigator into src/lib/normen/data.
+ * imports the law texts for the Normen-Navigator into src/lib/normen/data.
  *
  * DSGVO and KI-VO come from the EU Publications Office (Cellar): articles
  * and annexes from the consolidated version, recitals from the original
@@ -75,7 +75,7 @@ const clean = (text: string) =>
 		.replace(/\s+/g, ' ')
 		.trim();
 
-/** Block structure of EU (consolidated) markup: numbered paragraphs, grid lists, plain paragraphs. */
+/** block structure of EU (consolidated) markup: numbered paragraphs, grid lists, plain paragraphs */
 function euBlocks($: cheerio.CheerioAPI, parent: AnyNode): Block[] {
 	const out: Block[] = [];
 	const merge = (label: string, inner: Block[]): Block =>
@@ -242,7 +242,7 @@ async function importEu(source: EuSource): Promise<LawText> {
 	};
 }
 
-/** The single XML file inside a gesetze-im-internet zip (local file header, deflate). */
+/** the single XML file inside a gesetze-im-internet zip (local file header, deflate) */
 function unzipFirst(zip: Buffer): string {
 	if (zip.readUInt32LE(0) !== 0x04034b50) throw new Error('not a zip');
 	const method = zip.readUInt16LE(8);
@@ -254,7 +254,7 @@ function unzipFirst(zip: Buffer): string {
 	return (method === 8 ? inflateRawSync(data) : data).toString('utf8');
 }
 
-/** Block structure of gii-norm XML: P paragraphs with "(1)" labels, DL lists. */
+/** block structure of gii-norm XML: P paragraphs with "(1)" labels, DL lists */
 function giiBlocks($: cheerio.CheerioAPI, parent: AnyNode): Block[] {
 	const out: Block[] = [];
 	$(parent)

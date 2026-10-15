@@ -20,7 +20,7 @@ function deadlines(record: RecordView): DeadlineSpec[] {
 
 const inMonths = (value: number, unit: Unit) => (unit === 'jahre' ? value * 12 : value);
 
-/** "8 Jahren" / "8 years", in the dative the German sentences need. */
+/** "8 Jahren" / "8 years", in the dative the German sentences need */
 function describe(value: number, unit: Unit): Localized {
 	const years = unit === 'jahre';
 	return L(
@@ -30,7 +30,7 @@ function describe(value: number, unit: Unit): Localized {
 }
 
 /**
- * The entered period against the statutory one: shorter is a defect (the
+ * the entered period against the statutory one: shorter is a defect (the
  * retention duty is breached), longer needs its own justification. Then
  * the erasure method and the next run.
  */

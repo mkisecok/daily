@@ -33,7 +33,7 @@ function cookieOptions(maxAge: number) {
 }
 
 /**
- * Called from the OIDC callback: upserts the user from the ID token, makes
+ * called from the OIDC callback: upserts the user from the ID token, makes
  * sure they own an organisation, and stores a server-side session.
  */
 export async function createSession(cookies: Cookies, tokens: TokenSet): Promise<SessionUser> {
@@ -60,7 +60,7 @@ export async function createSession(cookies: Cookies, tokens: TokenSet): Promise
 }
 
 /**
- * Resolves the session cookie to a user, refreshing the Keycloak access
+ * resolves the session cookie to a user, refreshing the Keycloak access
  * token when it is about to expire. An unusable session is deleted.
  */
 export async function loadSession(cookies: Cookies): Promise<SessionInfo | undefined> {
@@ -104,7 +104,7 @@ export async function loadSession(cookies: Cookies): Promise<SessionInfo | undef
 				})
 				.where(eq(sessions.id, id));
 		} catch {
-			// Keycloak rejected the refresh token (SSO session ended, user disabled…).
+			// Keycloak rejected the refresh token (SSO session ended, user disabled…)
 			await destroySession(cookies);
 			return undefined;
 		}

@@ -52,7 +52,7 @@
 
 	const result = $derived(findings ? toResult(findings, scanned) : null);
 
-	/** Lets the input pick a whole folder (Chromium, Firefox, Safari). */
+	/** lets the input pick a whole folder (Chromium, Firefox, Safari) */
 	function directory(node: HTMLInputElement) {
 		node.setAttribute('webkitdirectory', '');
 	}

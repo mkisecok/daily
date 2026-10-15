@@ -6,7 +6,7 @@ import { evaluate } from './engine.js';
 const catalog = catalogJson as QuestionnaireCatalog;
 const ids = catalog.sections.flatMap((s) => s.questions.map((q) => q.id));
 
-/** Device access with optional accesses, every requirement met. */
+/** device access with optional accesses, every requirement met */
 function answers(overrides: Answers = {}): Answers {
 	return { ...(Object.fromEntries(ids.map((id) => [id, 'yes'])) as Answers), ...overrides };
 }

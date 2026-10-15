@@ -5,7 +5,7 @@ import { REDIRECT_URI, takeLoginState } from '#lib/server/auth/login.js';
 import { createSession } from '#lib/server/auth/session.js';
 import type { RequestHandler } from './$types';
 
-/** Keycloak redirects here with `code` and `state`; exchanges them for a session. */
+/** Keycloak redirects here with `code` and `state`; exchanges them for a session */
 export const GET: RequestHandler = async ({ url, cookies }) => {
 	const login = takeLoginState(cookies);
 	if (!login) error(400, 'Login state missing or expired. Please start again.');

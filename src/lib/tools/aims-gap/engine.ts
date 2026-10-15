@@ -9,7 +9,7 @@ const NOTE = L(
 	'The questions summarise the requirements in Daily’s own words and replace neither the standard’s text nor a certification audit. Many measures can be implemented together with an existing ISMS under ISO/IEC 27001.'
 );
 
-/** Gaps against ISO/IEC 42001 with the AI Act obligations each remedy also covers. */
+/** gaps against ISO/IEC 42001 with the AI Act obligations each remedy also covers */
 export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): QuestionnaireResult {
 	const { gaps, open, remedies } = auditSections(catalog, answers, SECTIONS);
 	const citations = catalog.sources;

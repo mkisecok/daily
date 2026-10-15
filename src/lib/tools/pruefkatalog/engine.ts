@@ -5,7 +5,7 @@ import { definition, TEMPLATES } from './definition.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
 
-/** The template's questions as the checklist, and the result of the review. */
+/** the template's questions as the checklist, and the result of the review */
 function assess(record: RecordView): QuestionnaireResult {
 	const template =
 		typeof record.data.vorlage === 'string' ? TEMPLATES[record.data.vorlage] : undefined;

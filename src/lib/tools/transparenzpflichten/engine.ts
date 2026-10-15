@@ -9,7 +9,7 @@ import type {
 
 const L = (de: string, en: string): Localized => ({ de, en });
 
-/** Questions whose "unclear" leaves a duty undecided. */
+/** questions whose "unclear" leaves a duty undecided */
 const DECISIVE = [
 	'r_provider',
 	'r_deployer',
@@ -30,7 +30,7 @@ const TIMING = L(
 );
 
 /**
- * Applies Art. 50 per role. A duty arises when its trigger is "yes" and its
+ * applies Art. 50 per role. A duty arises when its trigger is "yes" and its
  * exception is not "yes"; "unclear" on a decisive question makes the result
  * conditional unless a duty is already certain.
  */

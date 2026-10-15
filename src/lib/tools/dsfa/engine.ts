@@ -12,7 +12,7 @@ const LEVEL: Record<RiskLevel, Localized> = {
 	hoch: L('hohes Risiko', 'high risk')
 };
 
-/** Art. 36(2): the authority advises within eight weeks, extendable by six. */
+/** Art. 36(2): the authority advises within eight weeks, extendable by six */
 const OPINION_WEEKS = 8;
 
 function deadlines(record: RecordView): DeadlineSpec[] {
@@ -42,7 +42,7 @@ function deadlines(record: RecordView): DeadlineSpec[] {
 }
 
 /**
- * The risk picture before and after measures, then what Art. 35(7) still
+ * the risk picture before and after measures, then what Art. 35(7) still
  * lacks. A high residual risk requires prior consultation (Art. 36(1)).
  */
 function assess(record: RecordView): QuestionnaireResult {

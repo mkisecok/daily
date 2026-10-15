@@ -25,7 +25,7 @@ const reason = (id: string, text: Localized, cite?: LegalBasis): Reason => ({
 });
 
 /**
- * The checklist result: clauses answered "no" are defects, clauses not yet
+ * the checklist result: clauses answered "no" are defects, clauses not yet
  * answered keep the check open. Then the points around the contract:
  * guarantees, transfers, sub-processors, breach reporting.
  */

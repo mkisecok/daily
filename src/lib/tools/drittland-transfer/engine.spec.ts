@@ -5,7 +5,7 @@ import { evaluate } from './engine.js';
 
 const catalog = catalogJson as QuestionnaireCatalog;
 
-/** A transfer with no basis at all. */
+/** a transfer with no basis at all */
 const NONE: Answers = {
 	t_transfer: 'yes',
 	t_adequacy: 'no',

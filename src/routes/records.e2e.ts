@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-/** Requires the local stack from compose.yaml; see auth.e2e.ts. */
+/** requires the local stack from compose.yaml; see auth.e2e.ts */
 const username = process.env.E2E_USER ?? 'test@dai-ly.de';
 const password = process.env.E2E_PASSWORD ?? 'test-dev-password';
 
@@ -12,7 +12,7 @@ async function signIn(page: Page, path: string) {
 	await page.locator('#kc-login').click();
 }
 
-/** `YYYY-MM-DDTHH:mm` in German time, as a datetime-local input wants it. */
+/** `YYYY-MM-DDTHH:mm` in German time, as a datetime-local input wants it */
 function berlinInput(date: Date): string {
 	const parts = Object.fromEntries(
 		new Intl.DateTimeFormat('en-CA', {
@@ -58,7 +58,7 @@ test('KI-Register: create, edit, history, CSV and handoff from the risk classifi
 	await expect(page.locator('.history')).toContainText('Anbieter (Hersteller)');
 	await expect(page.locator('.history')).toContainText('Beispiel GmbH');
 
-	// Handoff: classify as high-risk (employment, Annex III) and attach the result.
+	// handoff: classify as high-risk (employment, Annex III) and attach the result
 	await page.getByRole('link', { name: /Prüfung durchführen/ }).click();
 	await expect(page.getByText(`Prüfung für den Eintrag „${name}“ in KI-Register.`)).toBeVisible();
 	for (const fieldset of await page.locator('form fieldset').all()) {

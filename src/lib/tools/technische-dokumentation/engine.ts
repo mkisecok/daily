@@ -15,7 +15,7 @@ const NOTES = [
 	)
 ];
 
-/** Annex IV completeness for providers of high-risk systems. */
+/** Annex IV completeness for providers of high-risk systems */
 export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): QuestionnaireResult {
 	const citations = catalog.sources;
 

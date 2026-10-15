@@ -6,7 +6,7 @@ export type ProvisionRef = { law: LawId; id: string };
 
 const MAX_RANGE = 40;
 
-/** Numbers after "Art." or "§": "4, 26, 50", "15–22", "35 Abs. 3" (stops at the first non-list token). */
+/** numbers after "Art." or "§": "4, 26, 50", "15–22", "35 Abs. 3" (stops at the first non-list token) */
 function numbers(list: string): string[] {
 	const out: string[] = [];
 	for (const part of list.split(/\s*,\s*|\s+(?:und|and|bis)\s+/)) {
@@ -24,7 +24,7 @@ function numbers(list: string): string[] {
 }
 
 /**
- * The provisions a citation points to, if the law is in the Navigator:
+ * the provisions a citation points to, if the law is in the Navigator:
  * "Art. 35 Abs. 3 lit. a" → art-35, "Art. 15–22" → art-15 … art-22,
  * "§ 26 Abs. 2" → p-26, "Anhang III Nr. 5" → anhang-iii.
  */
@@ -52,7 +52,7 @@ export function provisionsOf(basis: LegalBasis): ProvisionRef[] {
 	return refs;
 }
 
-/** Route path of the first provision a citation points to, or null. */
+/** route path of the first provision a citation points to, or null */
 export function citationPath(basis: LegalBasis): string | null {
 	const [first] = provisionsOf(basis);
 	return first ? `/normen/${first.law}/${first.id}` : null;

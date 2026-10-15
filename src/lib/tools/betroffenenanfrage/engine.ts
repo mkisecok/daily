@@ -13,7 +13,7 @@ const str = (record: RecordView, field: string) => {
 };
 
 /**
- * When the reply is due: one month after the day of receipt, three months
+ * when the reply is due: one month after the day of receipt, three months
  * once an extension has been communicated (Art. 12(3)). An extension that
  * was decided but not yet communicated does not move the deadline.
  */
@@ -47,7 +47,7 @@ function deadlines(record: RecordView): DeadlineSpec[] {
 	return specs;
 }
 
-/** What each right requires: the checklist shown on the record. */
+/** what each right requires: the checklist shown on the record */
 const CHECKLIST: Record<(typeof RIGHTS)[number], Localized> = {
 	auskunft: L(
 		'Auskunft (Art. 15): Bestätigung, ob Daten verarbeitet werden; Zwecke, Kategorien, Empfänger, Speicherdauer, Rechte, Herkunft und automatisierte Entscheidungen (Abs. 1 lit. a–h), Garantien bei Drittlandübermittlung (Abs. 2) und eine Kopie der Daten (Abs. 3); Rechte Dritter wahren (Abs. 4).',
@@ -84,7 +84,7 @@ const CHECKLIST: Record<(typeof RIGHTS)[number], Localized> = {
 };
 
 /**
- * The reply deadline as the headline, then the checklist for the rights
+ * the reply deadline as the headline, then the checklist for the rights
  * invoked and the points the record raises: identity, extension, refusal,
  * a late reply.
  */

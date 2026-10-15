@@ -21,7 +21,7 @@ export async function fetchText(url: string, timeoutMs = 15_000): Promise<string
 	}
 }
 
-/** undici reports connection problems as `TypeError: fetch failed` with a cause. */
+/** undici reports connection problems as `TypeError: fetch failed` with a cause */
 function isNetworkError(error: unknown): boolean {
 	return error instanceof TypeError || (error instanceof Error && error.name === 'AbortError');
 }

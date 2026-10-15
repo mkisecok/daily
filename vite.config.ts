@@ -8,13 +8,13 @@ import adapterStatic from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 export default defineConfig(({ mode }) => {
-	// `pnpm build:static` runs with --mode static and reads .env.static.
+	// `pnpm build:static` runs with --mode static and reads .env.static
 	const env = loadEnv(mode, process.cwd(), '');
 	const preview = env.PUBLIC_PREVIEW === '1' || env.PUBLIC_PREVIEW === 'true';
 	const base = (env.PUBLIC_BASE_PATH ?? '').replace(/\/$/, '') as '' | `/${string}`;
 	if (base && !base.startsWith('/')) throw new Error('PUBLIC_BASE_PATH must start with /');
 
-	// Paraglide must see the base path to tell /daily/en/… from /daily/….
+	// Paraglide must see the base path to tell /daily/en/… from /daily/…
 	const origin = ':protocol://:domain(.*)::port?' + base;
 	const urlPatterns = base
 		? [
@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => {
 		plugins: [
 			sveltekit({
 				compilerOptions: {
-					// Force runes mode for the project, except for libraries. Can be removed in svelte 6.
+					// force runes mode for the project, except for libraries. Can be removed in svelte 6.
 					runes: ({ filename }) =>
 						filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 				},
@@ -47,7 +47,7 @@ export default defineConfig(({ mode }) => {
 				project: './project.inlang',
 				outdir: './src/lib/paraglide',
 				emitTsDeclarations: true,
-				// German lives at /, English at /en/…; the URL wins over the cookie.
+				// German lives at /, English at /en/…; the URL wins over the cookie
 				strategy: ['url', 'cookie', 'baseLocale'],
 				urlPatterns,
 				trailingSlash: preview ? 'always' : undefined

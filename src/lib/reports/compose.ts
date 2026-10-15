@@ -14,7 +14,7 @@ export const KIND_CATEGORIES: Record<ReportKind, ToolCategory[]> = {
 
 export type Period = { from: string; to: string };
 
-/** A saved questionnaire run as the report needs it. */
+/** a saved questionnaire run as the report needs it */
 export type RunSummary = {
 	toolSlug: string;
 	createdAt: string;
@@ -30,11 +30,11 @@ export type ToolSection = {
 	total: number;
 	created: number;
 	updated: number;
-	/** Workflow tools: records per state, in the order of the definition. */
+	/** workflow tools: records per state, in the order of the definition */
 	states: { label: string; count: number; terminal: boolean }[];
-	/** Records grouped by the tool's own assessment of them. */
+	/** records grouped by the tool's own assessment of them */
 	outcomes: OutcomeCount[];
-	/** Records created or changed in the period, newest change first. */
+	/** records created or changed in the period, newest change first */
 	items: { id: string; title: string; state: string; updatedAt: string }[];
 };
 
@@ -44,7 +44,7 @@ export type Report = {
 	runs: { slug: string; name: Localized; count: number; outcomes: OutcomeCount[] }[];
 };
 
-/** `to` is inclusive: the whole last day counts. */
+/** `to` is inclusive: the whole last day counts */
 function within(iso: string, period: Period): boolean {
 	const day = iso.slice(0, 10);
 	return day >= period.from && day <= period.to;
@@ -68,7 +68,7 @@ function countOutcomes(
 }
 
 /**
- * The report for a period: per tool what exists, what is new or changed,
+ * the report for a period: per tool what exists, what is new or changed,
  * where workflows stand and how the tool rates its records; open
  * deadlines; questionnaire runs. Pure, so the page and the tests agree.
  */

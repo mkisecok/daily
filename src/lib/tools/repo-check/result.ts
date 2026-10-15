@@ -5,7 +5,7 @@ import { CATEGORY, summarise, type Category, type Finding } from './scan.js';
 const L = (de: string, en: string): Localized => ({ de, en });
 const ORDER: Category[] = ['geheimnis', 'personenbezug', 'ki', 'tracking'];
 
-/** The scan as a verdict: secrets first, then personal data, AI services and trackers. */
+/** the scan as a verdict: secrets first, then personal data, AI services and trackers */
 export function toResult(findings: Finding[], files: number): QuestionnaireResult {
 	const counts = summarise(findings);
 	const present = ORDER.filter((c) => counts[c] > 0);
@@ -59,7 +59,7 @@ export function toResult(findings: Finding[], files: number): QuestionnaireResul
 	};
 }
 
-/** Findings as German-Excel CSV (semicolons, BOM); excerpts are already masked. */
+/** findings as German-Excel CSV (semicolons, BOM); excerpts are already masked */
 export function findingsCsv(findings: Finding[], locale: string): string {
 	const pick = (l: Localized) => (locale === 'en' ? l.en : l.de);
 	const cell = (v: string) => (/[;"\r\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);

@@ -7,7 +7,7 @@ import type {
 } from '../types.js';
 
 /**
- * Application dates after the Digital Omnibus on AI, Regulation (EU)
+ * application dates after the Digital Omnibus on AI, Regulation (EU)
  * 2026/1744 (OJ L, 24 July 2026). Data, not code: review when the feed
  * reports a further amendment.
  */
@@ -47,12 +47,12 @@ const TRANSPARENCY = ['t_interaction', 't_synthetic', 't_emotion', 't_deepfake']
 
 const L = (de: string, en: string): Localized => ({ de, en });
 
-/** Outcome codes, taken over by the AI register. */
+/** outcome codes, taken over by the AI register */
 export type RiskOutcome =
 	'kein-ki' | 'ausserhalb' | 'verboten' | 'hochrisiko' | 'art6-3' | 'art50' | 'minimal';
 
 /**
- * Classification in the order the Regulation applies it:
+ * classification in the order the Regulation applies it:
  *   0. not an AI system / excluded use          → out of scope
  *   1. any Art. 5 practice                        → prohibited
  *   2. Annex I product                            → high-risk (2 Aug 2028)

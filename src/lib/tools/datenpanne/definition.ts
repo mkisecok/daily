@@ -6,7 +6,7 @@ const notifiable = (record: RecordView) => record.data.risiko !== 'kein';
 const highRisk = (record: RecordView) => record.data.risiko === 'hoch';
 
 /**
- * A personal data breach from awareness to closure: assessment, notification
+ * a personal data breach from awareness to closure: assessment, notification
  * of the authority (Art. 33) and of data subjects (Art. 34), documented as
  * Art. 33(5) requires.
  */

@@ -12,9 +12,9 @@ export type StoreError =
 	| { ok: false; error: 'not-found' | 'unknown-tool' | 'not-workflow' | 'not-allowed' }
 	| { ok: false; error: 'invalid'; errors: ValidationErrors }
 	| { ok: false; error: 'missing'; missing: string[] }
-	/** A transition's own check failed; `reason` says why. */
+	/** a transition's own check failed; `reason` says why */
 	| { ok: false; error: 'blocked'; reason: Localized }
-	/** Someone saved in between; `current` is the stored record. */
+	/** someone saved in between; `current` is the stored record */
 	| { ok: false; error: 'conflict'; current: StoredRecord };
 
 export type StoreResult<T> = { ok: true; value: T } | StoreError;
@@ -22,12 +22,12 @@ export type StoreResult<T> = { ok: true; value: T } | StoreError;
 export type RecordDetail = { record: StoredRecord; events: RecordEvent[]; deadlines: Deadline[] };
 
 /**
- * Persistence for register and workflow records. The full app talks to
+ * persistence for register and workflow records. The full app talks to
  * Postgres through `/api/records`; the public preview keeps everything in
  * the browser. Both apply the same validation, transitions and deadlines.
  */
 export interface RecordStore {
-	/** Records of one tool, newest change first; archived ones excluded. */
+	/** records of one tool, newest change first; archived ones excluded */
 	list(toolSlug: string): Promise<StoredRecord[]>;
 	get(id: string): Promise<RecordDetail | null>;
 	create(toolSlug: string, input: Record<string, unknown>): Promise<StoreResult<StoredRecord>>;
@@ -37,7 +37,7 @@ export interface RecordStore {
 		expectedVersion: number
 	): Promise<StoreResult<StoredRecord>>;
 	transition(id: string, to: string, expectedVersion: number): Promise<StoreResult<StoredRecord>>;
-	/** Stores a questionnaire result in an assessment field, plus derived values. */
+	/** stores a questionnaire result in an assessment field, plus derived values */
 	attachAssessment(
 		id: string,
 		field: string,
@@ -45,6 +45,6 @@ export interface RecordStore {
 		derived?: RecordData
 	): Promise<StoreResult<StoredRecord>>;
 	archive(id: string): Promise<StoreResult<StoredRecord>>;
-	/** Open deadlines across all record tools, earliest first. */
+	/** open deadlines across all record tools, earliest first */
 	deadlines(): Promise<Deadline[]>;
 }

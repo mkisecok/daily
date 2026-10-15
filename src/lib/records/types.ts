@@ -16,7 +16,7 @@ type FieldBase = {
 	help?: Localized;
 	cite?: LegalBasis;
 	required?: boolean;
-	/** Shown as a column in the record list. */
+	/** shown as a column in the record list */
 	listColumn?: boolean;
 };
 
@@ -28,9 +28,9 @@ export type FieldDef = FieldBase &
 		| { type: 'date' | 'datetime' }
 		| { type: 'number'; unit?: Localized; min?: number }
 		| { type: 'boolean' }
-		/** A frozen snapshot of a questionnaire result, e.g. the risk classification. */
+		/** a frozen snapshot of a questionnaire result, e.g. the risk classification */
 		| { type: 'assessment'; tool: string }
-		/** The id of a record of another register or workflow tool, e.g. the audit of a finding. */
+		/** the id of a record of another register or workflow tool, e.g. the audit of a finding */
 		| { type: 'reference'; tool: string }
 	);
 
@@ -42,9 +42,9 @@ export type TransitionDef = {
 	from: string;
 	to: string;
 	label: Localized;
-	/** Fields that must be filled before the transition is allowed. */
+	/** fields that must be filled before the transition is allowed */
 	requires?: string[];
-	/** Further condition on the values; returns why the step is blocked, or null. */
+	/** further condition on the values; returns why the step is blocked, or null */
 	check?: (record: RecordView) => Localized | null;
 };
 
@@ -59,13 +59,13 @@ export type RecordToolDefinition = {
 	version: number;
 	intro: Localized;
 	sources: LegalBasis[];
-	/** Field whose value is the record's title in lists and history. */
+	/** field whose value is the record's title in lists and history */
 	titleField: string;
 	sections: FieldSection[];
-	/** Present for workflow tools; registers have no states. */
+	/** present for workflow tools; registers have no states */
 	workflow?: WorkflowDef;
 	/**
-	 * Reference fields whose target is shown in full on the record page,
+	 * reference fields whose target is shown in full on the record page,
 	 * together with the records that point to it, e.g. a report embedding
 	 * its audit and the audit's findings.
 	 */
@@ -78,15 +78,15 @@ export type AssessmentSnapshot = {
 	tool: string;
 	catalogVersion: number;
 	verdict: VerdictLevel;
-	/** The questionnaire's machine-readable outcome, when it names one. */
+	/** the questionnaire's machine-readable outcome, when it names one */
 	outcome?: string;
 	headline: Localized;
-	/** ISO timestamp of the assessment. */
+	/** ISO timestamp of the assessment */
 	at: string;
 };
 
 /**
- * Stored field values. Dates are `YYYY-MM-DD`, datetimes ISO 8601 in UTC,
+ * stored field values. Dates are `YYYY-MM-DD`, datetimes ISO 8601 in UTC,
  * empty fields `null`.
  */
 export type FieldValue = string | number | boolean | string[] | AssessmentSnapshot | null;
@@ -99,7 +99,7 @@ export type StoredRecord = {
 	state: string | null;
 	title: string;
 	data: RecordData;
-	/** Increments on every write; updates must name the version they edited. */
+	/** increments on every write; updates must name the version they edited */
 	version: number;
 	createdAt: string;
 	updatedAt: string;
@@ -116,16 +116,16 @@ export type RecordEvent = {
 	fromState: string | null;
 	toState: string | null;
 	at: string;
-	/** Display name of the author in the full app; absent in the browser store. */
+	/** display name of the author in the full app; absent in the browser store */
 	author?: string | null;
 };
 
 export type DeadlineSpec = {
-	/** Stable per record, e.g. `meldung-aufsicht`. */
+	/** stable per record, e.g. `meldung-aufsicht` */
 	kind: string;
 	label: Localized;
 	dueAt: string;
-	/** Legal basis shown next to the deadline. */
+	/** legal basis shown next to the deadline */
 	cite?: LegalBasis;
 };
 
@@ -142,7 +142,7 @@ export type RecordView = Pick<StoredRecord, 'data' | 'state'>;
 export type RecordEngine = {
 	deadlines?: (record: RecordView) => DeadlineSpec[];
 	assess?: (record: RecordView) => QuestionnaireResult | null;
-	/** Values an attached questionnaire result sets, e.g. the risk class. */
+	/** values an attached questionnaire result sets, e.g. the risk class */
 	fromAssessment?: (field: string, result: QuestionnaireResult, record: RecordView) => RecordData;
 };
 

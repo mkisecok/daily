@@ -30,7 +30,7 @@
 	let busy = $state(false);
 	let failed = $state(false);
 
-	// The query string is read in the browser only: the page is prerendered.
+	// the query string is read in the browser only: the page is prerendered
 	onMount(async () => {
 		const [slug, id, field] = (page.url.searchParams.get('fuer') ?? '').split(':');
 		const tool = getRecordTool(slug ?? '');

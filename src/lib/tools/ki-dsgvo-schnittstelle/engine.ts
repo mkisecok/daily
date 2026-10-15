@@ -24,7 +24,7 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 		};
 	}
 
-	// Art. 22 is a requirement only for solely automated decisions.
+	// Art. 22 is a requirement only for solely automated decisions
 	const effective: Answers = answers.k_automated === 'no' ? { ...answers, k_art22: 'na' } : answers;
 	const { gaps, open, remedies } = auditSections(catalog, effective, REQUIREMENTS);
 	const scopeOpen = (['k_personal', 'k_automated'] as const)

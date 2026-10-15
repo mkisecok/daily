@@ -6,14 +6,14 @@ import { createRecordRepository } from './records.js';
 
 const repository = createRecordRepository(db, getRecordTool);
 
-/** The record store of the signed-in user's active organisation. */
+/** the record store of the signed-in user's active organisation */
 export async function storeFor(locals: App.Locals) {
 	if (!locals.user) error(401, 'Not signed in');
 	if (!locals.organisation) error(403, 'No organisation');
 	return repository.forOrganisation(locals.organisation.id, locals.user.id);
 }
 
-/** The JSON object body of a request, or 400. */
+/** the JSON object body of a request, or 400 */
 export async function readBody(request: Request): Promise<Record<string, unknown>> {
 	const body: unknown = await request.json().catch(() => undefined);
 	if (!body || typeof body !== 'object' || Array.isArray(body))
@@ -39,7 +39,7 @@ const STATUS = {
 	blocked: 422
 } as const;
 
-/** The stored record, or the store error as JSON with a matching status. */
+/** the stored record, or the store error as JSON with a matching status */
 export function respond<T>(result: StoreResult<T>, created = false): Response {
 	if (result.ok) return json(result.value, { status: created ? 201 : 200 });
 	return json(result, { status: STATUS[result.error] });

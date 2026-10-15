@@ -10,11 +10,11 @@ export function referenceFields(definition: RecordToolDefinition): ReferenceFiel
 	return allFields(definition).filter((f): f is ReferenceField => f.type === 'reference');
 }
 
-/** Records that point to `id` of `toolSlug`, grouped by the tool they belong to. */
+/** records that point to `id` of `toolSlug`, grouped by the tool they belong to */
 export type Backlinks = { tool: RecordTool; records: StoredRecord[] }[];
 
 /**
- * Cross-record lookups for the records page. Everything goes through the
+ * cross-record lookups for the records page. Everything goes through the
  * store, so it is scoped to the organisation (or the browser) like any
  * other read; an id that does not resolve simply shows as unknown.
  */
@@ -30,14 +30,14 @@ export function createLinks(store: RecordStore, tools: RecordTool[]) {
 	};
 
 	return {
-		/** Titles of every record a reference field of `definition` can point to. */
+		/** titles of every record a reference field of `definition` can point to */
 		async titles(definition: RecordToolDefinition): Promise<Titles> {
 			const slugs = [...new Set(referenceFields(definition).map((f) => f.tool))];
 			const lists = await Promise.all(slugs.map(list));
 			return Object.fromEntries(lists.flat().map((r) => [r.id, r.title]));
 		},
 
-		/** Options for each reference field of `definition`, by field id. */
+		/** options for each reference field of `definition`, by field id */
 		async choices(definition: RecordToolDefinition): Promise<Record<string, Option[]>> {
 			const fields = referenceFields(definition);
 			const lists = await Promise.all(fields.map((f) => list(f.tool)));
@@ -49,7 +49,7 @@ export function createLinks(store: RecordStore, tools: RecordTool[]) {
 			);
 		},
 
-		/** Records of any tool whose reference fields point to this record. */
+		/** records of any tool whose reference fields point to this record */
 		async backlinks(toolSlug: string, id: string): Promise<Backlinks> {
 			const sources = tools
 				.map((tool) => ({

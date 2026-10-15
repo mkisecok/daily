@@ -3,7 +3,7 @@ import type { LegalBasis, Localized } from '../types.js';
 
 const L = (de: string, en: string) => ({ de, en });
 
-/** One protection goal of the Standard Data Protection Model: typical measures plus details. */
+/** one protection goal of the Standard Data Protection Model: typical measures plus details */
 function goal(
 	id: string,
 	title: Localized,
@@ -26,7 +26,7 @@ function goal(
 	};
 }
 
-/** The seven protection goals of the SDM, in its order. */
+/** the seven protection goals of the SDM, in its order */
 export const GOALS = [
 	goal(
 		'vertraulichkeit',
@@ -140,7 +140,7 @@ export const GOALS = [
 ];
 
 /**
- * Technical and organisational measures per system or processing
+ * technical and organisational measures per system or processing
  * environment, structured by the protection goals of the Standard Data
  * Protection Model (SDM) of the German supervisory authorities.
  */

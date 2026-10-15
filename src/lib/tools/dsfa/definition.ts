@@ -3,7 +3,7 @@ import type { Localized } from '../types.js';
 
 const L = (de: string, en: string) => ({ de, en });
 
-/** The four steps the DSK uses for both likelihood and severity. */
+/** the four steps the DSK uses for both likelihood and severity */
 const SCALE = [
 	{ value: '1', label: L('Geringfügig', 'Negligible') },
 	{ value: '2', label: L('Überschaubar', 'Limited') },
@@ -14,7 +14,7 @@ const SCALE = [
 export type RiskLevel = 'gering' | 'risiko' | 'hoch';
 
 /**
- * Risk from likelihood and severity (1–4 each), in the manner of the DSK
+ * risk from likelihood and severity (1–4 each), in the manner of the DSK
  * risk matrix (Kurzpapier Nr. 18): up to 4 points low, 5–6 a risk, from 7
  * high.
  */
@@ -63,7 +63,7 @@ function risk(id: string, title: Localized, help: Localized): FieldSection {
 	};
 }
 
-/** The risk sources assessed, along the protection goals of the SDM. */
+/** the risk sources assessed, along the protection goals of the SDM */
 export const RISKS = [
 	risk(
 		'vertraulichkeit',
@@ -119,7 +119,7 @@ const num = (record: RecordView, id: string) => {
 	return Number.isInteger(value) && value >= 1 && value <= 4 ? value : null;
 };
 
-/** Each risk before and after measures; residual falls back to the initial rating. */
+/** each risk before and after measures; residual falls back to the initial rating */
 export function assessRisks(record: RecordView): AssessedRisk[] {
 	return RISKS.map(({ id, title }) => {
 		const w = num(record, `${id}_w`);
@@ -137,7 +137,7 @@ export function assessRisks(record: RecordView): AssessedRisk[] {
 
 const highResidual = (record: RecordView) => assessRisks(record).some((r) => r.after === 'hoch');
 
-/** A data protection impact assessment from draft to sign-off (Art. 35, 36). */
+/** a data protection impact assessment from draft to sign-off (Art. 35, 36) */
 export const definition: RecordToolDefinition = {
 	slug: 'dsfa',
 	version: 1,

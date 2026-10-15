@@ -10,7 +10,7 @@ import type { RawItem, SourceDefinition } from './types.js';
 
 export type IngestStats = { slug: string; fetched: number; inserted: number; error?: string }[];
 
-/** Mirrors `SOURCES` into the table without touching runtime columns. */
+/** mirrors `SOURCES` into the table without touching runtime columns */
 export async function syncSources(db: Database): Promise<void> {
 	for (const source of SOURCES) {
 		await db
@@ -38,7 +38,7 @@ export async function syncSources(db: Database): Promise<void> {
 	}
 }
 
-/** Polls every active source once. Never throws for a single source. */
+/** polls every active source once. Never throws for a single source. */
 export async function runIngest(
 	db: Database,
 	log: (line: string) => void = console.log

@@ -5,7 +5,7 @@ import { getOidcConfiguration } from '#lib/server/auth/oidc.js';
 import { REDIRECT_URI, safeNextPath, storeLoginState } from '#lib/server/auth/login.js';
 import type { RequestHandler } from './$types';
 
-/** Starts the Authorization Code flow with PKCE against Keycloak. */
+/** starts the Authorization Code flow with PKCE against Keycloak */
 export const GET: RequestHandler = async ({ url, cookies, locals }) => {
 	const next = safeNextPath(url.searchParams.get('next'));
 	if (locals.user) redirect(303, next);

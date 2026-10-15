@@ -20,11 +20,11 @@ export function isTerminal(definition: RecordToolDefinition, state: string | nul
 export type AvailableTransition = {
 	transition: TransitionDef;
 	missing: string[];
-	/** Why the transition's own check blocks it, if it does. */
+	/** why the transition's own check blocks it, if it does */
 	blocked: Localized | null;
 };
 
-/** Transitions out of the record's current state, with what still stands in their way. */
+/** transitions out of the record's current state, with what still stands in their way */
 export function allowedTransitions(
 	definition: RecordToolDefinition,
 	record: RecordView
@@ -45,7 +45,7 @@ export type TransitionResult =
 	| { ok: false; error: 'missing'; missing: string[] }
 	| { ok: false; error: 'blocked'; reason: Localized };
 
-/** Checks a transition; the caller persists the new state. */
+/** checks a transition; the caller persists the new state */
 export function applyTransition(
 	definition: RecordToolDefinition,
 	record: RecordView,

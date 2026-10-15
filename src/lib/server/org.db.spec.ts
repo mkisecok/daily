@@ -12,7 +12,7 @@ import {
 	resolveOrganisation
 } from './org.js';
 
-/** Runs against the compose Postgres through `pnpm test:db`; see records.db.spec.ts. */
+/** runs against the compose Postgres through `pnpm test:db`; see records.db.spec.ts */
 const url =
 	process.env.npm_lifecycle_event === 'test:db'
 		? loadEnv('', process.cwd(), '').DATABASE_URL

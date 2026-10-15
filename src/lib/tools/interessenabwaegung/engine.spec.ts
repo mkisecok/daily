@@ -5,7 +5,7 @@ import { evaluate } from './engine.js';
 
 const catalog = catalogJson as QuestionnaireCatalog;
 
-/** Authority no; interest and necessity met; no risk factors; nothing in favour. */
+/** authority no; interest and necessity met; no risk factors; nothing in favour */
 const BASE: Answers = {
 	x_authority: 'no',
 	i_lawful: 'yes',

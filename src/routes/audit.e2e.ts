@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-/** Requires the local stack from compose.yaml; see auth.e2e.ts. */
+/** requires the local stack from compose.yaml; see auth.e2e.ts */
 const username = process.env.E2E_USER ?? 'test@dai-ly.de';
 const password = process.env.E2E_PASSWORD ?? 'test-dev-password';
 

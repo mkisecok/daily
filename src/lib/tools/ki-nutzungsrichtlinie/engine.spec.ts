@@ -5,7 +5,7 @@ import { evaluate } from './engine.js';
 
 const catalog = catalogJson as QuestionnaireCatalog;
 
-/** A careful organisation: everything decided, nothing risky. */
+/** a careful organisation: everything decided, nothing risky */
 const CAREFUL: Answers = {
 	p_allowlist: 'yes',
 	p_private: 'no',

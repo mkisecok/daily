@@ -3,10 +3,10 @@ import type { Lang, LawId, Provision, ProvisionKind } from './types.js';
 
 export type LawMeta = {
 	id: LawId;
-	/** The abbreviation used in citations across Daily. */
+	/** the abbreviation used in citations across Daily */
 	law: Law;
 	name: Localized;
-	/** Whether an official English text exists in the data. */
+	/** whether an official English text exists in the data */
 	english: boolean;
 };
 
@@ -62,7 +62,7 @@ const PREFIX: Record<ProvisionKind, Record<Lang, string>> = {
 	anhang: { de: 'Anhang', en: 'Annex' }
 };
 
-/** "Art. 5", "§ 26", "ErwG 12", "Anhang III" / "Recital 12", "Annex III". */
+/** "Art. 5", "§ 26", "ErwG 12", "Anhang III" / "Recital 12", "Annex III" */
 export function provisionLabel(provision: Pick<Provision, 'kind' | 'number'>, lang: Lang): string {
 	return `${PREFIX[provision.kind][lang]} ${provision.number}`;
 }

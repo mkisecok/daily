@@ -4,7 +4,7 @@ import type { Localized } from '../types.js';
 const L = (de: string, en: string): Localized => ({ de, en });
 
 /**
- * Question sets per audit topic, in Daily's own words. Standards are cited
+ * question sets per audit topic, in Daily's own words. Standards are cited
  * by clause number only; their text is not reproduced.
  */
 export const TEMPLATES: Record<string, { label: Localized; questions: Localized[] }> = {
@@ -228,7 +228,7 @@ export const TEMPLATES: Record<string, { label: Localized; questions: Localized[
 	}
 };
 
-/** One checklist of an audit: a topic, its questions, evidence and result. */
+/** one checklist of an audit: a topic, its questions, evidence and result */
 export const definition: RecordToolDefinition = {
 	slug: 'pruefkatalog',
 	version: 1,

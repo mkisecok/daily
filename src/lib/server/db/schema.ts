@@ -11,7 +11,7 @@ import {
 	uuid
 } from 'drizzle-orm/pg-core';
 
-/** Keycloak is the identity provider; `id` is its `sub`. */
+/** Keycloak is the identity provider; `id` is its `sub` */
 export const users = pgTable('users', {
 	id: uuid('id').primaryKey(),
 	email: text('email').notNull().unique(),
@@ -24,7 +24,7 @@ export const users = pgTable('users', {
 export const organisationKind = pgEnum('organisation_kind', ['eigene', 'mandant']);
 
 /**
- * Every tool record belongs to an organisation. A user's own organisation
+ * every tool record belongs to an organisation. A user's own organisation
  * (kind `eigene`) is created on first login; external DSBs add clients
  * (kind `mandant`).
  */
@@ -53,7 +53,7 @@ export const memberships = pgTable(
 );
 
 /**
- * Server-side sessions. The browser holds only the random id; Keycloak
+ * server-side sessions. The browser holds only the random id; Keycloak
  * tokens stay here so they never reach client code.
  */
 export const sessions = pgTable('sessions', {
@@ -72,7 +72,7 @@ export const sessions = pgTable('sessions', {
 export const toolShape = pgEnum('tool_shape', ['questionnaire', 'register', 'workflow']);
 
 /**
- * One completed use of a questionnaire tool. `input` holds the answers,
+ * one completed use of a questionnaire tool. `input` holds the answers,
  * `result` the engine's verdict, both frozen with the catalog version so a
  * later catalog change never rewrites history.
  */
@@ -102,7 +102,7 @@ export const toolRuns = pgTable(
 /* ---------- records ---------- */
 
 /**
- * One entry of a register or workflow tool. `data` is validated against the
+ * one entry of a register or workflow tool. `data` is validated against the
  * tool definition of `definition_version`; `version` increments on every
  * change for optimistic locking. Archiving is a soft delete, so the history
  * stays available (accountability, Art. 5(2) DSGVO).
@@ -116,7 +116,7 @@ export const records = pgTable(
 			.references(() => organisations.id, { onDelete: 'cascade' }),
 		toolSlug: text('tool_slug').notNull(),
 		definitionVersion: integer('definition_version').notNull(),
-		/** Null for registers, a workflow state id otherwise. */
+		/** null for registers, a workflow state id otherwise */
 		state: text('state'),
 		title: text('title').notNull(),
 		data: jsonb('data').notNull(),
@@ -140,7 +140,7 @@ export const recordEventKind = pgEnum('record_event_kind', [
 	'archived'
 ]);
 
-/** Append-only history of a record: who changed which fields, and when. */
+/** append-only history of a record: who changed which fields, and when */
 export const recordEvents = pgTable(
 	'record_events',
 	{
@@ -159,7 +159,7 @@ export const recordEvents = pgTable(
 );
 
 /**
- * Deadlines derived from records by the tool engines. Recomputed on every
+ * deadlines derived from records by the tool engines. Recomputed on every
  * save: open rows of the record are replaced, `done_at` marks those a
  * terminal state or archive closed.
  */
@@ -187,7 +187,7 @@ export const deadlines = pgTable(
 export const feedSourceKind = pgEnum('feed_source_kind', ['rss', 'html']);
 export const feedRegion = pgEnum('feed_region', ['eu', 'de', 'land']);
 
-/** A publisher the worker polls. Rows are synced from `feed/sources.ts`. */
+/** a publisher the worker polls. Rows are synced from `feed/sources.ts`. */
 export const feedSources = pgTable('feed_sources', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	slug: text('slug').notNull().unique(),
@@ -195,7 +195,7 @@ export const feedSources = pgTable('feed_sources', {
 	kind: feedSourceKind('kind').notNull(),
 	url: text('url').notNull(),
 	region: feedRegion('region').notNull(),
-	/** 1 = authority, court or legislator; 2 = legal press. */
+	/** 1 = authority, court or legislator; 2 = legal press */
 	tier: integer('tier').notNull().default(1),
 	lang: text('lang').notNull().default('de'),
 	active: boolean('active').notNull().default(true),
@@ -205,7 +205,7 @@ export const feedSources = pgTable('feed_sources', {
 	failureCount: integer('failure_count').notNull().default(0)
 });
 
-/** Title, excerpt and link only: never the article body. */
+/** title, excerpt and link only: never the article body */
 export const feedItems = pgTable(
 	'feed_items',
 	{

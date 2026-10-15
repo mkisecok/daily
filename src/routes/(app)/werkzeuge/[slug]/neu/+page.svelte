@@ -10,7 +10,7 @@
 
 	let submitting = $state(false);
 
-	/** Questions numbered continuously across sections. */
+	/** questions numbered continuously across sections */
 	const sections = $derived.by(() => {
 		let number = 0;
 		return data.catalog.sections.map((section) => ({

@@ -7,7 +7,7 @@ export type HttpUrls = {
 };
 
 /**
- * The full app's store: JSON calls to `/api/records`. Store errors come
+ * the full app's store: JSON calls to `/api/records`. Store errors come
  * back as JSON bodies with 4xx statuses and are returned as they are;
  * anything else (network, 401, 500) throws.
  */

@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 /**
- * Requires the local stack from compose.yaml (Keycloak with the imported
+ * requires the local stack from compose.yaml (Keycloak with the imported
  * "daily" realm). Credentials default to the seeded test user in
  * infra/keycloak/realm-daily.json.
  */

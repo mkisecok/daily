@@ -1,11 +1,11 @@
 import type { Answers, Localized, Question, QuestionnaireCatalog, Reason } from './types.js';
 
 export type ChecklistFindings = {
-	/** Requirements answered "no". */
+	/** requirements answered "no" */
 	gaps: Reason[];
-	/** Requirements answered "unclear". */
+	/** requirements answered "unclear" */
 	open: Reason[];
-	/** The remedy of every gap, in catalog order. */
+	/** the remedy of every gap, in catalog order */
 	remedies: Localized[];
 };
 
@@ -14,7 +14,7 @@ function reason(question: Question): Reason {
 }
 
 /**
- * Walks the requirement sections of a checklist tool. "Not applicable" and
+ * walks the requirement sections of a checklist tool. "Not applicable" and
  * "yes" count as fulfilled; questions outside `sectionIds` are ignored.
  */
 export function auditSections(
@@ -38,7 +38,7 @@ export function auditSections(
 	return findings;
 }
 
-/** Looks a question up by id, for engines that cite single answers. */
+/** looks a question up by id, for engines that cite single answers */
 export function questionById(catalog: QuestionnaireCatalog, id: string): Question | undefined {
 	for (const section of catalog.sections) {
 		const question = section.questions.find((q) => q.id === id);
@@ -52,7 +52,7 @@ export function reasonFor(catalog: QuestionnaireCatalog, id: string): Reason {
 	return question ? reason(question) : { questionId: id, text: { de: id, en: id } };
 }
 
-/** "3 Lücken" / "3 gaps" style counts. */
+/** "3 Lücken" / "3 gaps" style counts */
 export function count(n: number, singular: Localized, plural: Localized): Localized {
 	return {
 		de: `${n} ${n === 1 ? singular.de : plural.de}`,

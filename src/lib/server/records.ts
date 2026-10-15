@@ -41,7 +41,7 @@ function toStored(row: RecordRow): StoredRecord {
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
- * Records in Postgres, scoped to one organisation and acting as one user.
+ * records in Postgres, scoped to one organisation and acting as one user.
  * Everything coming from the client is validated again with the shared
  * domain rules; deadlines are recomputed in the same transaction as the
  * write, and every write appends a history event.
@@ -65,7 +65,7 @@ export function createRecordRepository(
 			async function syncDeadlines(tx: Tx, tool: RecordTool, record: StoredRecord) {
 				const open = and(eq(deadlines.recordId, record.id), isNull(deadlines.doneAt));
 				if (record.archivedAt || isTerminal(tool.definition, record.state)) {
-					// Closed by the archive or a terminal state: keep them, marked done.
+					// closed by the archive or a terminal state: keep them, marked done
 					await tx.update(deadlines).set({ doneAt: new Date() }).where(open);
 					return;
 				}
@@ -97,7 +97,7 @@ export function createRecordRepository(
 					.values({ recordId, userId, kind, changes, fromState, toState });
 			}
 
-			/** Runs a planned change on a locked record and bumps its version. */
+			/** runs a planned change on a locked record and bumps its version */
 			async function write(
 				id: string,
 				kind: EventKind,

@@ -3,7 +3,7 @@ import postgres from 'postgres';
 import * as schema from './schema.js';
 
 /**
- * Database client factory shared by the SvelteKit app (which reads the URL
+ * database client factory shared by the SvelteKit app (which reads the URL
  * from `$app/env/private`) and the worker (which reads `process.env`).
  */
 export function createDb(url: string) {

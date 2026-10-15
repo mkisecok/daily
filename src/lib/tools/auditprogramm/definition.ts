@@ -2,7 +2,7 @@ import type { RecordToolDefinition } from '../../records/types.js';
 
 const L = (de: string, en: string) => ({ de, en });
 
-/** Audit criteria, shared by the audit tools. */
+/** audit criteria, shared by the audit tools */
 export const CRITERIA = [
 	{ value: 'dsgvo', label: L('DSGVO', 'GDPR') },
 	{ value: 'bdsg', label: L('BDSG', 'BDSG') },
@@ -13,7 +13,7 @@ export const CRITERIA = [
 	{ value: 'intern', label: L('Interne Richtlinien', 'Internal policies') }
 ];
 
-/** One audit of the audit programme, from planning to closure. */
+/** one audit of the audit programme, from planning to closure */
 export const definition: RecordToolDefinition = {
 	slug: 'auditprogramm',
 	version: 1,

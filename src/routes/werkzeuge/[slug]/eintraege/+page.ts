@@ -9,21 +9,21 @@ import { getRecordTool, getTool, listRecordTools, tools } from '#lib/tools/regis
 import type { EntryGenerator, PageLoad } from './$types';
 
 /**
- * Records come from the store (browser storage or the API), so the page
+ * records come from the store (browser storage or the API), so the page
  * renders on the client only.
  */
 export const ssr = false;
 
-/** Every built record tool, so static builds can prerender each list page. */
+/** every built record tool, so static builds can prerender each list page */
 export const entries: EntryGenerator = () =>
 	tools
 		.filter((tool) => tool.status !== 'planned' && getRecordTool(tool.slug))
 		.map((tool) => ({ slug: tool.slug }));
 
-/** A referenced record shown in full, with the records pointing to it. */
+/** a referenced record shown in full, with the records pointing to it */
 export type Composed = { tool: RecordTool; record: StoredRecord; backlinks: Backlinks };
 
-/** `?eintrag=<id>` shows a record, `?neu=1` the empty form, otherwise the list. */
+/** `?eintrag=<id>` shows a record, `?neu=1` the empty form, otherwise the list */
 export const load: PageLoad = async ({ params, data, url, depends }) => {
 	const tool = getTool(params.slug);
 	const recordTool = getRecordTool(params.slug);
@@ -40,7 +40,7 @@ export const load: PageLoad = async ({ params, data, url, depends }) => {
 		backlinks: [] as Backlinks,
 		composed: [] as Composed[]
 	};
-	// Prerendering still calls load; the store only exists in the browser, which loads again.
+	// prerendering still calls load; the store only exists in the browser, which loads again
 	if (!browser) return { ...base, view: 'list' as const, records: [] };
 
 	const store = getStore();

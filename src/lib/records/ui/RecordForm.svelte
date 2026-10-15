@@ -25,13 +25,13 @@
 		data?: RecordData;
 		errors?: ValidationErrors;
 		busy?: boolean;
-		/** Options for reference fields, by field id. */
+		/** options for reference fields, by field id */
 		choices?: Record<string, Option[]>;
 		onsave: (input: Record<string, unknown>) => void;
 		oncancel: () => void;
 	} = $props();
 
-	// Seeded once from the stored record; the parent remounts the form to reset it.
+	// seeded once from the stored record; the parent remounts the form to reset it.
 	// svelte-ignore state_referenced_locally
 	let values = $state<FormValues>(toInputs(definition, data));
 

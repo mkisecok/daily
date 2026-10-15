@@ -17,7 +17,7 @@
 		hrefFor
 	}: {
 		backlinks: Backlinks;
-		/** Route path to a record of a tool; resolved here. */
+		/** route path to a record of a tool; resolved here */
 		hrefFor: (tool: string, id: string) => RoutePath;
 	} = $props();
 

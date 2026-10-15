@@ -22,9 +22,9 @@
 	}: {
 		definition: RecordToolDefinition;
 		records: StoredRecord[];
-		/** Titles of referenced records by id. */
+		/** titles of referenced records by id */
 		titles?: Titles;
-		/** Route path (e.g. from `localized()`); resolved here. */
+		/** route path (e.g. from `localized()`); resolved here */
 		hrefFor: (record: StoredRecord) => RoutePath;
 	} = $props();
 

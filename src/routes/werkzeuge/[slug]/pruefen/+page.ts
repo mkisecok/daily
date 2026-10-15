@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 import { getQuestionnaire, getTool, tools } from '#lib/tools/registry.js';
 import type { EntryGenerator, PageLoad } from './$types';
 
-/** Every built questionnaire tool, so static builds can prerender each one. */
+/** every built questionnaire tool, so static builds can prerender each one */
 export const entries: EntryGenerator = () =>
 	tools
 		.filter((tool) => tool.status !== 'planned' && getQuestionnaire(tool.slug))

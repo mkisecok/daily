@@ -9,7 +9,7 @@ import {
 } from '#lib/server/org.js';
 import type { Actions, PageServerLoad, RequestEvent } from './$types';
 
-/** Needs a signed-in user and the database; never part of a static build. */
+/** needs a signed-in user and the database; never part of a static build */
 export const prerender = false;
 
 export const load: PageServerLoad = async ({ locals }) => {

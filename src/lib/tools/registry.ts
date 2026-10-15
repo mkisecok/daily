@@ -38,7 +38,7 @@ import { notes } from '../notes/tool.js';
 import { planned } from './planned.js';
 
 /**
- * Every tool the platform knows about, built or planned. Order within a
+ * every tool the platform knows about, built or planned. Order within a
  * category is the order shown in the catalogue.
  */
 export const tools: readonly ToolManifest[] = [
@@ -84,7 +84,7 @@ export function toolsByCategory(category: ToolCategory): ToolManifest[] {
 	return tools.filter((tool) => tool.category === category);
 }
 
-/** Runnable questionnaire tools: catalog + engine, keyed by slug. */
+/** runnable questionnaire tools: catalog + engine, keyed by slug */
 const questionnaires: Record<
 	string,
 	{ catalog: QuestionnaireCatalog; engine: QuestionnaireEngine }
@@ -139,9 +139,9 @@ export function getQuestionnaire(slug: string) {
 	return questionnaires[slug];
 }
 
-/** Register and workflow tools: definition + engine, keyed by slug. */
+/** register and workflow tools: definition + engine, keyed by slug */
 const recordTools: Record<string, RecordTool> = {
-	// Not in the catalogue: the notebook runs on the records framework.
+	// not in the catalogue: the notebook runs on the records framework
 	[notes.manifest.slug]: notes,
 	[auditbericht.manifest.slug]: auditbericht,
 	[feststellungen.manifest.slug]: feststellungen,
@@ -165,7 +165,7 @@ export function getRecordTool(slug: string): RecordTool | undefined {
 	return recordTools[slug];
 }
 
-/** Every register and workflow tool. */
+/** every register and workflow tool */
 export function listRecordTools(): RecordTool[] {
 	return Object.values(recordTools);
 }

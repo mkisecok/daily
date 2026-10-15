@@ -48,7 +48,7 @@
 	let errors = $state<ValidationErrors>({});
 	let message = $state<string | null>(null);
 
-	// A different list, record or form starts clean.
+	// a different list, record or form starts clean
 	afterNavigate(({ from, to }) => {
 		if (from?.url?.search === to?.url?.search) return;
 		editing = false;
@@ -57,7 +57,7 @@
 		message = null;
 	});
 
-	/** The message for a store error; validation errors show in the form instead. */
+	/** the message for a store error; validation errors show in the form instead */
 	function describe(result: StoreError): string | null {
 		switch (result.error) {
 			case 'invalid':
@@ -81,7 +81,7 @@
 		}
 	}
 
-	/** Runs a store call; failures (network, full storage) become a message. */
+	/** runs a store call; failures (network, full storage) become a message */
 	async function run<T>(action: () => Promise<T>): Promise<T | undefined> {
 		busy = true;
 		message = null;

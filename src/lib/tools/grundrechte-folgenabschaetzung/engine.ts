@@ -7,7 +7,7 @@ import { definition, ELEMENTS, required } from './definition.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
 
-/** The first use as the latest date to finish, while not notified; the review date always. */
+/** the first use as the latest date to finish, while not notified; the review date always */
 function deadlines(record: RecordView): DeadlineSpec[] {
 	const specs: DeadlineSpec[] = [];
 	const first = record.data.erste_verwendung;

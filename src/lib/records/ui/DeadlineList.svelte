@@ -21,7 +21,7 @@
 		showTool = true
 	}: {
 		deadlines: Deadline[];
-		/** Route path (e.g. from `localized()`); resolved here. */
+		/** route path (e.g. from `localized()`); resolved here */
 		hrefFor: (deadline: Deadline) => RoutePath;
 		now?: Date;
 		showTool?: boolean;

@@ -5,7 +5,7 @@ import { definition } from './definition.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
 
-/** Art. 33(1): "where feasible, not later than 72 hours after having become aware". */
+/** Art. 33(1): "where feasible, not later than 72 hours after having become aware" */
 export const NOTIFY_HOURS = 72;
 
 const str = (record: RecordView, field: string) => {
@@ -18,14 +18,14 @@ const listHas = (record: RecordView, field: string, ...values: string[]) => {
 	return Array.isArray(list) && values.some((v) => list.includes(v));
 };
 
-/** When the notification is due: awareness + 72 hours, in absolute time. */
+/** when the notification is due: awareness + 72 hours, in absolute time */
 export function notificationDue(record: RecordView): string | null {
 	const aware = str(record, 'kenntnis');
 	return aware ? addHours(aware, NOTIFY_HOURS) : null;
 }
 
 /**
- * Open deadlines. The authority clock runs until the risk is assessed as
+ * open deadlines. The authority clock runs until the risk is assessed as
  * "none" or the notification is entered; an unassessed breach counts as
  * notifiable. A high risk adds the communication to data subjects, which
  * Art. 34 wants "without undue delay"; Daily uses the same 72 hours as an
@@ -69,7 +69,7 @@ const AUTHORITY = L(
 );
 
 /**
- * What the record means legally: notification duty, communication duty,
+ * what the record means legally: notification duty, communication duty,
  * late notification and the documentation every breach needs.
  */
 function assess(record: RecordView): QuestionnaireResult {

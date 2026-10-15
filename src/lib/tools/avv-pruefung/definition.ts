@@ -3,12 +3,12 @@ import type { Localized } from '../types.js';
 
 const L = (de: string, en: string) => ({ de, en });
 
-/** One Art. 28(3) clause: a yes/no field citing its letter. */
+/** one Art. 28(3) clause: a yes/no field citing its letter */
 function clause(id: string, ref: string, label: Localized): FieldDef {
 	return { id, type: 'boolean', label, cite: { law: 'DSGVO', ref } };
 }
 
-/** The clauses Art. 28(3) requires, in the order of the provision. */
+/** the clauses Art. 28(3) requires, in the order of the provision */
 export const CLAUSES: FieldDef[] = [
 	clause(
 		'grundlagen',
@@ -78,7 +78,7 @@ export const CLAUSES: FieldDef[] = [
 	)
 ];
 
-/** A processor contract: one record per processor and service. */
+/** a processor contract: one record per processor and service */
 export const definition: RecordToolDefinition = {
 	slug: 'avv-pruefung',
 	version: 1,

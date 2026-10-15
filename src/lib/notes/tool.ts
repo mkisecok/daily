@@ -5,7 +5,7 @@ const L = (de: string, en: string) => ({ de, en });
 export const NOTES = 'notizen';
 
 /**
- * Notes run on the records framework, so they are scoped to the active
+ * notes run on the records framework, so they are scoped to the active
  * organisation, keep a history and live in browser storage in the
  * preview. They are not part of the tool catalogue.
  */
@@ -45,7 +45,7 @@ export const notes: RecordTool = {
 	engine: {}
 };
 
-/** Tags from the comma-separated field, trimmed and without duplicates. */
+/** tags from the comma-separated field, trimmed and without duplicates */
 export function tags(value: unknown): string[] {
 	if (typeof value !== 'string') return [];
 	return [
@@ -58,7 +58,7 @@ export function tags(value: unknown): string[] {
 	];
 }
 
-/** A source is a link when it is a web address or an internal path. */
+/** a source is a link when it is a web address or an internal path */
 export function sourceHref(value: unknown): { href: string; external: boolean } | null {
 	if (typeof value !== 'string') return null;
 	if (/^https?:\/\//i.test(value)) return { href: value, external: true };

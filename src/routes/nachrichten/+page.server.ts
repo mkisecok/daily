@@ -30,7 +30,7 @@ const tags = { regulation: REGULATION_TAGS, kind: KIND_TAGS };
 
 export const load: PageServerLoad = async ({ url, locals }) => {
 	if (PUBLIC_PREVIEW) {
-		// Prerendered: no query string, no database. The page filters in the browser.
+		// prerendered: no query string, no database. The page filters in the browser.
 		const { items, sources } = await fetchLiveFeed();
 		return {
 			items: items.map((item) => ({ ...item, publishedAt: item.publishedAt.toISOString() })),

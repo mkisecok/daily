@@ -8,7 +8,7 @@ const L = (de: string, en: string): Localized => ({ de, en });
 const topics = (record: RecordView): string[] =>
 	Array.isArray(record.data.themen) ? record.data.themen : [];
 
-/** The repetition: the training date plus the interval, at 9:00 German time. */
+/** the repetition: the training date plus the interval, at 9:00 German time */
 function deadlines(record: RecordView): DeadlineSpec[] {
 	const date = record.data.datum;
 	const months = record.data.wiederholung_monate;

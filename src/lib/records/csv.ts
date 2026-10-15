@@ -9,7 +9,7 @@ function cell(value: string): string {
 }
 
 /**
- * All fields of all records as CSV for Excel in German locales: semicolon
+ * all fields of all records as CSV for Excel in German locales: semicolon
  * separated, CRLF, UTF-8 with BOM, values formatted like on screen.
  */
 export function toCsv(

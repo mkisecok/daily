@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-/** Requires the local stack from compose.yaml; see auth.e2e.ts. */
+/** requires the local stack from compose.yaml; see auth.e2e.ts */
 const username = process.env.E2E_USER ?? 'test@dai-ly.de';
 const password = process.env.E2E_PASSWORD ?? 'test-dev-password';
 
@@ -45,7 +45,7 @@ test('client organisations keep records apart and the masthead names the workspa
 	await page.goto('/werkzeuge/ki-register/eintraege');
 	await expect(page.getByRole('link', { name: system })).toBeVisible();
 
-	// Leave the user in the own organisation for the other tests.
+	// leave the user in the own organisation for the other tests
 	await page.goto('/mandanten');
 	await own.getByRole('button', { name: 'Wechseln' }).click();
 	await expect(own.locator('.current')).toHaveText('Aktiv');

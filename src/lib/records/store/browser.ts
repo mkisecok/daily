@@ -21,7 +21,7 @@ type Options = {
 };
 
 /**
- * Records in `localStorage` for the public preview: nothing leaves the
+ * records in `localStorage` for the public preview: nothing leaves the
  * device. Same rules as the server through the shared planning functions.
  * Reads tolerate missing or blocked storage; failed writes throw so the
  * page can say the entry was not saved.
@@ -186,7 +186,7 @@ export function createBrowserStore(
 			try {
 				storage.removeItem(STORAGE_KEY);
 			} catch {
-				// Blocked storage holds nothing to clear.
+				// blocked storage holds nothing to clear
 			}
 		}
 	};

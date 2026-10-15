@@ -9,7 +9,7 @@ const L = (de: string, en: string): Localized => ({ de, en });
 const content = (record: RecordView): string[] =>
 	Array.isArray(record.data.inhalte) ? record.data.inhalte : [];
 
-/** The refresher: date done plus the interval, once the measure has taken place. */
+/** the refresher: date done plus the interval, once the measure has taken place */
 function deadlines(record: RecordView): DeadlineSpec[] {
 	const date = record.data.durchgefuehrt_am;
 	const months = record.data.wiederholung_monate;
@@ -30,7 +30,7 @@ function deadlines(record: RecordView): DeadlineSpec[] {
 	];
 }
 
-/** Content each kind of involvement needs at least. */
+/** content each kind of involvement needs at least */
 const REQUIRED: Record<string, { ids: string[]; cite: LegalBasis }> = {
 	aufsicht: {
 		ids: ['aufsicht', 'risiken', 'funktionsweise'],
@@ -52,7 +52,7 @@ function label(id: string): Localized {
 }
 
 /**
- * Content the role needs but the measure lacks; for human oversight of
+ * content the role needs but the measure lacks; for human oversight of
  * high-risk systems that is a defect (Art. 26(2)), otherwise a point.
  */
 function assess(record: RecordView): QuestionnaireResult {

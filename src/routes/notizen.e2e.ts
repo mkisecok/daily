@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-/** Requires the local stack from compose.yaml; see auth.e2e.ts. */
+/** requires the local stack from compose.yaml; see auth.e2e.ts */
 const username = process.env.E2E_USER ?? 'test@dai-ly.de';
 const password = process.env.E2E_PASSWORD ?? 'test-dev-password';
 
@@ -30,7 +30,7 @@ test('notes: today, Markdown with citations, a note from a provision, search', a
 	await expect(page.locator('.note h3')).toHaveText(`Termin ${stamp}`);
 	await expect(page.locator('.note a.norm')).toHaveAttribute('href', '/normen/dsgvo/art-6');
 
-	// The same button opens the same note again.
+	// the same button opens the same note again
 	await page.getByRole('link', { name: 'Alle Notizen' }).click();
 	await page.getByRole('button', { name: 'Heutige Notiz' }).click();
 	await expect(page).toHaveURL(todayUrl);

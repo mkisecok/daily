@@ -46,7 +46,7 @@ function isAssessment(value: unknown): value is AssessmentSnapshot {
 	);
 }
 
-/** Coerces one raw value (from a form or JSON) to its stored form. */
+/** coerces one raw value (from a form or JSON) to its stored form */
 function coerce(field: FieldDef, raw: unknown): { value: FieldValue; error?: FieldError } {
 	if (raw === undefined || raw === null) return { value: null };
 
@@ -71,7 +71,7 @@ function coerce(field: FieldDef, raw: unknown): { value: FieldValue; error?: Fie
 			const allowed = new Set(field.options.map((o) => o.value));
 			const values = (list as string[]).filter((item) => item !== '');
 			if (!values.every((item) => allowed.has(item))) return { value: null, error: 'invalid' };
-			// Keep the catalogue order so diffs and exports are stable.
+			// keep the catalogue order so diffs and exports are stable
 			return { value: field.options.map((o) => o.value).filter((v) => values.includes(v)) };
 		}
 		case 'date': {
@@ -110,7 +110,7 @@ function coerce(field: FieldDef, raw: unknown): { value: FieldValue; error?: Fie
 		case 'assessment': {
 			if (raw === '') return { value: null };
 			if (!isAssessment(raw)) return { value: null, error: 'invalid' };
-			// Keep only the snapshot's own keys: the input may be a whole result.
+			// keep only the snapshot's own keys: the input may be a whole result
 			const { tool, catalogVersion, verdict, outcome, headline, at } = raw;
 			return {
 				value: {
@@ -127,7 +127,7 @@ function coerce(field: FieldDef, raw: unknown): { value: FieldValue; error?: Fie
 }
 
 /**
- * Validates and normalises input for a tool's records. Unknown keys are
+ * validates and normalises input for a tool's records. Unknown keys are
  * dropped; every field of the definition is present in `data` (null when
  * empty). Used by both stores and re-run on the server.
  */
@@ -146,7 +146,7 @@ export function validateRecord(
 	return { data, errors };
 }
 
-/** The record title from its title field, never empty. */
+/** the record title from its title field, never empty */
 export function titleOf(definition: RecordToolDefinition, data: RecordData): string {
 	const value = data[definition.titleField];
 	return typeof value === 'string' && value.trim() !== '' ? value.trim() : '—';

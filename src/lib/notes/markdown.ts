@@ -2,7 +2,7 @@ import { citationPath } from '../normen/cite.js';
 import type { Law } from '../tools/types.js';
 
 /**
- * A small, safe subset of Markdown for notes: headings, paragraphs, lists,
+ * a small, safe subset of Markdown for notes: headings, paragraphs, lists,
  * quotes, emphasis, code, links. Parsed into a tree that the page renders
  * with components, so no HTML from a note ever reaches the DOM. Legal
  * citations such as "Art. 6 Abs. 1 DSGVO" become links into the Navigator.
@@ -28,7 +28,7 @@ const CITATION =
 	/(?<!\w)(Art\.|Artikel|§)\s*(\d+[a-z]?(?:\s+Abs\.\s*\d+[a-z]?)?(?:\s+(?:lit\.|S\.|Satz|Nr\.|UAbs\.)\s*[\w]+)?)\s+(DSGVO|KI-VO|BDSG|TDDDG)\b/g;
 const URL = /\bhttps?:\/\/[^\s<>()]+[^\s<>().,;:!?'"]/g;
 
-/** Citations and bare URLs inside plain text. */
+/** citations and bare URLs inside plain text */
 function links(text: string): Inline[] {
 	const out: Inline[] = [];
 	const matches = [
@@ -65,7 +65,7 @@ function links(text: string): Inline[] {
 	return out;
 }
 
-/** Inline syntax: `code`, [text](url), **strong**, *em* / _em_. */
+/** inline syntax: `code`, [text](url), **strong**, *em* / _em_ */
 export function inline(text: string): Inline[] {
 	const out: Inline[] = [];
 	const pattern = /`([^`]+)`|\[([^\]]+)\]\(([^)\s]+)\)|\*\*(.+?)\*\*|\*(.+?)\*|_(.+?)_/g;
@@ -134,7 +134,7 @@ export function parse(source: string): MdBlock[] {
 	return blocks;
 }
 
-/** Plain text of a note for lists and search: no Markdown syntax. */
+/** plain text of a note for lists and search: no Markdown syntax */
 export function plain(source: string, max = 160): string {
 	const text = source
 		.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')

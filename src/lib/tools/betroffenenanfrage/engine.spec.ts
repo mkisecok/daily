@@ -4,7 +4,7 @@ import { validateRecord } from '../../records/validate.js';
 import { applyTransition } from '../../records/workflow.js';
 import { definition, engine, replyDue } from './engine.js';
 
-/** Saturday 31 January 2026, 10:00 in Berlin. */
+/** Saturday 31 January 2026, 10:00 in Berlin */
 const RECEIVED = '2026-01-31T09:00:00.000Z';
 
 function view(data: RecordData, state = 'in_bearbeitung') {

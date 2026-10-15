@@ -1,7 +1,7 @@
 import type { SourceDefinition } from './types.js';
 
 /**
- * Publishers the worker polls. Verified 2026-10-13 unless noted. Adding a
+ * publishers the worker polls. Verified 2026-10-13 unless noted. Adding a
  * source = adding a row here; the worker upserts it into `feed_sources`.
  */
 export const SOURCES: SourceDefinition[] = [

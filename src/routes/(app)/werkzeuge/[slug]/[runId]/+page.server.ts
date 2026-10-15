@@ -6,7 +6,7 @@ import { getQuestionnaire, getTool } from '#lib/tools/registry.js';
 import type { Answers, QuestionnaireResult } from '#lib/tools/types.js';
 import type { PageServerLoad } from './$types';
 
-/** Needs a signed-in user and the database; never part of a static build. */
+/** needs a signed-in user and the database; never part of a static build */
 export const prerender = false;
 
 export const load: PageServerLoad = async ({ params, locals }) => {

@@ -1,6 +1,6 @@
 export type Theme = 'light' | 'dark';
 
-/** Value rendered into `<html data-theme>` before the user has ever chosen. */
+/** value rendered into `<html data-theme>` before the user has ever chosen */
 export const THEME_AUTO = 'auto';
 export const THEME_COOKIE = 'theme';
 

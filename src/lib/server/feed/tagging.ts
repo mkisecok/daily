@@ -1,5 +1,5 @@
 /**
- * Keyword rules that map a headline (plus excerpt) to the regulations and
+ * keyword rules that map a headline (plus excerpt) to the regulations and
  * kinds Daily filters by. Deterministic and reviewable; no model involved.
  */
 export const REGULATION_TAGS = [
@@ -66,7 +66,7 @@ export function tagText(title: string, excerpt?: string | null): Tag[] {
 	return [...new Set(tags)];
 }
 
-/** True when at least one regulation tag matched: the gate for filtered sources. */
+/** true when at least one regulation tag matched: the gate for filtered sources */
 export function isRelevant(tags: Tag[]): boolean {
 	return tags.some((tag) => (REGULATION_TAGS as readonly string[]).includes(tag));
 }

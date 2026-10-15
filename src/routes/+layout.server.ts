@@ -4,13 +4,13 @@ import { parseTheme, THEME_COOKIE } from '#lib/theme.js';
 import type { LayoutServerLoad } from './$types';
 
 /**
- * The static preview prerenders every page. Directories with index.html
+ * the static preview prerenders every page. Directories with index.html
  * (trailing slash) keep /en and /en/… from colliding on GitHub Pages.
  */
 export const prerender = PUBLIC_PREVIEW;
 export const trailingSlash = PUBLIC_PREVIEW ? 'always' : 'never';
 
-/** First day of publication; the dateline counts issues from here. */
+/** first day of publication; the dateline counts issues from here */
 const FIRST_ISSUE = new Date('2026-10-13T00:00:00Z');
 const DAY = 24 * 60 * 60 * 1000;
 

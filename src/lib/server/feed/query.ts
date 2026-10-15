@@ -6,9 +6,9 @@ export type FeedFilter = {
 	tag?: string;
 	region?: 'eu' | 'de' | 'land';
 	source?: string;
-	/** Exclusive upper bound for publishedAt (pagination by day). */
+	/** exclusive upper bound for publishedAt (pagination by day) */
 	before?: Date;
-	/** Only items the given user bookmarked. */
+	/** only items the given user bookmarked */
 	bookmarkedBy?: string;
 };
 
@@ -27,7 +27,7 @@ export type FeedRow = {
 const PAGE_DAYS = 14;
 const PAGE_LIMIT = 200;
 
-/** Items of the last 14 days before `before`, newest first, with bookmark state. */
+/** items of the last 14 days before `before`, newest first, with bookmark state */
 export async function listFeed(
 	db: Database,
 	filter: FeedFilter,

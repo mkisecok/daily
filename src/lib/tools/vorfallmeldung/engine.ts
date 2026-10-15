@@ -12,7 +12,7 @@ const str = (record: RecordView, field: string) => {
 };
 
 /**
- * The applicable maximum period in days: 2 for a widespread infringement or
+ * the applicable maximum period in days: 2 for a widespread infringement or
  * a disruption of critical infrastructure (Art. 73(3)), 10 for a death
  * (Art. 73(4)), otherwise 15 (Art. 73(2)). The shortest applicable wins.
  */
@@ -30,7 +30,7 @@ const PARAGRAPH: Record<2 | 10 | 15, string> = {
 };
 
 /**
- * The authority deadline runs from awareness while the incident may be
+ * the authority deadline runs from awareness while the incident may be
  * reportable and no report is entered; an unclear link counts. Deployers
  * also get an internal 24-hour target for informing the provider, which
  * Art. 26(5) wants "immediately".

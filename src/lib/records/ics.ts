@@ -16,7 +16,7 @@ function escape(text: string): string {
 		.replace(/\r?\n/g, '\\n');
 }
 
-/** Folds lines longer than 75 octets as RFC 5545 requires. */
+/** folds lines longer than 75 octets as RFC 5545 requires */
 function fold(line: string): string {
 	const bytes = new TextEncoder().encode(line);
 	if (bytes.length <= 75) return line;
@@ -38,7 +38,7 @@ function fold(line: string): string {
 }
 
 /**
- * Deadlines as an iCalendar file: one 15-minute event ending at the due
+ * deadlines as an iCalendar file: one 15-minute event ending at the due
  * time, with a reminder 24 hours before. UIDs are stable per record and
  * deadline kind, so re-importing updates instead of duplicating.
  */

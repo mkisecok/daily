@@ -2,7 +2,7 @@ import { and, asc, eq } from 'drizzle-orm';
 import type { Database } from './db/client.js';
 import { memberships, organisations } from './db/schema.js';
 
-/** Cookie naming the organisation a user works in; checked against memberships. */
+/** cookie naming the organisation a user works in; checked against memberships */
 export const ORG_COOKIE = 'daily_org';
 
 export const MAX_NAME = 120;
@@ -14,7 +14,7 @@ export type OrganisationSummary = {
 	role: 'owner' | 'member';
 };
 
-/** The user's organisations: the own one first, then clients in the order added. */
+/** the user's organisations: the own one first, then clients in the order added */
 export async function listOrganisations(
 	db: Database,
 	userId: string
@@ -33,7 +33,7 @@ export async function listOrganisations(
 }
 
 /**
- * The organisation a user currently works in: the one named by the cookie
+ * the organisation a user currently works in: the one named by the cookie
  * if the user is a member, otherwise the oldest membership, which is the
  * user's own organisation created on first login.
  */
@@ -46,14 +46,14 @@ export async function resolveOrganisation(
 	return all.find((org) => org.id === preferred) ?? all[0];
 }
 
-/** A trimmed organisation name, or null when empty or too long. */
+/** a trimmed organisation name, or null when empty or too long */
 export function cleanName(raw: unknown): string | null {
 	if (typeof raw !== 'string') return null;
 	const name = raw.trim().replace(/\s+/g, ' ');
 	return name.length > 0 && name.length <= MAX_NAME ? name : null;
 }
 
-/** Adds a client organisation (kind `mandant`) owned by the user. */
+/** adds a client organisation (kind `mandant`) owned by the user */
 export async function createClientOrganisation(
 	db: Database,
 	userId: string,
@@ -66,7 +66,7 @@ export async function createClientOrganisation(
 	});
 }
 
-/** Renames an organisation the user owns; false when not allowed. */
+/** renames an organisation the user owns; false when not allowed */
 export async function renameOrganisation(
 	db: Database,
 	userId: string,

@@ -1,5 +1,5 @@
 /**
- * Captures reference screenshots of the running dev server into docs/design.
+ * captures reference screenshots of the running dev server into docs/design.
  *
  *   node scripts/screenshots.ts            # expects http://localhost:5174
  *   BASE_URL=... node scripts/screenshots.ts

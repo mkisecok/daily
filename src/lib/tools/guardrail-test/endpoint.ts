@@ -1,14 +1,14 @@
 export type Endpoint = {
-	/** Chat completions URL of an OpenAI-compatible API. */
+	/** chat completions URL of an OpenAI-compatible API */
 	url: string;
 	model: string;
-	/** Sent as a bearer token; kept in memory only. */
+	/** sent as a bearer token; kept in memory only */
 	key: string;
-	/** Optional system prompt, e.g. with a canary value. */
+	/** optional system prompt, e.g. with a canary value */
 	system: string;
 };
 
-/** The assistant text from an OpenAI-compatible or Anthropic-style response, or plain text. */
+/** the assistant text from an OpenAI-compatible or Anthropic-style response, or plain text */
 export function responseText(body: unknown): string {
 	if (typeof body === 'string') return body;
 	if (!body || typeof body !== 'object') return '';
@@ -27,7 +27,7 @@ export function responseText(body: unknown): string {
 }
 
 /**
- * One prompt against the endpoint, straight from the browser. Works when
+ * one prompt against the endpoint, straight from the browser. Works when
  * the endpoint allows cross-origin requests (local gateways, most proxies);
  * otherwise use the manual mode.
  */

@@ -9,11 +9,11 @@ const fold = (s: string) =>
 		.replace(/[\u0300-\u036f]/g, '')
 		.replace(/ß/g, 'ss');
 
-/** "Art. 22" or "§ 26" typed directly: match the label, not the text. */
+/** "Art. 22" or "§ 26" typed directly: match the label, not the text */
 const REFERENCE = /^(art\.?|artikel|article|§|erwg|recital|anhang|annex)\s*([0-9ivxlc]+[a-z]?)$/i;
 
 /**
- * All terms must occur; hits in the label or title rank above hits in the
+ * all terms must occur; hits in the label or title rank above hits in the
  * text. The snippet shows the text around the first term.
  */
 export function search(index: SearchEntry[], query: string): SearchHit[] {
@@ -29,7 +29,7 @@ export function search(index: SearchEntry[], query: string): SearchHit[] {
 			)
 			.map((entry) => ({ entry, score: 100, snippet: entry.text.slice(0, 160) }));
 	}
-	// Match on the stem so inflected forms meet: "berechtigtes" finds "berechtigten".
+	// match on the stem so inflected forms meet: "berechtigtes" finds "berechtigten"
 	const terms = fold(raw)
 		.split(/\s+/)
 		.filter((t) => t.length > 1)

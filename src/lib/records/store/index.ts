@@ -5,7 +5,7 @@ import { createBrowserStore } from './browser.js';
 import { createHttpStore } from './http.js';
 import type { RecordStore } from './types.js';
 
-/** Storage that may be missing or blocked (private mode, disabled site data). */
+/** storage that may be missing or blocked (private mode, disabled site data) */
 function safeLocalStorage(): Pick<Storage, 'getItem' | 'setItem' | 'removeItem'> {
 	try {
 		return window.localStorage;
@@ -22,7 +22,7 @@ function safeLocalStorage(): Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>
 let store: (RecordStore & { clear?: () => void }) | undefined;
 
 /**
- * The browser store in the public preview, the API everywhere else. Only
+ * the browser store in the public preview, the API everywhere else. Only
  * call this in the browser: the records pages render on the client.
  */
 export function getStore(): RecordStore & { clear?: () => void } {

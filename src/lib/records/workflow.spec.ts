@@ -86,7 +86,7 @@ describe('workflow', () => {
 
 describe('deadline maths', () => {
 	it('adds 72 hours in absolute time across the end of daylight saving', () => {
-		// 24 Oct 2026, 10:00 in Berlin (CEST); DST ends on 25 Oct.
+		// 24 Oct 2026, 10:00 in Berlin (CEST); DST ends on 25 Oct
 		expect(addHours('2026-10-24T08:00:00.000Z', 72)).toBe('2026-10-27T08:00:00.000Z');
 	});
 
@@ -103,11 +103,11 @@ describe('deadline maths', () => {
 	});
 
 	it('counts months on the German calendar day and ends at 23:59', () => {
-		// 31 January, 10:00 → 28 February, 23:59 (CET).
+		// 31 January, 10:00 → 28 February, 23:59 (CET)
 		expect(monthsAfterDay('2026-01-31T09:00:00.000Z', 1)).toBe('2026-02-28T22:59:00.000Z');
-		// 31 March, 00:30 in Berlin is still 30 March in UTC; the German day counts.
+		// 31 March, 00:30 in Berlin is still 30 March in UTC; the German day counts
 		expect(monthsAfterDay('2026-03-30T22:30:00.000Z', 1)).toBe('2026-04-30T21:59:00.000Z');
-		// Three months across the end of daylight saving.
+		// three months across the end of daylight saving
 		expect(monthsAfterDay('2026-08-14T10:00:00.000Z', 3)).toBe('2026-11-14T22:59:00.000Z');
 	});
 

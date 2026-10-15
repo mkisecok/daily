@@ -53,7 +53,7 @@
 		};
 	}
 
-	// Each view starts clean; the editor opens with the prefill or the note.
+	// each view starts clean; the editor opens with the prefill or the note
 	afterNavigate(() => {
 		message = null;
 		confirmArchive = false;
@@ -103,7 +103,7 @@
 		}
 	}
 
-	/** Opens today's note, creating it on first use. */
+	/** opens today's note, creating it on first use */
 	async function today() {
 		const day = dayKey(new Date().toISOString());
 		const existing = (await store.list(NOTES)).find((n) => n.data.tag === day);

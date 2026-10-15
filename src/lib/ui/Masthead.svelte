@@ -21,17 +21,17 @@
 	}: {
 		theme: ThemeSetting;
 		user: { displayName: string } | null;
-		/** The workspace the signed-in user works in. */
+		/** the workspace the signed-in user works in */
 		organisation?: { name: string; kind: 'eigene' | 'mandant' } | null;
 	} = $props();
 
-	/** `route` is the route id prefix that marks the item as current. */
+	/** `route` is the route id prefix that marks the item as current */
 	const items = $derived([
 		{ href: resolve(localized('/nachrichten')), route: '/nachrichten', label: m.nav_feed() },
 		{ href: resolve(localized('/werkzeuge')), route: '/werkzeuge', label: m.nav_tools() },
 		{ href: resolve(localized('/normen')), route: '/normen', label: m.nav_norms() },
 		{ href: resolve(localized('/notizen')), route: '/notizen', label: m.nav_notes() },
-		// Deadlines come from records: the organisation's when signed in, the browser's in the preview.
+		// deadlines come from records: the organisation's when signed in, the browser's in the preview
 		...(user || PUBLIC_PREVIEW
 			? [
 					{ href: resolve(localized('/fristen')), route: '/fristen', label: m.deadlines_title() },
@@ -44,7 +44,7 @@
 		resolve(localized(`/auth/login?next=${encodeURIComponent(page.url.pathname)}`))
 	);
 
-	/** Route ids are identical on server and client, unlike resolved hrefs. */
+	/** route ids are identical on server and client, unlike resolved hrefs */
 	function isCurrent(route: string): boolean {
 		const id = page.route.id ?? '';
 		return id === route || id.startsWith(route + '/') || id.startsWith('/(app)' + route);
@@ -88,7 +88,7 @@
 </header>
 
 <style>
-	/* Stays at the top while scrolling, so the navigation is always at hand. */
+	/* stays at the top while scrolling, so the navigation is always at hand */
 	.masthead {
 		position: sticky;
 		top: env(safe-area-inset-top, 0px);
@@ -165,7 +165,7 @@
 			gap: 1rem;
 		}
 
-		/* Narrow screens: wordmark and tools in one row, the navigation as one
+		/* narrow screens: wordmark and tools in one row, the navigation as one
 		   scrollable line below, so the sticky bar stays low. */
 		@media (max-width: 56rem) {
 			& .inner {
@@ -241,7 +241,7 @@
 				letter-spacing: 0.06em;
 				color: var(--ink2);
 
-				/* A client workspace is marked so nobody files into the wrong one. */
+				/* a client workspace is marked so nobody files into the wrong one */
 				&[data-kind='mandant'] {
 					color: var(--navy);
 				}

@@ -6,7 +6,7 @@ import { definition, type RiskClass } from './definition.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
 
-/** Outcome of the risk classification → risk class of the register. */
+/** outcome of the risk classification → risk class of the register */
 const FROM_OUTCOME: Record<RiskOutcome, RiskClass> = {
 	'kein-ki': 'ausserhalb',
 	ausserhalb: 'ausserhalb',
@@ -23,7 +23,7 @@ function fromAssessment(field: string, result: QuestionnaireResult): RecordData 
 	return riskClass ? { risikoklasse: riskClass } : {};
 }
 
-/** The review date at 9:00 German time, unless the system is retired. */
+/** the review date at 9:00 German time, unless the system is retired */
 function deadlines(record: RecordView): DeadlineSpec[] {
 	const date = record.data.wiedervorlage;
 	if (typeof date !== 'string' || record.data.status === 'ausser_betrieb') return [];
@@ -103,7 +103,7 @@ const has = (record: RecordView, field: string, value: string) => {
 };
 
 /**
- * The obligations that follow from the register entry: risk class, role and
+ * the obligations that follow from the register entry: risk class, role and
  * data. A summary for the record page, not a substitute for the
  * questionnaires it points to.
  */

@@ -19,7 +19,7 @@
 
 	const hits = $derived<SearchHit[]>(index && query.trim().length >= 2 ? search(index, query) : []);
 
-	/** Loads the index once, when the user starts typing. */
+	/** loads the index once, when the user starts typing */
 	async function ensureIndex() {
 		if (index || loading) return;
 		loading = true;

@@ -8,7 +8,7 @@ import { ORG_COOKIE, resolveOrganisation } from '#lib/server/org.js';
 import { parseTheme, THEME_COOKIE } from '#lib/theme.js';
 
 /**
- * Locale comes from Paraglide (URL, then cookie, then base locale). Theme
+ * locale comes from Paraglide (URL, then cookie, then base locale). Theme
  * comes from a cookie so the server renders the right paper colour and the
  * page never flashes.
  */
@@ -27,7 +27,7 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 		);
 	});
 
-/** Resolves the session and the active organisation once per request into `locals`. */
+/** resolves the session and the active organisation once per request into `locals` */
 const handleAuth: Handle = async ({ event, resolve }) => {
 	const session = await loadSession(event.cookies);
 	event.locals.session = session;
