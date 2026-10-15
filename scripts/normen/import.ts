@@ -22,37 +22,22 @@ import type {
 	LawText,
 	Provision
 } from '../../src/lib/normen/types.js';
+import { applyCorrections, recitalCorrections } from '../../src/lib/normen/corrigenda.js';
 
 const OUT = 'src/lib/normen/data';
 const CELLAR = 'https://publications.europa.eu/resource/celex/';
 const retrieved = new Date().toISOString().slice(0, 10);
 
-type EuSource = {
-	id: LawId;
-	consolidated: string;
-	original: string;
-	version: Record<Lang, string>;
-};
+/**
+ * the consolidated version is not pinned: the importer asks Cellar for the
+ * newest one in force today, so a re-import picks up amendments. Recitals
+ * come from the original act with the published corrigenda applied.
+ */
+type EuSource = { id: LawId; original: string };
 
 const EU: EuSource[] = [
-	{
-		id: 'dsgvo',
-		consolidated: '02016R0679-20160504',
-		original: '32016R0679',
-		version: {
-			de: 'Konsolidierte Fassung vom 4. Mai 2016 (Berichtigung eingearbeitet); Erwägungsgründe aus ABl. L 119 vom 4. Mai 2016',
-			en: 'Consolidated version of 4 May 2016 (corrigendum incorporated); recitals from OJ L 119 of 4 May 2016'
-		}
-	},
-	{
-		id: 'ki-vo',
-		consolidated: '02024R1689-20260727',
-		original: '32024R1689',
-		version: {
-			de: 'Konsolidierte Fassung vom 27. Juli 2026 (mit Änderungen durch die Verordnung (EU) 2026/1744); Erwägungsgründe aus ABl. L 2024/1689',
-			en: 'Consolidated version of 27 July 2026 (with amendments by Regulation (EU) 2026/1744); recitals from OJ L 2024/1689'
-		}
-	}
+	{ id: 'dsgvo', original: '32016R0679' },
+	{ id: 'ki-vo', original: '32024R1689' }
 ];
 
 const DE: { id: LawId; path: string }[] = [
@@ -60,12 +45,87 @@ const DE: { id: LawId; path: string }[] = [
 	{ id: 'tdddg', path: 'ttdsg' }
 ];
 
-async function cellar(celex: string, lang: Lang): Promise<string> {
-	const response = await fetch(CELLAR + celex, {
+/** Cellar wants the brackets of corrigendum numbers such as 32016R0679R(02) encoded */
+const celexUrl = (celex: string) => CELLAR + celex.replace(/\(/g, '%28').replace(/\)/g, '%29');
+
+async function cellarOptional(celex: string, lang: Lang): Promise<string | null> {
+	const response = await fetch(celexUrl(celex), {
 		headers: { accept: 'application/xhtml+xml', 'accept-language': lang === 'de' ? 'deu' : 'eng' }
 	});
+	// corrigenda exist only in the languages they correct
+	if (response.status === 404) return null;
 	if (!response.ok) throw new Error(`${celex} ${lang}: HTTP ${response.status}`);
 	return response.text();
+}
+
+async function cellar(celex: string, lang: Lang): Promise<string> {
+	const html = await cellarOptional(celex, lang);
+	if (html === null) throw new Error(`${celex} ${lang}: not found`);
+	return html;
+}
+
+async function sparql(query: string): Promise<Record<string, string>[]> {
+	const response = await fetch('https://publications.europa.eu/webapi/rdf/sparql', {
+		method: 'POST',
+		headers: {
+			accept: 'application/sparql-results+json',
+			'content-type': 'application/x-www-form-urlencoded'
+		},
+		body: new URLSearchParams({ query })
+	});
+	if (!response.ok) throw new Error(`SPARQL: HTTP ${response.status}`);
+	const json = (await response.json()) as {
+		results: { bindings: Record<string, { value: string }>[] };
+	};
+	return json.results.bindings.map((row) =>
+		Object.fromEntries(Object.entries(row).map(([key, cell]) => [key, cell.value]))
+	);
+}
+
+/** acts that amend or correct `original`, with their date as YYYYMMDD */
+async function related(
+	original: string,
+	relation: 'amends' | 'corrects'
+): Promise<{ celex: string; date: string }[]> {
+	const rows = await sparql(`PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+SELECT DISTINCT ?celex ?date WHERE {
+  ?t cdm:resource_legal_id_celex ?tc . FILTER(STR(?tc) = "${original}")
+  ?w cdm:resource_legal_${relation}_resource_legal ?t ; cdm:resource_legal_id_celex ?celex ;
+     cdm:work_date_document ?date .
+}`);
+	return rows
+		.map((r) => ({ celex: r.celex, date: r.date.replace(/-/g, '') }))
+		.sort((a, b) => a.date.localeCompare(b.date));
+}
+
+async function consolidatedVersions(original: string): Promise<string[]> {
+	const prefix = `0${original.slice(1)}-`;
+	const rows = await sparql(`PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+SELECT DISTINCT ?celex WHERE {
+  ?w cdm:resource_legal_id_celex ?celex . FILTER(STRSTARTS(STR(?celex), "${prefix}"))
+}`);
+	return rows.map((r) => r.celex).sort();
+}
+
+const versionDate = (celex: string) => celex.slice(-8);
+
+/** "32026R1744" → "(EU) 2026/1744" with the kind of act per language */
+function actName(celex: string, lang: Lang): string {
+	const kind = celex[5] === 'L' ? ['Richtlinie', 'Directive'] : ['Verordnung', 'Regulation'];
+	const number = `(EU) ${celex.slice(1, 5)}/${Number(celex.slice(6))}`;
+	return `${kind[lang === 'de' ? 0 : 1]} ${number}`;
+}
+
+function longDate(yyyymmdd: string, lang: Lang): string {
+	const date = new Date(
+		`${yyyymmdd.slice(0, 4)}-${yyyymmdd.slice(4, 6)}-${yyyymmdd.slice(6)}T12:00:00Z`
+	);
+	return date.toLocaleDateString(lang === 'de' ? 'de-DE' : 'en-GB', {
+		day: 'numeric',
+		month: 'long',
+		year: 'numeric',
+		timeZone: 'UTC'
+	});
 }
 
 const clean = (text: string) =>
@@ -74,6 +134,17 @@ const clean = (text: string) =>
 		.replace(/[▼►◄]\s*[A-Z]\d*/g, '')
 		.replace(/\s+/g, ' ')
 		.trim();
+
+/** text lines of a corrigendum, one per paragraph or table cell */
+function corrigendumLines(html: string): string[] {
+	const $ = cheerio.load(html);
+	$('p, div, td, br').before('\n');
+	return $('body')
+		.text()
+		.split('\n')
+		.map((line) => clean(line))
+		.filter(Boolean);
+}
 
 /** block structure of EU (consolidated) markup: numbered paragraphs, grid lists, plain paragraphs */
 function euBlocks($: cheerio.CheerioAPI, parent: AnyNode): Block[] {
@@ -181,11 +252,21 @@ function parseRecitals(html: string): Map<string, string> {
 }
 
 async function importEu(source: EuSource): Promise<LawText> {
-	const [consDe, consEn, origDe, origEn] = await Promise.all([
-		cellar(source.consolidated, 'de'),
-		cellar(source.consolidated, 'en'),
+	const today = retrieved.replace(/-/g, '');
+	const versions = await consolidatedVersions(source.original);
+	const inForce = versions.filter((v) => versionDate(v) <= today);
+	const consolidated = inForce.at(-1);
+	if (!consolidated) throw new Error(`${source.id}: no consolidated version`);
+	const upcoming = versions.filter((v) => versionDate(v) > today);
+	if (upcoming.length > 0) console.warn(`${source.id}: future versions not imported:`, upcoming);
+
+	const [consDe, consEn, origDe, origEn, amendments, corrigenda] = await Promise.all([
+		cellar(consolidated, 'de'),
+		cellar(consolidated, 'en'),
 		cellar(source.original, 'de'),
-		cellar(source.original, 'en')
+		cellar(source.original, 'en'),
+		related(source.original, 'amends'),
+		related(source.original, 'corrects')
 	]);
 	const de = parseConsolidated(consDe);
 	const en = parseConsolidated(consEn);
@@ -193,6 +274,49 @@ async function importEu(source: EuSource): Promise<LawText> {
 	const enAnnexes = new Map(en.annexes.map((a) => [a.number, a]));
 	const recitalsDe = parseRecitals(origDe);
 	const recitalsEn = parseRecitals(origEn);
+	const corrected: Record<Lang, string[]> = { de: [], en: [] };
+	for (const { celex } of corrigenda) {
+		for (const [lang, recitals] of [
+			['de', recitalsDe],
+			['en', recitalsEn]
+		] as const) {
+			const html = await cellarOptional(celex, lang);
+			if (html === null) continue;
+			const applied = applyCorrections(
+				recitals,
+				recitalCorrections(corrigendumLines(html)),
+				`${celex} ${lang}`
+			);
+			if (applied > 0) corrected[lang].push(celex);
+			console.log(source.id, celex, lang, applied, 'recital corrections');
+		}
+	}
+	const date = versionDate(consolidated);
+	// an amendment published after the version date is not in this text yet
+	const amended = amendments.filter((a) => a.date <= date).map((a) => a.celex);
+	const version = (lang: Lang) => {
+		const parts =
+			lang === 'de'
+				? [
+						`Konsolidierte Fassung vom ${longDate(date, lang)}`,
+						amended.length > 0
+							? `geändert durch ${amended.map((a) => actName(a, lang)).join(', ')}`
+							: '',
+						corrected.de.length > 0
+							? 'Erwägungsgründe aus dem Amtsblatt, Berichtigungen eingearbeitet'
+							: 'Erwägungsgründe aus dem Amtsblatt'
+					]
+				: [
+						`Consolidated version of ${longDate(date, lang)}`,
+						amended.length > 0
+							? `amended by ${amended.map((a) => actName(a, lang)).join(', ')}`
+							: '',
+						corrected.en.length > 0
+							? 'recitals from the Official Journal, corrigenda applied'
+							: 'recitals from the Official Journal'
+					];
+		return parts.filter(Boolean).join('; ');
+	};
 
 	const provisions: Provision[] = [
 		...de.articles.map((a) => ({
@@ -228,12 +352,12 @@ async function importEu(source: EuSource): Promise<LawText> {
 		id: source.id,
 		source: {
 			de: {
-				url: `https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:${source.consolidated}`,
-				version: source.version.de
+				url: `https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:${consolidated}`,
+				version: version('de')
 			},
 			en: {
-				url: `https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:${source.consolidated}`,
-				version: source.version.en
+				url: `https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:${consolidated}`,
+				version: version('en')
 			}
 		},
 		retrieved,
@@ -311,13 +435,21 @@ async function importDe(law: { id: LawId; path: string }): Promise<LawText> {
 	const $ = cheerio.load(xml, { xml: true });
 	const chapters: Chapter[] = [];
 	const provisions: Provision[] = [];
-	let stand = '';
+	const stand: string[] = [];
 
 	$('norm').each((_, norm) => {
 		const meta = $(norm).children('metadaten');
 		const unit = meta.children('gliederungseinheit');
 		const enbez = clean(meta.children('enbez').text());
-		if (!stand) stand = clean(meta.find('standkommentar').first().text());
+		// "Stand" names the last amendment, "Hinweis" newer ones already in the text
+		if (stand.length === 0) {
+			meta.find('standangabe').each((__, entry) => {
+				const kind = clean($(entry).children('standtyp').text());
+				if (kind === 'Stand' || kind === 'Hinweis') {
+					stand.push(clean($(entry).children('standkommentar').text()));
+				}
+			});
+		}
 		if (unit.length > 0) {
 			chapters.push({
 				title: {
@@ -342,7 +474,7 @@ async function importDe(law: { id: LawId; path: string }): Promise<LawText> {
 		source: {
 			de: {
 				url: `https://www.gesetze-im-internet.de/${law.path}/`,
-				version: stand || 'Fassung nach gesetze-im-internet.de'
+				version: stand.join('; ') || 'Fassung nach gesetze-im-internet.de'
 			}
 		},
 		retrieved,
