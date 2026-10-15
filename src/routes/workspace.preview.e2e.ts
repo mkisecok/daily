@@ -34,3 +34,16 @@ test('preview: notes stay in the browser and reports read the browser records', 
 	);
 	await expect(page.locator('.report')).toContainText('nur in der vollständigen Installation');
 });
+
+test('preview: a checked box stays distinguishable in forced colours', async ({ page }) => {
+	await page.emulateMedia({ forcedColors: 'active' });
+	await page.goto('werkzeuge/datenpanne/eintraege/?neu=1');
+	const boxes = page.locator('.choices input[type="checkbox"]');
+	await boxes.first().check();
+	const [checked, unchecked] = await Promise.all(
+		[boxes.nth(0), boxes.nth(1)].map((box) =>
+			box.evaluate((el) => getComputedStyle(el).backgroundColor)
+		)
+	);
+	expect(checked).not.toBe(unchecked);
+});
