@@ -98,12 +98,25 @@
 
 		& li {
 			break-inside: avoid;
-			padding: 0.3rem 0;
 			font-family: var(--serif);
 			font-size: 15px;
 
+			& a {
+				display: flex;
+				align-items: baseline;
+				padding: 0.3rem 0;
+
+				/* finger-sized rows on phones */
+				@media (max-width: 40rem) {
+					align-items: center;
+					min-height: 44px;
+					border-bottom: 1px solid var(--rule2);
+				}
+			}
+
 			& .ref {
 				display: inline-block;
+				flex: none;
 				min-width: 4.5rem;
 				font-family: var(--mono);
 				font-size: 12px;
@@ -118,6 +131,20 @@
 			margin-top: 0.5rem;
 			font-family: var(--mono);
 			font-size: 13px;
+
+			/* recital numbers become tap-sized boxes on phones */
+			@media (max-width: 40rem) {
+				gap: 0.35rem;
+
+				& a {
+					display: inline-grid;
+					place-items: center;
+					min-width: 2.75rem;
+					min-height: 2.75rem;
+					border: 1px solid var(--rule2);
+					border-radius: var(--radius);
+				}
+			}
 		}
 	}
 </style>

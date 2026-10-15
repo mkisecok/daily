@@ -38,7 +38,11 @@
 		white-space: nowrap;
 	}
 
+	/* at least 24px tall, so the link is easy to hit on a phone */
 	.citation-link {
+		display: inline-flex;
+		align-items: center;
+		min-height: 24px;
 		text-decoration: none;
 
 		&:hover .citation {

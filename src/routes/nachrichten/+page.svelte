@@ -314,6 +314,22 @@
 				color: var(--ink);
 				border-bottom-color: var(--ink);
 			}
+
+			/* filters become chips on phones, big enough for a thumb */
+			@media (max-width: 40rem) {
+				display: inline-flex;
+				align-items: center;
+				min-height: 2.5rem;
+				padding: 0 0.7rem;
+				background: var(--sheet);
+				border: 1px solid var(--rule);
+				border-radius: var(--radius);
+
+				&[aria-current='true'] {
+					background: var(--khaki-soft);
+					border-color: var(--khaki);
+				}
+			}
 		}
 	}
 

@@ -38,6 +38,12 @@
 
 				& a {
 					color: var(--ink2);
+
+					@media (max-width: 40rem) {
+						display: inline-flex;
+						align-items: center;
+						min-height: 44px;
+					}
 				}
 			}
 
