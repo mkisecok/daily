@@ -81,7 +81,7 @@
 	"check_not_saved": "This result is not saved. With an account, assessments are stored with date and catalog version.",
 	"check_edit": "Change answers",
 	"check_noscript": "The evaluation runs in your browser and needs JavaScript.",
-	"preview_notice": "Public preview. Sign-in, notes and saved assessments are switched off here; register entries stay in your browser.",
+	"preview_notice": "Public preview. Sign-in and saved assessments are switched off here; entries and notes stay in your browser.",
 	"preview_more": "What this means",
 	"preview_title": "Public preview",
 	"preview_intro": "This version of Daily is a static preview. It runs without a server, database or sign-in and is rebuilt several times a day.",

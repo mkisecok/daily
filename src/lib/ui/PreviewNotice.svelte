@@ -7,30 +7,42 @@
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
 	import { localized } from '#lib/i18n/links.js';
+	import Icon from './Icon.svelte';
 </script>
 
 <p class="notice no-print">
 	<span class="page inner">
-		<span>{m.preview_notice()}</span>
+		<Icon name="eye" size={16} />
+		<span class="text">{m.preview_notice()}</span>
 		<a href={resolve(localized('/vorschau'))}>{m.preview_more()} →</a>
 	</span>
 </p>
 
 <style>
 	.notice {
-		background: var(--navy-soft);
-		border-bottom: 1px solid var(--rule);
-		font-family: var(--mono);
-		font-size: 11px;
-		letter-spacing: 0.04em;
+		font-size: 13px;
 		color: var(--ink2);
+		background: var(--sheet);
+		border-bottom: 1px solid var(--rule);
+		box-shadow: inset 3px 0 0 var(--navy);
 
 		& .inner {
 			display: flex;
 			flex-wrap: wrap;
-			gap: 0.25rem 1rem;
+			align-items: center;
+			gap: 0.25rem 0.6rem;
 			padding-top: 0.45rem;
 			padding-bottom: 0.45rem;
+			color: var(--navy);
+		}
+
+		& .text {
+			flex: 1 1 20rem;
+			color: var(--ink2);
+		}
+
+		& a {
+			white-space: nowrap;
 		}
 	}
 </style>

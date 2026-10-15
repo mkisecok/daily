@@ -81,7 +81,7 @@
 	"check_not_saved": "Dieses Ergebnis wird nicht gespeichert. Mit einem Konto werden Prüfungen mit Datum und Katalogversion abgelegt.",
 	"check_edit": "Antworten ändern",
 	"check_noscript": "Die Auswertung läuft im Browser und benötigt JavaScript.",
-	"preview_notice": "Öffentliche Vorschau. Anmeldung, Notizen und gespeicherte Prüfungen sind hier abgeschaltet; Register-Einträge bleiben in Ihrem Browser.",
+	"preview_notice": "Öffentliche Vorschau. Anmeldung und gespeicherte Prüfungen sind hier abgeschaltet; Einträge und Notizen bleiben in Ihrem Browser.",
 	"preview_more": "Was das bedeutet",
 	"preview_title": "Öffentliche Vorschau",
 	"preview_intro": "Diese Fassung von Daily ist eine statische Vorschau. Sie läuft ohne Server, ohne Datenbank und ohne Anmeldung und wird mehrmals täglich neu erzeugt.",
