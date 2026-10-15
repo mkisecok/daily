@@ -104,6 +104,7 @@
 			& a {
 				display: flex;
 				align-items: baseline;
+				gap: 0.4rem;
 				padding: 0.3rem 0;
 
 				/* finger-sized rows on phones */
