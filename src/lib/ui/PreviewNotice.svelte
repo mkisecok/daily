@@ -26,6 +26,11 @@
 		border-bottom: 1px solid var(--rule);
 		box-shadow: inset 3px 0 0 var(--navy);
 
+		/* phones show a "Vorschau" chip in the masthead instead */
+		@media (max-width: 56rem) {
+			display: none;
+		}
+
 		& .inner {
 			display: flex;
 			flex-wrap: wrap;

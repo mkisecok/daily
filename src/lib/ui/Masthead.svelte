@@ -14,6 +14,8 @@
 	import LangSwitch from './LangSwitch.svelte';
 	import ThemeSwitch from './ThemeSwitch.svelte';
 	import Tooltip from './Tooltip.svelte';
+	import Icon from './Icon.svelte';
+	import MenuSheet from './MenuSheet.svelte';
 
 	let {
 		theme,
@@ -41,6 +43,9 @@
 			: [])
 	]);
 
+	let menuOpen = $state(false);
+	const menuItems = $derived(items.map((item) => ({ ...item, current: isCurrent(item.route) })));
+
 	const loginHref = $derived(
 		resolve(localized(`/auth/login?next=${encodeURIComponent(page.url.pathname)}`))
 	);
@@ -65,6 +70,22 @@
 				</a>
 			{/each}
 		</nav>
+		<div class="phone">
+			{#if PUBLIC_PREVIEW}
+				<a class="chip" href={resolve(localized('/vorschau'))}>{m.preview_chip()}</a>
+			{/if}
+			<button
+				type="button"
+				class="menu"
+				aria-label={m.nav_menu()}
+				aria-haspopup="dialog"
+				aria-expanded={menuOpen}
+				aria-controls="phone-menu"
+				onclick={() => (menuOpen = true)}
+			>
+				<Icon name="menu-2" size={24} />
+			</button>
+		</div>
 		<div class="tools">
 			<LangSwitch />
 			<ThemeSwitch initial={theme} />
@@ -87,6 +108,16 @@
 	</div>
 </header>
 
+<MenuSheet
+	bind:open={menuOpen}
+	id="phone-menu"
+	items={menuItems}
+	{theme}
+	{user}
+	{organisation}
+	loginHref={PUBLIC_PREVIEW ? undefined : loginHref}
+/>
+
 <style>
 	/* stays at the top while scrolling, so the navigation is always at hand */
 	.masthead {
@@ -105,8 +136,7 @@
 			padding-top: 0.75rem;
 			padding-bottom: 0.75rem;
 
-			/* narrow screens: wordmark and tools in one row, the navigation as one
-			   scrollable line below, so the sticky bar stays low. */
+			/* narrow screens: wordmark and the menu button in one low row */
 			@media (max-width: 56rem) {
 				gap: 0.4rem 1rem;
 				min-height: 0;
@@ -141,25 +171,57 @@
 				}
 			}
 
+			& .phone {
+				display: none;
+				align-items: center;
+				gap: 0.5rem;
+				margin-left: auto;
+
+				@media (max-width: 56rem) {
+					display: flex;
+					order: 2;
+				}
+
+				& .chip {
+					padding: 0.2rem 0.55rem;
+					font-family: var(--mono);
+					font-size: 11px;
+					letter-spacing: 0.08em;
+					text-transform: uppercase;
+					color: var(--navy);
+					border: 1px solid var(--rule);
+					border-radius: var(--radius);
+
+					&:hover {
+						text-decoration: none;
+						border-color: var(--navy);
+					}
+				}
+
+				& .menu {
+					display: inline-grid;
+					place-items: center;
+					width: 44px;
+					height: 44px;
+					margin-right: -0.5rem;
+					color: var(--ink);
+					border-radius: var(--radius);
+
+					&:hover {
+						background: var(--navy-soft);
+					}
+				}
+			}
+
 			& nav {
 				display: flex;
 				flex-wrap: wrap;
 				gap: 1.5rem;
 				margin-left: auto;
 
-				@media (max-width: 40rem) {
-					margin-left: 0;
-					gap: 1rem;
-				}
-
+				/* phones use the menu sheet instead */
 				@media (max-width: 56rem) {
-					order: 3;
-					flex: 1 1 100%;
-					flex-wrap: nowrap;
-					gap: 1.1rem;
-					margin-left: 0;
-					overflow-x: auto;
-					scrollbar-width: none;
+					display: none;
 				}
 
 				& a {
@@ -178,10 +240,6 @@
 						color: var(--ink);
 						border-bottom-color: var(--ink);
 					}
-
-					@media (max-width: 56rem) {
-						white-space: nowrap;
-					}
 				}
 			}
 
@@ -191,8 +249,7 @@
 				gap: 1rem;
 
 				@media (max-width: 56rem) {
-					order: 2;
-					margin-left: auto;
+					display: none;
 				}
 
 				& .login,

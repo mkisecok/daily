@@ -65,3 +65,31 @@ test('preview: the calendar fills a date field and the record keeps it', async (
 	const [year, month] = (iso ?? '').split('-');
 	await expect(page.locator('.record-view')).toContainText(`15.${month}.${year}`);
 });
+
+test('preview: on a phone the menu opens as a sheet, navigates and closes', async ({ page }) => {
+	await page.setViewportSize({ width: 375, height: 740 });
+	await page.goto('werkzeuge/');
+	await expect(page.locator('header.masthead > .inner > nav')).toBeHidden();
+	const button = page.getByRole('button', { name: 'Menü' });
+	await button.click();
+	const sheet = page.getByRole('dialog');
+	const menu = sheet.getByRole('navigation', { name: 'Hauptnavigation' });
+	await expect(menu.getByRole('link')).toHaveCount(6);
+	await expect(sheet.getByRole('link', { name: /Werkzeuge/ })).toHaveAttribute(
+		'aria-current',
+		'page'
+	);
+	const box = await sheet.getByRole('link', { name: /Normen/ }).boundingBox();
+	expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
+
+	await sheet.getByRole('link', { name: /Normen/ }).click();
+	await expect(page).toHaveURL(/\/daily\/normen\/$/);
+	await expect(sheet).toBeHidden();
+
+	await button.click();
+	await expect(sheet).toBeVisible();
+	await page.keyboard.press('Escape');
+	await expect(sheet).toBeHidden();
+	await expect(button).toBeFocused();
+	expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBe(0);
+});

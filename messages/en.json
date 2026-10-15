@@ -239,5 +239,8 @@
 	"date_open_calendar": "Open calendar",
 	"date_previous_month": "Previous month",
 	"date_next_month": "Next month",
-	"control_no_match": "No matches"
+	"control_no_match": "No matches",
+	"nav_menu": "Menu",
+	"nav_close": "Close menu",
+	"preview_chip": "Preview"
 }
