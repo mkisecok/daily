@@ -31,16 +31,18 @@
 	let failed = $state(false);
 
 	// the query string is read in the browser only: the page is prerendered
-	onMount(async () => {
-		const [slug, id, field] = (page.url.searchParams.get('fuer') ?? '').split(':');
-		const tool = getRecordTool(slug ?? '');
-		const def = tool && field ? fieldById(tool.definition, field) : undefined;
-		if (!tool || !id || def?.type !== 'assessment' || def.tool !== questionnaire) return;
-		const detail = await getStore()
-			.get(id)
-			.catch(() => null);
-		if (!detail || detail.record.archivedAt) return;
-		target = { tool, id, field: def.id, record: detail.record };
+	onMount(() => {
+		void (async () => {
+			const [slug, id, field] = (page.url.searchParams.get('fuer') ?? '').split(':');
+			const tool = getRecordTool(slug ?? '');
+			const def = tool && field ? fieldById(tool.definition, field) : undefined;
+			if (!tool || !id || def?.type !== 'assessment' || def.tool !== questionnaire) return;
+			const detail = await getStore()
+				.get(id)
+				.catch(() => null);
+			if (!detail || detail.record.archivedAt) return;
+			target = { tool, id, field: def.id, record: detail.record };
+		})();
 	});
 
 	async function attach() {
@@ -95,9 +97,9 @@
 		border-left: 3px solid var(--navy);
 		background: var(--navy-soft);
 		font-size: 14px;
-	}
 
-	.failed {
-		color: var(--wax);
+		& .failed {
+			color: var(--wax);
+		}
 	}
 </style>
