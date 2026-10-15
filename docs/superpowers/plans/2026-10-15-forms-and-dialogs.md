@@ -127,8 +127,8 @@ form styles, plus Icon, Modal, ConfirmDialog, Tooltip and cards, and use them ac
   - disabled: 0.45 opacity
 - [ ] `.card` and `.card.accent` in `primitives.css`.
 - [ ] `Icon.svelte`: an SVG 24×24 viewBox, `fill="none"`, `stroke="currentColor"`,
-      `stroke-width="1.5"`, round caps and joins. Paths come from a `const PATHS:
-      Record<IconName, string[]>` copied from Tabler 3.x (MIT; the licence header comment
+      `stroke-width="1.5"`, round caps and joins. Paths come from an `ICONS` record
+      copied from Tabler 3.x (MIT; the licence header comment
       names the source).
 - [ ] `FieldInput`: delete the local field, input and choice styles (keep grid, label, help,
       error and cite layout). The boolean and multiselect `.choices` become tiles through the
@@ -283,8 +283,9 @@ await dialog.getByRole('button', { name: 'Archivieren' }).click();
 - [ ] Apply `.card` to the tool entries, link groups, report tool sections and deadline groups.
       Remove the now-duplicate local borders and padding.
 - [ ] Autofixer, `pnpm check`, `pnpm lint`, E2E.
-- [ ] Commits: `feat(ui): tooltips instead of title attributes` and `feat(ui): cards for tools,
-      links, reports and deadlines`.
+- [ ] Commits:
+  - `feat(ui): tooltips instead of title attributes`
+  - `feat(ui): cards for tools, links, reports and deadlines`
 
 ### Task 7: Verify, document, ship
 

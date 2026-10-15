@@ -14,3 +14,4 @@ bun.lockb
 
 # Generated law texts (pnpm normen:import)
 /src/lib/normen/data/
+/.superpowers/
