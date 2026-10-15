@@ -10,6 +10,7 @@
 	import Markdown from '#lib/notes/ui/Markdown.svelte';
 	import { getStore } from '#lib/records/store/index.js';
 	import type { StoredRecord } from '#lib/records/types.js';
+	import ConfirmDialog from '#lib/ui/ConfirmDialog.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -229,19 +230,19 @@
 			<button type="button" class="quiet" onclick={() => window.print()}>{m.records_print()}</button
 			>
 			<a class="button quiet" href={resolve(listPath)}>{m.notes_back()}</a>
-			{#if confirmArchive}
-				<span class="confirm">{m.records_archive_confirm()}</span>
-				<button type="button" onclick={() => archive(record)} disabled={busy}>
-					{m.records_archive_yes()}
-				</button>
-				<button type="button" class="quiet" onclick={() => (confirmArchive = false)}>
-					{m.records_cancel()}
-				</button>
-			{:else}
-				<button type="button" class="quiet" onclick={() => (confirmArchive = true)}>
-					{m.records_archive()}
-				</button>
-			{/if}
+			<button type="button" class="quiet" disabled={busy} onclick={() => (confirmArchive = true)}>
+				{m.records_archive()}
+			</button>
+			<ConfirmDialog
+				bind:open={confirmArchive}
+				title={m.notes_archive_title()}
+				body={m.records_archive_confirm()}
+				confirmLabel={m.records_archive()}
+				tone="danger"
+				icon="archive"
+				typeToConfirm={m.records_archive_word()}
+				onconfirm={() => archive(record)}
+			/>
 		</div>
 	{/if}
 {:else}
@@ -462,13 +463,6 @@
 
 	.actions {
 		margin-top: 2rem;
-
-		& .confirm {
-			font-family: var(--sans);
-			font-size: 14px;
-			letter-spacing: 0;
-			text-transform: none;
-		}
 	}
 
 	.quiet-text {
