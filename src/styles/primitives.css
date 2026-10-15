@@ -41,6 +41,16 @@
 	align-items: center;
 	gap: 0.75rem;
 	flex-wrap: wrap;
+
+	/* on small phones every action gets the full width and a thumb-sized height */
+	@media (max-width: 24rem) {
+		& > button,
+		& > .button {
+			flex: 1 1 100%;
+			justify-content: center;
+			min-height: 44px;
+		}
+	}
 }
 
 /**
@@ -126,6 +136,29 @@
 
 	&.accent {
 		border-top: 2px solid var(--navy);
+	}
+
+	/**
+	 * index card ("Karteikarte"): a spine in the colour of its area. An inset
+	 * shadow draws it, so the rounded corners stay intact.
+	 */
+	&.index {
+		--spine: var(--ink3);
+
+		padding-left: 1.5rem;
+		box-shadow: inset 4px 0 0 var(--spine);
+
+		&[data-area='datenschutz'] {
+			--spine: var(--navy);
+		}
+
+		&[data-area='ki'] {
+			--spine: var(--wax);
+		}
+
+		&[data-area='audit'] {
+			--spine: var(--khaki);
+		}
 	}
 }
 

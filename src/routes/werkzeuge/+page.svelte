@@ -15,7 +15,7 @@
 		entwickler: m.category_entwickler
 	};
 
-	const numerals = ['I.', 'II.', 'III.', 'IV.'];
+	const numerals = ['I', 'II', 'III', 'IV'];
 </script>
 
 <svelte:head>
@@ -30,10 +30,14 @@
 
 {#each categories as category, index (category)}
 	<section class="group">
-		<h2><span class="numeral">{numerals[index]}</span> {labels[category]()}</h2>
+		<h2><span class="numeral">{numerals[index]}.</span> {labels[category]()}</h2>
 		<ol class="list">
-			{#each toolsByCategory(category) as tool (tool.slug)}
-				<li class="tool card" data-status={tool.status}>
+			{#each toolsByCategory(category) as tool, position (tool.slug)}
+				<li class="tool card index" data-area={category} data-status={tool.status}>
+					<div class="meta">
+						<span class="chapter">{numerals[index]}.{position + 1}</span>
+						<StatusBadge status={tool.status} />
+					</div>
 					<div class="name">
 						{#if tool.status === 'planned'}
 							<span class="title">{text(tool.name)}</span>
@@ -42,15 +46,13 @@
 								>{text(tool.name)}</a
 							>
 						{/if}
-						<StatusBadge status={tool.status} />
 					</div>
 					<p class="summary">{text(tool.summary)}</p>
-					<p class="basis">
-						{#each tool.legalBasis as basis, i (basis.law + basis.ref)}
-							{#if i > 0}<span class="sep">·</span>{/if}
-							<Citation {basis} />
+					<ul class="basis">
+						{#each tool.legalBasis as basis (basis.law + basis.ref)}
+							<li class="cite-chip"><Citation {basis} /></li>
 						{/each}
-					</p>
+					</ul>
 				</li>
 			{/each}
 		</ol>
@@ -97,7 +99,7 @@
 
 			& .tool {
 				display: grid;
-				grid-row: span 3;
+				grid-row: span 4;
 				grid-template-rows: subgrid;
 				gap: 0.6rem;
 				transition: border-color 0.12s ease;
@@ -111,12 +113,23 @@
 					box-shadow: 0 0 0 3px var(--navy-soft);
 				}
 
-				& .name {
+				& .meta {
 					display: flex;
-					flex-wrap: wrap;
 					align-items: baseline;
 					justify-content: space-between;
-					gap: 0.4rem 0.75rem;
+					gap: 0.75rem;
+
+					& .chapter {
+						font-family: var(--mono);
+						font-size: 12px;
+						letter-spacing: 0.04em;
+						color: var(--spine);
+					}
+				}
+
+				& .name {
+					display: flex;
+					align-items: baseline;
 				}
 
 				& .title {
@@ -140,12 +153,23 @@
 					display: flex;
 					flex-wrap: wrap;
 					align-content: flex-end;
-					gap: 0.25rem 0.6rem;
-					padding-top: 0.6rem;
+					gap: 0.35rem;
+					padding-top: 0.7rem;
+					list-style: none;
 					border-top: 1px solid var(--rule2);
 
-					& .sep {
-						color: var(--ink3);
+					& .cite-chip {
+						display: inline-flex;
+						align-items: center;
+						min-height: 1.75rem;
+						padding: 0 0.45rem;
+						background: var(--paper);
+						border: 1px solid var(--rule);
+						border-radius: var(--radius);
+
+						&:hover {
+							border-color: var(--navy);
+						}
 					}
 				}
 
