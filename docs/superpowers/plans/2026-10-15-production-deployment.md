@@ -115,14 +115,14 @@ Other changes:
 
 ## 3. Admin tasks today (without an admin UI)
 
-| Task                                             | How                                                                                                                                                                                     |
-| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Create, disable or delete users; reset passwords | Keycloak admin console. Local: `http://localhost:8080/admin/` with the dev credentials from `compose.yaml`. Production: `https://auth.dai-ly.de/admin/` with the personal admin account |
-| See who logged in; unlock after brute force      | Keycloak → realm `daily` → Sessions / Events (enable login events) / Users → Brute force                                                                                                |
-| Look at data                                     | `pnpm db:studio` (Drizzle Studio) against the local database. In production only via an SSH tunnel, never exposed                                                                       |
-| News sources                                     | Edit `src/lib/server/feed/sources.ts`; the worker syncs them into the table on start                                                                                                    |
-| Law texts                                        | `pnpm normen:import`, review, commit. See `2026-10-15-law-maintenance.md`                                                                                                               |
-| Organisations                                    | Users create client organisations under `/mandanten`. Renaming and deleting has no admin path yet                                                                                       |
+| Task                                             | How                                                                                                                                                                                               |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Create, disable or delete users; reset passwords | Keycloak admin console. Local: `http://localhost:8080/admin/` with the dev credentials from `compose.yaml`. Production: `https://auth.dai-ly.de/admin/` with the personal admin account           |
+| See who logged in; unlock after brute force      | Keycloak → realm `daily` → Sessions / Events (enable login events) / Users → Brute force                                                                                                          |
+| Look at data                                     | Adminer at `http://localhost:8081` (local compose stack, bound to localhost) or `pnpm db:studio` (Drizzle Studio) against the local database. In production only via an SSH tunnel, never exposed |
+| News sources                                     | Edit `src/lib/server/feed/sources.ts`; the worker syncs them into the table on start                                                                                                              |
+| Law texts                                        | `pnpm normen:import`, review, commit. See `2026-10-15-law-maintenance.md`                                                                                                                         |
+| Organisations                                    | Users create client organisations under `/mandanten`. Renaming and deleting has no admin path yet                                                                                                 |
 
 ## 4. Feature plan: admin area in the app
 
