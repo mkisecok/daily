@@ -1,15 +1,17 @@
 /**
- * Design tokens — the "Kanzlei" identity.
+ * design tokens — the "Kanzlei" identity, palette "Tinte und Oliv"
  *
  * Paper and ink, hairline rules, serif headings, mono for article numbers and
- * dates. Three signal colours only, and they are the wordmark's letters:
+ * dates. Three signal colours only, and they are the wordmark's letters, each
+ * with one job:
  *
- *   navy   D   data        links, primary actions
- *   wax    AI  AI          warnings, fines, overdue deadlines
- *   khaki  L   law         done, compliant, success
+ *   khaki  L   law         act: primary buttons, chosen options, checked boxes, done
+ *   navy   D   data        navigate and inform: links, citations, focus, tooltips
+ *   wax    AI  AI          warn and destroy: overdue, destructive actions, required
  *
- * Everything else is ink on paper. No gradients, no shadows on surfaces,
- * no pills, no emoji.
+ * Everything else is ink on paper. Corners are 3px. Shadows only on floating
+ * layers (dropdown lists, tooltips, dialogs); page surfaces stay flat. No
+ * gradients, no pills, no emoji.
  */
 
 :root,
@@ -22,14 +24,21 @@ html[data-theme='light'] {
 	--ink2: #4a4741;
 	--ink3: #8a857b;
 
-	--navy: #1f3a5f;
-	--navy-soft: rgba(31, 58, 95, 0.09);
-	--wax: #a23b2a;
-	--wax-soft: rgba(162, 59, 42, 0.09);
-	--khaki: #6b6b3a;
-	--khaki-soft: rgba(107, 107, 58, 0.11);
+	--navy: #16294a;
+	--navy-soft: rgba(22, 41, 74, 0.09);
+	--wax: #8b2c1f;
+	--wax-soft: rgba(139, 44, 31, 0.09);
+	--khaki: #4f5126;
+	--khaki-strong: #3f411e;
+	--khaki-soft: rgba(79, 81, 38, 0.11);
 
 	--on-navy: #fffdf9;
+	--on-khaki: #fffdf9;
+	--on-wax: #fffdf9;
+
+	--radius: 3px;
+	--shadow-float: 0 6px 18px rgba(28, 27, 25, 0.1);
+	--shadow-modal: 0 16px 40px rgba(28, 27, 25, 0.2);
 
 	--sans: 'DM Sans Variable', 'DM Sans', system-ui, -apple-system, sans-serif;
 	--serif: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, 'Times New Roman', serif;
@@ -51,14 +60,20 @@ html[data-theme='dark'] {
 	--ink2: #b5afa3;
 	--ink3: #7f7a70;
 
-	--navy: #7fa8d4;
-	--navy-soft: rgba(127, 168, 212, 0.13);
-	--wax: #d4675a;
-	--wax-soft: rgba(212, 103, 90, 0.14);
-	--khaki: #a7a766;
-	--khaki-soft: rgba(167, 167, 102, 0.14);
+	--navy: #8fb0dc;
+	--navy-soft: rgba(143, 176, 220, 0.13);
+	--wax: #e07a6a;
+	--wax-soft: rgba(224, 122, 106, 0.14);
+	--khaki: #b9b97a;
+	--khaki-strong: #cfcf93;
+	--khaki-soft: rgba(185, 185, 122, 0.14);
 
 	--on-navy: #141311;
+	--on-khaki: #141311;
+	--on-wax: #141311;
+
+	--shadow-float: 0 6px 18px rgba(0, 0, 0, 0.4);
+	--shadow-modal: 0 16px 40px rgba(0, 0, 0, 0.55);
 
 	color-scheme: dark;
 }
