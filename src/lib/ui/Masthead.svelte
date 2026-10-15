@@ -44,7 +44,14 @@
 	]);
 
 	let menuOpen = $state(false);
-	const menuItems = $derived(items.map((item) => ({ ...item, current: isCurrent(item.route) })));
+	const menuItems = $derived(
+		items.map((item) => ({
+			path: localized(item.route),
+			route: item.route,
+			label: item.label,
+			current: isCurrent(item.route)
+		}))
+	);
 
 	const loginHref = $derived(
 		resolve(localized(`/auth/login?next=${encodeURIComponent(page.url.pathname)}`))
@@ -115,7 +122,9 @@
 	{theme}
 	{user}
 	{organisation}
-	loginHref={PUBLIC_PREVIEW ? undefined : loginHref}
+	loginPath={PUBLIC_PREVIEW
+		? undefined
+		: localized(`/auth/login?next=${encodeURIComponent(page.url.pathname)}`)}
 />
 
 <style>

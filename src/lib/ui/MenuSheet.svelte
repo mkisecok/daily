@@ -9,13 +9,13 @@
 	import { afterNavigate } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
-	import { localized } from '#lib/i18n/links.js';
+	import { localized, type RoutePath } from '#lib/i18n/links.js';
 	import type { ThemeSetting } from '#lib/theme.js';
 	import Icon from './Icon.svelte';
 	import LangSwitch from './LangSwitch.svelte';
 	import ThemeSwitch from './ThemeSwitch.svelte';
 
-	type Item = { href: string; route: string; label: string; current: boolean };
+	type Item = { path: RoutePath; route: string; label: string; current: boolean };
 
 	let {
 		open = $bindable(false),
@@ -24,7 +24,7 @@
 		theme,
 		user,
 		organisation,
-		loginHref
+		loginPath
 	}: {
 		open?: boolean;
 		id: string;
@@ -33,7 +33,7 @@
 		user: { displayName: string } | null;
 		organisation: { name: string; kind: 'eigene' | 'mandant' } | null;
 		/** absent in the static preview, which has no sign-in */
-		loginHref?: string;
+		loginPath?: RoutePath;
 	} = $props();
 
 	const NUMERALS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
@@ -75,7 +75,7 @@
 			<ol>
 				{#each items as item, i (item.route)}
 					<li>
-						<a href={item.href} aria-current={item.current ? 'page' : undefined}>
+						<a href={resolve(item.path)} aria-current={item.current ? 'page' : undefined}>
 							<span class="numeral">{NUMERALS[i]}</span>
 							<span class="label">{item.label}</span>
 						</a>
@@ -96,9 +96,9 @@
 					<button type="submit" class="button quiet">{m.nav_logout()}</button>
 				</form>
 			</div>
-		{:else if loginHref}
+		{:else if loginPath}
 			<div class="account">
-				<a class="button" href={loginHref} data-sveltekit-reload>{m.nav_login()}</a>
+				<a class="button" href={resolve(loginPath)} data-sveltekit-reload>{m.nav_login()}</a>
 			</div>
 		{/if}
 
