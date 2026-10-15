@@ -193,28 +193,7 @@
 			margin: 0;
 
 			& .choices {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 0.5rem 1.5rem;
 				margin-top: 0.4rem;
-
-				& label {
-					display: inline-flex;
-					align-items: center;
-					gap: 0.4rem;
-					font-size: 14px;
-					color: var(--ink2);
-					cursor: pointer;
-
-					&:has(input:checked) {
-						color: var(--ink);
-					}
-				}
-
-				& input {
-					accent-color: var(--navy);
-					margin: 0;
-				}
 			}
 		}
 
@@ -244,17 +223,6 @@
 		& textarea {
 			width: 100%;
 			max-width: var(--measure);
-			padding: 0.5rem 0.6rem;
-			font: inherit;
-			font-size: 15px;
-			color: var(--ink);
-			background: var(--sheet);
-			border: 1px solid var(--rule);
-			border-radius: 0;
-
-			&:focus {
-				border-color: var(--navy);
-			}
 		}
 
 		&[data-type='number'] input,
@@ -265,7 +233,6 @@
 
 		& textarea {
 			resize: vertical;
-			line-height: 1.45;
 		}
 
 		& .with-unit {
@@ -288,10 +255,6 @@
 		& .error {
 			font-size: 13px;
 			color: var(--wax);
-		}
-
-		&.invalid :is(input, select, textarea) {
-			border-color: var(--wax);
 		}
 	}
 </style>
