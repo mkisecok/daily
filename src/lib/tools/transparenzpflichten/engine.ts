@@ -1,4 +1,5 @@
 import { count, reasonFor } from '../checklist.js';
+import { DATES } from '../risikoklassifizierung/engine.js';
 import type {
 	Answers,
 	Localized,
@@ -54,8 +55,8 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 		if (yes('a_synthetic') && !yes('a_assistive')) {
 			reasons.push(reasonFor(catalog, 'a_synthetic'));
 			const date = yes('r_existing')
-				? L('ab dem 2. Dezember 2026', 'from 2 December 2026')
-				: L('seit dem 2. August 2026', 'since 2 August 2026');
+				? L(`ab dem ${DATES.transparencyExisting.de}`, `from ${DATES.transparencyExisting.en}`)
+				: L(`seit dem ${DATES.transparency.de}`, `since ${DATES.transparency.en}`);
 			duties.push(
 				L(
 					`Ausgaben in maschinenlesbarem Format kennzeichnen und als künstlich erzeugt oder manipuliert erkennbar machen, soweit technisch möglich (Wasserzeichen, Metadaten, kryptografische Nachweise); Pflicht ${date.de} (Art. 50 Abs. 2).`,

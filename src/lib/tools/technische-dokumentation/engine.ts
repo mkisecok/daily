@@ -1,4 +1,5 @@
 import { auditSections, count, reasonFor } from '../checklist.js';
+import { DATES } from '../risikoklassifizierung/engine.js';
 import type { Answers, Localized, QuestionnaireCatalog, QuestionnaireResult } from '../types.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
@@ -10,8 +11,8 @@ const NOTES = [
 		'SMEs including start-ups may provide the Annex IV elements in a simplified form; the Commission provides a form for this (Art. 11(1), second subparagraph).'
 	),
 	L(
-		'Geltungsbeginn: 2. Dezember 2027 für Hochrisiko-Systeme nach Anhang III, 2. August 2028 für Systeme nach Anhang I (Verordnung (EU) 2026/1744).',
-		'Application: 2 December 2027 for Annex III high-risk systems, 2 August 2028 for Annex I systems (Regulation (EU) 2026/1744).'
+		`Geltungsbeginn: ${DATES.annexIII.de} für Hochrisiko-Systeme nach Anhang III, ${DATES.annexI.de} für Systeme nach Anhang I (Verordnung (EU) 2026/1744).`,
+		`Application: ${DATES.annexIII.en} for Annex III high-risk systems, ${DATES.annexI.en} for Annex I systems (Regulation (EU) 2026/1744).`
 	)
 ];
 
