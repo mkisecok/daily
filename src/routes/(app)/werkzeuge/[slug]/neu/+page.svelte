@@ -54,7 +54,7 @@
 		</section>
 	{/each}
 
-	<div class="actions">
+	<div class="toolbar actions">
 		<button type="submit" disabled={submitting}>{m.form_evaluate()}</button>
 		<span class="note">{m.form_saved_note()}</span>
 	</div>
@@ -91,32 +91,7 @@
 	}
 
 	.actions {
-		display: flex;
-		align-items: center;
-		gap: 1.25rem;
-		flex-wrap: wrap;
 		margin-top: 2.5rem;
-
-		& button {
-			font-family: var(--mono);
-			font-size: 12px;
-			letter-spacing: 0.08em;
-			text-transform: uppercase;
-			padding: 0.6rem 1.1rem;
-			border: 1px solid var(--ink);
-			color: var(--on-navy);
-			background: var(--ink);
-
-			&:hover:not(:disabled) {
-				background: var(--navy);
-				border-color: var(--navy);
-			}
-
-			&:disabled {
-				opacity: 0.5;
-				cursor: default;
-			}
-		}
 
 		& .note {
 			font-size: 13px;

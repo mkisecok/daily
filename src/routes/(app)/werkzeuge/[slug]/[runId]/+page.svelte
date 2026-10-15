@@ -65,10 +65,14 @@
 
 <p class="disclaimer">{m.footer_disclaimer()} {m.run_disclaimer()}</p>
 
-<div class="actions no-print">
+<div class="toolbar actions no-print">
 	<button type="button" onclick={() => window.print()}>{m.run_print()}</button>
-	<a href={resolve(localized(`/werkzeuge/${data.tool.slug}/neu`))}>{m.run_again()}</a>
-	<a href={resolve(localized(`/werkzeuge/${data.tool.slug}`))}>{m.run_back()}</a>
+	<a class="button quiet" href={resolve(localized(`/werkzeuge/${data.tool.slug}/neu`))}
+		>{m.run_again()}</a
+	>
+	<a class="button ghost" href={resolve(localized(`/werkzeuge/${data.tool.slug}`))}
+		>{m.run_back()}</a
+	>
 </div>
 
 <style>
@@ -139,28 +143,6 @@
 	}
 
 	.actions {
-		display: flex;
-		gap: 1.25rem;
-		align-items: center;
 		margin-top: 2rem;
-		font-family: var(--mono);
-		font-size: 12px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-
-		& button {
-			padding: 0.5rem 0.9rem;
-			border: 1px solid var(--ink);
-			color: var(--on-navy);
-			background: var(--ink);
-			font: inherit;
-			letter-spacing: inherit;
-			text-transform: inherit;
-
-			&:hover {
-				background: var(--navy);
-				border-color: var(--navy);
-			}
-		}
 	}
 </style>

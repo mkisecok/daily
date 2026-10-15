@@ -37,7 +37,7 @@
 	{#if question.help}
 		<p class="help">{text(question.help)}</p>
 	{/if}
-	<div class="answers">
+	<div class="answers choices">
 		{#each options as option (option)}
 			<label>
 				<input
@@ -107,30 +107,7 @@
 
 		& .answers {
 			grid-area: answers;
-			display: flex;
-			gap: 1.5rem;
 			margin-left: 2.35rem;
-
-			& label {
-				display: inline-flex;
-				align-items: center;
-				gap: 0.4rem;
-				font-family: var(--mono);
-				font-size: 12px;
-				letter-spacing: 0.06em;
-				text-transform: uppercase;
-				color: var(--ink2);
-				cursor: pointer;
-
-				&:has(input:checked) {
-					color: var(--ink);
-				}
-			}
-
-			& input {
-				accent-color: var(--navy);
-				margin: 0;
-			}
 		}
 
 		& .cite {

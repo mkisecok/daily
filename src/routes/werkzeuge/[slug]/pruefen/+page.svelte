@@ -88,17 +88,17 @@
 
 	<p class="note">{m.footer_disclaimer()} {m.run_disclaimer()} {m.check_not_saved()}</p>
 
-	<div class="actions no-print">
+	<div class="toolbar actions no-print">
 		<button type="button" onclick={() => window.print()}>{m.run_print()}</button>
 		<button type="button" class="quiet" onclick={edit}>{m.check_edit()}</button>
 		{#if PUBLIC_PREVIEW}
 			<!-- no accounts in the static preview -->
 		{:else if data.user}
-			<a href={saveHref}>{m.tool_save()}</a>
+			<a class="button quiet" href={saveHref}>{m.tool_save()}</a>
 		{:else}
-			<a href={loginHref} data-sveltekit-reload>{m.tool_save_login()}</a>
+			<a class="button quiet" href={loginHref} data-sveltekit-reload>{m.tool_save_login()}</a>
 		{/if}
-		<a href={toolHref}>{m.run_back()}</a>
+		<a class="button ghost" href={toolHref}>{m.run_back()}</a>
 	</div>
 {:else}
 	<p class="measure intro">{text(data.catalog.intro)}</p>
@@ -117,7 +117,7 @@
 			</section>
 		{/each}
 
-		<div class="actions">
+		<div class="toolbar actions">
 			<button type="submit">{m.form_check()}</button>
 			<span class="hint">{m.check_not_saved()}</span>
 		</div>
@@ -204,45 +204,10 @@
 	}
 
 	.actions {
-		display: flex;
-		align-items: center;
-		gap: 1.25rem;
-		flex-wrap: wrap;
 		margin-top: 2rem;
-		font-family: var(--mono);
-		font-size: 12px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-
-		& button {
-			font: inherit;
-			letter-spacing: inherit;
-			text-transform: inherit;
-			padding: 0.6rem 1.1rem;
-			border: 1px solid var(--ink);
-			color: var(--on-navy);
-			background: var(--ink);
-
-			&:hover {
-				background: var(--navy);
-				border-color: var(--navy);
-			}
-
-			&.quiet {
-				color: var(--ink);
-				background: none;
-
-				&:hover {
-					color: var(--on-navy);
-				}
-			}
-		}
 
 		& .hint {
-			font-family: var(--sans);
 			font-size: 13px;
-			letter-spacing: 0;
-			text-transform: none;
 			color: var(--ink3);
 		}
 	}
