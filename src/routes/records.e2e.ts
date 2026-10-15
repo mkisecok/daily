@@ -299,6 +299,7 @@ test('dialogs: archiving needs the typed word, Esc cancels, citations explain th
 	const citation = page.locator('.citation-link').first();
 	await citation.focus();
 	await expect(page.getByRole('tooltip', { name: 'In den Normen öffnen' })).toBeVisible();
+	await expect(citation).toHaveAccessibleDescription('In den Normen öffnen');
 	await page.keyboard.press('Escape');
 	await expect(page.getByRole('tooltip')).toBeHidden();
 

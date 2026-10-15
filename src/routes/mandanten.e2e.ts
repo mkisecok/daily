@@ -21,6 +21,12 @@ test('client organisations keep records apart and the masthead names the workspa
 	await page.getByRole('button', { name: 'Mandant anlegen' }).click();
 	await expect(page.getByRole('status')).toHaveText(`Sie arbeiten jetzt in ${client}.`);
 	await expect(page.locator('.masthead .org')).toHaveText(client);
+	// a long name is cut off instead of widening the masthead
+	const chipWidth = await page.locator('.masthead .org').evaluate((el) => {
+		el.textContent = 'Mustermann und Partner Rechtsanwälte mbB Steuerberatungsgesellschaft';
+		return el.getBoundingClientRect().width;
+	});
+	expect(chipWidth).toBeLessThanOrEqual(14 * 16 + 1);
 
 	await page.goto('/werkzeuge/ki-register/eintraege?neu=1');
 	await page.getByLabel('Bezeichnung').fill(system);

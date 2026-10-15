@@ -49,9 +49,17 @@
 		if (event.key === 'Escape') hide();
 	}
 
-	/** hover and keyboard focus on the trigger; listeners go when the element does */
+	/**
+	 * hover and keyboard focus on the trigger; listeners go when the element does.
+	 * The description goes on the focusable element inside, because screen readers
+	 * announce the description of what has focus, not of its wrapper.
+	 */
 	function trigger(node: HTMLElement) {
 		anchor = node;
+		const focusable =
+			node.querySelector<HTMLElement>('a[href], button, input, select, textarea, [tabindex]') ??
+			node;
+		focusable.setAttribute('aria-describedby', `${id}-tip`);
 		const offs = [
 			on(node, 'pointerenter', show),
 			on(node, 'pointerleave', hide),
@@ -68,12 +76,15 @@
 
 <svelte:document onkeydown={escape} />
 
-<span {@attach trigger} class="anchor" aria-describedby="{id}-tip">{@render children()}</span>
+<span {@attach trigger} class="anchor">{@render children()}</span>
 <span {@attach tip} id="{id}-tip" class="tip" popover="manual" role="tooltip">{text}</span>
 
 <style>
+	/* inline-flex keeps the trigger a flex item, so its own max-width and ellipsis still apply */
 	.anchor {
-		display: inline;
+		display: inline-flex;
+		align-items: center;
+		max-width: 100%;
 	}
 
 	.tip {
