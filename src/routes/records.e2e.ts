@@ -12,6 +12,15 @@ async function signIn(page: Page, path: string) {
 	await page.locator('#kc-login').click();
 }
 
+/** clicks a workflow step and confirms it in the dialog */
+async function step(page: Page, name: string) {
+	await page.getByRole('button', { name, exact: true }).click();
+	await page
+		.getByRole('dialog', { name: 'Status ändern?' })
+		.getByRole('button', { name, exact: true })
+		.click();
+}
+
 /** `YYYY-MM-DDTHH:mm` in German time, as a datetime-local input wants it */
 function berlinInput(date: Date): string {
 	const parts = Object.fromEntries(
@@ -108,11 +117,11 @@ test('Datenpanne: 72-hour deadline on Fristen and the workflow to closure', asyn
 		'Voraussichtlich keine Meldepflicht.'
 	);
 
-	await page.getByRole('button', { name: 'Bewertung abschließen' }).click();
+	await step(page, 'Bewertung abschließen');
 	await expect(page.locator('[aria-current="step"]')).toHaveText('Bewertet');
 	await expect(page.getByRole('button', { name: 'Meldung erfasst' })).toBeDisabled();
-	await page.getByRole('button', { name: 'Als nicht meldepflichtig dokumentieren' }).click();
-	await page.getByRole('button', { name: 'Abschließen' }).click();
+	await step(page, 'Als nicht meldepflichtig dokumentieren');
+	await step(page, 'Abschließen');
 	await expect(page.locator('[aria-current="step"]')).toHaveText('Abgeschlossen');
 
 	await page.getByRole('link', { name: 'Fristen' }).click();
@@ -177,14 +186,14 @@ test('Betroffenenanfrage: reply deadline on Fristen and closing as answered', as
 		.getByRole('link', { name: title })
 		.click();
 
-	await page.getByRole('button', { name: 'Bearbeitung beginnen' }).click();
+	await step(page, 'Bearbeitung beginnen');
 	await expect(page.locator('[aria-current="step"]')).toHaveText('In Bearbeitung');
 	await page.getByRole('button', { name: 'Bearbeiten' }).click();
 	await page.getByLabel('Durchgeführte Maßnahmen').fill('Auskunft mit Kopie erteilt');
 	await page.getByLabel('Antwort versandt am').fill(berlinInput(new Date()));
 	await page.getByRole('button', { name: 'Speichern' }).click();
 	await expect(page.locator('.verdict .headline')).toHaveText('Fristgerecht beantwortet.');
-	await page.getByRole('button', { name: 'Als beantwortet abschließen' }).click();
+	await step(page, 'Als beantwortet abschließen');
 	await expect(page.locator('[aria-current="step"]')).toHaveText('Beantwortet');
 });
 
@@ -246,7 +255,7 @@ test('DSFA: a high residual risk blocks sign-off until the authority is consulte
 	await expect(page.locator('.verdict .headline')).toHaveText(
 		'Hohes Restrisiko: Aufsichtsbehörde vorher konsultieren.'
 	);
-	await page.getByRole('button', { name: 'Bewertung abschließen' }).click();
+	await step(page, 'Bewertung abschließen');
 	await expect(page.locator('[aria-current="step"]')).toHaveText('Bewertet');
 	await expect(page.getByRole('button', { name: 'Freigeben' })).toBeDisabled();
 	await expect(page.locator('.state-bar')).toContainText('Art. 36 Abs. 1');

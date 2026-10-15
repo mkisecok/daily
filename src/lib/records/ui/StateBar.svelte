@@ -7,7 +7,8 @@
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
 	import { text } from '#lib/tools/i18n.js';
-	import type { RecordToolDefinition, StoredRecord } from '../types.js';
+	import ConfirmDialog from '#lib/ui/ConfirmDialog.svelte';
+	import type { RecordToolDefinition, StoredRecord, TransitionDef } from '../types.js';
 	import { fieldById } from '../validate.js';
 	import { allowedTransitions } from '../workflow.js';
 
@@ -25,6 +26,20 @@
 
 	const states = $derived(definition.workflow?.states ?? []);
 	const options = $derived(record.archivedAt ? [] : allowedTransitions(definition, record));
+
+	/** the step waiting for confirmation */
+	let pending = $state<TransitionDef | null>(null);
+	let confirming = $state(false);
+
+	const stateLabel = (id: string | null) => {
+		const state = states.find((s) => s.id === id);
+		return state ? text(state.label) : (id ?? '');
+	};
+
+	function ask(transition: TransitionDef) {
+		pending = transition;
+		confirming = true;
+	}
 
 	function labels(ids: string[]): string {
 		return ids
@@ -52,7 +67,7 @@
 						type="button"
 						class="quiet"
 						disabled={busy || missing.length > 0 || blocked !== null}
-						onclick={() => ontransition(transition.to)}
+						onclick={() => ask(transition)}
 					>
 						{text(transition.label)}
 					</button>
@@ -68,6 +83,19 @@
 				{/if}
 			{/each}
 		</div>
+	{/if}
+	{#if pending}
+		<ConfirmDialog
+			bind:open={confirming}
+			title={m.records_transition_title()}
+			body={m.records_transition_body({
+				from: stateLabel(record.state),
+				to: stateLabel(pending.to)
+			})}
+			confirmLabel={text(pending.label)}
+			icon="check"
+			onconfirm={() => pending && ontransition(pending.to)}
+		/>
 	{/if}
 </section>
 
