@@ -405,6 +405,7 @@ Repository https://github.com/mkisecok/daily (public), live static preview https
 | **Normen‑Navigator**: DSGVO, KI‑VO (consolidated 27 Jul 2026), BDSG, TDDDG imported from Cellar and gesetze-im-internet.de (`pnpm normen:import`, committed JSON); contents, provisions with linked cross‑references, recitals, annexes, search, "cited in the tools"; every citation in the app links to its provision | Built (14 Oct, later) |
 | **Notizen**: notebook on the records framework (per organisation, browser storage in the preview), today's note, safe Markdown with linked citations, search, notes started from news items, records and provisions                                                                                                     | Built (14 Oct, later) |
 | **Berichte**: period report per scope (overall, Datenschutz, KI, Audit) from registers, workflows, deadlines and saved runs (`/api/runs`), preface and outlook, browser print to PDF                                                                                                                                    | Built (14 Oct, later) |
+| Law import: newest consolidated EU version found via Cellar SPARQL, corrigenda applied to recitals, full Stand of German statutes; review against the code style rules (nested CSS, no `:global`, comment style), AI Act dates from one table (15 Oct)                                                                  | Built (15 Oct)        |
 | Sticky masthead, compact single‑line navigation on narrow screens                                                                                                                                                                                                                                                       | Built (14 Oct, later) |
 
 ### 9.2 Tools (29, none planned)
@@ -426,7 +427,8 @@ Unit tests for every engine and the records framework (266), database tests agai
 
 ### 9.4 Open
 
-- Navigator: links from recitals to the articles they explain (EUR‑Lex gives no mapping), EDPB/DSK guidelines and EuGH cases as further sources; re-import when a law is amended.
+- Navigator: links from recitals to the articles they explain (EUR‑Lex gives no mapping), EDPB/DSK guidelines and EuGH cases as further sources. Keeping the law current: `docs/superpowers/plans/2026-10-15-law-maintenance.md` (routine, rule inventory, Rechtsstand-Monitor plan).
+- Production and administration: `docs/superpowers/plans/2026-10-15-production-deployment.md` (gaps before go-live, Keycloak hardening, admin area plan).
 - Berichte: server-side PDF; reports are printed from the browser.
 - Steps 14–17: Docker image, Hetzner server, Caddy, dai-ly.de DNS, backups, go‑live; the full app has so far only run locally.
 - Feed LLM summaries (Phase 2), e‑mail reminders for Fristen, deleting organisations (left out on purpose), inviting members to an organisation.
