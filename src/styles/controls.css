@@ -169,7 +169,7 @@
 .daily-field-label {
 	display: inline;
 	font-family: var(--serif);
-	font-size: 16px;
+	font-size: var(--field-label-size, 16px);
 	color: var(--ink);
 }
 

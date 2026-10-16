@@ -386,6 +386,8 @@
 		max-width: var(--measure);
 
 		& .field {
+			--field-label-size: 15px;
+
 			display: block;
 			margin-top: 1rem;
 
