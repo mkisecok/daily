@@ -43,11 +43,13 @@
 	}}
 >
 	{#each sections as section (section.id)}
-		<section class="section">
-			<h2>{text(section.title)}</h2>
-			{#if section.intro}
-				<p class="measure section-intro">{text(section.intro)}</p>
-			{/if}
+		<section class="section card">
+			<header class="section-head">
+				<h2>{text(section.title)}</h2>
+				{#if section.intro}
+					<p class="measure section-intro">{text(section.intro)}</p>
+				{/if}
+			</header>
 			{#each section.questions as { question, number } (question.id)}
 				<QuestionRow {number} {question} value={form?.answers?.[question.id]} />
 			{/each}
@@ -62,36 +64,46 @@
 
 <style>
 	.intro {
-		margin-top: 1.5rem;
 		font-size: 16px;
 		color: var(--ink2);
 	}
 
 	.error {
-		margin-top: 1.5rem;
-		font-family: var(--mono);
-		font-size: 12px;
+		max-width: var(--measure);
+		margin-top: 1.25rem;
+		padding: 0.65rem 0.9rem;
+		font-size: 14px;
 		color: var(--wax);
+		background: var(--wax-soft);
+		border-radius: var(--radius);
 	}
 
+	/* a questionnaire section: a raised card with its question rows inside */
 	.section {
-		padding-top: 2.5rem;
+		margin-top: 1.25rem;
+		padding: 1.25rem 1.5rem 0.25rem;
 
-		& h2 {
-			font-size: 22px;
-			padding-bottom: 0.5rem;
-			border-bottom: 1px solid var(--rule);
+		@media (max-width: 40rem) {
+			padding: 1rem 1rem 0.25rem;
 		}
 
-		& .section-intro {
-			margin: 0.75rem 0 0.5rem;
-			font-size: 14px;
-			color: var(--ink2);
+		& .section-head {
+			margin-bottom: 0.9rem;
+
+			& h2 {
+				font-size: 20px;
+			}
+
+			& .section-intro {
+				margin-top: 0.4rem;
+				font-size: 14px;
+				color: var(--ink2);
+			}
 		}
 	}
 
 	.actions {
-		margin-top: 2.5rem;
+		margin-top: 1.5rem;
 
 		& .note {
 			font-size: 13px;

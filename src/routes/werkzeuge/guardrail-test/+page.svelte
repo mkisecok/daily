@@ -133,7 +133,7 @@
 
 <ToolHeader tool={data.tool} />
 
-<section class="setup no-print">
+<section class="setup card no-print">
 	<p class="measure intro">{text(T.intro)}</p>
 
 	<fieldset>
@@ -198,7 +198,7 @@
 		{#each prompts as prompt (prompt.id)}
 			<li>
 				<p class="prompt">
-					<span class="set">{text(SETS[prompt.set].label)}</span>
+					<span class="set badge">{text(SETS[prompt.set].label)}</span>
 					{text(prompt.text)}
 				</p>
 				{#if mode === 'manual' || answers[prompt.id] !== undefined}
@@ -226,7 +226,7 @@
 		<button type="button" class="quiet" onclick={exportCsv}>{text(T.csv)}</button>
 		<button type="button" class="quiet" onclick={() => window.print()}>{text(T.print)}</button>
 	</div>
-	<div class="scroll">
+	<div class="scroll card">
 		<table class="outcomes">
 			<thead>
 				<tr>
@@ -253,33 +253,48 @@
 {/if}
 
 <style>
+	/* the setup panel: a raised card with the sets, the mode, the fields and the prompts */
 	.setup {
-		padding: 1.5rem 0;
+		padding: 1.25rem 1.5rem 1.5rem;
+
+		@media (max-width: 40rem) {
+			padding: 1rem;
+		}
 
 		& .intro {
-			margin-bottom: 1rem;
+			margin-bottom: 0.5rem;
 			font-size: 15px;
 			color: var(--ink2);
 		}
 
 		& fieldset {
+			min-width: 0;
 			margin-top: 1.25rem;
-			padding: 0;
+			padding: 1.25rem 0 0;
 			border: 0;
+			border-top: 1px solid var(--rule2);
 
 			& legend {
+				float: left;
+				width: 100%;
 				font-family: var(--serif);
 				font-size: 17px;
+				font-weight: 600;
+			}
+
+			& .choices,
+			& .switches {
+				clear: both;
 			}
 
 			& .choices {
-				margin-top: 0.5rem;
+				padding-top: 0.6rem;
 			}
 
 			& .switches {
 				display: grid;
 				gap: 0.7rem;
-				margin-top: 0.6rem;
+				padding-top: 0.7rem;
 			}
 		}
 
@@ -289,8 +304,8 @@
 
 			& label {
 				display: block;
-				font-family: var(--serif);
-				font-size: 15px;
+				font-size: 14px;
+				font-weight: 600;
 			}
 
 			& input,
@@ -301,13 +316,16 @@
 
 			& .inline {
 				display: flex;
-				gap: 1rem;
+				flex-wrap: wrap;
+				gap: 0.5rem 1rem;
 				align-items: center;
 
 				/* the canary is a code value, so it stays in mono */
 				& input {
-					font-family: var(--mono);
+					flex: 1 1 14rem;
+					min-width: 0;
 					max-width: 22rem;
+					font-family: var(--mono);
 				}
 
 				& .button {
@@ -323,17 +341,28 @@
 			}
 		}
 
+		& .toolbar {
+			margin-top: 1.25rem;
+		}
+
 		& .status {
 			font-size: 13px;
 			color: var(--ink3);
 		}
 
+		/* prompts as rows with hairlines between them */
 		& .prompts {
-			margin: 1.5rem 0 1rem 1.25rem;
+			margin: 1.5rem 0 0 1.25rem;
 
 			& li {
-				padding: 0.75rem 0;
-				border-bottom: 1px solid var(--rule2);
+				padding: 0.9rem 0 0.9rem 0.25rem;
+				border-top: 1px solid var(--rule2);
+
+				&::marker {
+					font-family: var(--mono);
+					font-size: 12px;
+					color: var(--ink3);
+				}
 			}
 
 			& textarea {
@@ -346,18 +375,16 @@
 				font-size: 15px;
 
 				& .set {
-					display: block;
-					font-family: var(--mono);
-					font-size: 11px;
-					letter-spacing: 0.1em;
-					text-transform: uppercase;
-					color: var(--ink3);
+					display: flex;
+					width: fit-content;
+					margin-bottom: 0.35rem;
+					font-family: var(--sans);
 				}
 			}
 
 			& .answer-label {
 				display: block;
-				margin-top: 0.5rem;
+				margin-top: 0.6rem;
 				font-size: 13px;
 				color: var(--ink2);
 			}
@@ -374,9 +401,11 @@
 		margin-top: 1.25rem;
 	}
 
+	/* outcomes as rows in a raised card; only the table scrolls sideways */
 	.scroll {
 		overflow-x: auto;
-		margin-top: 1.5rem;
+		margin-top: 1rem;
+		padding: 0.5rem 1.25rem;
 
 		& .outcomes {
 			width: 100%;
@@ -385,20 +414,20 @@
 
 			& th,
 			& td {
-				padding: 0.5rem 1rem 0.5rem 0;
+				padding: 0.6rem 1rem 0.6rem 0;
 				text-align: left;
 				vertical-align: baseline;
 				border-bottom: 1px solid var(--rule2);
 			}
 
 			& th {
-				font-family: var(--mono);
-				font-size: 11px;
-				font-weight: 500;
-				letter-spacing: 0.1em;
-				text-transform: uppercase;
+				font-size: 12px;
+				font-weight: 600;
 				color: var(--ink3);
-				border-bottom: 1px solid var(--ink);
+			}
+
+			& tbody tr:last-child td {
+				border-bottom: 0;
 			}
 
 			& tr[data-passed='false'] .passed {

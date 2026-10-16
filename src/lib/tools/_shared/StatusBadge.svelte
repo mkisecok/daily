@@ -1,6 +1,7 @@
 <!--
 	@component
-	Tool status as small-caps text with a hairline, never a pill.
+	Tool status as a small badge: available in khaki, beta in navy, planned
+	neutral.
 -->
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
@@ -17,24 +18,7 @@
 	);
 </script>
 
-<span class="badge" data-status={status}>{label}</span>
-
-<style>
-	.badge {
-		font-family: var(--mono);
-		font-size: 10px;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-		padding: 0.15rem 0;
-		border-bottom: 1px solid currentColor;
-		color: var(--ink3);
-
-		&[data-status='stable'] {
-			color: var(--khaki);
-		}
-
-		&[data-status='beta'] {
-			color: var(--navy);
-		}
-	}
-</style>
+<span
+	class={['badge', { khaki: status === 'stable', navy: status === 'beta' }]}
+	data-status={status}>{label}</span
+>

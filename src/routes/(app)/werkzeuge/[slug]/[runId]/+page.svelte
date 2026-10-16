@@ -47,17 +47,17 @@
 
 <Verdict result={data.run.result} />
 
-<section class="answers">
-	<h2 class="eyebrow">{m.run_answers()}</h2>
+<section class="answers card">
+	<h2>{m.run_answers()}</h2>
 	<ol>
 		{#each rows as { question, number, answer } (question.id)}
 			<li>
 				<span class="number">{number}.</span>
 				<span class="question">{text(question.text)}</span>
-				<span class="answer" data-answer={answer}>
+				<span class="answer badge" data-answer={answer}>
 					{answerLabel[answer]?.() ?? '—'}
 				</span>
-				{#if question.cite}<Citation basis={question.cite} />{/if}
+				{#if question.cite}<span class="chip"><Citation basis={question.cite} /></span>{/if}
 			</li>
 		{/each}
 	</ol>
@@ -77,19 +77,29 @@
 
 <style>
 	.meta {
-		margin: 1rem 0 1.5rem;
-		font-family: var(--serif);
-		font-size: 15px;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem 0.5rem;
+		font-size: 14px;
 		color: var(--ink2);
 
 		& .sep {
-			margin: 0 0.5rem;
 			color: var(--ink3);
 		}
 	}
 
+	/* the given answers as rows in a raised card */
 	.answers {
-		padding: 2rem 0;
+		margin-top: 1.5rem;
+		padding: 1.25rem 1.5rem 0.5rem;
+
+		@media (max-width: 40rem) {
+			padding: 1rem 1rem 0.5rem;
+		}
+
+		& h2 {
+			font-size: 18px;
+		}
 
 		& ol {
 			list-style: none;
@@ -100,10 +110,10 @@
 			display: grid;
 			grid-template-columns: 1.6rem 1fr auto auto;
 			gap: 0.5rem 1rem;
-			align-items: baseline;
-			padding: 0.6rem 0;
-			border-bottom: 1px solid var(--rule2);
+			align-items: center;
+			padding: 0.65rem 0;
 			font-size: 14px;
+			border-top: 1px solid var(--rule2);
 
 			@media (max-width: 40rem) {
 				grid-template-columns: 1.6rem 1fr;
@@ -111,6 +121,9 @@
 		}
 
 		& .number {
+			font-family: var(--mono);
+			font-size: 12px;
+			font-variant-numeric: tabular-nums;
 			color: var(--ink3);
 		}
 
@@ -120,14 +133,30 @@
 		}
 
 		& .answer {
-			font-family: var(--mono);
-			font-size: 11px;
-			letter-spacing: 0.1em;
-			text-transform: uppercase;
-			color: var(--ink2);
+			justify-self: start;
 
 			&[data-answer='yes'] {
 				color: var(--wax);
+				background: var(--wax-soft);
+			}
+
+			@media (max-width: 40rem) {
+				grid-column: 2;
+			}
+		}
+
+		& .chip {
+			display: inline-flex;
+			align-items: center;
+			justify-self: start;
+			min-height: 1.75rem;
+			padding: 0 0.5rem;
+			background: var(--sheet);
+			border: 1px solid var(--rule2);
+			border-radius: var(--radius-badge);
+
+			&:hover {
+				border-color: var(--navy);
 			}
 
 			@media (max-width: 40rem) {
@@ -137,12 +166,13 @@
 	}
 
 	.disclaimer {
+		max-width: var(--measure);
+		margin-top: 1.25rem;
 		font-size: 13px;
-		font-style: italic;
 		color: var(--ink3);
 	}
 
 	.actions {
-		margin-top: 2rem;
+		margin-top: 1.5rem;
 	}
 </style>

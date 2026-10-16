@@ -35,26 +35,26 @@
 	{:else if recordTool}
 		<p class="measure">{text(recordTool.definition.intro)}</p>
 	{/if}
-	<p class="action">
+	<div class="toolbar action">
 		{#if recordTool}
 			<!-- records live on their own page; saving is built in -->
-			<a class="start" href={recordsHref}>{m.records_open()} →</a>
+			<a class="button" href={recordsHref}>{m.records_open()} →</a>
 		{:else}
-			<a class="start" href={checkHref}>{m.tool_start()} →</a>
+			<a class="button" href={checkHref}>{m.tool_start()} →</a>
 		{/if}
 		{#if PUBLIC_PREVIEW || recordTool}
 			<!-- no accounts in the static preview; record tools save on their own page -->
 		{:else if data.user}
-			<a class="secondary" href={saveHref}>{m.tool_save()}</a>
+			<a class="button quiet" href={saveHref}>{m.tool_save()}</a>
 		{:else}
-			<a class="secondary" href={loginHref} data-sveltekit-reload>{m.tool_save_login()}</a>
+			<a class="button quiet" href={loginHref} data-sveltekit-reload>{m.tool_save_login()}</a>
 		{/if}
-	</p>
+	</div>
 </section>
 
 {#if data.user && !recordTool}
-	<section class="runs">
-		<h2 class="eyebrow">{m.tool_runs()}</h2>
+	<section class="runs card">
+		<h2>{m.tool_runs()}</h2>
 		{#if data.runs.length === 0}
 			<p class="empty">{m.tool_runs_empty()}</p>
 		{:else}
@@ -86,8 +86,7 @@
 
 <style>
 	.intro {
-		padding: 2rem 0;
-		border-bottom: 1px solid var(--rule);
+		padding-bottom: 2rem;
 
 		& .lead {
 			font-size: 17px;
@@ -99,73 +98,59 @@
 		}
 
 		& .action {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: baseline;
-			gap: 1.5rem;
-			margin-top: 1.75rem;
-
-			& .secondary {
-				font-family: var(--mono);
-				font-size: 12px;
-				letter-spacing: 0.08em;
-				text-transform: uppercase;
-			}
-
-			& .start {
-				font-family: var(--mono);
-				font-size: 12px;
-				letter-spacing: 0.08em;
-				text-transform: uppercase;
-				padding: 0.5rem 0.9rem;
-				border: 1px solid var(--navy);
-
-				&:hover {
-					background: var(--navy-soft);
-					text-decoration: none;
-				}
-			}
+			margin-top: 1.5rem;
 		}
 	}
 
+	/* earlier runs as rows in a raised card */
 	.runs {
-		padding: 2rem 0;
+		max-width: 44rem;
+		padding: 1.25rem 1.25rem 0.5rem;
+
+		& h2 {
+			font-size: 18px;
+		}
 
 		& .empty {
-			margin-top: 0.75rem;
+			margin: 0.5rem 0 0.75rem;
 			color: var(--ink3);
 		}
 
 		& table {
+			width: 100%;
 			margin-top: 0.75rem;
 			border-collapse: collapse;
-			width: 100%;
-			max-width: 40rem;
 			font-size: 14px;
 
 			& th {
+				padding: 0.4rem 1rem 0.4rem 0;
+				font-size: 12px;
+				font-weight: 600;
 				text-align: left;
-				font-family: var(--mono);
-				font-size: 11px;
-				letter-spacing: 0.12em;
-				text-transform: uppercase;
-				font-weight: 500;
 				color: var(--ink3);
-				padding: 0.4rem 0;
-				border-bottom: 1px solid var(--rule);
+				border-bottom: 1px solid var(--rule2);
 			}
 
 			& td {
-				padding: 0.55rem 0;
-				border-bottom: 1px solid var(--rule2);
+				padding: 0.7rem 1rem 0.7rem 0;
 				font-variant-numeric: tabular-nums;
+				border-bottom: 1px solid var(--rule2);
+			}
+
+			& tr:last-child td {
+				border-bottom: 0;
 			}
 
 			& .result {
 				font-family: var(--serif);
+				font-size: 15px;
 
 				&[data-level='positive'] {
 					color: var(--wax);
+				}
+
+				&[data-level='conditional'] {
+					color: var(--navy);
 				}
 
 				&[data-level='negative'] {

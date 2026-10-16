@@ -1,7 +1,8 @@
 <!--
 	@component
-	One numbered question with a yes / no / unclear choice. The citation sits
-	on the right like a margin note. Works without JavaScript (plain radios).
+	One numbered question with a yes / no / unclear choice as tiles, for a
+	section card. The citation sits on the right as a chip, like a margin note.
+	Works without JavaScript (plain radios).
 -->
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
@@ -57,6 +58,7 @@
 </fieldset>
 
 <style>
+	/* one row inside a section card; hairlines between rows */
 	.row {
 		display: grid;
 		grid-template-columns: 1fr auto;
@@ -65,10 +67,11 @@
 			'help cite'
 			'answers cite';
 		column-gap: 2rem;
-		row-gap: 0.5rem;
-		padding: 1.25rem 0;
+		row-gap: 0.6rem;
+		min-width: 0;
+		padding: 1.1rem 0;
 		border: 0;
-		border-bottom: 1px solid var(--rule2);
+		border-top: 1px solid var(--rule2);
 
 		@media (max-width: 40rem) {
 			grid-template-columns: 1fr;
@@ -91,9 +94,13 @@
 			max-width: var(--measure);
 
 			& .number {
-				color: var(--ink3);
 				flex-shrink: 0;
 				min-width: 1.6rem;
+				padding-top: 0.2rem;
+				font-family: var(--mono);
+				font-size: 12px;
+				font-variant-numeric: tabular-nums;
+				color: var(--ink3);
 			}
 		}
 
@@ -113,7 +120,26 @@
 		& .cite {
 			grid-area: cite;
 			align-self: start;
-			padding-top: 0.2rem;
+			justify-self: start;
+			display: inline-flex;
+			align-items: center;
+			min-height: 1.75rem;
+			padding: 0 0.5rem;
+			background: var(--sheet);
+			border: 1px solid var(--rule2);
+			border-radius: var(--radius-badge);
+
+			&:hover {
+				border-color: var(--navy);
+			}
+		}
+
+		/* on phones the tiles take the full width of the card */
+		@media (max-width: 40rem) {
+			& .help,
+			& .answers {
+				margin-left: 0;
+			}
 		}
 	}
 </style>

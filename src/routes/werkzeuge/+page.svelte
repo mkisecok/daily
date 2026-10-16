@@ -7,6 +7,7 @@
 	import type { ToolCategory } from '#lib/tools/types.js';
 	import Citation from '#lib/tools/_shared/Citation.svelte';
 	import StatusBadge from '#lib/tools/_shared/StatusBadge.svelte';
+	import PageHeader from '#lib/ui/PageHeader.svelte';
 
 	const labels: Record<ToolCategory, () => string> = {
 		datenschutz: m.category_datenschutz,
@@ -23,10 +24,7 @@
 	<meta name="description" content={m.tools_intro()} />
 </svelte:head>
 
-<header class="head">
-	<h1>{m.nav_tools()}</h1>
-	<p class="measure lead">{m.tools_intro()}</p>
-</header>
+<PageHeader title={m.nav_tools()} description={m.tools_intro()} />
 
 {#each categories as category, index (category)}
 	<section class="group">
@@ -60,32 +58,20 @@
 {/each}
 
 <style>
-	.head {
-		padding-bottom: 2rem;
-		border-bottom: 1px solid var(--rule);
-
-		& h1 {
-			font-size: clamp(30px, 4vw, 40px);
-		}
-
-		& .lead {
-			margin-top: 1rem;
-			font-size: 17px;
-			color: var(--ink2);
-		}
-	}
-
 	.group {
-		padding: 2.5rem 0 1rem;
+		padding: 0.5rem 0 2rem;
 
 		& h2 {
-			font-size: 22px;
-			padding-bottom: 0.75rem;
-			border-bottom: 1px solid var(--rule);
+			display: flex;
+			align-items: baseline;
+			gap: 0.6rem;
+			font-size: 20px;
 
 			& .numeral {
+				font-family: var(--mono);
+				font-size: 13px;
+				font-weight: 500;
 				color: var(--ink3);
-				margin-right: 0.5rem;
 			}
 		}
 
@@ -94,7 +80,7 @@
 			display: grid;
 			grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
 			gap: 1rem;
-			margin-top: 1.25rem;
+			margin-top: 1rem;
 			list-style: none;
 
 			& .tool {
@@ -102,10 +88,15 @@
 				grid-row: span 4;
 				grid-template-rows: subgrid;
 				gap: 0.6rem;
-				transition: border-color 0.12s ease;
+				transition:
+					border-color 0.12s ease,
+					box-shadow 0.12s ease;
 
 				&:hover {
-					border-color: var(--ink3);
+					border-color: var(--rule);
+					box-shadow:
+						inset 4px 0 0 var(--spine),
+						var(--shadow-float);
 				}
 
 				&:has(.title:focus-visible) {
@@ -118,7 +109,7 @@
 
 				& .meta {
 					display: flex;
-					align-items: baseline;
+					align-items: center;
 					justify-content: space-between;
 					gap: 0.75rem;
 
@@ -165,10 +156,10 @@
 						display: inline-flex;
 						align-items: center;
 						min-height: 1.75rem;
-						padding: 0 0.45rem;
-						background: var(--paper);
-						border: 1px solid var(--rule);
-						border-radius: var(--radius);
+						padding: 0 0.5rem;
+						background: var(--sheet);
+						border: 1px solid var(--rule2);
+						border-radius: var(--radius-badge);
 
 						&:hover {
 							border-color: var(--navy);

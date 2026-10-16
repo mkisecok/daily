@@ -106,7 +106,7 @@
 
 <ToolHeader tool={data.tool} />
 
-<section class="input no-print">
+<section class="input card no-print">
 	<p class="measure intro">{text(T.intro)}</p>
 	<div class="toolbar">
 		<label class="button quiet">
@@ -151,7 +151,7 @@
 			<button type="button" class="quiet" onclick={exportCsv}>{text(T.csv)}</button>
 			<button type="button" class="quiet" onclick={() => window.print()}>{text(T.print)}</button>
 		</div>
-		<div class="scroll">
+		<div class="scroll card">
 			<table class="findings">
 				<thead>
 					<tr>
@@ -180,8 +180,13 @@
 {/if}
 
 <style>
+	/* the input panel: a raised card with the pickers, the paste field and the actions */
 	.input {
-		padding: 1.5rem 0;
+		padding: 1.25rem 1.5rem 1.5rem;
+
+		@media (max-width: 40rem) {
+			padding: 1rem;
+		}
 
 		& .intro {
 			margin-bottom: 1.25rem;
@@ -214,8 +219,8 @@
 		& .paste-label {
 			display: block;
 			margin-top: 1.5rem;
-			font-family: var(--serif);
-			font-size: 16px;
+			font-size: 14px;
+			font-weight: 600;
 		}
 
 		/* code and file names stay in mono */
@@ -229,7 +234,7 @@
 
 		& .paste-name {
 			display: block;
-			margin-top: 0.75rem;
+			margin-top: 0.9rem;
 			font-size: 13px;
 			color: var(--ink2);
 
@@ -244,9 +249,11 @@
 		margin-top: 1.25rem;
 	}
 
+	/* findings as rows in a raised card; only the table scrolls sideways */
 	.scroll {
 		overflow-x: auto;
-		margin-top: 1.5rem;
+		margin-top: 1rem;
+		padding: 0.5rem 1.25rem;
 
 		& .findings {
 			width: 100%;
@@ -255,20 +262,20 @@
 
 			& th,
 			& td {
-				padding: 0.5rem 1rem 0.5rem 0;
+				padding: 0.6rem 1rem 0.6rem 0;
 				text-align: left;
 				vertical-align: baseline;
 				border-bottom: 1px solid var(--rule2);
 			}
 
 			& th {
-				font-family: var(--mono);
-				font-size: 11px;
-				font-weight: 500;
-				letter-spacing: 0.1em;
-				text-transform: uppercase;
+				font-size: 12px;
+				font-weight: 600;
 				color: var(--ink3);
-				border-bottom: 1px solid var(--ink);
+			}
+
+			& tbody tr:last-child td {
+				border-bottom: 0;
 			}
 
 			& tr[data-category='geheimnis'] .category {

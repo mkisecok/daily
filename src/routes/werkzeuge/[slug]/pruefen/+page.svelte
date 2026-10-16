@@ -70,17 +70,17 @@
 {#if result}
 	<Verdict {result} />
 
-	<section class="answers">
-		<h2 class="eyebrow">{m.run_answers()}</h2>
+	<section class="answers card">
+		<h2>{m.run_answers()}</h2>
 		<ol>
 			{#each rows as { question, number } (question.id)}
 				<li>
 					<span class="number">{number}.</span>
 					<span class="question">{text(question.text)}</span>
-					<span class="answer" data-answer={answers[question.id]}>
+					<span class="answer badge" data-answer={answers[question.id]}>
 						{answerLabel[answers[question.id]]?.() ?? '—'}
 					</span>
-					{#if question.cite}<Citation basis={question.cite} />{/if}
+					{#if question.cite}<span class="chip"><Citation basis={question.cite} /></span>{/if}
 				</li>
 			{/each}
 		</ol>
@@ -106,11 +106,13 @@
 
 	<form onsubmit={evaluate}>
 		{#each sections as section (section.id)}
-			<section class="section">
-				<h2>{text(section.title)}</h2>
-				{#if section.intro}
-					<p class="measure section-intro">{text(section.intro)}</p>
-				{/if}
+			<section class="section card">
+				<header class="section-head">
+					<h2>{text(section.title)}</h2>
+					{#if section.intro}
+						<p class="measure section-intro">{text(section.intro)}</p>
+					{/if}
+				</header>
 				{#each section.questions as { question, number } (question.id)}
 					<QuestionRow {number} {question} value={answers[question.id]} />
 				{/each}
@@ -126,29 +128,46 @@
 
 <style>
 	.intro {
-		margin-top: 1.5rem;
 		font-size: 16px;
 		color: var(--ink2);
 	}
 
+	/* a questionnaire section: a raised card with its question rows inside */
 	.section {
-		padding-top: 2.5rem;
+		margin-top: 1.25rem;
+		padding: 1.25rem 1.5rem 0.25rem;
 
-		& h2 {
-			font-size: 22px;
-			padding-bottom: 0.5rem;
-			border-bottom: 1px solid var(--rule);
+		@media (max-width: 40rem) {
+			padding: 1rem 1rem 0.25rem;
 		}
 
-		& .section-intro {
-			margin: 0.75rem 0 0.5rem;
-			font-size: 14px;
-			color: var(--ink2);
+		& .section-head {
+			margin-bottom: 0.9rem;
+
+			& h2 {
+				font-size: 20px;
+			}
+
+			& .section-intro {
+				margin-top: 0.4rem;
+				font-size: 14px;
+				color: var(--ink2);
+			}
 		}
 	}
 
+	/* the given answers as rows in a raised card */
 	.answers {
-		padding: 2rem 0;
+		margin-top: 1.5rem;
+		padding: 1.25rem 1.5rem 0.5rem;
+
+		@media (max-width: 40rem) {
+			padding: 1rem 1rem 0.5rem;
+		}
+
+		& h2 {
+			font-size: 18px;
+		}
 
 		& ol {
 			list-style: none;
@@ -159,10 +178,10 @@
 			display: grid;
 			grid-template-columns: 1.6rem 1fr auto auto;
 			gap: 0.5rem 1rem;
-			align-items: baseline;
-			padding: 0.6rem 0;
-			border-bottom: 1px solid var(--rule2);
+			align-items: center;
+			padding: 0.65rem 0;
 			font-size: 14px;
+			border-top: 1px solid var(--rule2);
 
 			@media (max-width: 40rem) {
 				grid-template-columns: 1.6rem 1fr;
@@ -170,6 +189,9 @@
 		}
 
 		& .number {
+			font-family: var(--mono);
+			font-size: 12px;
+			font-variant-numeric: tabular-nums;
 			color: var(--ink3);
 		}
 
@@ -179,14 +201,30 @@
 		}
 
 		& .answer {
-			font-family: var(--mono);
-			font-size: 11px;
-			letter-spacing: 0.1em;
-			text-transform: uppercase;
-			color: var(--ink2);
+			justify-self: start;
 
 			&[data-answer='yes'] {
 				color: var(--wax);
+				background: var(--wax-soft);
+			}
+
+			@media (max-width: 40rem) {
+				grid-column: 2;
+			}
+		}
+
+		& .chip {
+			display: inline-flex;
+			align-items: center;
+			justify-self: start;
+			min-height: 1.75rem;
+			padding: 0 0.5rem;
+			background: var(--sheet);
+			border: 1px solid var(--rule2);
+			border-radius: var(--radius-badge);
+
+			&:hover {
+				border-color: var(--navy);
 			}
 
 			@media (max-width: 40rem) {
@@ -196,15 +234,14 @@
 	}
 
 	.note {
-		margin-top: 1rem;
+		margin-top: 1.25rem;
 		font-size: 13px;
-		font-style: italic;
 		color: var(--ink3);
 		max-width: var(--measure);
 	}
 
 	.actions {
-		margin-top: 2rem;
+		margin-top: 1.5rem;
 
 		& .hint {
 			font-size: 13px;
