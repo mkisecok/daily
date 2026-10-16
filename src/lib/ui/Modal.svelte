@@ -48,8 +48,8 @@
 		padding: 0;
 		color: var(--ink);
 		background: var(--sheet);
-		border: 1px solid var(--rule);
-		border-radius: var(--radius);
+		border: 1px solid var(--rule2);
+		border-radius: var(--radius-card);
 		box-shadow: var(--shadow-modal);
 
 		&::backdrop {

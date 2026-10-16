@@ -102,7 +102,7 @@
 		color: var(--sheet);
 		background: var(--ink);
 		border: 0;
-		border-radius: var(--radius);
+		border-radius: var(--radius-badge);
 		box-shadow: var(--shadow-float);
 		pointer-events: none;
 	}

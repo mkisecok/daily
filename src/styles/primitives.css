@@ -127,12 +127,13 @@
 	}
 }
 
-/** a sheet with a hairline frame; `.accent` adds a navy top rule */
+/** a raised sheet with a soft frame; `.accent` adds a navy top rule */
 .card {
 	padding: 1rem 1.25rem;
 	background: var(--sheet);
-	border: 1px solid var(--rule);
-	border-radius: var(--radius);
+	border: 1px solid var(--rule2);
+	border-radius: var(--radius-card);
+	box-shadow: var(--shadow-raised);
 
 	&.accent {
 		border-top: 2px solid var(--navy);
@@ -146,7 +147,9 @@
 		--spine: var(--ink3);
 
 		padding-left: 1.5rem;
-		box-shadow: inset 4px 0 0 var(--spine);
+		box-shadow:
+			inset 4px 0 0 var(--spine),
+			var(--shadow-raised);
 
 		&[data-area='datenschutz'] {
 			--spine: var(--navy);
@@ -159,6 +162,36 @@
 		&[data-area='audit'] {
 			--spine: var(--khaki);
 		}
+	}
+}
+
+/** status word in a small tinted box: neutral by default, or navy, wax, khaki */
+.badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	padding: 0.1rem 0.5rem;
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1.6;
+	white-space: nowrap;
+	color: var(--ink2);
+	background: var(--paper);
+	border-radius: var(--radius-badge);
+
+	&.navy {
+		color: var(--navy);
+		background: var(--navy-soft);
+	}
+
+	&.wax {
+		color: var(--wax);
+		background: var(--wax-soft);
+	}
+
+	&.khaki {
+		color: var(--khaki);
+		background: var(--khaki-soft);
 	}
 }
 
