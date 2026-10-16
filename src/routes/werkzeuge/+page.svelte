@@ -110,7 +110,10 @@
 
 				&:has(.title:focus-visible) {
 					border-color: var(--navy);
-					box-shadow: 0 0 0 3px var(--navy-soft);
+					/* keep the area spine next to the focus ring */
+					box-shadow:
+						inset 4px 0 0 var(--spine),
+						0 0 0 3px var(--navy-soft);
 				}
 
 				& .meta {
