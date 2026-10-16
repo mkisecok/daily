@@ -25,6 +25,8 @@
 	} = $props();
 
 	const states = $derived(definition.workflow?.states ?? []);
+	/** states before the current one count as done */
+	const currentIndex = $derived(states.findIndex((s) => s.id === record.state));
 	const options = $derived(record.archivedAt ? [] : allowedTransitions(definition, record));
 
 	/** the step waiting for confirmation */
@@ -51,10 +53,15 @@
 	}
 </script>
 
-<section class="state-bar">
-	<ol class="states">
-		{#each states as state (state.id)}
-			<li aria-current={state.id === record.state ? 'step' : undefined}>{text(state.label)}</li>
+<section class="state-bar card">
+	<ol class="states" aria-label={m.records_state()}>
+		{#each states as state, index (state.id)}
+			<li
+				aria-current={index === currentIndex ? 'step' : undefined}
+				data-done={index < currentIndex || undefined}
+			>
+				{text(state.label)}
+			</li>
 		{/each}
 	</ol>
 
@@ -65,7 +72,6 @@
 				{#each options as { transition, missing, blocked } (transition.to)}
 					<button
 						type="button"
-						class="quiet"
 						disabled={busy || missing.length > 0 || blocked !== null}
 						onclick={() => ask(transition)}
 					>
@@ -100,42 +106,134 @@
 </section>
 
 <style>
+	/* a stepper: done steps khaki, the current one navy, the rest neutral */
 	.state-bar {
-		padding: 1.25rem 0;
-		border-bottom: 1px solid var(--rule);
+		margin-top: 1.5rem;
 
 		& .states {
 			display: flex;
-			flex-wrap: wrap;
-			gap: 0.25rem 0;
 			list-style: none;
-			font-family: var(--mono);
-			font-size: 11px;
-			letter-spacing: 0.1em;
-			text-transform: uppercase;
-			color: var(--ink3);
+			counter-reset: step;
 
-			& li + li::before {
-				content: '→';
-				margin: 0 0.75rem;
-				color: var(--rule);
+			& li {
+				--marker: 1.75rem;
+
+				position: relative;
+				display: flex;
+				flex: 1 1 0;
+				flex-direction: column;
+				gap: 0.5rem;
+				min-width: 0;
+				padding-right: 0.75rem;
+				font-size: 13px;
+				line-height: 1.35;
+				overflow-wrap: anywhere;
+				color: var(--ink3);
+				counter-increment: step;
+
+				/* the marker */
+				&::before {
+					content: counter(step);
+					position: relative;
+					z-index: 1;
+					display: grid;
+					place-items: center;
+					flex: none;
+					width: var(--marker);
+					height: var(--marker);
+					font-family: var(--mono);
+					font-size: 12px;
+					font-weight: 500;
+					color: var(--ink3);
+					background: var(--sheet);
+					border: 1.5px solid var(--rule);
+					border-radius: 50%;
+				}
+
+				/* the line to the next step */
+				&::after {
+					content: '';
+					position: absolute;
+					top: calc(var(--marker) / 2 - 1px);
+					left: var(--marker);
+					right: 0;
+					height: 2px;
+					background: var(--rule2);
+				}
+
+				&:last-child::after {
+					display: none;
+				}
+
+				&[data-done] {
+					color: var(--ink2);
+
+					&::before {
+						content: '\2713';
+						color: var(--on-khaki);
+						background: var(--khaki);
+						border-color: var(--khaki);
+					}
+
+					&::after {
+						background: var(--khaki);
+					}
+				}
+
+				&[aria-current='step'] {
+					font-weight: 600;
+					color: var(--navy);
+
+					&::before {
+						color: var(--on-navy);
+						background: var(--navy);
+						border-color: var(--navy);
+						box-shadow: 0 0 0 4px var(--navy-soft);
+					}
+				}
 			}
 
-			& li[aria-current='step'] {
-				color: var(--navy);
-				font-weight: 600;
+			/* on phones the steps run downwards */
+			@media (max-width: 40rem) {
+				flex-direction: column;
+
+				& li {
+					flex-direction: row;
+					align-items: center;
+					gap: 0.75rem;
+					padding: 0 0 0.85rem;
+
+					&::after {
+						top: var(--marker);
+						bottom: 0;
+						left: calc(var(--marker) / 2 - 1px);
+						right: auto;
+						width: 2px;
+						height: auto;
+					}
+
+					&:last-child {
+						padding-bottom: 0;
+					}
+				}
 			}
 		}
 
 		& .next {
 			display: grid;
 			gap: 0.6rem;
-			margin-top: 1rem;
+			margin-top: 1.25rem;
+			padding-top: 1rem;
+			border-top: 1px solid var(--rule2);
 
 			& .missing {
 				font-size: 13px;
-				color: var(--ink3);
+				color: var(--ink2);
 			}
+		}
+
+		@media print {
+			box-shadow: none;
 		}
 	}
 </style>

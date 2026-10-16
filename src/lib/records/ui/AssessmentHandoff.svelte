@@ -89,14 +89,16 @@
 {/if}
 
 <style>
+	/* a soft navy info card */
 	.handoff {
 		display: grid;
 		gap: 0.75rem;
 		margin-top: 1.5rem;
-		padding: 0.9rem 1rem;
-		border-left: 3px solid var(--navy);
-		background: var(--navy-soft);
+		padding: 0.9rem 1.1rem;
 		font-size: 14px;
+		background: var(--navy-soft);
+		border: 1px solid var(--navy-soft);
+		border-radius: var(--radius-card);
 
 		& .failed {
 			color: var(--wax);

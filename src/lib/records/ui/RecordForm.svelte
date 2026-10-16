@@ -57,7 +57,7 @@
 	{/if}
 
 	{#each sections as section (section.id)}
-		<section class="section">
+		<section class="section card">
 			<h2>{text(section.title)}</h2>
 			{#if section.intro}<p class="measure intro">{text(section.intro)}</p>{/if}
 			{#each section.fields as field (field.id)}
@@ -80,33 +80,40 @@
 </form>
 
 <style>
+	/* one raised card per section, the fields inside */
 	.record-form {
+		display: grid;
+		gap: 1.25rem;
+		margin-top: 1.5rem;
+
 		& .errors {
-			margin-top: 1.5rem;
 			padding: 0.75rem 1rem;
-			border-left: 3px solid var(--wax);
-			background: var(--wax-soft);
 			font-size: 14px;
+			color: var(--wax);
+			background: var(--wax-soft);
+			border: 1px solid var(--wax-soft);
+			border-radius: var(--radius-card);
 		}
 
 		& .section {
-			padding-top: 2rem;
+			min-width: 0;
+			padding-bottom: 0.25rem;
 
 			& h2 {
-				font-size: 20px;
-				padding-bottom: 0.5rem;
-				border-bottom: 1px solid var(--rule);
+				font-size: 18px;
+				padding-bottom: 0.25rem;
 			}
 
 			& .intro {
-				margin-top: 0.75rem;
+				margin-top: 0.35rem;
+				margin-bottom: 0.25rem;
 				font-size: 14px;
 				color: var(--ink2);
 			}
 		}
 
 		& .actions {
-			margin-top: 2rem;
+			margin-top: 0.25rem;
 		}
 	}
 </style>

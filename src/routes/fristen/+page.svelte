@@ -5,6 +5,8 @@
 	import { toIcs } from '#lib/records/ics.js';
 	import DeadlineList from '#lib/records/ui/DeadlineList.svelte';
 	import { downloadText } from '#lib/records/ui/download.js';
+	import Icon from '#lib/ui/Icon.svelte';
+	import PageHeader from '#lib/ui/PageHeader.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -24,41 +26,46 @@
 	<title>{m.deadlines_title()} — Daily</title>
 </svelte:head>
 
-<header class="head">
-	<h1>{m.deadlines_title()}</h1>
-	{#if data.preview}<p class="local">{m.records_local()}</p>{/if}
-</header>
+{#snippet actions()}
+	{#if data.deadlines.length > 0}
+		<button type="button" class="quiet no-print" onclick={exportIcs}>
+			<Icon name="calendar" size={16} />{m.deadlines_ics()}
+		</button>
+	{/if}
+{/snippet}
 
-{#if data.deadlines.length > 0}
-	<p class="toolbar no-print">
-		<button type="button" class="quiet" onclick={exportIcs}>{m.deadlines_ics()}</button>
+<PageHeader title={m.deadlines_title()} {actions} />
+
+{#if data.preview}
+	<p class="local no-print">
+		<span class="icon"><Icon name="lock" /></span><span>{m.records_local()}</span>
 	</p>
 {/if}
 
 <DeadlineList
 	deadlines={data.deadlines}
 	{now}
+	grouped
 	hrefFor={(d) => localized(`/werkzeuge/${d.toolSlug}/eintraege?eintrag=${d.recordId}`)}
 />
 
 <style>
-	.head {
-		padding: 2.5rem 0 1rem;
-		border-bottom: 2px solid var(--ink);
+	/* a soft navy info card */
+	.local {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.75rem;
+		max-width: 100%;
+		margin-bottom: 1.5rem;
+		padding: 0.75rem 1rem;
+		font-size: 14px;
+		background: var(--navy-soft);
+		border: 1px solid var(--navy-soft);
+		border-radius: var(--radius-card);
 
-		& h1 {
-			font-size: clamp(28px, 4vw, 40px);
+		& .icon {
+			display: inline-flex;
+			color: var(--navy);
 		}
-
-		& .local {
-			margin-top: 0.75rem;
-			font-size: 14px;
-			color: var(--ink2);
-			max-width: var(--measure);
-		}
-	}
-
-	.toolbar {
-		margin-top: 1.25rem;
 	}
 </style>

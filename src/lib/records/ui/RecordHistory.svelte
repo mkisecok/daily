@@ -45,11 +45,11 @@
 	}
 </script>
 
-<section class="history">
+<section class="history card">
 	<h2 class="eyebrow">{m.records_history()}</h2>
 	<ol>
 		{#each events as event (event.id)}
-			<li>
+			<li data-kind={event.kind}>
 				<span class="when">{formatShortDate(event.at, locale)} {formatTime(event.at, locale)}</span>
 				<span class="what">
 					{kinds[event.kind]()}{#if event.kind === 'transition'}:
@@ -73,24 +73,67 @@
 </section>
 
 <style>
+	/* a vertical timeline: a dot per event on a hairline, the kind in its colour */
 	.history {
-		padding: 2rem 0;
+		margin-top: 2rem;
 
 		& ol {
 			list-style: none;
-			margin-top: 0.75rem;
+			margin-top: 1rem;
 		}
 
 		& li {
+			--dot: var(--ink3);
+
+			position: relative;
 			display: grid;
-			grid-template-columns: 9.5rem 1fr;
-			gap: 0.25rem 1rem;
-			padding: 0.6rem 0;
-			border-bottom: 1px solid var(--rule2);
+			gap: 0.2rem;
+			padding: 0 0 1.25rem 1.75rem;
 			font-size: 14px;
 
-			@media (max-width: 40rem) {
-				grid-template-columns: 1fr;
+			/* the line */
+			&::before {
+				content: '';
+				position: absolute;
+				top: 0.9rem;
+				bottom: -0.3rem;
+				left: calc(0.3rem - 1px);
+				width: 2px;
+				background: var(--rule2);
+			}
+
+			/* the dot */
+			&::after {
+				content: '';
+				position: absolute;
+				top: 0.3rem;
+				left: 0;
+				width: 0.6rem;
+				height: 0.6rem;
+				background: var(--sheet);
+				border: 2px solid var(--dot);
+				border-radius: 50%;
+			}
+
+			&:last-child {
+				padding-bottom: 0;
+
+				&::before {
+					display: none;
+				}
+			}
+
+			&[data-kind='created'],
+			&[data-kind='assessment'] {
+				--dot: var(--khaki);
+			}
+
+			&[data-kind='transition'] {
+				--dot: var(--navy);
+			}
+
+			&[data-kind='archived'] {
+				--dot: var(--wax);
 			}
 
 			& .when {
@@ -99,24 +142,42 @@
 				color: var(--ink3);
 			}
 
+			& .what {
+				font-weight: 500;
+			}
+
 			& .who {
+				font-weight: 400;
 				color: var(--ink3);
 			}
 
 			& .changes {
-				grid-column: 2;
 				display: grid;
 				grid-template-columns: max-content 1fr;
-				gap: 0.2rem 1rem;
+				gap: 0.25rem 1rem;
+				margin-top: 0.35rem;
+				padding: 0.6rem 0.8rem;
 				font-size: 13px;
 				color: var(--ink2);
+				background: var(--paper);
+				border-radius: var(--radius);
 
 				@media (max-width: 40rem) {
-					grid-column: 1;
+					grid-template-columns: minmax(0, 1fr);
+					gap: 0.1rem;
+
+					& dd + dt {
+						margin-top: 0.4rem;
+					}
 				}
 
 				& dt {
 					color: var(--ink3);
+				}
+
+				& dd {
+					min-width: 0;
+					overflow-wrap: anywhere;
 				}
 
 				& del {
@@ -128,6 +189,10 @@
 					color: var(--ink);
 				}
 			}
+		}
+
+		@media print {
+			box-shadow: none;
 		}
 	}
 </style>

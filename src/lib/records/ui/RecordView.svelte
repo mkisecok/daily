@@ -34,7 +34,7 @@
 	const locale = getLocale();
 </script>
 
-<div class="record-view">
+<div class="record-view card">
 	{#each definition.sections as section (section.id)}
 		<section class="section">
 			<h2>{text(section.title)}</h2>
@@ -75,43 +75,53 @@
 </div>
 
 <style>
+	/* one raised card; each section a titled block of label/value rows */
 	.record-view {
+		margin-top: 1.5rem;
+		padding: 0;
+
 		& .section {
-			padding-top: 2rem;
+			padding: 1rem 1.25rem 0.5rem;
+
+			& + .section {
+				border-top: 1px solid var(--rule2);
+			}
 
 			& h2 {
-				font-size: 20px;
-				padding-bottom: 0.5rem;
-				border-bottom: 1px solid var(--rule);
+				font-size: 18px;
+				padding-bottom: 0.35rem;
 			}
 		}
 
 		& .row {
 			display: grid;
-			grid-template-columns: minmax(12rem, 1fr) 2fr;
+			grid-template-columns: minmax(10rem, 1fr) 2fr;
 			gap: 0.25rem 2rem;
-			padding: 0.7rem 0;
-			border-bottom: 1px solid var(--rule2);
+			padding: 0.65rem 0;
+			border-top: 1px solid var(--rule2);
 
 			@media (max-width: 40rem) {
-				grid-template-columns: 1fr;
+				grid-template-columns: minmax(0, 1fr);
 			}
 
 			& dt {
 				display: flex;
 				flex-direction: column;
+				align-items: flex-start;
 				gap: 0.15rem;
-				font-size: 14px;
-				color: var(--ink2);
+				font-size: 13px;
+				color: var(--ink3);
 			}
 
 			& dd {
-				font-family: var(--serif);
-				font-size: 16px;
+				min-width: 0;
+				font-size: 15px;
 				white-space: pre-line;
+				overflow-wrap: anywhere;
 
 				& .assessment {
 					display: block;
+					font-weight: 600;
 
 					&[data-level='positive'] {
 						color: var(--wax);
@@ -129,7 +139,6 @@
 				& .assessed,
 				& .none {
 					display: block;
-					font-family: var(--sans);
 					font-size: 13px;
 					color: var(--ink3);
 				}
@@ -137,12 +146,14 @@
 				& .assess {
 					display: inline-block;
 					margin-top: 0.35rem;
-					font-family: var(--mono);
-					font-size: 12px;
-					letter-spacing: 0.08em;
-					text-transform: uppercase;
+					font-size: 13px;
+					font-weight: 500;
 				}
 			}
+		}
+
+		@media print {
+			box-shadow: none;
 		}
 	}
 </style>

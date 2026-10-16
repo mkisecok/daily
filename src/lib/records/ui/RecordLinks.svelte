@@ -33,7 +33,9 @@
 				<li>
 					<a href={resolve(hrefFor(group.tool.manifest.slug, record.id))}>{record.title}</a>
 					{#if group.tool.definition.workflow}
-						<span class="state">{stateLabel(group.tool.definition, record.state, locale)}</span>
+						<span class="state badge navy"
+							>{stateLabel(group.tool.definition, record.state, locale)}</span
+						>
 					{/if}
 				</li>
 			{/each}
@@ -43,10 +45,10 @@
 
 <style>
 	.links {
-		margin-top: 2rem;
+		margin-top: 1.5rem;
 
 		& h3 {
-			margin-top: 0.75rem;
+			margin-top: 0.9rem;
 			font-size: 16px;
 		}
 
@@ -59,23 +61,22 @@
 			display: flex;
 			flex-wrap: wrap;
 			gap: 0.25rem 1rem;
-			align-items: baseline;
+			align-items: center;
+			justify-content: space-between;
+			min-height: 44px;
 			padding: 0.45rem 0;
+			font-size: 15px;
+			font-weight: 500;
+			overflow-wrap: anywhere;
 			border-bottom: 1px solid var(--rule2);
 
 			&:last-child {
 				border-bottom: 0;
 			}
-			font-family: var(--serif);
-			font-size: 15px;
+		}
 
-			& .state {
-				font-family: var(--mono);
-				font-size: 11px;
-				letter-spacing: 0.08em;
-				text-transform: uppercase;
-				color: var(--navy);
-			}
+		@media print {
+			box-shadow: none;
 		}
 	}
 </style>

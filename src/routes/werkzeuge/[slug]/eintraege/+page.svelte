@@ -22,9 +22,12 @@
 	import { formatShortDate } from '#lib/i18n/date.js';
 	import { text } from '#lib/tools/i18n.js';
 	import { getRecordTool } from '#lib/tools/registry.js';
-	import ToolHeader from '#lib/tools/_shared/ToolHeader.svelte';
+	import Citation from '#lib/tools/_shared/Citation.svelte';
+	import StatusBadge from '#lib/tools/_shared/StatusBadge.svelte';
 	import Verdict from '#lib/tools/_shared/Verdict.svelte';
 	import ConfirmDialog from '#lib/ui/ConfirmDialog.svelte';
+	import Icon from '#lib/ui/Icon.svelte';
+	import PageHeader from '#lib/ui/PageHeader.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -152,12 +155,39 @@
 	<meta name="description" content={text(data.tool.summary)} />
 </svelte:head>
 
+{#snippet toolMeta()}
+	<p class="tool-meta">
+		<StatusBadge status={data.tool.status} />
+		{#each data.tool.legalBasis as basis (basis.law + basis.ref)}
+			<span class="sep" aria-hidden="true">·</span>
+			<Citation {basis} />
+		{/each}
+	</p>
+{/snippet}
+
+{#snippet listActions()}
+	<a class="button" href={resolve(localized(`/werkzeuge/${slug}/eintraege?neu=1`))}>
+		{m.records_new()}
+	</a>
+	{#if records.length > 0}
+		<button type="button" class="quiet" onclick={exportCsv}>{m.records_csv()}</button>
+		<button type="button" class="quiet" onclick={() => window.print()}>{m.records_print()}</button>
+	{/if}
+{/snippet}
+
 <div class="no-print">
-	<ToolHeader tool={data.tool} />
+	<PageHeader
+		title={text(data.tool.name)}
+		trail={[{ label: m.nav_tools(), path: localized('/werkzeuge') }]}
+		description={data.view === 'list' ? text(data.definition.intro) : undefined}
+		meta={toolMeta}
+		actions={data.view === 'list' ? listActions : undefined}
+	/>
 </div>
 
 {#if data.preview}
 	<aside class="local no-print">
+		<span class="icon"><Icon name="lock" /></span>
 		<p>{m.records_local()}</p>
 		<p class="toolbar">
 			<button type="button" class="quiet" onclick={() => (confirmClear = true)}>
@@ -198,11 +228,55 @@
 	{:else}
 		{@const record = detail.record}
 		<header class="record-head">
-			<h2>{record.title}</h2>
-			{#if record.archivedAt}
-				<p class="archived">
-					{m.records_archived({ date: formatShortDate(record.archivedAt, locale) })}
-				</p>
+			<div class="heading">
+				<h2>{record.title}</h2>
+				{#if data.definition.workflow}
+					<span class="badge navy">{stateLabel(data.definition, record.state, locale)}</span>
+				{/if}
+				{#if record.archivedAt}
+					<span class="archived badge wax">
+						{m.records_archived({ date: formatShortDate(record.archivedAt, locale) })}
+					</span>
+				{/if}
+			</div>
+			{#if !editing}
+				<div class="toolbar actions no-print">
+					{#if !record.archivedAt}
+						<button type="button" onclick={() => (editing = true)}>{m.records_edit()}</button>
+					{/if}
+					<button type="button" class="quiet" onclick={() => window.print()}
+						>{m.records_print()}</button
+					>
+					<a class="button quiet" href={resolve(listPath)}>{m.records_back()}</a>
+					<a
+						class="button quiet"
+						href={resolve(
+							localized(
+								`/notizen?neu=1&titel=${encodeURIComponent(record.title)}&quelle=${encodeURIComponent(`/werkzeuge/${slug}/eintraege?eintrag=${record.id}`)}`
+							)
+						)}>{m.notes_from_record()}</a
+					>
+					{#if !record.archivedAt}
+						<button
+							type="button"
+							class="quiet"
+							disabled={busy}
+							onclick={() => (confirmArchive = true)}
+						>
+							{m.records_archive()}
+						</button>
+						<ConfirmDialog
+							bind:open={confirmArchive}
+							title={m.records_archive_title()}
+							body={m.records_archive_confirm()}
+							confirmLabel={m.records_archive()}
+							tone="danger"
+							icon="archive"
+							typeToConfirm={m.records_archive_word()}
+							onconfirm={() => archive(record)}
+						/>
+					{/if}
+				</div>
 			{/if}
 		</header>
 
@@ -271,7 +345,7 @@
 							<article class="composed-record">
 								<h4>
 									{item.title}{#if group.tool.definition.workflow}
-										<span class="composed-state"
+										<span class="composed-state badge navy"
 											>{stateLabel(group.tool.definition, item.state, locale)}</span
 										>{/if}
 								</h4>
@@ -290,64 +364,13 @@
 				<RecordLinks backlinks={data.backlinks} hrefFor={referenceHref} />
 			{/if}
 
-			<div class="toolbar actions no-print">
-				{#if !record.archivedAt}
-					<button type="button" onclick={() => (editing = true)}>{m.records_edit()}</button>
-				{/if}
-				<button type="button" class="quiet" onclick={() => window.print()}
-					>{m.records_print()}</button
-				>
-				<a class="button quiet" href={resolve(listPath)}>{m.records_back()}</a>
-				<a
-					class="button quiet"
-					href={resolve(
-						localized(
-							`/notizen?neu=1&titel=${encodeURIComponent(record.title)}&quelle=${encodeURIComponent(`/werkzeuge/${slug}/eintraege?eintrag=${record.id}`)}`
-						)
-					)}>{m.notes_from_record()}</a
-				>
-				{#if !record.archivedAt}
-					<button
-						type="button"
-						class="quiet"
-						disabled={busy}
-						onclick={() => (confirmArchive = true)}
-					>
-						{m.records_archive()}
-					</button>
-					<ConfirmDialog
-						bind:open={confirmArchive}
-						title={m.records_archive_title()}
-						body={m.records_archive_confirm()}
-						confirmLabel={m.records_archive()}
-						tone="danger"
-						icon="archive"
-						typeToConfirm={m.records_archive_word()}
-						onconfirm={() => archive(record)}
-					/>
-				{/if}
-			</div>
-
 			<RecordHistory definition={data.definition} events={detail.events} titles={data.titles} />
 		{/if}
 	{/if}
 {:else}
 	<section class="list no-print">
-		<p class="measure intro">{text(data.definition.intro)}</p>
-		<div class="toolbar">
-			<a class="button" href={resolve(localized(`/werkzeuge/${slug}/eintraege?neu=1`))}>
-				{m.records_new()}
-			</a>
-			{#if records.length > 0}
-				<button type="button" class="quiet" onclick={exportCsv}>{m.records_csv()}</button>
-				<button type="button" class="quiet" onclick={() => window.print()}
-					>{m.records_print()}</button
-				>
-			{/if}
-		</div>
-
 		{#if records.length === 0}
-			<p class="quiet-text">{m.records_empty()}</p>
+			<p class="empty">{m.records_empty()}</p>
 		{:else}
 			<RecordTable
 				definition={data.definition}
@@ -369,61 +392,93 @@
 {/if}
 
 <style>
+	.tool-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.6rem;
+		margin-top: 0.75rem;
+
+		& .sep {
+			color: var(--ink3);
+		}
+	}
+
+	/* soft navy info cards: the preview notice and status messages */
+	.local,
+	.message {
+		margin-bottom: 1.5rem;
+		padding: 0.75rem 1rem;
+		font-size: 14px;
+		background: var(--navy-soft);
+		border: 1px solid var(--navy-soft);
+		border-radius: var(--radius-card);
+	}
+
 	.local {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		justify-content: space-between;
-		gap: 0.75rem 2rem;
-		margin-top: 1.5rem;
-		padding: 0.75rem 1rem;
-		border-left: 3px solid var(--khaki);
-		background: var(--khaki-soft);
-		font-size: 14px;
+		gap: 0.75rem 1rem;
+
+		& .icon {
+			display: inline-flex;
+			color: var(--navy);
+		}
 
 		& p {
+			flex: 1 1 16rem;
+			min-width: 0;
 			max-width: var(--measure);
 		}
-	}
 
-	.message {
-		margin-top: 1.5rem;
-		padding: 0.75rem 1rem;
-		border-left: 3px solid var(--navy);
-		background: var(--navy-soft);
-		font-size: 14px;
-	}
-
-	.list {
-		& .intro {
-			margin: 1.5rem 0;
-			font-size: 16px;
-			color: var(--ink2);
+		& .toolbar {
+			flex: 0 1 auto;
 		}
 	}
 
-	.mode-title,
-	.record-head h2 {
-		margin-top: 2rem;
-		font-size: clamp(24px, 3vw, 30px);
+	.mode-title {
+		font-size: clamp(22px, 2.6vw, 26px);
 	}
 
 	.record-head {
-		& .archived {
-			margin-top: 0.5rem;
-			font-size: 14px;
-			color: var(--wax);
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 1rem 2rem;
+
+		& .heading {
+			display: flex;
+			flex: 1 1 18rem;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 0.5rem 0.75rem;
+			min-width: 0;
+
+			& h2 {
+				font-size: clamp(22px, 2.6vw, 26px);
+				overflow-wrap: anywhere;
+			}
+		}
+
+		& .actions {
+			flex: 0 1 auto;
+			justify-content: flex-end;
+
+			@media (max-width: 40rem) {
+				flex: 1 1 100%;
+				justify-content: flex-start;
+			}
 		}
 	}
 
 	.deadlines {
-		padding-top: 1.5rem;
+		margin-top: 2rem;
 	}
 
 	.composed {
 		margin-top: 2.5rem;
-		padding-top: 1rem;
-		border-top: 2px solid var(--ink);
 
 		& h3 {
 			margin-top: 1.5rem;
@@ -431,33 +486,33 @@
 		}
 
 		& .composed-record {
-			margin-top: 1rem;
-			padding-left: 1rem;
-			border-left: 2px solid var(--rule);
+			margin-top: 1.5rem;
 			break-inside: avoid;
 
 			& h4 {
 				font-size: 16px;
 
 				& .composed-state {
-					margin-left: 0.75rem;
-					font-family: var(--mono);
-					font-size: 11px;
-					letter-spacing: 0.08em;
-					text-transform: uppercase;
-					color: var(--navy);
+					margin-left: 0.5rem;
+					font-family: var(--sans);
+					vertical-align: 0.1em;
 				}
 			}
 		}
 	}
 
-	.actions {
-		margin-top: 2rem;
-	}
-
-	.quiet-text {
+	.quiet-text,
+	.empty {
 		margin-top: 1.5rem;
 		font-size: 14px;
 		color: var(--ink3);
+	}
+
+	.empty {
+		padding: 2rem 1.25rem;
+		text-align: center;
+		background: var(--sheet);
+		border: 1px dashed var(--rule);
+		border-radius: var(--radius-card);
 	}
 </style>
