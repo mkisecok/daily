@@ -212,7 +212,41 @@ test('preview: the command palette jumps to a tool and searches the laws', async
 
 test('preview: typing "/" in a text field does not open the palette', async ({ page }) => {
 	await page.goto('notizen/?neu=1');
-	await page.getByLabel('Titel').fill('a/b');
+	// real keystrokes: fill() sends no keydown and would pass without the guard
+	await page.getByLabel('Titel').pressSequentially('a/b');
 	await expect(page.getByLabel('Titel')).toHaveValue('a/b');
 	await expect(page.getByRole('dialog', { name: 'Suche öffnen' })).toBeHidden();
+});
+
+test('preview: the sidebar counter follows saves and clearing without navigation', async ({
+	page
+}) => {
+	await page.goto('werkzeuge/datenpanne/eintraege/?neu=1', { waitUntil: 'networkidle' });
+	const counter = page.locator('.sidebar a', { hasText: 'Fristen' }).locator('.count');
+	await expect(counter).toHaveCount(0);
+	const now = new Date();
+	const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T08:00`;
+	await page.getByLabel('Bezeichnung').fill('Zählertest');
+	await pickDate(page, 'Kenntnis am', today);
+	await page.getByLabel('Was ist geschehen?').fill('Test');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(counter).toHaveText('1');
+
+	await page.getByRole('link', { name: 'Zur Übersicht' }).click();
+	await page.getByRole('button', { name: 'Lokale Daten löschen' }).click();
+	const dialog = page.getByRole('dialog', { name: 'Lokale Daten löschen?' });
+	await dialog.getByLabel('Zur Bestätigung „löschen“ eingeben').fill('löschen');
+	await dialog.getByRole('button', { name: 'Lokale Daten löschen' }).click();
+	await expect(counter).toHaveCount(0);
+});
+
+test('preview: phones reach the preview explanation from the menu', async ({ page }) => {
+	await page.setViewportSize({ width: 375, height: 740 });
+	await page.goto('werkzeuge/', { waitUntil: 'networkidle' });
+	await page.getByRole('button', { name: 'Menü' }).click();
+	await page
+		.getByRole('dialog')
+		.getByRole('link', { name: /Vorschau/ })
+		.click();
+	await expect(page).toHaveURL(/\/daily\/vorschau\/$/);
 });
