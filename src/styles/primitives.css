@@ -176,7 +176,7 @@
 	line-height: 1.6;
 	white-space: nowrap;
 	color: var(--ink2);
-	background: var(--paper);
+	background: var(--neutral-soft);
 	border-radius: var(--radius-badge);
 
 	&.navy {

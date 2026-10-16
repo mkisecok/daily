@@ -25,7 +25,9 @@ html[data-theme='light'] {
 	--rule2: #eae4d8;
 	--ink: #1c1b19;
 	--ink2: #4a4741;
-	--ink3: #8a857b;
+	/* at least 4.5:1 on canvas, sidebar and sheets */
+	--ink3: #6e6960;
+	--neutral-soft: rgba(28, 27, 25, 0.06);
 
 	--navy: #16294a;
 	--navy-soft: rgba(22, 41, 74, 0.09);
@@ -66,7 +68,8 @@ html[data-theme='dark'] {
 	--rule2: #2a2823;
 	--ink: #ede8df;
 	--ink2: #b5afa3;
-	--ink3: #7f7a70;
+	--ink3: #9a958b;
+	--neutral-soft: rgba(237, 232, 223, 0.08);
 
 	--navy: #8fb0dc;
 	--navy-soft: rgba(143, 176, 220, 0.13);
