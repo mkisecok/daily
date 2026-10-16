@@ -28,8 +28,9 @@
 		if (resolved === 'dark' || resolved === 'light') theme = resolved;
 	}
 
+	/** reads the document, not local state: the other switch (phone menu or masthead) may have toggled */
 	function toggle() {
-		theme = theme === 'dark' ? 'light' : 'dark';
+		theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
 		document.documentElement.dataset.theme = theme;
 		document.cookie = `${THEME_COOKIE}=${theme}; path=/; max-age=31536000; samesite=lax`;
 	}
