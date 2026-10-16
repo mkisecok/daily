@@ -6,6 +6,7 @@
 	close it; focus returns to the menu button.
 -->
 <script lang="ts">
+	import { on } from 'svelte/events';
 	import { afterNavigate } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
@@ -48,6 +49,14 @@
 		if (!open && dialog.open) dialog.close();
 	}
 
+	/** the sheet belongs to the phone layout: growing past it closes the dialog (its close event resets `open`) */
+	function closeOnDesktop(dialog: HTMLDialogElement) {
+		const desktop = window.matchMedia('(min-width: 56.01rem)');
+		return on(desktop, 'change', (event) => {
+			if (event.matches && dialog.open) dialog.close();
+		});
+	}
+
 	/** the sheet fills the dialog, so a click on the dialog itself is a click on the backdrop */
 	function backdrop(event: MouseEvent & { currentTarget: HTMLDialogElement }) {
 		if (event.target === event.currentTarget) event.currentTarget.close();
@@ -57,6 +66,7 @@
 <!-- the Esc key closes the dialog natively, so the backdrop click needs no key handler -->
 <dialog
 	{@attach sync}
+	{@attach closeOnDesktop}
 	{id}
 	class="sheet"
 	aria-label={m.nav_label()}

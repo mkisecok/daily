@@ -1,7 +1,9 @@
 <!--
 	@component
 	Site header: wordmark, primary navigation, language and theme switches,
-	sign-in state. A hairline below, nothing else.
+	sign-in state. A hairline below, nothing else. Below 56rem only the
+	wordmark, a preview chip and the menu button remain; the navigation moves
+	into the phone menu sheet.
 -->
 <script lang="ts">
 	import { PUBLIC_PREVIEW } from '$app/env/public';
