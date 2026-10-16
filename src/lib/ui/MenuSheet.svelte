@@ -7,21 +7,22 @@
 -->
 <script lang="ts">
 	import { on } from 'svelte/events';
+	import { PUBLIC_PREVIEW } from '$app/env/public';
 	import { afterNavigate } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import { m } from '#lib/paraglide/messages.js';
 	import { localized, type RoutePath } from '#lib/i18n/links.js';
 	import type { ThemeSetting } from '#lib/theme.js';
+	import DeadlineCount from './DeadlineCount.svelte';
 	import Icon from './Icon.svelte';
 	import LangSwitch from './LangSwitch.svelte';
 	import ThemeSwitch from './ThemeSwitch.svelte';
-
-	type Item = { path: RoutePath; route: string; label: string; current: boolean };
+	import { navItems } from './nav.js';
 
 	let {
 		open = $bindable(false),
 		id,
-		items,
 		theme,
 		user,
 		organisation,
@@ -29,7 +30,6 @@
 	}: {
 		open?: boolean;
 		id: string;
-		items: Item[];
 		theme: ThemeSetting;
 		user: { displayName: string } | null;
 		organisation: { name: string; kind: 'eigene' | 'mandant' } | null;
@@ -37,7 +37,8 @@
 		loginPath?: RoutePath;
 	} = $props();
 
-	const NUMERALS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+	const withRecords = $derived(!!user || PUBLIC_PREVIEW);
+	const items = $derived(navItems(withRecords, page.route.id));
 
 	afterNavigate(() => {
 		open = false;
@@ -77,17 +78,18 @@
 		<div class="head">
 			<span class="eyebrow">{m.nav_menu()}</span>
 			<button type="button" class="close" onclick={() => (open = false)} aria-label={m.nav_close()}>
-				<Icon name="x" size={22} />
+				<span class="ico"><Icon name="x" size={22} /></span>
 			</button>
 		</div>
 
 		<nav aria-label={m.nav_label()}>
 			<ol>
-				{#each items as item, i (item.route)}
+				{#each items as item (item.route)}
 					<li>
 						<a href={resolve(item.path)} aria-current={item.current ? 'page' : undefined}>
-							<span class="numeral">{NUMERALS[i]}</span>
+							<span class="ico"><Icon name={item.icon} size={20} /></span>
 							<span class="label">{item.label}</span>
+							{#if item.route === '/fristen'}<DeadlineCount enabled={withRecords} />{/if}
 						</a>
 					</li>
 				{/each}
@@ -184,7 +186,7 @@
 
 		& nav a {
 			display: flex;
-			align-items: baseline;
+			align-items: center;
 			gap: 0.9rem;
 			min-height: 52px;
 			padding: 0.8rem 0.5rem 0.7rem;
@@ -200,11 +202,14 @@
 				background: var(--khaki-soft);
 			}
 
-			& .numeral {
-				min-width: 2.2rem;
-				font-family: var(--mono);
-				font-size: 12px;
+			& .ico {
+				display: inline-grid;
+				place-items: center;
 				color: var(--ink3);
+			}
+
+			&[aria-current='page'] .ico {
+				color: var(--khaki);
 			}
 
 			& .label {
