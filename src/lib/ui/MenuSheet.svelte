@@ -89,7 +89,7 @@
 						<a href={resolve(item.path)} aria-current={item.current ? 'page' : undefined}>
 							<span class="ico"><Icon name={item.icon} size={20} /></span>
 							<span class="label">{item.label}</span>
-							{#if item.route === '/fristen'}<DeadlineCount enabled={withRecords} />{/if}
+							{#if item.route === '/fristen'}<DeadlineCount />{/if}
 						</a>
 					</li>
 				{/each}
@@ -112,6 +112,13 @@
 			<div class="account">
 				<a class="button" href={resolve(loginPath)} data-sveltekit-reload>{m.nav_login()}</a>
 			</div>
+		{/if}
+
+		{#if PUBLIC_PREVIEW}
+			<a class="preview" href={resolve(localized('/vorschau'))}>
+				<span class="ico"><Icon name="eye" size={18} /></span>
+				<span>{m.preview_chip()} · {m.preview_more()}</span>
+			</a>
 		{/if}
 
 		<div class="foot">
@@ -236,6 +243,24 @@
 				&[data-kind='mandant'] {
 					color: var(--navy);
 				}
+			}
+		}
+
+		/* phones have no preview bar: this is where the preview explains itself */
+		& .preview {
+			display: flex;
+			align-items: center;
+			gap: 0.6rem;
+			min-height: 44px;
+			margin-top: 1.25rem;
+			padding: 0.5rem 0.75rem;
+			font-size: 14px;
+			color: var(--navy);
+			background: var(--navy-soft);
+			border-radius: var(--radius);
+
+			&:hover {
+				text-decoration: none;
 			}
 		}
 

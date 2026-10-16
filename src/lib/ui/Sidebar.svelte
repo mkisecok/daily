@@ -48,7 +48,7 @@
 					>
 						<span class="ico"><Icon name={item.icon} size={18} /></span>
 						<span>{item.label}</span>
-						{#if item.route === '/fristen'}<DeadlineCount enabled={withRecords} />{/if}
+						{#if item.route === '/fristen'}<DeadlineCount />{/if}
 					</a>
 				</li>
 			{/each}

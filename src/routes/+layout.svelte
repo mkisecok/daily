@@ -8,6 +8,7 @@
 	import '../styles/forms.css';
 	import '../styles/controls.css';
 	import '../styles/print.css';
+	import { afterNavigate } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { locales } from '#lib/paraglide/runtime.js';
@@ -21,12 +22,15 @@
 	import MenuSheet from '#lib/ui/MenuSheet.svelte';
 	import Sidebar from '#lib/ui/Sidebar.svelte';
 	import Topbar from '#lib/ui/Topbar.svelte';
+	import { refreshDeadlineCount } from '#lib/ui/deadline-count.svelte.js';
 	import type { LayoutProps } from './$types';
 
 	let { data, children }: LayoutProps = $props();
 
 	let menuOpen = $state(false);
 	let paletteOpen = $state(false);
+
+	afterNavigate(() => refreshDeadlineCount(!!data.user || PUBLIC_PREVIEW));
 </script>
 
 <svelte:head>

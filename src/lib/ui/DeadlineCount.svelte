@@ -1,27 +1,13 @@
 <!--
 	@component
-	Number of open deadlines due within seven days, read from the record store
-	in the browser; wax when one is overdue. Shows nothing when there are none
-	or the store cannot be read (signed out in the full app). Reloads after
-	every navigation, so a saved record updates it.
+	Number of open deadlines due within seven days; wax when one is overdue.
+	Shows nothing when there are none or the store cannot be read (signed out
+	in the full app). The count itself lives in `deadline-count.svelte.ts`,
+	shared with the phone menu and refreshed by the layout and by store writes.
 -->
 <script lang="ts">
-	import { afterNavigate } from '$app/navigation';
 	import { m } from '#lib/paraglide/messages.js';
-	import { getStore } from '#lib/records/store/index.js';
-	import { dueSoon } from './deadline-count.js';
-
-	let { enabled }: { enabled: boolean } = $props();
-
-	let due = $state({ count: 0, overdue: false });
-
-	afterNavigate(() => {
-		if (!enabled) return;
-		void getStore()
-			.deadlines()
-			.then((deadlines) => (due = dueSoon(deadlines, new Date())))
-			.catch(() => (due = { count: 0, overdue: false }));
-	});
+	import { deadlineCount as due } from './deadline-count.svelte.js';
 </script>
 
 {#if due.count > 0}
