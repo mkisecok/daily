@@ -257,5 +257,7 @@
 	"home_area_norms": "The GDPR, the AI Act, the BDSG and the TDDDG in full, with cross-references.",
 	"home_area_notes": "A daily note on news, provisions and your own matters.",
 	"home_area_deadlines": "Open deadlines from registers and workflows, the nearest first.",
-	"records_ui_deadlines_later": "Later"
+	"records_ui_deadlines_later": "Later",
+	"records_step_done": "done",
+	"records_step_skipped": "not taken"
 }

@@ -298,6 +298,7 @@
 		{:else}
 			{#if data.definition.workflow}
 				<StateBar
+					events={detail.events}
 					definition={data.definition}
 					{record}
 					{busy}

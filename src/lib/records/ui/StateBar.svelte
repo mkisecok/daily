@@ -1,32 +1,38 @@
 <!--
 	@component
-	Where a workflow record stands: the states in order with the current one
-	marked, then the possible next steps. A step whose required fields are
+	Where a workflow record stands: the states in order, marked as passed,
+	current, still possible or not taken (from the record's own transitions,
+	never from the order alone), then the possible next steps. A step whose required fields are
 	empty, or whose own check fails, is disabled and says why.
 -->
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
 	import { text } from '#lib/tools/i18n.js';
 	import ConfirmDialog from '#lib/ui/ConfirmDialog.svelte';
-	import type { RecordToolDefinition, StoredRecord, TransitionDef } from '../types.js';
+	import { stateProgress } from '../progress.js';
+	import type { RecordEvent, RecordToolDefinition, StoredRecord, TransitionDef } from '../types.js';
 	import { fieldById } from '../validate.js';
 	import { allowedTransitions } from '../workflow.js';
 
 	let {
 		definition,
 		record,
+		events,
 		busy = false,
 		ontransition
 	}: {
 		definition: RecordToolDefinition;
 		record: StoredRecord;
+		/** the record's history; transitions in it say which states were passed */
+		events: RecordEvent[];
 		busy?: boolean;
 		ontransition: (to: string) => void;
 	} = $props();
 
 	const states = $derived(definition.workflow?.states ?? []);
-	/** states before the current one count as done */
-	const currentIndex = $derived(states.findIndex((s) => s.id === record.state));
+	const progress = $derived(
+		new Map(stateProgress(definition, record.state, events).map((p) => [p.id, p.status]))
+	);
 	const options = $derived(record.archivedAt ? [] : allowedTransitions(definition, record));
 
 	/** the step waiting for confirmation */
@@ -55,12 +61,14 @@
 
 <section class="state-bar card">
 	<ol class="states" aria-label={m.records_state()}>
-		{#each states as state, index (state.id)}
-			<li
-				aria-current={index === currentIndex ? 'step' : undefined}
-				data-done={index < currentIndex || undefined}
-			>
-				{text(state.label)}
+		{#each states as state (state.id)}
+			{@const status = progress.get(state.id)}
+			<li data-status={status} aria-current={status === 'current' ? 'step' : undefined}>
+				{text(state.label)}{#if status === 'done'}<span class="visually-hidden"
+						>, {m.records_step_done()}</span
+					>{:else if status === 'skipped'}<span class="visually-hidden"
+						>, {m.records_step_skipped()}</span
+					>{/if}
 			</li>
 		{/each}
 	</ol>
@@ -106,14 +114,13 @@
 </section>
 
 <style>
-	/* a stepper: done steps khaki, the current one navy, the rest neutral */
+	/* a stepper: passed steps khaki, the current one navy, open ones neutral, untaken branches dashed */
 	.state-bar {
 		margin-top: 1.5rem;
 
 		& .states {
 			display: flex;
 			list-style: none;
-			counter-reset: step;
 
 			& li {
 				--marker: 1.75rem;
@@ -129,11 +136,10 @@
 				line-height: 1.35;
 				overflow-wrap: anywhere;
 				color: var(--ink3);
-				counter-increment: step;
 
-				/* the marker */
+				/* the marker: empty ring by default */
 				&::before {
-					content: counter(step);
+					content: '';
 					position: relative;
 					z-index: 1;
 					display: grid;
@@ -165,7 +171,7 @@
 					display: none;
 				}
 
-				&[data-done] {
+				&[data-status='done'] {
 					color: var(--ink2);
 
 					&::before {
@@ -177,6 +183,16 @@
 
 					&::after {
 						background: var(--khaki);
+					}
+				}
+
+				/* a branch not taken: dashed and faded, never ticked */
+				&[data-status='skipped'] {
+					font-style: italic;
+					opacity: 0.6;
+
+					&::before {
+						border-style: dashed;
 					}
 				}
 
@@ -217,6 +233,15 @@
 					}
 				}
 			}
+		}
+
+		& .visually-hidden {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip-path: inset(50%);
+			white-space: nowrap;
 		}
 
 		& .next {

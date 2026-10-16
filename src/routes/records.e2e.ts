@@ -124,6 +124,9 @@ test('Datenpanne: 72-hour deadline on Fristen and the workflow to closure', asyn
 	await step(page, 'Als nicht meldepflichtig dokumentieren');
 	await step(page, 'Abschließen');
 	await expect(page.locator('[aria-current="step"]')).toHaveText('Abgeschlossen');
+	// the breach was not reportable: "Gemeldet" must show as not taken, never as done
+	await expect(page.locator('.state-bar li[data-status="skipped"]')).toContainText('Gemeldet');
+	await expect(page.locator('.state-bar li[data-status="done"]')).not.toContainText(['Gemeldet']);
 
 	await page.getByRole('link', { name: 'Fristen' }).click();
 	await expect(page.locator('h1')).toHaveText('Fristen');
