@@ -249,5 +249,8 @@
 	"deadlines_due_soon": "{count} deadlines in the next 7 days",
 	"search_placeholder": "Search or jump to …",
 	"search_open": "Open search",
-	"search_shortcut": "Ctrl K"
+	"search_shortcut": "Ctrl K",
+	"command_areas": "Areas",
+	"command_actions": "Actions",
+	"command_search_norms": "Search the laws: {query}"
 }

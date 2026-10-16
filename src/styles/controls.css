@@ -375,6 +375,60 @@
 	}
 }
 
+/* command palette (Bits UI Command) */
+.daily-command-input {
+	flex: 1;
+	min-width: 0;
+	padding: 0.3rem 0;
+	font: inherit;
+	font-size: 16px;
+	color: var(--ink);
+	background: none;
+	border: 0;
+	box-shadow: none;
+
+	&:focus {
+		outline: none;
+		box-shadow: none;
+	}
+}
+
+.daily-command-list {
+	max-height: min(24rem, calc(100dvh - 11rem));
+	padding: 0.35rem;
+	overflow-y: auto;
+}
+
+.daily-command-empty {
+	padding: 1rem 0.6rem;
+	font-size: 14px;
+	color: var(--ink3);
+}
+
+.daily-command-heading {
+	padding: 0.6rem 0.6rem 0.3rem;
+	font-family: var(--mono);
+	font-size: 11px;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--ink3);
+}
+
+.daily-command-item {
+	display: flex;
+	align-items: center;
+	gap: 0.65rem;
+	min-height: 2.6rem;
+	padding: 0.4rem 0.6rem;
+	font-size: 14px;
+	border-radius: var(--radius);
+	cursor: pointer;
+
+	&[data-selected] {
+		background: var(--navy-soft);
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.daily-switch,
 	.daily-switch-thumb,

@@ -249,5 +249,8 @@
 	"deadlines_due_soon": "{count} Fristen in den nächsten 7 Tagen",
 	"search_placeholder": "Suchen oder springen …",
 	"search_open": "Suche öffnen",
-	"search_shortcut": "Strg K"
+	"search_shortcut": "Strg K",
+	"command_areas": "Bereiche",
+	"command_actions": "Aktionen",
+	"command_search_norms": "In den Normen suchen: {query}"
 }
