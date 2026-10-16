@@ -37,7 +37,7 @@
 	);
 </script>
 
-<div class="scroll">
+<div class="rows">
 	<table>
 		<thead>
 			<tr>
@@ -54,12 +54,18 @@
 				<tr>
 					<th scope="row"><a href={resolve(hrefFor(record))}>{record.title}</a></th>
 					{#each columns as column (column.id)}
-						<td>{formatValue(column, record.data[column.id], locale, titles) || '—'}</td>
+						<td data-label={text(column.label)}
+							>{formatValue(column, record.data[column.id], locale, titles) || '—'}</td
+						>
 					{/each}
 					{#if definition.workflow}
-						<td><span class="state">{stateLabel(definition, record.state, locale)}</span></td>
+						<td data-label={m.records_state()}
+							><span class="badge navy">{stateLabel(definition, record.state, locale)}</span></td
+						>
 					{/if}
-					<td class="date">{formatShortDate(record.updatedAt, locale)}</td>
+					<td class="date" data-label={m.records_updated()}
+						>{formatShortDate(record.updatedAt, locale)}</td
+					>
 				</tr>
 			{/each}
 		</tbody>
@@ -67,52 +73,100 @@
 </div>
 
 <style>
-	.scroll {
-		overflow-x: auto;
+	/* a raised list of rows; on phones each row stacks with the field names */
+	.rows {
 		margin-top: 1.5rem;
+		overflow-x: auto;
+		background: var(--sheet);
+		border: 1px solid var(--rule2);
+		border-radius: var(--radius-card);
+		box-shadow: var(--shadow-raised);
 
 		& table {
 			width: 100%;
 			border-collapse: collapse;
 			font-size: 14px;
+		}
 
-			& th,
+		& th,
+		& td {
+			padding: 0.85rem 1rem;
+			text-align: left;
+			vertical-align: middle;
+		}
+
+		& thead th {
+			padding-top: 0.65rem;
+			padding-bottom: 0.65rem;
+			font-family: var(--mono);
+			font-size: 11px;
+			font-weight: 500;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			white-space: nowrap;
+			color: var(--ink3);
+			background: var(--paper);
+			border-bottom: 1px solid var(--rule2);
+		}
+
+		& tbody tr {
+			border-bottom: 1px solid var(--rule2);
+			transition: background-color 0.12s ease;
+
+			&:last-child {
+				border-bottom: 0;
+			}
+
+			&:hover {
+				background: var(--navy-soft);
+			}
+		}
+
+		& tbody th {
+			font-size: 15px;
+			font-weight: 600;
+
+			& a {
+				color: var(--ink);
+			}
+		}
+
+		& td {
+			color: var(--ink2);
+		}
+
+		& .date {
+			font-family: var(--mono);
+			font-size: 12px;
+			white-space: nowrap;
+			color: var(--ink3);
+		}
+
+		@media (max-width: 40rem) {
+			& thead {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				overflow: hidden;
+				clip-path: inset(50%);
+			}
+
+			& tbody tr {
+				display: grid;
+				gap: 0.25rem;
+				padding: 0.85rem 1rem;
+			}
+
+			& tbody th,
 			& td {
-				padding: 0.65rem 1rem 0.65rem 0;
-				text-align: left;
-				vertical-align: baseline;
-				border-bottom: 1px solid var(--rule2);
+				display: block;
+				padding: 0;
 			}
 
-			& thead th {
-				font-family: var(--mono);
-				font-size: 11px;
-				font-weight: 500;
-				letter-spacing: 0.1em;
-				text-transform: uppercase;
+			& td::before {
+				content: attr(data-label) ': ';
+				font-family: var(--sans);
 				color: var(--ink3);
-				border-bottom: 1px solid var(--ink);
-				white-space: nowrap;
-			}
-
-			& tbody th {
-				font-family: var(--serif);
-				font-size: 16px;
-				font-weight: 400;
-			}
-
-			& .state {
-				font-family: var(--mono);
-				font-size: 11px;
-				letter-spacing: 0.08em;
-				text-transform: uppercase;
-				color: var(--navy);
-				white-space: nowrap;
-			}
-
-			& .date {
-				white-space: nowrap;
-				color: var(--ink2);
 			}
 		}
 	}
