@@ -14,6 +14,7 @@
 	import Citation from '#lib/tools/_shared/Citation.svelte';
 	import { text } from '#lib/tools/i18n.js';
 	import { getTool } from '#lib/tools/registry.js';
+	import { distance as distanceOf } from '../distance.js';
 	import type { Deadline } from '../types.js';
 
 	type Urgency = 'overdue' | 'soon' | 'later';
@@ -38,9 +39,7 @@
 	} = $props();
 
 	const locale = getLocale();
-	const HOUR = 60 * 60 * 1000;
-	const DAY = 24 * HOUR;
-	const relative = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+	const DAY = 24 * 60 * 60 * 1000;
 
 	const titles: Record<Urgency, () => string> = {
 		overdue: m.deadlines_overdue,
@@ -54,13 +53,8 @@
 		return left < 0 ? 'overdue' : left < DAY ? 'soon' : 'later';
 	}
 
-	/** how far off the deadline is, e.g. "in 3 Tagen" or "vor 5 Stunden" */
-	function distance(deadline: Deadline): string {
-		const left = Date.parse(deadline.dueAt) - now.getTime();
-		return Math.abs(left) < DAY
-			? relative.format(Math.round(left / HOUR), 'hour')
-			: relative.format(Math.round(left / DAY), 'day');
-	}
+	/** how far off the deadline is, e.g. "übermorgen" or "vor 20 Minuten" */
+	const distance = (deadline: Deadline) => distanceOf(deadline.dueAt, now, locale);
 
 	const groups = $derived(
 		(['overdue', 'soon', 'later'] as const)
