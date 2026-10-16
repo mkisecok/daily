@@ -6,12 +6,16 @@
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import Blocks from '#lib/normen/ui/Blocks.svelte';
 	import { text } from '#lib/tools/i18n.js';
+	import PageHeader from '#lib/ui/PageHeader.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 
 	const lawPath = $derived(localized(`/normen/${data.law.id}`));
 	const href = (id: string) => resolve(localized(`/normen/${data.law.id}/${id}`));
+	const title = $derived(
+		[data.provision.label, data.law.law, data.provision.title].filter(Boolean).join(' ')
+	);
 </script>
 
 <svelte:head>
@@ -20,21 +24,23 @@
 </svelte:head>
 
 <article class="provision">
-	<header class="head">
-		<p class="eyebrow">
-			<a href={resolve(localized('/normen'))}>{m.nav_norms()}</a> ·
-			<a href={resolve(lawPath)}>{data.law.law}</a>
-			{#if data.provision.chapter}· {data.provision.chapter}{/if}
-		</p>
-		<h1>
-			<span class="ref">{data.provision.label} {data.law.law}</span>
-			{data.provision.title}
-		</h1>
-	</header>
+	<PageHeader
+		{title}
+		trail={[
+			{ label: m.nav_norms(), path: localized('/normen') },
+			{ label: data.law.law, path: lawPath }
+		]}
+	>
+		{#snippet meta()}
+			{#if data.provision.chapter}<p class="chapter">{data.provision.chapter}</p>{/if}
+		{/snippet}
+	</PageHeader>
 
-	{#if data.provision.fallback}<p class="fallback">{m.normen_fallback()}</p>{/if}
+	<div class="card reading">
+		{#if data.provision.fallback}<p class="fallback">{m.normen_fallback()}</p>{/if}
 
-	<Blocks blocks={data.provision.blocks} />
+		<Blocks blocks={data.provision.blocks} />
+	</div>
 
 	{#if data.citedBy.length > 0}
 		<section class="cited no-print">
@@ -60,11 +66,17 @@
 
 	<nav class="pager no-print" aria-label={data.law.law}>
 		{#if data.prev}
-			<a href={href(data.prev.id)} rel="prev">← {data.prev.label} {data.prev.title}</a>
+			<a class="card" href={href(data.prev.id)} rel="prev">
+				<span class="eyebrow">← {m.normen_prev()}</span>
+				<span class="target">{data.prev.label} {data.prev.title}</span>
+			</a>
 		{:else}<span></span>{/if}
-		<a href={resolve(lawPath)}>{m.normen_back()}</a>
+		<a class="back" href={resolve(lawPath)}>{m.normen_back()}</a>
 		{#if data.next}
-			<a href={href(data.next.id)} rel="next">{data.next.label} {data.next.title} →</a>
+			<a class="card" href={href(data.next.id)} rel="next">
+				<span class="eyebrow">{m.normen_next()} →</span>
+				<span class="target">{data.next.label} {data.next.title}</span>
+			</a>
 		{:else}<span></span>{/if}
 	</nav>
 
@@ -77,65 +89,116 @@
 
 <style>
 	.provision {
-		& .head {
-			padding: 2.5rem 0 1rem;
-			border-bottom: 2px solid var(--ink);
+		/* the reading column: the law text at its measure plus the card's padding */
+		--reading: calc(var(--measure) + 4.5rem);
 
-			& h1 {
-				margin-top: 0.5rem;
-				font-size: clamp(24px, 3.2vw, 34px);
+		& .chapter {
+			margin-top: 0.6rem;
+			font-size: 14px;
+			color: var(--ink2);
+		}
 
-				& .ref {
-					display: block;
-					font-family: var(--mono);
-					font-size: 14px;
-					font-weight: 500;
-					color: var(--navy);
-				}
+		& .reading {
+			max-width: var(--reading);
+			padding: 1.75rem 2.25rem 2rem;
+
+			@media (max-width: 40rem) {
+				padding: 1.1rem 1rem 1.25rem;
+			}
+
+			@media print {
+				padding: 0;
+				border: 0;
+				box-shadow: none;
 			}
 		}
 
 		& .fallback {
-			margin-top: 1.25rem;
+			margin-bottom: 1.25rem;
 			padding: 0.6rem 0.9rem;
-			border-left: 3px solid var(--khaki);
-			background: var(--khaki-soft);
 			font-size: 14px;
-			max-width: var(--measure);
+			background: var(--khaki-soft);
+			border-radius: var(--radius);
 		}
 
 		& .cited {
-			margin-top: 2.5rem;
+			max-width: var(--reading);
+			margin-top: 2rem;
 
 			& ul {
-				list-style: none;
-				margin-top: 0.5rem;
 				display: flex;
 				flex-wrap: wrap;
-				gap: 0.4rem 1.5rem;
+				gap: 0.5rem;
+				margin-top: 0.6rem;
+				list-style: none;
 			}
 
-			& li {
+			/* each citing tool as a chip */
+			& a {
+				display: inline-flex;
+				align-items: center;
+				min-height: 36px;
+				padding: 0.3rem 0.8rem;
 				font-family: var(--serif);
 				font-size: 15px;
+				background: var(--sheet);
+				border: 1px solid var(--rule2);
+				border-radius: var(--radius);
+				box-shadow: var(--shadow-raised);
+				transition: border-color 0.12s ease;
+
+				&:hover {
+					text-decoration: none;
+					border-color: var(--navy);
+				}
+
+				@media (max-width: 40rem) {
+					min-height: 44px;
+				}
 			}
 		}
 
 		& .toolbar {
-			margin-top: 2rem;
+			margin-top: 1.75rem;
 		}
 
 		& .pager {
 			display: grid;
 			grid-template-columns: 1fr auto 1fr;
+			align-items: center;
 			gap: 1rem;
-			margin-top: 2.5rem;
-			padding-top: 1rem;
-			border-top: 1px solid var(--rule);
-			font-size: 14px;
+			max-width: var(--reading);
+			margin-top: 2rem;
+
+			& .card {
+				display: flex;
+				flex-direction: column;
+				gap: 0.2rem;
+				min-width: 0;
+				height: 100%;
+				padding: 0.8rem 1rem;
+				color: var(--ink);
+				transition: border-color 0.12s ease;
+
+				&:hover {
+					text-decoration: none;
+					border-color: var(--navy);
+				}
+
+				& .target {
+					font-family: var(--serif);
+					font-size: 15px;
+					line-height: 1.35;
+					overflow-wrap: anywhere;
+				}
+			}
 
 			& a[rel='next'] {
 				text-align: right;
+			}
+
+			& .back {
+				font-size: 14px;
 			}
 
 			@media (max-width: 40rem) {
@@ -144,14 +207,19 @@
 				& a[rel='next'] {
 					text-align: left;
 				}
+
+				& .back {
+					order: 1;
+					padding: 0.6rem 0;
+				}
 			}
 		}
 
 		& .source {
+			max-width: var(--reading);
 			margin-top: 1.5rem;
 			font-size: 12px;
 			color: var(--ink3);
-			max-width: var(--measure);
 		}
 	}
 </style>

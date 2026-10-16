@@ -8,6 +8,7 @@
 	import type { ReportKind } from '#lib/reports/compose.js';
 	import DeadlineList from '#lib/records/ui/DeadlineList.svelte';
 	import { text } from '#lib/tools/i18n.js';
+	import PageHeader from '#lib/ui/PageHeader.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -41,12 +42,11 @@
 	<title>{m.nav_reports()} — Daily</title>
 </svelte:head>
 
-<header class="head no-print">
-	<h1>{m.nav_reports()}</h1>
-	<p class="measure intro">{m.reports_intro()}</p>
-</header>
+<div class="no-print">
+	<PageHeader title={m.nav_reports()} description={m.reports_intro()} />
+</div>
 
-<form class="settings no-print" onsubmit={(e) => e.preventDefault()}>
+<form class="settings card no-print" onsubmit={(e) => e.preventDefault()}>
 	<label>
 		<span>{m.reports_kind()}</span>
 		<select value={data.kind} onchange={(e) => update({ art: e.currentTarget.value })}>
@@ -208,37 +208,31 @@
 </article>
 
 <style>
-	.head {
-		padding: 2.5rem 0 1rem;
-		border-bottom: 2px solid var(--ink);
-
-		& h1 {
-			font-size: clamp(28px, 4vw, 40px);
-		}
-
-		& .intro {
-			margin-top: 0.75rem;
-			font-size: 15px;
-			color: var(--ink2);
-		}
-	}
-
 	.settings {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 1rem 1.5rem;
-		margin-top: 1.5rem;
-		max-width: var(--measure);
+		gap: 1rem 1.25rem;
+		max-width: calc(var(--measure) + 3rem);
+		padding: 1.25rem 1.5rem;
 
-		& label span {
-			display: block;
-			font-family: var(--serif);
-			font-size: 14px;
+		@media (max-width: 40rem) {
+			padding: 1rem;
+		}
+
+		& label {
+			min-width: 0;
+
+			& span {
+				display: block;
+				font-size: 14px;
+				font-weight: 500;
+			}
 		}
 
 		& select,
 		& input,
 		& textarea {
+			max-width: 100%;
 			margin-top: 0.3rem;
 		}
 
@@ -249,23 +243,41 @@
 				width: 100%;
 			}
 		}
+
+		& .toolbar {
+			padding-top: 0.25rem;
+		}
 	}
 
+	/* the report as a sheet of paper; printing drops the frame */
 	.report {
-		margin-top: 2.5rem;
-		border-top: 2px solid var(--ink);
+		max-width: 56rem;
+		margin-top: 2rem;
+		padding: 2.25rem 2.75rem 2.75rem;
+		background: var(--sheet);
+		border: 1px solid var(--rule2);
+		border-radius: var(--radius-card);
+		box-shadow: var(--shadow-raised);
+
+		@media (max-width: 40rem) {
+			padding: 1.25rem 1rem 1.5rem;
+		}
 
 		@media print {
+			max-width: none;
 			margin-top: 0;
-			border-top: 0;
+			padding: 0;
+			background: none;
+			border: 0;
+			box-shadow: none;
 		}
 
 		& .cover {
-			padding: 1.5rem 0;
-			border-bottom: 1px solid var(--rule);
+			padding-bottom: 1.5rem;
+			border-bottom: 2px solid var(--ink);
 
 			& h2 {
-				margin: 0.3rem 0 0.5rem;
+				margin: 0.3rem 0 0.6rem;
 				font-size: clamp(26px, 3.5vw, 34px);
 			}
 
@@ -281,25 +293,34 @@
 		}
 
 		& section {
-			padding-top: 1.75rem;
+			padding-top: 2rem;
 
 			& h3 {
+				padding-bottom: 0.45rem;
 				font-size: 20px;
-				padding-bottom: 0.4rem;
 				border-bottom: 1px solid var(--rule);
 			}
 
 			&.free p {
-				margin-top: 0.75rem;
 				max-width: var(--measure);
-				white-space: pre-line;
+				margin-top: 0.75rem;
 				font-family: var(--serif);
 				font-size: 16px;
+				white-space: pre-line;
 			}
 
+			/* inside the sheet the registers sit flat, framed by a hairline */
 			& .tool {
-				margin-top: 0.75rem;
+				margin-top: 0.85rem;
+				padding: 0.9rem 1.1rem;
+				background: none;
+				border-color: var(--rule2);
+				box-shadow: none;
 				break-inside: avoid;
+
+				@media (max-width: 40rem) {
+					padding: 0.8rem 0.85rem;
+				}
 
 				& h4 {
 					font-size: 17px;
@@ -309,6 +330,12 @@
 				& .count {
 					font-size: 13px;
 					color: var(--ink2);
+				}
+
+				& .count {
+					margin-left: 0.4rem;
+					font-family: var(--sans);
+					font-weight: 400;
 				}
 
 				& .row {
@@ -350,7 +377,7 @@
 				}
 
 				& details {
-					margin-top: 0.5rem;
+					margin-top: 0.6rem;
 					font-size: 14px;
 
 					& summary {
@@ -366,7 +393,12 @@
 							display: flex;
 							flex-wrap: wrap;
 							gap: 0.2rem 1rem;
-							padding: 0.3rem 0;
+							padding: 0.35rem 0;
+							overflow-wrap: anywhere;
+
+							& + li {
+								border-top: 1px solid var(--rule2);
+							}
 
 							& .state {
 								font-family: var(--mono);

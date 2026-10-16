@@ -38,34 +38,64 @@
 	.markdown {
 		max-width: var(--measure);
 		font-family: var(--serif);
-		font-size: 16px;
-		line-height: 1.6;
+		font-size: 16.5px;
+		line-height: 1.65;
+		color: var(--ink);
+		overflow-wrap: break-word;
 
 		& > * + * {
-			margin-top: 0.75rem;
+			margin-top: 0.8rem;
+		}
+
+		& h2,
+		& h3,
+		& h4 {
+			line-height: 1.25;
 		}
 
 		& h2 {
-			font-size: 21px;
+			font-size: 22px;
 		}
 
 		& h3 {
-			font-size: 18px;
+			font-size: 18.5px;
 		}
 
 		& h4 {
-			font-size: 16px;
+			font-size: 16.5px;
 		}
 
 		& ul,
 		& ol {
 			padding-left: 1.4rem;
+
+			& li + li {
+				margin-top: 0.3rem;
+			}
+
+			& li::marker {
+				color: var(--ink3);
+			}
+		}
+
+		& ol li::marker {
+			font-family: var(--mono);
+			font-size: 0.85em;
 		}
 
 		& blockquote {
-			padding-left: 1rem;
-			border-left: 3px solid var(--rule);
+			padding: 0.5rem 1rem;
 			color: var(--ink2);
+			background: var(--paper);
+			border-left: 3px solid var(--rule);
+			border-radius: 0 var(--radius) var(--radius) 0;
+		}
+
+		/* headings get air above them, except at the very top */
+		& > * + h2,
+		& > * + h3,
+		& > * + h4 {
+			margin-top: 1.5rem;
 		}
 	}
 </style>

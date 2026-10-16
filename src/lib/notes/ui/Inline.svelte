@@ -23,14 +23,21 @@
 
 <style>
 	code {
+		padding: 0.05em 0.3em;
 		font-family: var(--mono);
-		font-size: 0.9em;
-		padding: 0 0.2em;
+		font-size: 0.86em;
 		background: var(--rule2);
+		border-radius: 4px;
+		box-decoration-break: clone;
 	}
 
+	/* a citation into the Navigator, set like a reference */
 	.norm {
+		padding: 0 0.25em;
 		font-family: var(--mono);
-		font-size: 0.92em;
+		font-size: 0.86em;
+		background: var(--navy-soft);
+		border-radius: 4px;
+		box-decoration-break: clone;
 	}
 </style>

@@ -34,34 +34,43 @@
 <style>
 	.blocks {
 		max-width: var(--measure);
-		margin-top: 1rem;
 
 		& .block {
-			margin-top: 0.75rem;
-
 			&.labelled {
 				display: grid;
-				grid-template-columns: 2.5rem 1fr;
-				gap: 0 0.5rem;
+				grid-template-columns: 2.5rem minmax(0, 1fr);
+				gap: 0 0.6rem;
 			}
 
 			& .label {
+				padding-top: 0.2rem;
 				font-family: var(--mono);
-				font-size: 13px;
+				font-size: 12.5px;
+				font-variant-numeric: tabular-nums;
 				color: var(--ink3);
-				padding-top: 0.15rem;
 			}
 
 			& p {
 				font-family: var(--serif);
-				font-size: 16px;
-				line-height: 1.6;
+				font-size: 16.5px;
+				line-height: 1.65;
 				color: var(--ink);
+				overflow-wrap: break-word;
+				hyphens: auto;
 			}
 		}
 
-		&.nested .block {
-			margin-top: 0.4rem;
+		/* paragraphs breathe; items of a list sit closer */
+		& .block + .block {
+			margin-top: 0.9rem;
+		}
+
+		&.nested {
+			margin-top: 0.45rem;
+
+			& .block + .block {
+				margin-top: 0.4rem;
+			}
 		}
 	}
 </style>
