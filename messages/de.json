@@ -252,5 +252,10 @@
 	"search_shortcut": "Strg K",
 	"command_areas": "Bereiche",
 	"command_actions": "Aktionen",
-	"command_search_norms": "In den Normen suchen: {query}"
+	"command_search_norms": "In den Normen suchen: {query}",
+	"home_area_tools": "Prüfungen, Register und Abläufe zu DSGVO und KI-Verordnung, jede mit Rechtsgrundlage.",
+	"home_area_norms": "DSGVO, KI-Verordnung, BDSG und TDDDG im Wortlaut, mit Querverweisen.",
+	"home_area_notes": "Tagesnotizen zu Meldungen, Vorschriften und eigenen Vorgängen.",
+	"home_area_deadlines": "Offene Fristen aus Registern und Abläufen, die nächsten zuerst.",
+	"records_ui_deadlines_later": "Später"
 }

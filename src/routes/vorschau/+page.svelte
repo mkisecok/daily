@@ -1,9 +1,18 @@
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
 	import { formatLongDate, formatTime } from '#lib/i18n/date.js';
+	import Icon from '#lib/ui/Icon.svelte';
+	import PageHeader from '#lib/ui/PageHeader.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
+
+	const works = $derived([
+		m.preview_works_feed(),
+		m.preview_works_tools(),
+		m.preview_works_records(),
+		m.preview_works_lang()
+	]);
 </script>
 
 <svelte:head>
@@ -11,72 +20,99 @@
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
-<header class="head">
-	<h1>{m.preview_title()}</h1>
-	<p class="measure lead">{m.preview_intro()}</p>
-	<p class="eyebrow">
-		{m.preview_built({
-			date: formatLongDate(data.today, data.locale),
-			time: formatTime(data.today, data.locale)
-		})}
-	</p>
-</header>
+<PageHeader title={m.preview_title()} description={m.preview_intro()}>
+	{#snippet meta()}
+		<p class="built">
+			<span class="badge navy">
+				<Icon name="clock" size={14} />
+				{m.preview_built({
+					date: formatLongDate(data.today, data.locale),
+					time: formatTime(data.today, data.locale)
+				})}
+			</span>
+		</p>
+	{/snippet}
+</PageHeader>
 
-<section class="part">
-	<h2>{m.preview_works_title()}</h2>
-	<ul class="measure">
-		<li>{m.preview_works_feed()}</li>
-		<li>{m.preview_works_tools()}</li>
-		<li>{m.preview_works_records()}</li>
-		<li>{m.preview_works_lang()}</li>
-	</ul>
-</section>
+<div class="parts">
+	<section class="card part">
+		<h2>{m.preview_works_title()}</h2>
+		<ul>
+			{#each works as line (line)}
+				<li><span class="mark"><Icon name="check" size={16} /></span><span>{line}</span></li>
+			{/each}
+		</ul>
+	</section>
 
-<section class="part">
-	<h2>{m.preview_missing_title()}</h2>
-	<p class="measure">{m.preview_missing_body()}</p>
-</section>
+	<section class="card part missing">
+		<h2>{m.preview_missing_title()}</h2>
+		<p>{m.preview_missing_body()}</p>
+	</section>
+</div>
 
 <style>
-	.head {
-		padding-bottom: 1.75rem;
-		border-bottom: 1px solid var(--rule);
+	.built {
+		margin-top: 1rem;
 
-		& h1 {
-			font-size: clamp(30px, 4vw, 40px);
-		}
-
-		& .lead {
-			margin-top: 1rem;
-			font-size: 17px;
-			color: var(--ink2);
-		}
-
-		& .eyebrow {
-			margin-top: 1.5rem;
+		& .badge {
+			white-space: normal;
 		}
 	}
 
-	.part {
-		padding: 2rem 0;
-		border-bottom: 1px solid var(--rule2);
+	.parts {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+		align-items: start;
+		gap: 1rem;
 
-		& h2 {
-			font-size: 22px;
-		}
+		& .part {
+			padding: 1.35rem 1.5rem 1.5rem;
 
-		& ul {
-			margin: 0.75rem 0 0 1.25rem;
+			& h2 {
+				font-size: 21px;
+			}
 
-			& li {
-				padding: 0.3rem 0;
+			& ul {
+				display: flex;
+				flex-direction: column;
+				gap: 0.75rem;
+				margin-top: 1rem;
+				list-style: none;
+
+				& li {
+					display: flex;
+					gap: 0.65rem;
+					max-width: var(--measure);
+					font-size: 14.5px;
+					color: var(--ink2);
+				}
+
+				& .mark {
+					display: inline-flex;
+					flex: none;
+					align-items: center;
+					justify-content: center;
+					width: 1.5rem;
+					height: 1.5rem;
+					margin-top: 0.05rem;
+					color: var(--khaki);
+					background: var(--khaki-soft);
+					border-radius: var(--radius-badge);
+				}
+			}
+
+			& p {
+				max-width: var(--measure);
+				margin-top: 1rem;
+				font-size: 14.5px;
 				color: var(--ink2);
 			}
-		}
 
-		& p {
-			margin-top: 0.75rem;
-			color: var(--ink2);
+			&.missing {
+				box-shadow:
+					inset 4px 0 0 var(--navy),
+					var(--shadow-raised);
+			}
 		}
 	}
 </style>

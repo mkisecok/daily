@@ -8,6 +8,7 @@
 	import { dayKey, formatLongDate, formatTime } from '#lib/i18n/date.js';
 	import { localized, type RoutePath } from '#lib/i18n/links.js';
 	import Icon from '#lib/ui/Icon.svelte';
+	import PageHeader from '#lib/ui/PageHeader.svelte';
 	import Tooltip from '#lib/ui/Tooltip.svelte';
 	import type { PageProps } from './$types';
 
@@ -121,14 +122,11 @@
 	<meta name="description" content={m.feed_intro()} />
 </svelte:head>
 
-<header class="head">
-	<h1>{m.nav_feed()}</h1>
-	<p class="measure lead">{m.feed_intro()}</p>
-</header>
+<PageHeader title={m.nav_feed()} description={m.feed_intro()} />
 
-<nav class="filters no-print" aria-label={m.feed_filters()}>
+<nav class="filters card no-print" aria-label={m.feed_filters()}>
 	<div class="group">
-		<span class="eyebrow">{m.filter_regulation()}</span>
+		<span class="label">{m.filter_regulation()}</span>
 		<a href={resolve(link({ tag: null }))} aria-current={filter.tag === null ? 'true' : undefined}>
 			{m.filter_all()}
 		</a>
@@ -139,7 +137,7 @@
 		{/each}
 	</div>
 	<div class="group">
-		<span class="eyebrow">{m.filter_kind()}</span>
+		<span class="label">{m.filter_kind()}</span>
 		{#each data.tags.kind as tag (tag)}
 			<a href={resolve(link({ tag }))} aria-current={filter.tag === tag ? 'true' : undefined}>
 				{tagLabels[tag]()}
@@ -147,7 +145,7 @@
 		{/each}
 	</div>
 	<div class="group">
-		<span class="eyebrow">{m.filter_region()}</span>
+		<span class="label">{m.filter_region()}</span>
 		<a
 			href={resolve(link({ region: null }))}
 			aria-current={filter.region === null ? 'true' : undefined}
@@ -165,7 +163,7 @@
 	</div>
 	{#if data.user}
 		<div class="group">
-			<span class="eyebrow">{m.filter_mine()}</span>
+			<span class="label">{m.filter_mine()}</span>
 			<a
 				href={resolve(link({ merken: filter.merken ? null : '1' }))}
 				aria-current={filter.merken ? 'true' : undefined}
@@ -183,7 +181,7 @@
 {#each days as { day, items } (day)}
 	<section class="day">
 		<h2 class="dateline">{formatLongDate(day, data.locale)}</h2>
-		<ol>
+		<ol class="list">
 			{#each items as item (item.id)}
 				<li class="item" data-tier={item.source.tier}>
 					<p class="meta">
@@ -208,7 +206,7 @@
 					{/if}
 					<div class="tags">
 						{#each item.tags as tag (tag)}
-							<a class="tag" href={resolve(link({ tag }))}>{tagLabels[tag]?.() ?? tag}</a>
+							<a class="tag badge" href={resolve(link({ tag }))}>{tagLabels[tag]?.() ?? tag}</a>
 						{/each}
 						{#if data.user}
 							{@const bookmarked = toggled.get(item.id) ?? item.bookmarked}
@@ -244,12 +242,12 @@
 
 {#if oldest && data.items.length > 0}
 	<p class="older no-print">
-		<a href={resolve(link({ vor: oldest }))}>{m.feed_older()} →</a>
+		<a class="button quiet" href={resolve(link({ vor: oldest }))}>{m.feed_older()} →</a>
 	</p>
 {/if}
 
-<aside class="sources no-print">
-	<h2 class="eyebrow">{m.feed_sources()}</h2>
+<aside class="sources card no-print">
+	<h2>{m.feed_sources()}</h2>
 	<ul>
 		{#each data.sources as source (source.slug)}
 			<li>
@@ -267,117 +265,125 @@
 </aside>
 
 <style>
-	.head {
-		padding-bottom: 1.5rem;
-		border-bottom: 1px solid var(--rule);
-
-		& h1 {
-			font-size: clamp(30px, 4vw, 40px);
-		}
-
-		& .lead {
-			margin-top: 0.75rem;
-			font-size: 16px;
-			color: var(--ink2);
-		}
-	}
-
 	.filters {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 1rem 2.5rem;
-		padding: 1rem 0;
-		border-bottom: 1px solid var(--rule2);
-		font-family: var(--mono);
-		font-size: 11px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
+		flex-direction: column;
+		gap: 0.75rem;
+		padding: 1rem 1.25rem;
 
 		& .group {
 			display: flex;
 			flex-wrap: wrap;
-			align-items: baseline;
-			gap: 0.9rem;
+			align-items: center;
+			gap: 0.4rem;
+
+			& .label {
+				flex: 0 0 6rem;
+				font-size: 13px;
+				font-weight: 600;
+				color: var(--ink3);
+
+				@media (max-width: 40rem) {
+					flex-basis: 100%;
+				}
+			}
 		}
 
+		/* chips; the chosen one in khaki, big enough for a thumb on phones */
 		& a {
-			color: var(--ink3);
-			padding-bottom: 1px;
-			border-bottom: 1px solid transparent;
+			display: inline-flex;
+			align-items: center;
+			min-height: 2rem;
+			padding: 0 0.7rem;
+			font-size: 13px;
+			font-weight: 500;
+			color: var(--ink2);
+			background: var(--sheet);
+			border: 1px solid var(--rule2);
+			border-radius: var(--radius);
+			transition:
+				border-color 0.12s ease,
+				color 0.12s ease;
 
 			&:hover {
 				color: var(--ink);
 				text-decoration: none;
+				border-color: var(--ink3);
 			}
 
 			&[aria-current='true'] {
-				color: var(--ink);
-				border-bottom-color: var(--ink);
+				color: var(--khaki);
+				background: var(--khaki-soft);
+				border-color: var(--khaki);
 			}
 
-			/* filters become chips on phones, big enough for a thumb */
 			@media (max-width: 40rem) {
-				display: inline-flex;
-				align-items: center;
-				min-height: 2.5rem;
-				padding: 0 0.7rem;
-				background: var(--sheet);
-				border: 1px solid var(--rule);
-				border-radius: var(--radius);
-
-				&[aria-current='true'] {
-					background: var(--khaki-soft);
-					border-color: var(--khaki);
-				}
+				min-height: 44px;
+				padding: 0 0.85rem;
 			}
 		}
 	}
 
 	.empty {
-		padding: 3rem 0;
+		margin-top: 2rem;
+		padding: 3rem 1rem;
+		text-align: center;
 		color: var(--ink3);
-		font-style: italic;
+		border: 1px dashed var(--rule);
+		border-radius: var(--radius-card);
 	}
 
 	.day {
-		padding-top: 2rem;
+		margin-top: 2.25rem;
 
 		& .dateline {
-			font-size: 16px;
-			font-weight: 600;
+			margin-bottom: 0.75rem;
+			font-size: 18px;
 			color: var(--ink2);
-			padding-bottom: 0.5rem;
-			border-bottom: 1px solid var(--rule);
 		}
 
-		& ol {
+		/* the day's entries as rows in one raised container */
+		& .list {
 			list-style: none;
+			background: var(--sheet);
+			border: 1px solid var(--rule2);
+			border-radius: var(--radius-card);
+			box-shadow: var(--shadow-raised);
 
 			& .item {
-				padding: 1.1rem 0;
-				border-bottom: 1px solid var(--rule2);
+				padding: 1.1rem 1.25rem 1rem;
+
+				& + .item {
+					border-top: 1px solid var(--rule2);
+				}
 
 				& .meta {
-					font-family: var(--mono);
-					font-size: 11px;
-					letter-spacing: 0.06em;
-					text-transform: uppercase;
+					display: flex;
+					flex-wrap: wrap;
+					align-items: baseline;
+					font-size: 13px;
 					color: var(--ink3);
 
 					& .source {
+						font-weight: 500;
 						color: var(--ink2);
 					}
 
 					& .sep {
-						margin: 0 0.4rem;
+						margin: 0 0.45rem;
+					}
+
+					& .lang {
+						font-family: var(--mono);
+						font-size: 11.5px;
 					}
 				}
 
 				& h3 {
-					margin-top: 0.3rem;
-					font-size: 19px;
-					font-weight: 600;
 					max-width: var(--measure);
+					margin-top: 0.3rem;
+					font-size: 18px;
+					overflow-wrap: anywhere;
 
 					& a {
 						color: var(--ink);
@@ -392,49 +398,51 @@
 					margin-top: 0.35rem;
 					font-size: 14px;
 					color: var(--ink2);
+					overflow-wrap: anywhere;
 				}
 
 				& .tags {
 					display: flex;
 					flex-wrap: wrap;
-					align-items: baseline;
-					gap: 0.75rem;
-					margin-top: 0.5rem;
-					font-family: var(--mono);
-					font-size: 10.5px;
-					letter-spacing: 0.1em;
-					text-transform: uppercase;
+					align-items: center;
+					gap: 0.4rem;
+					margin-top: 0.75rem;
 
 					& .tag {
-						color: var(--ink3);
-
 						&:hover {
-							color: var(--ink);
+							color: var(--navy);
 							text-decoration: none;
+							background: var(--navy-soft);
 						}
 					}
 
-					& .note-link {
+					& .note-link,
+					& .bookmark button {
+						display: inline-flex;
+						align-items: center;
+						min-height: 2rem;
+						padding: 0 0.6rem;
+						font-size: 13px;
+						font-weight: 500;
 						color: var(--navy);
+						border-radius: var(--radius);
+
+						&:hover {
+							text-decoration: none;
+							background: var(--navy-soft);
+						}
+
+						@media (max-width: 40rem) {
+							min-height: 44px;
+						}
 					}
 
 					& .bookmark {
 						margin-left: auto;
 
-						& button {
-							font: inherit;
-							letter-spacing: inherit;
-							text-transform: inherit;
-							color: var(--navy);
-							padding: 0;
-
-							&:hover {
-								text-decoration: underline;
-							}
-
-							&[aria-pressed='true'] {
-								color: var(--khaki);
-							}
+						& button[aria-pressed='true'] {
+							color: var(--khaki);
+							background: var(--khaki-soft);
 						}
 					}
 				}
@@ -447,25 +455,30 @@
 	}
 
 	.older {
-		margin-top: 2rem;
-		font-family: var(--mono);
-		font-size: 12px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
+		margin-top: 1.5rem;
+
+		& .button {
+			min-height: 44px;
+		}
 	}
 
 	.sources {
 		margin-top: 3rem;
-		padding-top: 1.5rem;
-		border-top: 1px solid var(--rule);
+
+		& h2 {
+			font-family: var(--sans);
+			font-size: 13px;
+			font-weight: 600;
+			color: var(--ink3);
+		}
 
 		& ul {
 			list-style: none;
 			display: flex;
 			flex-wrap: wrap;
-			gap: 0.5rem 1.5rem;
+			gap: 0.35rem 1.25rem;
 			margin-top: 0.5rem;
-			font-size: 13px;
+			font-size: 14px;
 
 			& .error {
 				margin-left: 0.3rem;
