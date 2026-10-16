@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { afterNavigate } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { localized } from '#lib/i18n/links.js';
 	import { m } from '#lib/paraglide/messages.js';
@@ -18,6 +19,15 @@
 	let loading = $state(false);
 
 	const hits = $derived<SearchHit[]>(index && query.trim().length >= 2 ? search(index, query) : []);
+
+	// a search handed over in the address (e.g. from the command palette) fills the field
+	afterNavigate(({ to }) => {
+		const handed = to?.url.searchParams.get('q');
+		if (handed) {
+			query = handed;
+			void ensureIndex();
+		}
+	});
 
 	/** loads the index once, when the user starts typing */
 	async function ensureIndex() {
