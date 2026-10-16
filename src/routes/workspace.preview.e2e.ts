@@ -69,7 +69,7 @@ test('preview: the calendar fills a date field and the record keeps it', async (
 test('preview: on a phone the menu opens as a sheet, navigates and closes', async ({ page }) => {
 	await page.setViewportSize({ width: 375, height: 740 });
 	await page.goto('werkzeuge/');
-	await expect(page.locator('header.masthead > .inner > nav')).toBeHidden();
+	await expect(page.locator('.sidebar')).toBeHidden();
 	const button = page.getByRole('button', { name: 'Menü' });
 	await button.click();
 	const sheet = page.getByRole('dialog');
@@ -176,7 +176,7 @@ test('preview: the phone menu keeps focus inside, closes on desktop width, theme
 	await sheet.locator('.switch').click();
 	await page.setViewportSize({ width: 1280, height: 800 });
 	await expect(sheet).toBeHidden();
-	await page.locator('header.masthead .tools .switch').click();
+	await page.locator('.sidebar .switch').click();
 	expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe(before);
 });
 
@@ -185,4 +185,34 @@ test('preview: a searchable field says when nothing matches', async ({ page }) =
 	await page.locator('#field-audit').click();
 	await page.locator('#field-audit').pressSequentially('zzzz');
 	await expect(page.getByText('Keine Treffer')).toBeVisible();
+});
+
+test('preview: the command palette jumps to a tool and searches the laws', async ({ page }) => {
+	// the shortcut listener exists once the page is hydrated
+	await page.goto('werkzeuge/', { waitUntil: 'networkidle' });
+	await page.keyboard.press('Control+k');
+	const palette = page.getByRole('dialog', { name: 'Suche öffnen' });
+	await expect(palette).toBeVisible();
+	await page.keyboard.type('Datenpanne');
+	await page.keyboard.press('Enter');
+	await expect(page).toHaveURL(/\/daily\/werkzeuge\/datenpanne\/$/);
+	await expect(palette).toBeHidden();
+
+	await page.keyboard.press('/');
+	await expect(palette).toBeVisible();
+	await page.keyboard.press('Escape');
+	await expect(palette).toBeHidden();
+
+	await page.getByRole('button', { name: 'Suche öffnen' }).click();
+	await page.keyboard.type('Art. 22');
+	await palette.getByRole('option', { name: /In den Normen suchen/ }).click();
+	await expect(page).toHaveURL(/\/daily\/normen\/\?q=Art\.%2022$/);
+	await expect(page.getByLabel('In allen Gesetzen suchen')).toHaveValue('Art. 22');
+});
+
+test('preview: typing "/" in a text field does not open the palette', async ({ page }) => {
+	await page.goto('notizen/?neu=1');
+	await page.getByLabel('Titel').fill('a/b');
+	await expect(page.getByLabel('Titel')).toHaveValue('a/b');
+	await expect(page.getByRole('dialog', { name: 'Suche öffnen' })).toBeHidden();
 });
