@@ -1,8 +1,9 @@
 import type { Locator, Page } from '@playwright/test';
 
 /**
- * picks an option in a Daily dropdown, by stored value like `selectOption`, or
- * by `{ label }`. Searchable record fields (an input) are filtered by the label first.
+ * picks an option in a Daily dropdown. Dropdowns take the stored value like
+ * `selectOption`, or `{ label }`. Searchable record fields (an input) always
+ * match by label: a plain string is typed as the label to filter by.
  */
 export async function choose(control: Locator, option: string | { label: string }) {
 	const page = control.page();

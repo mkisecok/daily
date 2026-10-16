@@ -161,3 +161,28 @@ test('preview: contents rows keep space between number and title', async ({ page
 	});
 	expect(smallest).toBeGreaterThanOrEqual(4);
 });
+
+test('preview: the phone menu keeps focus inside, closes on desktop width, theme stays in step', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 375, height: 740 });
+	await page.goto('werkzeuge/');
+	await page.getByRole('button', { name: 'Menü' }).click();
+	const sheet = page.getByRole('dialog');
+	for (let i = 0; i < 14; i++) await page.keyboard.press('Tab');
+	expect(await sheet.evaluate((d) => d.contains(document.activeElement))).toBe(true);
+
+	const before = await page.evaluate(() => document.documentElement.dataset.theme);
+	await sheet.locator('.switch').click();
+	await page.setViewportSize({ width: 1280, height: 800 });
+	await expect(sheet).toBeHidden();
+	await page.locator('header.masthead .tools .switch').click();
+	expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe(before);
+});
+
+test('preview: a searchable field says when nothing matches', async ({ page }) => {
+	await page.goto('werkzeuge/feststellungen/eintraege/?neu=1');
+	await page.locator('#field-audit').click();
+	await page.locator('#field-audit').pressSequentially('zzzz');
+	await expect(page.getByText('Keine Treffer')).toBeVisible();
+});
