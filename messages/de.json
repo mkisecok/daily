@@ -242,5 +242,12 @@
 	"control_no_match": "Keine Treffer",
 	"nav_menu": "Menü",
 	"nav_close": "Menü schließen",
-	"preview_chip": "Vorschau"
+	"preview_chip": "Vorschau",
+	"nav_skip": "Zum Inhalt",
+	"nav_account": "Konto",
+	"nav_clients": "Mandanten",
+	"deadlines_due_soon": "{count} Fristen in den nächsten 7 Tagen",
+	"search_placeholder": "Suchen oder springen …",
+	"search_open": "Suche öffnen",
+	"search_shortcut": "Strg K"
 }

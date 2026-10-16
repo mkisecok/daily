@@ -242,5 +242,12 @@
 	"control_no_match": "No matches",
 	"nav_menu": "Menu",
 	"nav_close": "Close menu",
-	"preview_chip": "Preview"
+	"preview_chip": "Preview",
+	"nav_skip": "Skip to content",
+	"nav_account": "Account",
+	"nav_clients": "Clients",
+	"deadlines_due_soon": "{count} deadlines in the next 7 days",
+	"search_placeholder": "Search or jump to …",
+	"search_open": "Open search",
+	"search_shortcut": "Ctrl K"
 }
