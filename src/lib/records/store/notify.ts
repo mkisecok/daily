@@ -20,8 +20,8 @@ export function notifying(inner: Clearable, changed: () => void): Clearable {
 		create: (toolSlug, input) => after(inner.create(toolSlug, input)),
 		update: (id, input, expectedVersion) => after(inner.update(id, input, expectedVersion)),
 		transition: (id, to, expectedVersion) => after(inner.transition(id, to, expectedVersion)),
-		attachAssessment: (id, field, snapshot, derived) =>
-			after(inner.attachAssessment(id, field, snapshot, derived)),
+		attachAssessment: (id, field, answers, expectedVersion) =>
+			after(inner.attachAssessment(id, field, answers, expectedVersion)),
 		archive: (id) => after(inner.archive(id)),
 		clear: inner.clear
 			? () => {

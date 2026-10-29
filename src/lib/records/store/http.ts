@@ -46,8 +46,8 @@ export function createHttpStore(urls: HttpUrls, fetchFn: typeof fetch = fetch): 
 		update: (id, data, expectedVersion) => call(urls.record(id), 'PUT', { data, expectedVersion }),
 		transition: (id, to, expectedVersion) =>
 			call(`${urls.record(id)}/transition`, 'POST', { to, expectedVersion }),
-		attachAssessment: (id, field, snapshot, derived) =>
-			call(`${urls.record(id)}/assessment`, 'POST', { field, snapshot, derived }),
+		attachAssessment: (id, field, answers, expectedVersion) =>
+			call(`${urls.record(id)}/assessment`, 'POST', { field, answers, expectedVersion }),
 		archive: (id) => call(urls.record(id), 'DELETE'),
 		deadlines: () => read(urls.deadlines)
 	};

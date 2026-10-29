@@ -50,7 +50,8 @@
 	let confirmClear = $state(false);
 	let busy = $state(false);
 	let errors = $state<ValidationErrors>({});
-	let message = $state<string | null>(null);
+	/** feedback above the page: `alert` for failures, `status` for success */
+	let message = $state<{ text: string; tone: 'status' | 'alert' } | null>(null);
 
 	// a different list, record or form starts clean
 	afterNavigate(({ from, to }) => {
@@ -61,12 +62,9 @@
 		message = null;
 	});
 
-	/** the message for a store error; validation errors show in the form instead */
-	function describe(result: StoreError): string | null {
+	/** the message for a store error other than invalid input */
+	function describe(result: Exclude<StoreError, { error: 'invalid' }>): string {
 		switch (result.error) {
-			case 'invalid':
-				errors = result.errors;
-				return null;
 			case 'conflict':
 				return m.records_conflict();
 			case 'missing':
@@ -85,6 +83,16 @@
 		}
 	}
 
+	/** shows a store error: invalid input next to its fields, anything else as an alert */
+	function fail(result: StoreError) {
+		if (result.error === 'invalid') {
+			errors = result.errors;
+			message = null;
+		} else {
+			message = { text: describe(result), tone: 'alert' };
+		}
+	}
+
 	/** runs a store call; failures (network, full storage) become a message */
 	async function run<T>(action: () => Promise<T>): Promise<T | undefined> {
 		busy = true;
@@ -92,7 +100,7 @@
 		try {
 			return await action();
 		} catch {
-			message = m.records_failed();
+			message = { text: m.records_failed(), tone: 'alert' };
 			return undefined;
 		} finally {
 			busy = false;
@@ -103,7 +111,7 @@
 		const result = await run(() => store.create(slug, input));
 		if (!result) return;
 		if (!result.ok) {
-			message = describe(result);
+			fail(result);
 			return;
 		}
 		await goto(resolve(recordPath(result.value.id)));
@@ -115,9 +123,9 @@
 		if (result.ok) {
 			errors = {};
 			editing = false;
-			message = m.records_saved();
+			message = { text: m.records_saved(), tone: 'status' };
 		} else {
-			message = describe(result);
+			fail(result);
 			if (result.error === 'conflict') editing = false;
 		}
 		await invalidate('records:data');
@@ -125,14 +133,14 @@
 
 	async function transition(record: StoredRecord, to: string) {
 		const result = await run(() => store.transition(record.id, to, record.version));
-		if (result && !result.ok) message = describe(result);
+		if (result && !result.ok) fail(result);
 		await invalidate('records:data');
 	}
 
 	async function archive(record: StoredRecord) {
 		const result = await run(() => store.archive(record.id));
 		if (result?.ok) await goto(resolve(listPath));
-		else if (result) message = describe(result);
+		else if (result) fail(result);
 	}
 
 	function exportCsv() {
@@ -208,7 +216,7 @@
 {/if}
 
 {#if message}
-	<p class="message no-print" role="status">{message}</p>
+	<p class="message no-print" role={message.tone}>{message.text}</p>
 {/if}
 
 {#if data.view === 'new'}

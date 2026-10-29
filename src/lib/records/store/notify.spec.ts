@@ -30,7 +30,7 @@ describe('store change notifications', () => {
 		await store.create('x', {});
 		await store.update('1', {}, 1);
 		await store.transition('1', 'b', 1);
-		await store.attachAssessment('1', 'f', {} as never);
+		await store.attachAssessment('1', 'f', {}, 1);
 		await store.archive('1');
 		store.clear?.();
 		expect(changed).toHaveBeenCalledTimes(6);

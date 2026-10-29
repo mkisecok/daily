@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { loadEnv } from 'vite';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { testTool } from '../records/fixtures.js';
+import { getTestQuestionnaire, linkedTool, testTool } from '../records/fixtures.js';
 import type { RecordStore } from '../records/store/types.js';
 import { createDb } from './db/client.js';
 import { deadlines, memberships, organisations, users } from './db/schema.js';
@@ -19,8 +19,10 @@ const url =
 
 describe.skipIf(!url)('record repository (Postgres)', () => {
 	const db = createDb(url ?? '');
-	const repo = createRecordRepository(db, (slug) =>
-		slug === testTool.definition.slug ? testTool : undefined
+	const repo = createRecordRepository(
+		db,
+		(slug) => [testTool, linkedTool].find((tool) => tool.definition.slug === slug),
+		getTestQuestionnaire
 	);
 	const userId = randomUUID();
 	let organisationId = '';
@@ -115,24 +117,46 @@ describe.skipIf(!url)('record repository (Postgres)', () => {
 		expect(rows[0].doneAt).not.toBeNull();
 	});
 
-	it('attaches an assessment and keeps it through form updates', async () => {
+	it('evaluates answers on the server and keeps the result through form updates', async () => {
 		const created = await store.create('test-register', { name: 'Bewertet' });
 		if (!created.ok) throw new Error('create failed');
 		const id = created.value.id;
-		const snapshot = {
-			tool: 'demo',
-			catalogVersion: 1,
-			verdict: 'conditional' as const,
-			headline: { de: 'Bedingt', en: 'Conditional' },
-			at: '2026-10-14T10:00:00.000Z'
-		};
-		expect(await store.attachAssessment(id, 'name', snapshot)).toMatchObject({
+		const answers = { q1: 'yes', q2: 'na' } as const;
+		expect(await store.attachAssessment(id, 'name', answers, 1)).toMatchObject({
 			error: 'not-allowed'
 		});
-		const attached = await store.attachAssessment(id, 'check', snapshot, { kind: 'a' });
-		expect(attached).toMatchObject({ ok: true, value: { data: { check: snapshot, kind: 'a' } } });
+		expect(await store.attachAssessment(id, 'check', { q1: 'yes' }, 1)).toMatchObject({
+			error: 'invalid'
+		});
+		expect(await store.attachAssessment(id, 'check', answers, 0)).toMatchObject({
+			error: 'conflict'
+		});
+		const attached = await store.attachAssessment(id, 'check', answers, 1);
+		expect(attached).toMatchObject({
+			ok: true,
+			value: { data: { check: { tool: 'demo', catalogVersion: 2, outcome: 'ja' }, kind: 'a' } }
+		});
+		if (!attached.ok) throw new Error('attach failed');
 		const edited = await store.update(id, { name: 'Bewertet, geändert', kind: 'a' }, 2);
-		expect(edited).toMatchObject({ ok: true, value: { data: { check: snapshot } } });
+		expect(edited).toMatchObject({
+			ok: true,
+			value: { data: { check: attached.value.data.check } }
+		});
+	});
+
+	it('refuses references to missing records and to other organisations', async () => {
+		const mine = await store.create('test-register', { name: 'Ziel' });
+		const foreign = await other.create('test-register', { name: 'Fremd' });
+		if (!mine.ok || !foreign.ok) throw new Error('create failed');
+		expect(
+			await store.create('linked-register', { name: 'X', target: foreign.value.id })
+		).toMatchObject({ error: 'invalid', errors: { target: 'invalid' } });
+		expect(
+			await store.create('linked-register', { name: 'X', target: randomUUID() })
+		).toMatchObject({ error: 'invalid', errors: { target: 'invalid' } });
+		expect(
+			await store.create('linked-register', { name: 'X', target: mine.value.id })
+		).toMatchObject({ ok: true });
 	});
 
 	it('archives instead of deleting', async () => {

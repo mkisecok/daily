@@ -1,4 +1,5 @@
-import type { RecordTool, RecordToolDefinition } from './types.js';
+import type { Questionnaire } from './operations.js';
+import type { RecordData, RecordTool, RecordToolDefinition } from './types.js';
 
 const L = (de: string, en: string) => ({ de, en });
 
@@ -76,6 +77,71 @@ export const testTool: RecordTool = {
 		deadlines: (record) =>
 			typeof record.data.due === 'string'
 				? [{ kind: 'due', label: L('Fällig', 'Due'), dueAt: `${record.data.due}T00:00:00.000Z` }]
-				: []
+				: [],
+		fromAssessment: (_field, result): RecordData => (result.outcome === 'ja' ? { kind: 'a' } : {})
 	}
+};
+
+/** the `demo` questionnaire the test definition's assessment field names */
+export const testQuestionnaire: Questionnaire = {
+	catalog: {
+		slug: 'demo',
+		version: 2,
+		intro: L('', ''),
+		sources: [],
+		sections: [
+			{
+				id: 's',
+				title: L('Fragen', 'Questions'),
+				questions: [
+					{ id: 'q1', type: 'yesno', text: L('Erforderlich?', 'Required?') },
+					{ id: 'q2', type: 'yesnona', text: L('Anwendbar?', 'Applicable?') }
+				]
+			}
+		]
+	},
+	engine: (_catalog, answers) =>
+		answers.q1 === 'yes'
+			? {
+					verdict: 'positive',
+					outcome: 'ja',
+					headline: L('Erforderlich.', 'Required.'),
+					explanation: L('', ''),
+					reasons: [],
+					citations: []
+				}
+			: {
+					verdict: 'negative',
+					headline: L('Nicht erforderlich.', 'Not required.'),
+					explanation: L('', ''),
+					reasons: [],
+					citations: []
+				}
+};
+
+export const getTestQuestionnaire = (slug: string) =>
+	slug === 'demo' ? testQuestionnaire : undefined;
+
+/** a register whose `target` field points to the test register */
+export const linkedTool: RecordTool = {
+	...testTool,
+	manifest: { ...testTool.manifest, slug: 'linked-register' },
+	definition: {
+		slug: 'linked-register',
+		version: 1,
+		intro: L('', ''),
+		sources: [],
+		titleField: 'name',
+		sections: [
+			{
+				id: 'main',
+				title: L('Allgemein', 'General'),
+				fields: [
+					{ id: 'name', type: 'text', label: L('Name', 'Name'), required: true },
+					{ id: 'target', type: 'reference', tool: 'test-register', label: L('Bezug', 'Reference') }
+				]
+			}
+		]
+	},
+	engine: {}
 };

@@ -1,10 +1,10 @@
 import { error, json } from '@sveltejs/kit';
 import type { StoreResult } from '../records/store/types.js';
-import { getRecordTool } from '../tools/registry.js';
+import { getQuestionnaire, getRecordTool } from '../tools/registry.js';
 import { db } from './db/index.js';
 import { createRecordRepository } from './records.js';
 
-const repository = createRecordRepository(db, getRecordTool);
+const repository = createRecordRepository(db, getRecordTool, getQuestionnaire);
 
 /** the record store of the signed-in user's active organisation */
 export async function storeFor(locals: App.Locals) {
