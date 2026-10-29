@@ -98,7 +98,7 @@
 
 		{#if user}
 			<div class="account">
-				<span class="name">{user.displayName}</span>
+				<a class="name" href={resolve(localized('/konto'))}>{user.displayName}</a>
 				{#if organisation}
 					<a class="org" href={resolve(localized('/mandanten'))} data-kind={organisation.kind}
 						>{m.org_working_in({ name: organisation.name })}</a

@@ -1,0 +1,18 @@
+# keep the build context small and free of secrets and local state
+.git
+.github
+.claude
+.vscode
+node_modules
+build
+build-worker
+.svelte-kit
+src/lib/paraglide
+test-results
+playwright-report
+docs
+infra
+*.md
+.env
+.env.*
+!.env.example

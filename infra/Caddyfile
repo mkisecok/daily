@@ -1,0 +1,64 @@
+# TLS, redirects and transport headers for dai-ly.de. Certificates come from
+# Let's Encrypt automatically. Security headers other than HSTS are set by
+# the app (src/hooks.server.ts) and Keycloak.
+
+{
+	email {$ACME_EMAIL:admin@dai-ly.de}
+}
+
+(common) {
+	encode zstd gzip
+	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	header -Server
+}
+
+# access log without query strings or client details beyond what Caddy needs;
+# rotated and kept for 7 days (Art. 5(1)(c) and (e) GDPR)
+(access_log) {
+	log {
+		output file /var/log/caddy/{args[0]}.log {
+			roll_size 10MiB
+			roll_keep_for 168h
+		}
+		format filter {
+			wrap json
+			fields {
+				request>uri regexp "\?.*$" ""
+				request>headers delete
+				request>remote_ip ip_mask {
+					ipv4 16
+					ipv6 32
+				}
+				request>client_ip ip_mask {
+					ipv4 16
+					ipv6 32
+				}
+				resp_headers delete
+			}
+		}
+	}
+}
+
+dai-ly.de {
+	import common
+	import access_log app
+	reverse_proxy app:3000
+}
+
+www.dai-ly.de {
+	redir https://dai-ly.de{uri} permanent
+}
+
+auth.dai-ly.de {
+	import common
+	import access_log auth
+
+	# the admin console only from the addresses in KC_ADMIN_ALLOW (none by default)
+	@admin {
+		path /admin*
+		not remote_ip {$KC_ADMIN_ALLOW:192.0.2.1/32}
+	}
+	respond @admin 404
+
+	reverse_proxy keycloak:8080
+}

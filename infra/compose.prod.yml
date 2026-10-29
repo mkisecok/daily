@@ -1,0 +1,126 @@
+# Production stack on one server: Caddy terminates TLS and is the only
+# service with published ports. Everything else talks over the internal
+# network. Secrets come from /opt/daily/.env (see infra/env.prod.example).
+#
+#   infra/deploy.sh          pull, migrate, start
+#
+# The image is built and pushed by .github/workflows/image.yml.
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
+x-app: &app
+  image: ghcr.io/mkisecok/daily:${DAILY_TAG:-main}
+  restart: unless-stopped
+  env_file: /opt/daily/.env
+  environment:
+    ORIGIN: https://dai-ly.de
+    APP_ORIGIN: https://dai-ly.de
+    KEYCLOAK_ISSUER: https://auth.dai-ly.de/realms/daily
+    BODY_SIZE_LIMIT: 1M
+  read_only: true
+  tmpfs:
+    - /tmp
+  networks: [internal]
+  logging: *logging
+  depends_on:
+    postgres:
+      condition: service_healthy
+
+services:
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    environment:
+      KC_ADMIN_ALLOW: ${KC_ADMIN_ALLOW:-}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+      - caddy-logs:/var/log/caddy
+    networks: [internal]
+    logging: *logging
+    depends_on: [app, keycloak]
+
+  app:
+    <<: *app
+
+  worker:
+    <<: *app
+    command: ['node', 'build-worker/index.js']
+    healthcheck:
+      disable: true
+
+  # one-off: docker compose --profile deploy run --rm migrate
+  migrate:
+    <<: *app
+    command: ['node', 'build-worker/migrate.js']
+    restart: 'no'
+    profiles: [deploy]
+    healthcheck:
+      disable: true
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.1
+    restart: unless-stopped
+    command: ['start', '--import-realm']
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: daily
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in /opt/daily/.env}
+      KC_HOSTNAME: https://auth.dai-ly.de
+      KC_PROXY_HEADERS: xforwarded
+      # plain HTTP only inside the internal network; Caddy serves HTTPS
+      KC_HTTP_ENABLED: 'true'
+      KC_HEALTH_ENABLED: 'true'
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME:-}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:-}
+      KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET:?set KEYCLOAK_CLIENT_SECRET in /opt/daily/.env}
+      KC_SMTP_HOST: ${KC_SMTP_HOST:-}
+      KC_SMTP_PORT: ${KC_SMTP_PORT:-587}
+      KC_SMTP_FROM: ${KC_SMTP_FROM:-}
+      KC_SMTP_USER: ${KC_SMTP_USER:-}
+      KC_SMTP_PASSWORD: ${KC_SMTP_PASSWORD:-}
+    volumes:
+      - ./keycloak/prod:/opt/keycloak/data/import:ro
+    networks: [internal]
+    logging: *logging
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: daily
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in /opt/daily/.env}
+      POSTGRES_DB: daily
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres/init-keycloak-db.sql:/docker-entrypoint-initdb.d/10-keycloak.sql:ro
+    networks: [internal]
+    logging: *logging
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U daily -d daily']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+networks:
+  internal:
+
+volumes:
+  pgdata:
+  caddy-data:
+  caddy-config:
+  caddy-logs:
