@@ -1,5 +1,5 @@
 import { addHours, dayAt } from '../../records/deadlines.js';
-import type { DeadlineSpec, RecordEngine, RecordView } from '../../records/types.js';
+import type { DeadlineSpec, RecordData, RecordEngine, RecordView } from '../../records/types.js';
 import { isEmpty } from '../../records/validate.js';
 import type { LegalBasis, Localized, QuestionnaireResult, Reason } from '../types.js';
 import { assessRisks, definition, RISKS, riskLevel, type RiskLevel } from './definition.js';
@@ -158,5 +158,27 @@ function assess(record: RecordView): QuestionnaireResult {
 	};
 }
 
-export const engine: RecordEngine = { deadlines, assess };
+/**
+ * the screening's reasons become the reason for the DPIA, in German like
+ * the rest of the entry. Text the user wrote is never overwritten.
+ */
+function fromAssessment(
+	field: string,
+	result: QuestionnaireResult,
+	record: RecordView
+): RecordData {
+	if (field !== 'schwellwert' || !isEmpty(record.data.anlass)) return {};
+	if (result.reasons.length === 0) return {};
+	return {
+		anlass: result.reasons
+			.map((reason) =>
+				reason.cite
+					? `– ${reason.text.de} (${reason.cite.ref} ${reason.cite.law})`
+					: `– ${reason.text.de}`
+			)
+			.join('\n')
+	};
+}
+
+export const engine: RecordEngine = { deadlines, assess, fromAssessment };
 export { definition, RISKS, riskLevel };

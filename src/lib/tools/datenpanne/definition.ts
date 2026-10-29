@@ -12,7 +12,7 @@ const highRisk = (record: RecordView) => record.data.risiko === 'hoch';
  */
 export const definition: RecordToolDefinition = {
 	slug: 'datenpanne',
-	version: 1,
+	version: 2,
 	intro: L(
 		'Ein Eintrag je Verletzung des Schutzes personenbezogener Daten. Ab dem Zeitpunkt der Kenntnis läuft die 72-Stunden-Frist für die Meldung an die Aufsichtsbehörde; sie erscheint unter Fristen. Jeder Vorfall wird dokumentiert, auch wenn keine Meldung nötig ist (Art. 33 Abs. 5 DSGVO).',
 		'One entry per personal data breach. From the moment of awareness the 72-hour period for notifying the supervisory authority runs; it appears under Deadlines. Every breach is documented, even when no notification is needed (Art. 33(5) GDPR).'
@@ -39,6 +39,16 @@ export const definition: RecordToolDefinition = {
 					),
 					required: true,
 					listColumn: true
+				},
+				{
+					id: 'vvt',
+					type: 'reference',
+					tool: 'vvt',
+					label: L('Betroffene Verarbeitungstätigkeit', 'Affected processing activity'),
+					help: L(
+						'Der VVT-Eintrag, aus dem die betroffenen Daten stammen.',
+						'The record entry the affected data come from.'
+					)
 				},
 				{
 					id: 'kenntnis',
