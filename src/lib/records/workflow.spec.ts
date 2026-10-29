@@ -173,4 +173,22 @@ describe('export', () => {
 			true
 		);
 	});
+
+	it('escapes iCalendar text, folds without splitting characters and skips a missing cite', () => {
+		const deadline: Deadline = {
+			kind: 'antwort',
+			label: { de: 'Antwort', en: 'Reply' },
+			dueAt: '2026-11-30T22:59:00.000Z',
+			recordId: 'r2',
+			toolSlug: 'betroffenenanfrage',
+			recordTitle: `Auskunft; Pfad C:\\Daten\nzweite Zeile ${'Ä'.repeat(60)}`
+		};
+		const ics = toIcs([deadline], 'en', new Date('2026-11-01T08:00:00.000Z'));
+		const unfolded = ics.replace(/\r\n /g, '');
+		expect(unfolded).toContain('SUMMARY:Reply – Auskunft\\; Pfad C:\\\\Daten\\nzweite Zeile');
+		expect(unfolded).toContain(`zweite Zeile ${'Ä'.repeat(60)}`);
+		expect(ics).not.toContain('\uFFFD');
+		expect(ics).not.toMatch(/^DESCRIPTION:.*Art\./m);
+		expect(ics.endsWith('END:VCALENDAR\r\n')).toBe(true);
+	});
 });
