@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, inArray, isNull } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, isNotNull, isNull } from 'drizzle-orm';
 import { computeDeadlines } from '../records/deadlines.js';
 import {
 	checkReferences,
@@ -158,7 +158,7 @@ export function createRecordRepository(
 			}
 
 			return {
-				async list(toolSlug) {
+				async list(toolSlug, options) {
 					const rows = await db
 						.select()
 						.from(records)
@@ -166,7 +166,7 @@ export function createRecordRepository(
 							and(
 								eq(records.organisationId, organisationId),
 								eq(records.toolSlug, toolSlug),
-								isNull(records.archivedAt)
+								options?.archived ? isNotNull(records.archivedAt) : isNull(records.archivedAt)
 							)
 						)
 						.orderBy(desc(records.updatedAt));
@@ -277,6 +277,30 @@ export function createRecordRepository(
 							.returning();
 						const stored = toStored(updated);
 						await event(tx, id, 'archived', {});
+						await syncDeadlines(tx, tool, stored);
+						return { ok: true, value: stored } as const;
+					});
+				},
+
+				async unarchive(id) {
+					return db.transaction(async (tx) => {
+						const row = await lock(tx, id);
+						if (!row) return { ok: false, error: 'not-found' } as const;
+						const tool = getTool(row.toolSlug);
+						if (!tool) return { ok: false, error: 'unknown-tool' } as const;
+						if (!row.archivedAt) return { ok: true, value: toStored(row) } as const;
+						const [updated] = await tx
+							.update(records)
+							.set({
+								archivedAt: null,
+								version: row.version + 1,
+								updatedBy: userId,
+								updatedAt: new Date()
+							})
+							.where(eq(records.id, id))
+							.returning();
+						const stored = toStored(updated);
+						await event(tx, id, 'restored', {});
 						await syncDeadlines(tx, tool, stored);
 						return { ok: true, value: stored } as const;
 					});

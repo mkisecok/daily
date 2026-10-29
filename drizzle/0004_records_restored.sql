@@ -1,0 +1,1 @@
+ALTER TYPE "public"."record_event_kind" ADD VALUE 'restored';

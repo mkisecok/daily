@@ -23,7 +23,10 @@ export const entries: EntryGenerator = () =>
 /** a referenced record shown in full, with the records pointing to it */
 export type Composed = { tool: RecordTool; record: StoredRecord; backlinks: Backlinks };
 
-/** `?eintrag=<id>` shows a record, `?neu=1` the empty form, otherwise the list */
+/**
+ * `?eintrag=<id>` shows a record, `?neu=1` the empty form, otherwise the
+ * list; `?archiviert=1` lists the archived records instead
+ */
 export const load: PageLoad = async ({ params, data, url, depends }) => {
 	const tool = getTool(params.slug);
 	const recordTool = getRecordTool(params.slug);
@@ -41,7 +44,7 @@ export const load: PageLoad = async ({ params, data, url, depends }) => {
 		composed: [] as Composed[]
 	};
 	// prerendering still calls load; the store only exists in the browser, which loads again
-	if (!browser) return { ...base, view: 'list' as const, records: [] };
+	if (!browser) return { ...base, view: 'list' as const, records: [], archived: false };
 
 	const store = getStore();
 	const links = createLinks(store, listRecordTools());
@@ -83,6 +86,10 @@ export const load: PageLoad = async ({ params, data, url, depends }) => {
 	if (url.searchParams.get('neu') === '1') {
 		return { ...base, view: 'new' as const, choices: await links.choices(definition) };
 	}
-	const [records, titles] = await Promise.all([store.list(tool.slug), links.titles(definition)]);
-	return { ...base, view: 'list' as const, records, titles };
+	const archived = url.searchParams.get('archiviert') === '1';
+	const [records, titles] = await Promise.all([
+		store.list(tool.slug, { archived }),
+		links.titles(definition)
+	]);
+	return { ...base, view: 'list' as const, records, titles, archived };
 };

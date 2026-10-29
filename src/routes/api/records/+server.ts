@@ -2,12 +2,15 @@ import { error, json } from '@sveltejs/kit';
 import { readBody, respond, storeFor } from '#lib/server/record-api.js';
 import type { RequestHandler } from './$types';
 
-/** `GET /api/records?tool=<slug>`: the active organisation's records of one tool */
+/**
+ * `GET /api/records?tool=<slug>`: the active organisation's records of one
+ * tool; with `&archiviert=1` the archived ones instead
+ */
 export const GET: RequestHandler = async ({ url, locals }) => {
 	const tool = url.searchParams.get('tool');
 	if (!tool) error(400, 'tool missing');
 	const store = await storeFor(locals);
-	return json(await store.list(tool));
+	return json(await store.list(tool, { archived: url.searchParams.get('archiviert') === '1' }));
 };
 
 /** `POST /api/records` with `{ tool, data }` */

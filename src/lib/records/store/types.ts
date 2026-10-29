@@ -11,6 +11,8 @@ export type StoreError =
 	/** someone saved in between; `current` is the stored record */
 	| { ok: false; error: 'conflict'; current: StoredRecord };
 
+export type ListOptions = { archived?: boolean };
+
 export type StoreResult<T> = { ok: true; value: T } | StoreError;
 
 export type RecordDetail = { record: StoredRecord; events: RecordEvent[]; deadlines: Deadline[] };
@@ -21,8 +23,8 @@ export type RecordDetail = { record: StoredRecord; events: RecordEvent[]; deadli
  * the browser. Both apply the same validation, transitions and deadlines.
  */
 export interface RecordStore {
-	/** records of one tool, newest change first; archived ones excluded */
-	list(toolSlug: string): Promise<StoredRecord[]>;
+	/** records of one tool, newest change first; live ones, or only the archived ones */
+	list(toolSlug: string, options?: ListOptions): Promise<StoredRecord[]>;
 	get(id: string): Promise<RecordDetail | null>;
 	create(toolSlug: string, input: Record<string, unknown>): Promise<StoreResult<StoredRecord>>;
 	update(
@@ -42,6 +44,8 @@ export interface RecordStore {
 		expectedVersion: number
 	): Promise<StoreResult<StoredRecord>>;
 	archive(id: string): Promise<StoreResult<StoredRecord>>;
+	/** brings an archived record back; its deadlines open again */
+	unarchive(id: string): Promise<StoreResult<StoredRecord>>;
 	/** open deadlines across all record tools, earliest first */
 	deadlines(): Promise<Deadline[]>;
 }
