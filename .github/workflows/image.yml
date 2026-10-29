@@ -81,7 +81,7 @@ jobs:
           grep -qi '^x-frame-options: DENY' headers.txt
           grep -qi '^permissions-policy: ' headers.txt
           csp=$(grep -i '^content-security-policy:' headers.txt)
-          echo "$csp" | grep -q "script-src 'self' 'nonce-"
+          echo "$csp" | grep -q "script-src 'self' 'sha256-[^']*' 'nonce-"
           echo "$csp" | grep -q "frame-ancestors 'none'"
           echo "$csp" | grep -q "form-action 'self' https://auth.example.invalid"
           nonce=$(echo "$csp" | sed -E "s/.*'nonce-([^']+)'.*/\1/")
