@@ -81,7 +81,7 @@ export const CLAUSES: FieldDef[] = [
 /** a processor contract: one record per processor and service */
 export const definition: RecordToolDefinition = {
 	slug: 'avv-pruefung',
-	version: 1,
+	version: 2,
 	intro: L(
 		'Ein Eintrag je Auftragsverarbeiter und Leistung. Die Prüfliste folgt Art. 28 Abs. 3 DSGVO; nicht erfüllte Punkte erscheinen mit ihrem Buchstaben im Ergebnis. Mit Wiedervorlage wird der Vertrag zur Frist.',
 		'One entry per processor and service. The checklist follows Art. 28(3) GDPR; clauses not met appear with their letter in the result. A review date turns the contract into a deadline.'
@@ -102,6 +102,16 @@ export const definition: RecordToolDefinition = {
 					label: L('Auftragsverarbeiter', 'Processor'),
 					required: true,
 					listColumn: true
+				},
+				{
+					id: 'vvt',
+					type: 'reference',
+					tool: 'vvt',
+					label: L('Verarbeitungstätigkeit im VVT', 'Processing activity in the record'),
+					help: L(
+						'Die Verarbeitungstätigkeit, für die der Auftragsverarbeiter eingesetzt wird.',
+						'The processing activity the processor is engaged for.'
+					)
 				},
 				{
 					id: 'leistung',
