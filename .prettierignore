@@ -15,3 +15,6 @@ bun.lockb
 # Generated law texts (pnpm normen:import)
 /src/lib/normen/data/
 /.superpowers/
+
+# Vendored skills from fubits1/svelte-skills
+/.claude/skills/
