@@ -111,7 +111,7 @@ export type FieldChanges = Record<string, [FieldValue | undefined, FieldValue | 
 export type RecordEvent = {
 	id: string;
 	recordId: string;
-	kind: 'created' | 'updated' | 'transition' | 'assessment' | 'archived';
+	kind: 'created' | 'updated' | 'transition' | 'assessment' | 'archived' | 'restored';
 	changes: FieldChanges | null;
 	fromState: string | null;
 	toState: string | null;

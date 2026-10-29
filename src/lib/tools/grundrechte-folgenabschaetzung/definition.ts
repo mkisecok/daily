@@ -30,7 +30,7 @@ export const ELEMENTS = [
 /** a fundamental rights impact assessment before a high-risk system is first used (Art. 27) */
 export const definition: RecordToolDefinition = {
 	slug: 'grundrechte-folgenabschaetzung',
-	version: 1,
+	version: 2,
 	intro: L(
 		'Eine Grundrechte-Folgenabschätzung je Hochrisiko-KI-System und Einsatz, bevor es erstmals verwendet wird. Pflichtig sind öffentliche Stellen, private Stellen mit öffentlichen Aufgaben sowie Betreiber von Systemen zur Kreditwürdigkeitsprüfung und zur Preisbildung in der Lebens- und Krankenversicherung. Das Ergebnis wird der Marktüberwachungsbehörde mitgeteilt; eine bestehende DSFA wird ergänzt, nicht ersetzt.',
 		'One fundamental rights impact assessment per high-risk AI system and use, before it is first used. Required for public bodies, private entities providing public services and deployers of systems for creditworthiness assessment and pricing in life and health insurance. The results are notified to the market surveillance authority; an existing DPIA is complemented, not replaced.'
@@ -51,6 +51,16 @@ export const definition: RecordToolDefinition = {
 					label: L('Bezeichnung', 'Title'),
 					required: true,
 					listColumn: true
+				},
+				{
+					id: 'ki_eintrag',
+					type: 'reference',
+					tool: 'ki-register',
+					label: L('KI-System im Register', 'AI system in the register'),
+					help: L(
+						'Das Hochrisiko-KI-System aus dem KI-Register, das diese Abschätzung betrifft.',
+						'The high-risk AI system from the AI register this assessment concerns.'
+					)
 				},
 				{ id: 'ki_system', type: 'text', label: L('KI-System', 'AI system'), listColumn: true },
 				{

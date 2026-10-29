@@ -1,12 +1,6 @@
-import type { Localized } from '../../tools/types.js';
+import type { Answers, Localized } from '../../tools/types.js';
 import type { ValidationErrors } from '../validate.js';
-import type {
-	AssessmentSnapshot,
-	Deadline,
-	RecordData,
-	RecordEvent,
-	StoredRecord
-} from '../types.js';
+import type { Deadline, RecordEvent, StoredRecord } from '../types.js';
 
 export type StoreError =
 	| { ok: false; error: 'not-found' | 'unknown-tool' | 'not-workflow' | 'not-allowed' }
@@ -16,6 +10,8 @@ export type StoreError =
 	| { ok: false; error: 'blocked'; reason: Localized }
 	/** someone saved in between; `current` is the stored record */
 	| { ok: false; error: 'conflict'; current: StoredRecord };
+
+export type ListOptions = { archived?: boolean };
 
 export type StoreResult<T> = { ok: true; value: T } | StoreError;
 
@@ -27,8 +23,8 @@ export type RecordDetail = { record: StoredRecord; events: RecordEvent[]; deadli
  * the browser. Both apply the same validation, transitions and deadlines.
  */
 export interface RecordStore {
-	/** records of one tool, newest change first; archived ones excluded */
-	list(toolSlug: string): Promise<StoredRecord[]>;
+	/** records of one tool, newest change first; live ones, or only the archived ones */
+	list(toolSlug: string, options?: ListOptions): Promise<StoredRecord[]>;
 	get(id: string): Promise<RecordDetail | null>;
 	create(toolSlug: string, input: Record<string, unknown>): Promise<StoreResult<StoredRecord>>;
 	update(
@@ -37,14 +33,19 @@ export interface RecordStore {
 		expectedVersion: number
 	): Promise<StoreResult<StoredRecord>>;
 	transition(id: string, to: string, expectedVersion: number): Promise<StoreResult<StoredRecord>>;
-	/** stores a questionnaire result in an assessment field, plus derived values */
+	/**
+	 * evaluates questionnaire answers and stores the result in an assessment
+	 * field, plus the values the record tool derives from it
+	 */
 	attachAssessment(
 		id: string,
 		field: string,
-		snapshot: AssessmentSnapshot,
-		derived?: RecordData
+		answers: Answers,
+		expectedVersion: number
 	): Promise<StoreResult<StoredRecord>>;
 	archive(id: string): Promise<StoreResult<StoredRecord>>;
+	/** brings an archived record back; its deadlines open again */
+	unarchive(id: string): Promise<StoreResult<StoredRecord>>;
 	/** open deadlines across all record tools, earliest first */
 	deadlines(): Promise<Deadline[]>;
 }

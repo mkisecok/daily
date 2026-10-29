@@ -146,7 +146,7 @@ export const GOALS = [
  */
 export const definition: RecordToolDefinition = {
 	slug: 'tom-katalog',
-	version: 1,
+	version: 2,
 	intro: L(
 		'Ein Eintrag je System oder Verarbeitungsumgebung. Die Maßnahmen folgen den sieben Gewährleistungszielen des Standard-Datenschutzmodells (SDM) der Aufsichtsbehörden und belegen die Sicherheit der Verarbeitung nach Art. 32 DSGVO. Die Beschreibung kann im Verzeichnis von Verarbeitungstätigkeiten in Bezug genommen werden.',
 		'One entry per system or processing environment. The measures follow the seven protection goals of the Standard Data Protection Model (SDM) of the German authorities and evidence the security of processing under Art. 32 GDPR. The record of processing activities can refer to the entry.'
@@ -168,6 +168,16 @@ export const definition: RecordToolDefinition = {
 					label: L('System oder Umgebung', 'System or environment'),
 					required: true,
 					listColumn: true
+				},
+				{
+					id: 'vvt',
+					type: 'reference',
+					tool: 'vvt',
+					label: L('Verarbeitungstätigkeit im VVT', 'Processing activity in the record'),
+					help: L(
+						'Die Verarbeitungstätigkeit, deren Daten dieses System verarbeitet; im VVT verweist Art. 30 Abs. 1 lit. g auf diese Maßnahmen.',
+						'The processing activity whose data this system processes; in the record, Art. 30(1)(g) refers to these measures.'
+					)
 				},
 				{
 					id: 'beschreibung',

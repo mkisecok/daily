@@ -41,4 +41,24 @@ describe('Prüfkatalog', () => {
 			'negative'
 		);
 	});
+
+	it('accepts written evidence in place of samples', () => {
+		expect(assess({ titel: 'X', ergebnis: 'erfuellt', nachweise: 'Richtlinie v3' })).toMatchObject({
+			verdict: 'negative',
+			outcome: 'erfuellt'
+		});
+	});
+
+	it('asks for a template or own questions while nothing is chosen', () => {
+		const result = assess({ titel: 'X' });
+		expect(result).toMatchObject({ verdict: 'conditional', outcome: 'offen' });
+		expect(result.notes).toEqual([]);
+		expect(result.explanation.de).toContain('Vorlage wählen');
+	});
+
+	it('keeps the template questions whatever the result, and cites ISO 27001 9.2', () => {
+		const result = assess({ titel: 'X', vorlage: 'dsgvo', ergebnis: 'nicht_erfuellt' });
+		expect(result.notes).toEqual(TEMPLATES.dsgvo.questions);
+		expect(result.citations).toEqual([{ law: 'ISO 27001', ref: 'Kap. 9.2' }]);
+	});
 });

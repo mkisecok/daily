@@ -137,7 +137,8 @@ export const recordEventKind = pgEnum('record_event_kind', [
 	'updated',
 	'transition',
 	'assessment',
-	'archived'
+	'archived',
+	'restored'
 ]);
 
 /** append-only history of a record: who changed which fields, and when */

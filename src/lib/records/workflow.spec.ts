@@ -154,6 +154,24 @@ describe('export', () => {
 		expect(row.startsWith('Offen;"Eins; zwei";"Zeile 1\nZeile 2";A;')).toBe(true);
 	});
 
+	it('keeps formulas in CSV cells from running in Excel', () => {
+		const csv = toCsv(
+			def,
+			[
+				record({
+					data: { name: '=HYPERLINK("http://x";"klick")', notes: '+49 30 1234', kind: 'a' }
+				}),
+				record({ id: 'r2', data: { name: '@SUM(A1)', notes: '-1', kind: 'b' } })
+			],
+			'de'
+		);
+		const [, first, second] = csv.split('\r\n');
+		expect(first.startsWith(`Offen;"'=HYPERLINK(""http://x"";""klick"")";'+49 30 1234;A;`)).toBe(
+			true
+		);
+		expect(second.startsWith("Offen;'@SUM(A1);'-1;B;")).toBe(true);
+	});
+
 	it('writes an iCalendar file with stable UIDs and a reminder', () => {
 		const deadline: Deadline = {
 			kind: 'meldung',
@@ -172,5 +190,23 @@ describe('export', () => {
 		expect(ics.split('\r\n').every((line) => new TextEncoder().encode(line).length <= 75)).toBe(
 			true
 		);
+	});
+
+	it('escapes iCalendar text, folds without splitting characters and skips a missing cite', () => {
+		const deadline: Deadline = {
+			kind: 'antwort',
+			label: { de: 'Antwort', en: 'Reply' },
+			dueAt: '2026-11-30T22:59:00.000Z',
+			recordId: 'r2',
+			toolSlug: 'betroffenenanfrage',
+			recordTitle: `Auskunft; Pfad C:\\Daten\nzweite Zeile ${'Ä'.repeat(60)}`
+		};
+		const ics = toIcs([deadline], 'en', new Date('2026-11-01T08:00:00.000Z'));
+		const unfolded = ics.replace(/\r\n /g, '');
+		expect(unfolded).toContain('SUMMARY:Reply – Auskunft\\; Pfad C:\\\\Daten\\nzweite Zeile');
+		expect(unfolded).toContain(`zweite Zeile ${'Ä'.repeat(60)}`);
+		expect(ics).not.toContain('\uFFFD');
+		expect(ics).not.toMatch(/^DESCRIPTION:.*Art\./m);
+		expect(ics.endsWith('END:VCALENDAR\r\n')).toBe(true);
 	});
 });

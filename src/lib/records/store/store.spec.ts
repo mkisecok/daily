@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { testTool } from '../fixtures.js';
+import { getTestQuestionnaire, linkedTool, testTool } from '../fixtures.js';
+import type { RecordTool } from '../types.js';
 import { createBrowserStore, STORAGE_KEY } from './browser.js';
 import { createHttpStore } from './http.js';
 
@@ -13,17 +14,94 @@ function fakeStorage() {
 	};
 }
 
+const tools: Record<string, RecordTool> = {
+	[testTool.definition.slug]: testTool,
+	[linkedTool.definition.slug]: linkedTool
+};
+
 function browserStore(storage = fakeStorage()) {
 	let tick = 0;
 	let id = 0;
 	return createBrowserStore(storage, {
-		getTool: (slug) => (slug === testTool.definition.slug ? testTool : undefined),
+		getTool: (slug) => tools[slug],
+		getQuestionnaire: getTestQuestionnaire,
 		now: () => new Date(Date.UTC(2026, 9, 14, 8, 0, tick++)),
 		newId: () => `id-${++id}`
 	});
 }
 
 describe('browser store', () => {
+	it('lists archived records apart and restores them with their deadlines', async () => {
+		const store = browserStore();
+		const created = await store.create('test-register', { name: 'Alt', due: '2026-12-01' });
+		if (!created.ok) throw new Error('create failed');
+		const id = created.value.id;
+		await store.archive(id);
+		expect(await store.list('test-register')).toEqual([]);
+		expect((await store.list('test-register', { archived: true })).map((r) => r.id)).toEqual([id]);
+		expect(await store.deadlines()).toEqual([]);
+
+		const restored = await store.unarchive(id);
+		expect(restored).toMatchObject({ ok: true, value: { archivedAt: null, version: 3 } });
+		expect((await store.list('test-register')).map((r) => r.id)).toEqual([id]);
+		expect(await store.list('test-register', { archived: true })).toEqual([]);
+		expect((await store.deadlines()).map((d) => d.recordId)).toEqual([id]);
+		expect((await store.get(id))?.events.map((e) => e.kind)).toEqual([
+			'created',
+			'archived',
+			'restored'
+		]);
+		expect(await store.unarchive(id)).toMatchObject({ ok: true, value: { version: 3 } });
+		expect(await store.unarchive('missing')).toEqual({ ok: false, error: 'not-found' });
+	});
+
+	it('only stores references to records of the named tool', async () => {
+		const store = browserStore();
+		const target = await store.create('test-register', { name: 'Ziel' });
+		const other = await store.create('linked-register', { name: 'Anderes' });
+		if (!target.ok || !other.ok) throw new Error('create failed');
+
+		expect(await store.create('linked-register', { name: 'X', target: 'missing' })).toEqual({
+			ok: false,
+			error: 'invalid',
+			errors: { target: 'invalid' }
+		});
+		expect(
+			await store.create('linked-register', { name: 'X', target: other.value.id })
+		).toMatchObject({ error: 'invalid', errors: { target: 'invalid' } });
+
+		const linked = await store.create('linked-register', { name: 'X', target: target.value.id });
+		expect(linked).toMatchObject({ ok: true, value: { data: { target: target.value.id } } });
+		if (!linked.ok) throw new Error('create failed');
+		expect(await store.update(linked.value.id, { name: 'X', target: 'missing' }, 1)).toMatchObject({
+			error: 'invalid',
+			errors: { target: 'invalid' }
+		});
+		expect(await store.update(linked.value.id, { name: 'Y', target: '' }, 1)).toMatchObject({
+			ok: true
+		});
+	});
+
+	it('evaluates assessment answers itself and checks the version', async () => {
+		const store = browserStore();
+		const created = await store.create('test-register', { name: 'Eins' });
+		if (!created.ok) throw new Error('create failed');
+		const id = created.value.id;
+		expect(await store.attachAssessment(id, 'check', { q1: 'yes', q2: 'na' }, 2)).toMatchObject({
+			error: 'conflict'
+		});
+		const attached = await store.attachAssessment(id, 'check', { q1: 'yes', q2: 'na' }, 1);
+		expect(attached).toMatchObject({
+			ok: true,
+			value: {
+				version: 2,
+				data: { kind: 'a', check: { tool: 'demo', verdict: 'positive', outcome: 'ja' } }
+			}
+		});
+		const detail = await store.get(id);
+		expect(detail?.events.at(-1)?.kind).toBe('assessment');
+	});
+
 	it('creates, persists and reads records with history', async () => {
 		const storage = fakeStorage();
 		const store = browserStore(storage);

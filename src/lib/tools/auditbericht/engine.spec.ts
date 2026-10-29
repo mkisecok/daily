@@ -35,4 +35,41 @@ describe('Auditbericht', () => {
 		});
 		expect(approved).toMatchObject({ outcome: 'freigegeben', verdict: 'positive' });
 	});
+
+	it('needs no recommendations for a conforming audit', () => {
+		const result = assess({
+			titel: 'Bericht',
+			audit: 'a1',
+			zusammenfassung: 's',
+			gesamturteil: 'konform',
+			verteiler: 'Geschäftsführung',
+			freigegeben_am: '2026-12-01'
+		});
+		expect(result).toMatchObject({ outcome: 'freigegeben', verdict: 'negative' });
+		expect(result.notes).toEqual([]);
+	});
+
+	it('asks for recommendations when there are nonconformities', () => {
+		const result = assess({
+			titel: 'Bericht',
+			audit: 'a1',
+			zusammenfassung: 's',
+			gesamturteil: 'abweichungen',
+			verteiler: 'Geschäftsführung'
+		});
+		expect(result.outcome).toBe('entwurf');
+		expect(result.notes!.map((n) => n.de)).toEqual([
+			'Empfehlungen für die Behebung der Abweichungen ergänzen.'
+		]);
+		const withAdvice = assess({
+			titel: 'Bericht',
+			audit: 'a1',
+			zusammenfassung: 's',
+			gesamturteil: 'abweichungen',
+			empfehlungen: 'Schulung',
+			verteiler: 'Geschäftsführung',
+			freigegeben_am: '2026-12-01'
+		});
+		expect(withAdvice).toMatchObject({ verdict: 'negative', notes: [] });
+	});
 });

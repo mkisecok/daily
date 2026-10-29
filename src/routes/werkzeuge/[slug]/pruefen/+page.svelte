@@ -65,7 +65,7 @@
 
 <ToolHeader tool={data.tool} />
 
-<AssessmentHandoff questionnaire={data.tool.slug} catalogVersion={data.catalog.version} {result} />
+<AssessmentHandoff questionnaire={data.tool.slug} {answers} {result} />
 
 {#if result}
 	<Verdict {result} />

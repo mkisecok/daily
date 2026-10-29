@@ -33,7 +33,10 @@ export function createHttpStore(urls: HttpUrls, fetchFn: typeof fetch = fetch): 
 	}
 
 	return {
-		list: (toolSlug) => read(`${urls.records}?tool=${encodeURIComponent(toolSlug)}`),
+		list: (toolSlug, options) =>
+			read(
+				`${urls.records}?tool=${encodeURIComponent(toolSlug)}${options?.archived ? '&archiviert=1' : ''}`
+			),
 
 		async get(id) {
 			const response = await fetchFn(urls.record(id), { headers: { accept: 'application/json' } });
@@ -46,9 +49,10 @@ export function createHttpStore(urls: HttpUrls, fetchFn: typeof fetch = fetch): 
 		update: (id, data, expectedVersion) => call(urls.record(id), 'PUT', { data, expectedVersion }),
 		transition: (id, to, expectedVersion) =>
 			call(`${urls.record(id)}/transition`, 'POST', { to, expectedVersion }),
-		attachAssessment: (id, field, snapshot, derived) =>
-			call(`${urls.record(id)}/assessment`, 'POST', { field, snapshot, derived }),
+		attachAssessment: (id, field, answers, expectedVersion) =>
+			call(`${urls.record(id)}/assessment`, 'POST', { field, answers, expectedVersion }),
 		archive: (id) => call(urls.record(id), 'DELETE'),
+		unarchive: (id) => call(`${urls.record(id)}/unarchive`, 'POST'),
 		deadlines: () => read(urls.deadlines)
 	};
 }
