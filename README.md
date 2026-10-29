@@ -22,6 +22,8 @@ entries stay in your browser).
   - AI and GDPR interface check (Art. 5, 6, 22, 35 DSGVO, EDPB Opinion 28/2024)
   - AI usage policy generator (Art. 4 KI-VO, DSGVO, BetrVG)
   - AIMS gap analysis (ISO/IEC 42001 clauses and Annex A, mapped to AI Act articles)
+  - Anonymiser (Art. 4(5), 25, 32 DSGVO) – pseudonymises text in the browser before it goes
+    into an AI chat and puts the real values back into the reply; offline, nothing is uploaded
 
   Registers and workflows keep records over time, with history, deadlines, CSV export and a
   print version (beta):
