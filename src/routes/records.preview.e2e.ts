@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { choose, pickDate } from './e2e-helpers.js';
+import { chip, choose, pickDate } from './e2e-helpers.js';
 
 test('preview keeps records in the browser across reloads and can delete them', async ({
 	page
@@ -64,4 +64,29 @@ test('preview: a questionnaire result is evaluated again when it is attached', a
 	await expect(page).toHaveURL(/\/werkzeuge\/ki-register\/eintraege\/\?eintrag=/);
 	await expect(page.locator('.record-view')).toContainText('Hochrisiko (Art. 6)');
 	await expect(page.locator('.history')).toContainText('Bewertung übernommen');
+});
+
+test('preview: a DSFA links to its VVT entry, which lists it back', async ({ page }) => {
+	const group = (label: string) => page.getByRole('group', { name: label });
+	await page.goto('werkzeuge/vvt/eintraege/?neu=1');
+	await page.getByLabel('Bezeichnung').fill('Videoüberwachung Lager');
+	await choose(page.locator('#field-rolle'), 'verantwortlicher');
+	await page.getByLabel('Zwecke der Verarbeitung').fill('Schutz vor Diebstahl');
+	await chip(group('Kategorien betroffener Personen'), 'Beschäftigte');
+	await chip(group('Kategorien personenbezogener Daten'), 'Bild- und Tonaufnahmen');
+	await choose(page.locator('#field-status'), 'aktiv');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+	const vvtUrl = page.url();
+
+	await page.goto('werkzeuge/dsfa/eintraege/?neu=1');
+	await page.getByLabel('Verarbeitungsvorgang').fill('DSFA Videoüberwachung');
+	await choose(page.locator('#field-vvt'), { label: 'Videoüberwachung Lager' });
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page.locator('.record-view')).toContainText('Videoüberwachung Lager');
+
+	await page.goto(vvtUrl);
+	const links = page.locator('.links');
+	await expect(links).toContainText('Datenschutz-Folgenabschätzung');
+	await expect(links.getByRole('link', { name: 'DSFA Videoüberwachung' })).toBeVisible();
 });

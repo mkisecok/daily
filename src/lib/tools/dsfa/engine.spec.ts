@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
+import { referenceFields } from '../../records/links.js';
 import type { RecordData } from '../../records/types.js';
 import { validateRecord } from '../../records/validate.js';
 import { allowedTransitions } from '../../records/workflow.js';
+import { getQuestionnaire } from '../registry.js';
+import type { Answers } from '../types.js';
 import { definition, engine, RISKS, riskLevel } from './engine.js';
 
 function view(data: RecordData, state = 'entwurf') {
@@ -128,5 +131,44 @@ describe('DSFA: workflow and deadlines', () => {
 			['stellungnahme', '2026-12-09T08:00:00.000Z'],
 			['ueberpruefung', '2027-10-01T07:00:00.000Z']
 		]);
+	});
+});
+
+describe('DSFA: links and screening handoff', () => {
+	const screening = getQuestionnaire('dsfa-schwellwert')!;
+	const answersWith = (yes: string[]): Answers =>
+		Object.fromEntries(
+			screening.catalog.sections
+				.flatMap((section) => section.questions)
+				.map((question) => [question.id, yes.includes(question.id) ? 'yes' : 'no'])
+		);
+	const twoCriteria = screening.catalog.sections
+		.flatMap((section) => section.questions)
+		.slice(-2)
+		.map((question) => question.id);
+
+	it('links the DSFA to its processing activity', () => {
+		expect(definition.version).toBe(2);
+		expect(referenceFields(definition).map((f) => [f.id, f.tool])).toEqual([['vvt', 'vvt']]);
+	});
+
+	it('takes the screening reasons over as the reason for the DPIA', () => {
+		const result = screening.engine(screening.catalog, answersWith(twoCriteria));
+		expect(result.verdict).toBe('positive');
+		const derived = engine.fromAssessment!('schwellwert', result, view({ bezeichnung: 'X' }));
+		const lines = String(derived.anlass).split('\n');
+		expect(lines).toHaveLength(result.reasons.length);
+		expect(lines.every((line) => line.startsWith('– '))).toBe(true);
+		expect(validateRecord(definition, { bezeichnung: 'X', ...derived }).errors).toEqual({});
+	});
+
+	it('keeps text the user wrote and ignores other fields or empty results', () => {
+		const result = screening.engine(screening.catalog, answersWith(twoCriteria));
+		expect(
+			engine.fromAssessment!('schwellwert', result, view({ bezeichnung: 'X', anlass: 'Eigener' }))
+		).toEqual({});
+		expect(engine.fromAssessment!('other', result, view({ bezeichnung: 'X' }))).toEqual({});
+		const none = screening.engine(screening.catalog, answersWith([]));
+		expect(engine.fromAssessment!('schwellwert', none, view({ bezeichnung: 'X' }))).toEqual({});
 	});
 });

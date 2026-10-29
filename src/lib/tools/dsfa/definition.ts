@@ -140,7 +140,7 @@ const highResidual = (record: RecordView) => assessRisks(record).some((r) => r.a
 /** a data protection impact assessment from draft to sign-off (Art. 35, 36) */
 export const definition: RecordToolDefinition = {
 	slug: 'dsfa',
-	version: 1,
+	version: 2,
 	intro: L(
 		'Eine Datenschutz-Folgenabschätzung je Verarbeitungsvorgang mit voraussichtlich hohem Risiko: Beschreibung, Notwendigkeit, Risiken vor und nach Abhilfemaßnahmen, Entscheidung und gegebenenfalls Konsultation der Aufsichtsbehörde. Die Bewertung lehnt sich an die Risikomatrix der DSK an; die Druckfassung dient als Bericht.',
 		'One DPIA per processing operation likely to result in a high risk: description, necessity, risks before and after measures, decision and, where needed, consultation of the authority. The rating follows the DSK risk matrix; the print version serves as the report.'
@@ -163,6 +163,16 @@ export const definition: RecordToolDefinition = {
 					label: L('Verarbeitungsvorgang', 'Processing operation'),
 					required: true,
 					listColumn: true
+				},
+				{
+					id: 'vvt',
+					type: 'reference',
+					tool: 'vvt',
+					label: L('Verarbeitungstätigkeit im VVT', 'Processing activity in the record'),
+					help: L(
+						'Der Eintrag im Verzeichnis von Verarbeitungstätigkeiten, für den diese DSFA durchgeführt wird.',
+						'The entry in the record of processing activities this DPIA is carried out for.'
+					)
 				},
 				{
 					id: 'verarbeitung',
@@ -188,6 +198,16 @@ export const definition: RecordToolDefinition = {
 					type: 'assessment',
 					tool: 'dsfa-schwellwert',
 					label: L('DSFA-Schwellwertanalyse', 'DPIA screening')
+				},
+				{
+					id: 'anlass',
+					type: 'textarea',
+					label: L('Anlass der DSFA', 'Reason for the DPIA'),
+					help: L(
+						'Die Regelbeispiele, Muss-Listen-Einträge und WP-248-Kriterien, die eine DSFA auslösen. Wird aus der Schwellwertanalyse übernommen, solange das Feld leer ist.',
+						'The statutory examples, must-list entries and WP 248 criteria that trigger a DPIA. Taken over from the screening while the field is empty.'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 1, 3, 4' }
 				},
 				{
 					id: 'notwendigkeit',
