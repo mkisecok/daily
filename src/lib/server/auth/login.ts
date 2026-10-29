@@ -1,6 +1,8 @@
 import type { Cookies } from '@sveltejs/kit';
+import * as client from 'openid-client';
 import { dev } from '$app/env';
 import { APP_ORIGIN } from '$app/env/private';
+import { getOidcConfiguration } from './oidc.js';
 
 /** short-lived cookie carrying the PKCE verifier and state across the redirect */
 export const LOGIN_COOKIE = 'daily_login';
@@ -14,6 +16,23 @@ export type LoginState = {
 
 export const REDIRECT_URI = `${APP_ORIGIN}/auth/callback`;
 export const POST_LOGOUT_REDIRECT_URI = `${APP_ORIGIN}/`;
+/** where Keycloak returns after its "Delete account" step; registered in the realm */
+export const ACCOUNT_DELETED_URI = `${APP_ORIGIN}/konto/geloescht`;
+
+/**
+ * Keycloak's own "Delete account" step (application-initiated action
+ * `delete_account`): the user confirms there and Keycloak deletes the login,
+ * so Daily never needs rights to manage users. No code is exchanged on the
+ * way back; the landing page only confirms.
+ */
+export async function buildDeleteAccountUrl(): Promise<URL> {
+	const configuration = await getOidcConfiguration();
+	return client.buildAuthorizationUrl(configuration, {
+		redirect_uri: ACCOUNT_DELETED_URI,
+		scope: 'openid',
+		kc_action: 'delete_account'
+	});
+}
 
 export function storeLoginState(cookies: Cookies, value: LoginState): void {
 	cookies.set(LOGIN_COOKIE, JSON.stringify(value), {

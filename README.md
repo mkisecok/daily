@@ -120,6 +120,23 @@ PUBLIC_BASE_PATH=/daily pnpm build:static
 PUBLIC_BASE_PATH=/daily pnpm preview:static   # http://localhost:4175/daily/
 ```
 
+## Deployment
+
+One image (`Dockerfile`) runs the app, the news worker and the migration runner. CI
+(`.github/workflows/image.yml`) builds it, starts it against a fresh Postgres, checks
+`/healthz` and the security headers, and pushes `ghcr.io/mkisecok/daily` from `main`.
+
+On the server, `infra/compose.prod.yml` runs Caddy (TLS for `dai-ly.de` and
+`auth.dai-ly.de`), the app, the worker, Keycloak with `infra/keycloak/prod/realm-daily.json`
+and Postgres. Secrets live in `/opt/daily/.env` (template: `infra/env.prod.example`).
+
+```sh
+cd /opt/daily/infra && ./deploy.sh   # pull, migrate, start
+```
+
+See `docs/superpowers/plans/2026-10-15-production-deployment.md` for server setup, DNS,
+backups and the remaining go-live steps.
+
 ## Documentation
 
 The product plan and design decisions are in

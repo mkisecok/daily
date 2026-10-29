@@ -1,0 +1,154 @@
+{
+	"realm": "daily",
+	"displayName": "Daily",
+	"enabled": true,
+	"registrationAllowed": false,
+	"registrationEmailAsUsername": true,
+	"loginWithEmailAllowed": true,
+	"duplicateEmailsAllowed": false,
+	"resetPasswordAllowed": true,
+	"verifyEmail": true,
+	"rememberMe": true,
+	"bruteForceProtected": true,
+	"internationalizationEnabled": true,
+	"supportedLocales": ["de", "en"],
+	"defaultLocale": "de",
+	"ssoSessionIdleTimeout": 1209600,
+	"ssoSessionMaxLifespan": 2592000,
+	"accessTokenLifespan": 300,
+	"roles": {
+		"realm": [
+			{
+				"name": "user",
+				"description": "Signed-in member"
+			},
+			{
+				"name": "editor",
+				"description": "Curates the feed"
+			},
+			{
+				"name": "admin",
+				"description": "Platform administration"
+			}
+		]
+	},
+	"defaultRole": {
+		"name": "default-roles-daily",
+		"composite": true,
+		"composites": {
+			"realm": ["user", "offline_access", "uma_authorization"],
+			"client": {
+				"account": ["view-profile", "manage-account", "delete-account"]
+			}
+		}
+	},
+	"clients": [
+		{
+			"clientId": "daily-web",
+			"name": "Daily web app",
+			"enabled": true,
+			"protocol": "openid-connect",
+			"publicClient": false,
+			"clientAuthenticatorType": "client-secret",
+			"secret": "${KEYCLOAK_CLIENT_SECRET}",
+			"standardFlowEnabled": true,
+			"implicitFlowEnabled": false,
+			"directAccessGrantsEnabled": false,
+			"serviceAccountsEnabled": false,
+			"redirectUris": ["https://dai-ly.de/auth/callback", "https://dai-ly.de/konto/geloescht"],
+			"webOrigins": ["https://dai-ly.de"],
+			"attributes": {
+				"pkce.code.challenge.method": "S256",
+				"post.logout.redirect.uris": "https://dai-ly.de/*"
+			},
+			"defaultClientScopes": ["openid", "profile", "email", "roles"],
+			"optionalClientScopes": ["offline_access"]
+		}
+	],
+	"requiredActions": [
+		{
+			"alias": "CONFIGURE_TOTP",
+			"name": "Configure OTP",
+			"providerId": "CONFIGURE_TOTP",
+			"enabled": true,
+			"defaultAction": false,
+			"priority": 10,
+			"config": {}
+		},
+		{
+			"alias": "TERMS_AND_CONDITIONS",
+			"name": "Terms and Conditions",
+			"providerId": "TERMS_AND_CONDITIONS",
+			"enabled": false,
+			"defaultAction": false,
+			"priority": 20,
+			"config": {}
+		},
+		{
+			"alias": "UPDATE_PASSWORD",
+			"name": "Update Password",
+			"providerId": "UPDATE_PASSWORD",
+			"enabled": true,
+			"defaultAction": false,
+			"priority": 30,
+			"config": {}
+		},
+		{
+			"alias": "UPDATE_PROFILE",
+			"name": "Update Profile",
+			"providerId": "UPDATE_PROFILE",
+			"enabled": true,
+			"defaultAction": false,
+			"priority": 40,
+			"config": {}
+		},
+		{
+			"alias": "VERIFY_EMAIL",
+			"name": "Verify Email",
+			"providerId": "VERIFY_EMAIL",
+			"enabled": true,
+			"defaultAction": false,
+			"priority": 50,
+			"config": {}
+		},
+		{
+			"alias": "delete_account",
+			"name": "Delete Account",
+			"providerId": "delete_account",
+			"enabled": true,
+			"defaultAction": false,
+			"priority": 60,
+			"config": {}
+		},
+		{
+			"alias": "webauthn-register",
+			"name": "Webauthn Register",
+			"providerId": "webauthn-register",
+			"enabled": true,
+			"defaultAction": false,
+			"priority": 70,
+			"config": {}
+		},
+		{
+			"alias": "update_user_locale",
+			"name": "Update User Locale",
+			"providerId": "update_user_locale",
+			"enabled": true,
+			"defaultAction": false,
+			"priority": 1000,
+			"config": {}
+		}
+	],
+	"sslRequired": "external",
+	"passwordPolicy": "length(12) and notUsername and notEmail and passwordHistory(3)",
+	"smtpServer": {
+		"host": "${KC_SMTP_HOST:}",
+		"port": "${KC_SMTP_PORT:587}",
+		"from": "${KC_SMTP_FROM:}",
+		"fromDisplayName": "Daily",
+		"starttls": "true",
+		"auth": "true",
+		"user": "${KC_SMTP_USER:}",
+		"password": "${KC_SMTP_PASSWORD:}"
+	}
+}

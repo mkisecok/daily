@@ -68,6 +68,10 @@
 						>{organisation?.name ?? m.nav_clients()}</span
 					>
 				</a>
+				<a href={resolve(localized('/konto'))} class:current={page.route.id?.endsWith('/konto')}>
+					<span class="ico"><Icon name="user" size={18} /></span>
+					<span>{m.nav_account()}</span>
+				</a>
 				<form method="post" action={resolve('/auth/logout')}>
 					<button type="submit">
 						<span class="ico"><Icon name="logout" size={18} /></span>

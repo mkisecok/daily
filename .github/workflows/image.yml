@@ -1,0 +1,109 @@
+name: Container image
+
+# Builds the production image, checks the deployment files, starts the image
+# against a fresh Postgres and checks health, migrations and security
+# headers. On main the tested image is pushed to GHCR for infra/deploy.sh.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: image-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/daily
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build image
+        run: docker build --pull -t daily:ci .
+
+      - name: Check compose file
+        run: |
+          sudo mkdir -p /opt/daily && sudo touch /opt/daily/.env
+          POSTGRES_PASSWORD=ci KEYCLOAK_CLIENT_SECRET=ci \
+            docker compose -f infra/compose.prod.yml config --quiet
+
+      - name: Check Caddyfile
+        run: |
+          docker run --rm -v "$PWD/infra/Caddyfile:/etc/caddy/Caddyfile:ro" \
+            caddy:2.10-alpine caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+
+      - name: Start Postgres and run migrations
+        run: |
+          docker network create ci
+          docker run -d --name postgres --network ci \
+            -e POSTGRES_USER=daily -e POSTGRES_PASSWORD=ci -e POSTGRES_DB=daily \
+            postgres:17-alpine
+          for i in $(seq 1 30); do
+            docker exec postgres pg_isready -U daily -d daily && break
+            sleep 2
+          done
+          docker run --rm --network ci \
+            -e DATABASE_URL=postgres://daily:ci@postgres:5432/daily \
+            daily:ci node build-worker/migrate.js
+
+      - name: Start the app
+        run: |
+          docker run -d --name app --network ci -p 3000:3000 \
+            -e DATABASE_URL=postgres://daily:ci@postgres:5432/daily \
+            -e KEYCLOAK_ISSUER=https://auth.example.invalid/realms/daily \
+            -e KEYCLOAK_CLIENT_ID=daily-web \
+            -e KEYCLOAK_CLIENT_SECRET=ci \
+            -e APP_ORIGIN=http://localhost:3000 \
+            -e ORIGIN=http://localhost:3000 \
+            daily:ci
+          for i in $(seq 1 30); do
+            curl -fsS http://localhost:3000/healthz && break
+            sleep 2
+          done
+
+      - name: Check health, headers and CSP
+        run: |
+          test "$(curl -fsS http://localhost:3000/healthz)" = ok
+          curl -fsS -D headers.txt -o page.html http://localhost:3000/werkzeuge
+          cat headers.txt
+          grep -qi '^x-content-type-options: nosniff' headers.txt
+          grep -qi '^referrer-policy: strict-origin-when-cross-origin' headers.txt
+          grep -qi '^x-frame-options: DENY' headers.txt
+          grep -qi '^permissions-policy: ' headers.txt
+          csp=$(grep -i '^content-security-policy:' headers.txt)
+          echo "$csp" | grep -q "script-src 'self' 'nonce-"
+          echo "$csp" | grep -q "frame-ancestors 'none'"
+          echo "$csp" | grep -q "form-action 'self' https://auth.example.invalid"
+          nonce=$(echo "$csp" | sed -E "s/.*'nonce-([^']+)'.*/\1/")
+          grep -q "nonce=\"$nonce\"" page.html
+
+      - name: Check the worker starts and purges sessions
+        run: |
+          docker run --rm --network ci \
+            -e DATABASE_URL=postgres://daily:ci@postgres:5432/daily \
+            daily:ci node build-worker/index.js --once | tee worker.log || true
+          grep -q 'expired sessions deleted: 0' worker.log
+
+      - name: App logs
+        if: always()
+        run: docker logs app || true
+
+      - name: Push to GHCR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          short=$(git rev-parse --short HEAD)
+          for tag in "sha-$short" main; do
+            docker tag daily:ci "$IMAGE:$tag"
+            docker push "$IMAGE:$tag"
+          done

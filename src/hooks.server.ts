@@ -1,10 +1,12 @@
 import type { Handle } from '@sveltejs/kit/hooks';
+import { KEYCLOAK_ISSUER } from '$app/env/private';
 import { sequence } from '@sveltejs/kit/hooks';
 import { getTextDirection } from '#lib/paraglide/runtime.js';
 import { paraglideMiddleware } from '#lib/paraglide/server.js';
 import { loadSession } from '#lib/server/auth/session.js';
 import { db } from '#lib/server/db/index.js';
 import { ORG_COOKIE, resolveOrganisation } from '#lib/server/org.js';
+import { applySecurityHeaders } from '#lib/server/security-headers.js';
 import { parseTheme, THEME_COOKIE } from '#lib/theme.js';
 
 /**
@@ -38,4 +40,24 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle: Handle = sequence(handleParaglide, handleAuth);
+/** the sign-in origin, allowed as a form target for the logout redirect */
+const identityOrigin = (() => {
+	try {
+		return new URL(KEYCLOAK_ISSUER).origin;
+	} catch {
+		return '';
+	}
+})();
+
+/** security headers on every response; see #lib/server/security-headers.ts */
+const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
+	const response = await resolve(event);
+	try {
+		applySecurityHeaders(response.headers, identityOrigin);
+	} catch {
+		// responses passed through from fetch() have immutable headers
+	}
+	return response;
+};
+
+export const handle: Handle = sequence(handleSecurityHeaders, handleParaglide, handleAuth);

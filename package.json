@@ -25,6 +25,7 @@
 		"db:studio": "drizzle-kit studio",
 		"worker": "tsx worker/index.ts",
 		"worker:once": "tsx worker/index.ts --once",
+		"build:migrate": "esbuild scripts/migrate.ts --bundle --platform=node --format=esm --target=node22 --outfile=build-worker/migrate.js",
 		"build:worker": "esbuild worker/index.ts --bundle --platform=node --format=esm --target=node22 --outfile=build-worker/index.js --banner:js=\"import { createRequire } from 'module'; const require = createRequire(import.meta.url);\"",
 		"test:db": "vitest run --project server db.spec",
 		"test:e2e:preview": "playwright test --config playwright.preview.config.ts",
