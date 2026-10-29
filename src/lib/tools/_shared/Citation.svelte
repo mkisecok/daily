@@ -36,6 +36,12 @@
 		letter-spacing: 0.02em;
 		color: var(--ink3);
 		white-space: nowrap;
+
+		/* long references such as implementing decisions wrap on phones */
+		@media (max-width: 40rem) {
+			white-space: normal;
+			overflow-wrap: anywhere;
+		}
 	}
 
 	/* at least 24px tall, so the link is easy to hit on a phone */

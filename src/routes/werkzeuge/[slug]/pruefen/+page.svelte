@@ -176,7 +176,7 @@
 
 		& li {
 			display: grid;
-			grid-template-columns: 1.6rem 1fr auto auto;
+			grid-template-columns: 1.6rem minmax(0, 1fr) auto auto;
 			gap: 0.5rem 1rem;
 			align-items: center;
 			padding: 0.65rem 0;
@@ -184,7 +184,7 @@
 			border-top: 1px solid var(--rule2);
 
 			@media (max-width: 40rem) {
-				grid-template-columns: 1.6rem 1fr;
+				grid-template-columns: 1.6rem minmax(0, 1fr);
 			}
 		}
 
@@ -217,6 +217,7 @@
 			display: inline-flex;
 			align-items: center;
 			justify-self: start;
+			max-width: 100%;
 			min-height: 1.75rem;
 			padding: 0 0.5rem;
 			background: var(--sheet);

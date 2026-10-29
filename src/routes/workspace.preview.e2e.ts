@@ -251,3 +251,16 @@ test('preview: phones reach the preview explanation from the menu', async ({ pag
 		.click();
 	await expect(page).toHaveURL(/\/daily\/vorschau\/$/);
 });
+
+test('preview: a questionnaire result with long citations fits a phone screen', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 375, height: 800 });
+	await page.goto('werkzeuge/drittland-transfer/pruefen/', { waitUntil: 'networkidle' });
+	for (const fieldset of await page.locator('form fieldset').all()) {
+		await fieldset.locator('input[value="unknown"]').check();
+	}
+	await page.getByRole('button', { name: 'Auswerten' }).click();
+	await expect(page.locator('.verdict .headline')).toBeVisible();
+	expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBe(0);
+});
