@@ -71,8 +71,10 @@
 		"@internationalized/date": "3.12.4",
 		"bits-ui": "2.19.3",
 		"cheerio": "^1.2.0",
+		"mammoth": "^1.13.0",
 		"node-cron": "^4.6.0",
 		"openid-client": "^6.8.8",
+		"pdfjs-dist": "^6.4.299",
 		"rss-parser": "^3.13.0"
 	}
 }

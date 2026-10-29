@@ -2,7 +2,8 @@ import { expect, test } from '@playwright/test';
 import { chip, choose, pickDate } from './e2e-helpers.js';
 
 test('preview: Navigator pages and search work under the base path', async ({ page }) => {
-	await page.goto('normen/');
+	// the search loads its index on input, which needs the hydrated page
+	await page.goto('normen/', { waitUntil: 'networkidle' });
 	await page.getByLabel('In allen Gesetzen suchen').fill('Art. 22');
 	await expect(page.locator('.hits li')).toHaveCount(2);
 	await page.locator('.hits a', { hasText: 'DSGVO' }).click();
