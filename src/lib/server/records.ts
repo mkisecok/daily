@@ -1,12 +1,15 @@
 import { and, asc, desc, eq, inArray, isNull } from 'drizzle-orm';
 import { computeDeadlines } from '../records/deadlines.js';
 import {
+	checkReferences,
 	isError,
-	planAssessment,
+	planAssessmentFromAnswers,
+	referencedIds,
 	planCreate,
 	planTransition,
 	planUpdate,
-	type Planned
+	type Planned,
+	type Questionnaire
 } from '../records/operations.js';
 import type { RecordStore, StoreError, StoreResult } from '../records/store/types.js';
 import type {
@@ -48,7 +51,8 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
  */
 export function createRecordRepository(
 	db: Database,
-	getTool: (slug: string) => RecordTool | undefined
+	getTool: (slug: string) => RecordTool | undefined,
+	getQuestionnaire: (slug: string) => Questionnaire | undefined
 ) {
 	return {
 		forOrganisation(organisationId: string, userId: string | null): RecordStore {
@@ -97,6 +101,23 @@ export function createRecordRepository(
 					.values({ recordId, userId, kind, changes, fromState, toState });
 			}
 
+			/**
+			 * the tool of each referenced record in this organisation, so a
+			 * reference cannot point to a missing record or another tenant's
+			 */
+			async function referenceCheck(tx: Tx, tool: RecordTool, data: RecordData) {
+				const ids = referencedIds(tool.definition, data).filter((id) => UUID.test(id));
+				const found =
+					ids.length === 0
+						? []
+						: await tx
+								.select({ id: records.id, toolSlug: records.toolSlug })
+								.from(records)
+								.where(and(inArray(records.id, ids), eq(records.organisationId, organisationId)));
+				const tools = new Map(found.map((row) => [row.id, row.toolSlug]));
+				return checkReferences(tool.definition, data, (id) => tools.get(id));
+			}
+
 			/** runs a planned change on a locked record and bumps its version */
 			async function write(
 				id: string,
@@ -114,6 +135,8 @@ export function createRecordRepository(
 					if (kind === 'updated' && Object.keys(planned.changes).length === 0) {
 						return { ok: true, value: current } as const;
 					}
+					const broken = await referenceCheck(tx, tool, planned.data);
+					if (broken) return broken;
 					const [updated] = await tx
 						.update(records)
 						.set({
@@ -187,6 +210,8 @@ export function createRecordRepository(
 					const planned = planCreate(tool.definition, input);
 					if (isError(planned)) return planned;
 					return db.transaction(async (tx) => {
+						const broken = await referenceCheck(tx, tool, planned.data);
+						if (broken) return broken;
 						const [row] = await tx
 							.insert(records)
 							.values({
@@ -219,9 +244,17 @@ export function createRecordRepository(
 					);
 				},
 
-				attachAssessment(id, field, snapshot, derived) {
+				attachAssessment(id, field, answers, expectedVersion) {
 					return write(id, 'assessment', (tool, current) =>
-						planAssessment(tool.definition, current, field, snapshot, derived)
+						planAssessmentFromAnswers(
+							tool,
+							current,
+							field,
+							answers,
+							expectedVersion,
+							getQuestionnaire,
+							new Date().toISOString()
+						)
 					);
 				},
 

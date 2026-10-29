@@ -154,6 +154,24 @@ describe('export', () => {
 		expect(row.startsWith('Offen;"Eins; zwei";"Zeile 1\nZeile 2";A;')).toBe(true);
 	});
 
+	it('keeps formulas in CSV cells from running in Excel', () => {
+		const csv = toCsv(
+			def,
+			[
+				record({
+					data: { name: '=HYPERLINK("http://x";"klick")', notes: '+49 30 1234', kind: 'a' }
+				}),
+				record({ id: 'r2', data: { name: '@SUM(A1)', notes: '-1', kind: 'b' } })
+			],
+			'de'
+		);
+		const [, first, second] = csv.split('\r\n');
+		expect(first.startsWith(`Offen;"'=HYPERLINK(""http://x"";""klick"")";'+49 30 1234;A;`)).toBe(
+			true
+		);
+		expect(second.startsWith("Offen;'@SUM(A1);'-1;B;")).toBe(true);
+	});
+
 	it('writes an iCalendar file with stable UIDs and a reminder', () => {
 		const deadline: Deadline = {
 			kind: 'meldung',

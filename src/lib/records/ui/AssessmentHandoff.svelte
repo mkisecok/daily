@@ -13,17 +13,16 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { text } from '#lib/tools/i18n.js';
 	import { getRecordTool } from '#lib/tools/registry.js';
-	import type { QuestionnaireResult } from '#lib/tools/types.js';
+	import type { Answers, QuestionnaireResult } from '#lib/tools/types.js';
 	import { getStore } from '../store/index.js';
 	import type { RecordTool, StoredRecord } from '../types.js';
 	import { fieldById } from '../validate.js';
 
 	let {
 		questionnaire,
-		catalogVersion,
+		answers,
 		result
-	}: { questionnaire: string; catalogVersion: number; result: QuestionnaireResult | null } =
-		$props();
+	}: { questionnaire: string; answers: Answers; result: QuestionnaireResult | null } = $props();
 
 	type Target = { tool: RecordTool; id: string; field: string; record: StoredRecord };
 	let target = $state<Target | null>(null);
@@ -51,19 +50,8 @@
 		busy = true;
 		failed = false;
 		try {
-			const outcome = await getStore().attachAssessment(
-				id,
-				field,
-				{
-					tool: questionnaire,
-					catalogVersion,
-					verdict: result.verdict,
-					...(result.outcome ? { outcome: result.outcome } : {}),
-					headline: result.headline,
-					at: new Date().toISOString()
-				},
-				tool.engine.fromAssessment?.(field, result, record) ?? {}
-			);
+			// the store evaluates the answers again; the result here is only shown
+			const outcome = await getStore().attachAssessment(id, field, answers, record.version);
 			if (!outcome.ok) throw new Error(outcome.error);
 			await goto(resolve(localized(`/werkzeuge/${tool.manifest.slug}/eintraege?eintrag=${id}`)));
 		} catch {

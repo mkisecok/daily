@@ -1,12 +1,6 @@
-import type { Localized } from '../../tools/types.js';
+import type { Answers, Localized } from '../../tools/types.js';
 import type { ValidationErrors } from '../validate.js';
-import type {
-	AssessmentSnapshot,
-	Deadline,
-	RecordData,
-	RecordEvent,
-	StoredRecord
-} from '../types.js';
+import type { Deadline, RecordEvent, StoredRecord } from '../types.js';
 
 export type StoreError =
 	| { ok: false; error: 'not-found' | 'unknown-tool' | 'not-workflow' | 'not-allowed' }
@@ -37,12 +31,15 @@ export interface RecordStore {
 		expectedVersion: number
 	): Promise<StoreResult<StoredRecord>>;
 	transition(id: string, to: string, expectedVersion: number): Promise<StoreResult<StoredRecord>>;
-	/** stores a questionnaire result in an assessment field, plus derived values */
+	/**
+	 * evaluates questionnaire answers and stores the result in an assessment
+	 * field, plus the values the record tool derives from it
+	 */
 	attachAssessment(
 		id: string,
 		field: string,
-		snapshot: AssessmentSnapshot,
-		derived?: RecordData
+		answers: Answers,
+		expectedVersion: number
 	): Promise<StoreResult<StoredRecord>>;
 	archive(id: string): Promise<StoreResult<StoredRecord>>;
 	/** open deadlines across all record tools, earliest first */

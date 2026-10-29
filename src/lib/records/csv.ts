@@ -4,7 +4,12 @@ import { allFields } from './validate.js';
 
 const SEPARATOR = ';';
 
-function cell(value: string): string {
+/**
+ * a cell Excel shows as text: values that start like a formula get a
+ * leading apostrophe, so `=HYPERLINK(…)` typed into a record is not run
+ */
+function cell(raw: string): string {
+	const value = /^[=+\-@\t\r]/.test(raw) ? `'${raw}` : raw;
 	return /[;"\r\n]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
 }
 

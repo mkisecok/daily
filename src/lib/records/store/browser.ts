@@ -1,11 +1,14 @@
 import { computeDeadlines } from '../deadlines.js';
+import { getQuestionnaire as registryQuestionnaire } from '../../tools/registry.js';
 import {
+	checkReferences,
 	isError,
-	planAssessment,
+	planAssessmentFromAnswers,
 	planCreate,
 	planTransition,
 	planUpdate,
-	type Planned
+	type Planned,
+	type Questionnaire
 } from '../operations.js';
 import type { RecordEvent, RecordTool, StoredRecord } from '../types.js';
 import type { RecordStore, StoreError, StoreResult } from './types.js';
@@ -16,6 +19,7 @@ type Saved = { records: StoredRecord[]; events: RecordEvent[] };
 
 type Options = {
 	getTool: (slug: string) => RecordTool | undefined;
+	getQuestionnaire?: (slug: string) => Questionnaire | undefined;
 	now?: () => Date;
 	newId?: () => string;
 };
@@ -28,7 +32,12 @@ type Options = {
  */
 export function createBrowserStore(
 	storage: Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>,
-	{ getTool, now = () => new Date(), newId = () => crypto.randomUUID() }: Options
+	{
+		getTool,
+		getQuestionnaire = registryQuestionnaire,
+		now = () => new Date(),
+		newId = () => crypto.randomUUID()
+	}: Options
 ): RecordStore & { clear(): void } {
 	function load(): Saved {
 		try {
@@ -81,6 +90,8 @@ export function createBrowserStore(
 		if (kind === 'updated' && Object.keys(planned.changes).length === 0) {
 			return { ok: true, value: current };
 		}
+		const broken = checkReferences(tool.definition, planned.data, toolOf(saved));
+		if (broken) return broken;
 		const next: StoredRecord = {
 			...current,
 			data: planned.data,
@@ -94,6 +105,10 @@ export function createBrowserStore(
 		saved.events.push(event(id, kind, planned, current.state, planned.state));
 		save(saved);
 		return { ok: true, value: next };
+	}
+
+	function toolOf(saved: Saved) {
+		return (id: string) => saved.records.find((r) => r.id === id)?.toolSlug;
 	}
 
 	function openDeadlines(records: StoredRecord[]) {
@@ -126,6 +141,9 @@ export function createBrowserStore(
 			if (!tool) return { ok: false, error: 'unknown-tool' };
 			const planned = planCreate(tool.definition, input);
 			if (isError(planned)) return planned;
+			const saved = load();
+			const broken = checkReferences(tool.definition, planned.data, toolOf(saved));
+			if (broken) return broken;
 			const at = now().toISOString();
 			const record: StoredRecord = {
 				id: newId(),
@@ -139,7 +157,6 @@ export function createBrowserStore(
 				updatedAt: at,
 				archivedAt: null
 			};
-			const saved = load();
 			saved.records.push(record);
 			saved.events.push(event(record.id, 'created', planned, null, planned.state));
 			save(saved);
@@ -158,9 +175,17 @@ export function createBrowserStore(
 			);
 		},
 
-		attachAssessment(id, field, snapshot, derived) {
+		attachAssessment(id, field, answers, expectedVersion) {
 			return write(id, 'assessment', (tool, current) =>
-				planAssessment(tool.definition, current, field, snapshot, derived)
+				planAssessmentFromAnswers(
+					tool,
+					current,
+					field,
+					answers,
+					expectedVersion,
+					getQuestionnaire,
+					now().toISOString()
+				)
 			);
 		},
 
