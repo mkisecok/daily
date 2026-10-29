@@ -2,19 +2,22 @@
 	@component
 	The form for a new or existing record, grouped into the definition's
 	sections. Assessment fields are not edited here: they come from their
-	questionnaire.
+	questionnaire. Leaving with unsaved input asks first.
 -->
 <script lang="ts">
+	import { beforeNavigate, goto } from '$app/navigation';
 	import { m } from '#lib/paraglide/messages.js';
 	import { text } from '#lib/tools/i18n.js';
 	import type { Option, RecordData, RecordToolDefinition } from '../types.js';
 	import type { ValidationErrors } from '../validate.js';
+	import ConfirmDialog from '#lib/ui/ConfirmDialog.svelte';
 	import FieldInput from './FieldInput.svelte';
 	import { fromInputs, toInputs, type FormValues } from './inputs.js';
 
 	let {
 		definition,
 		data = {},
+		draft,
 		errors = {},
 		busy = false,
 		choices = {},
@@ -23,17 +26,51 @@
 	}: {
 		definition: RecordToolDefinition;
 		data?: RecordData;
+		/** input kept from an earlier attempt, shown instead of `data` */
+		draft?: FormValues;
 		errors?: ValidationErrors;
 		busy?: boolean;
 		/** options for reference fields, by field id */
 		choices?: Record<string, Option[]>;
-		onsave: (input: Record<string, unknown>) => void;
+		/** `values` is the raw form state, for keeping the input after a conflict */
+		onsave: (input: Record<string, unknown>, values: FormValues) => void | Promise<void>;
 		oncancel: () => void;
 	} = $props();
 
 	// seeded once from the stored record; the parent remounts the form to reset it.
 	// svelte-ignore state_referenced_locally
-	let values = $state<FormValues>(toInputs(definition, data));
+	const stored = JSON.stringify(toInputs(definition, data));
+	// svelte-ignore state_referenced_locally
+	let values = $state<FormValues>(draft ? $state.snapshot(draft) : JSON.parse(stored));
+	const dirty = $derived(JSON.stringify(values) !== stored);
+
+	/** set while saving or after the user chose to discard, so navigation goes ahead */
+	let leaving = false;
+	let confirmLeave = $state(false);
+	/** where to go once the user discards; null means the cancel button */
+	let pending: URL | null = null;
+
+	beforeNavigate((navigation) => {
+		if (!dirty || leaving) return;
+		// closing the tab or leaving the site: the browser asks itself
+		navigation.cancel();
+		if (navigation.type === 'leave' || !navigation.to) return;
+		pending = navigation.to.url;
+		confirmLeave = true;
+	});
+
+	function cancel() {
+		if (!dirty) return oncancel();
+		pending = null;
+		confirmLeave = true;
+	}
+
+	function discard() {
+		leaving = true;
+		// eslint-disable-next-line svelte/no-navigation-without-resolve -- the URL comes from SvelteKit's own navigation and is resolved already
+		if (pending) void goto(pending);
+		else oncancel();
+	}
 
 	const sections = $derived(
 		definition.sections
@@ -45,9 +82,14 @@
 	);
 	const hasErrors = $derived(Object.keys(errors).length > 0);
 
-	function submit(event: SubmitEvent) {
+	async function submit(event: SubmitEvent) {
 		event.preventDefault();
-		onsave(fromInputs(definition, values));
+		leaving = true;
+		try {
+			await onsave(fromInputs(definition, values), $state.snapshot(values));
+		} finally {
+			leaving = false;
+		}
 	}
 </script>
 
@@ -73,11 +115,20 @@
 
 	<div class="toolbar actions">
 		<button type="submit" disabled={busy}>{m.records_save()}</button>
-		<button type="button" class="quiet" onclick={oncancel} disabled={busy}>
+		<button type="button" class="quiet" onclick={cancel} disabled={busy}>
 			{m.records_cancel()}
 		</button>
 	</div>
 </form>
+
+<ConfirmDialog
+	bind:open={confirmLeave}
+	title={m.records_leave_title()}
+	body={m.records_leave_body()}
+	confirmLabel={m.records_leave_confirm()}
+	tone="danger"
+	onconfirm={discard}
+/>
 
 <style>
 	/* one raised card per section, the fields inside */

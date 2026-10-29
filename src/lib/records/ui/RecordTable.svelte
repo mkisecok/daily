@@ -1,7 +1,8 @@
 <!--
 	@component
 	The register as a table: title, the definition's list columns, status and
-	last change. The title links to the record.
+	last change. The title links to the record; with `onsort`, the column
+	headers sort the list.
 -->
 <script lang="ts">
 	import type { RoutePath } from '#lib/i18n/links.js';
@@ -18,7 +19,11 @@
 		definition,
 		records,
 		hrefFor,
-		titles = {}
+		titles = {},
+		caption,
+		sort,
+		descending = false,
+		onsort
 	}: {
 		definition: RecordToolDefinition;
 		records: StoredRecord[];
@@ -26,6 +31,12 @@
 		titles?: Titles;
 		/** route path (e.g. from `localized()`); resolved here */
 		hrefFor: (record: StoredRecord) => RoutePath;
+		/** names the table for screen readers */
+		caption?: string;
+		/** the key the list is sorted by: `title`, a column id, `state` or `updated` */
+		sort?: string;
+		descending?: boolean;
+		onsort?: (key: string) => void;
 	} = $props();
 
 	const locale = getLocale();
@@ -35,18 +46,50 @@
 	const titleLabel = $derived(
 		allFields(definition).find((f) => f.id === definition.titleField)?.label
 	);
+
+	function ariaSort(key: string) {
+		if (sort !== key) return undefined;
+		return descending ? 'descending' : 'ascending';
+	}
 </script>
+
+{#snippet heading(key: string, label: string)}
+	{#if onsort}
+		<button
+			type="button"
+			class="sort"
+			aria-label={m.records_sort_by({ column: label })}
+			onclick={() => onsort(key)}
+			>{label}<span class="arrow" aria-hidden="true"
+				>{sort === key ? (descending ? '↓' : '↑') : ''}</span
+			></button
+		>
+	{:else}
+		{label}
+	{/if}
+{/snippet}
 
 <div class="rows">
 	<table>
+		{#if caption}<caption class="visually-hidden">{caption}</caption>{/if}
 		<thead>
 			<tr>
-				<th scope="col">{titleLabel ? text(titleLabel) : ''}</th>
+				<th scope="col" aria-sort={ariaSort('title')}
+					>{@render heading('title', titleLabel ? text(titleLabel) : '')}</th
+				>
 				{#each columns as column (column.id)}
-					<th scope="col">{text(column.label)}</th>
+					<th scope="col" aria-sort={ariaSort(column.id)}
+						>{@render heading(column.id, text(column.label))}</th
+					>
 				{/each}
-				{#if definition.workflow}<th scope="col">{m.records_state()}</th>{/if}
-				<th scope="col" class="date">{m.records_updated()}</th>
+				{#if definition.workflow}
+					<th scope="col" aria-sort={ariaSort('state')}
+						>{@render heading('state', m.records_state())}</th
+					>
+				{/if}
+				<th scope="col" class="date" aria-sort={ariaSort('updated')}
+					>{@render heading('updated', m.records_updated())}</th
+				>
 			</tr>
 		</thead>
 		<tbody>
@@ -88,6 +131,15 @@
 			font-size: 14px;
 		}
 
+		& .visually-hidden {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip-path: inset(50%);
+			white-space: nowrap;
+		}
+
 		& th,
 		& td {
 			padding: 0.85rem 1rem;
@@ -107,6 +159,28 @@
 			color: var(--ink3);
 			background: var(--paper);
 			border-bottom: 1px solid var(--rule2);
+
+			/* the header text itself is the sort control */
+			& .sort {
+				all: unset;
+				cursor: pointer;
+				display: inline-flex;
+				gap: 0.3em;
+				align-items: center;
+
+				&:hover {
+					color: var(--ink);
+				}
+
+				&:focus-visible {
+					outline: 2px solid var(--navy);
+					outline-offset: 2px;
+				}
+			}
+
+			& .arrow {
+				min-width: 0.7em;
+			}
 		}
 
 		& tbody tr {

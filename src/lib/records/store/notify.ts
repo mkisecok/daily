@@ -14,7 +14,7 @@ export function notifying(inner: Clearable, changed: () => void): Clearable {
 			return value;
 		});
 	return {
-		list: (toolSlug) => inner.list(toolSlug),
+		list: (toolSlug, options) => inner.list(toolSlug, options),
 		get: (id) => inner.get(id),
 		deadlines: () => inner.deadlines(),
 		create: (toolSlug, input) => after(inner.create(toolSlug, input)),
@@ -23,6 +23,7 @@ export function notifying(inner: Clearable, changed: () => void): Clearable {
 		attachAssessment: (id, field, answers, expectedVersion) =>
 			after(inner.attachAssessment(id, field, answers, expectedVersion)),
 		archive: (id) => after(inner.archive(id)),
+		unarchive: (id) => after(inner.unarchive(id)),
 		clear: inner.clear
 			? () => {
 					inner.clear?.();

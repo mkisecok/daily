@@ -119,9 +119,10 @@ export function createBrowserStore(
 	}
 
 	return {
-		async list(toolSlug) {
+		async list(toolSlug, options) {
+			const archived = options?.archived ?? false;
 			return load()
-				.records.filter((r) => r.toolSlug === toolSlug && !r.archivedAt)
+				.records.filter((r) => r.toolSlug === toolSlug && Boolean(r.archivedAt) === archived)
 				.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 		},
 
@@ -199,6 +200,20 @@ export function createBrowserStore(
 			const next = { ...current, archivedAt: at, updatedAt: at, version: current.version + 1 };
 			saved.records[index] = next;
 			saved.events.push(event(id, 'archived', null, null, null));
+			save(saved);
+			return { ok: true, value: next };
+		},
+
+		async unarchive(id) {
+			const saved = load();
+			const index = saved.records.findIndex((r) => r.id === id);
+			if (index === -1) return { ok: false, error: 'not-found' };
+			const current = saved.records[index];
+			if (!current.archivedAt) return { ok: true, value: current };
+			const at = now().toISOString();
+			const next = { ...current, archivedAt: null, updatedAt: at, version: current.version + 1 };
+			saved.records[index] = next;
+			saved.events.push(event(id, 'restored', null, null, null));
 			save(saved);
 			return { ok: true, value: next };
 		},

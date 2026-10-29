@@ -170,5 +170,14 @@ describe.skipIf(!url)('record repository (Postgres)', () => {
 		expect(detail?.events.at(-1)?.kind).toBe('archived');
 		expect(await store.update(id, { name: 'x' }, 2)).toMatchObject({ error: 'not-allowed' });
 		expect((await store.deadlines()).some((d) => d.recordId === id)).toBe(false);
+
+		expect((await store.list('test-register', { archived: true })).some((r) => r.id === id)).toBe(
+			true
+		);
+		const restored = await store.unarchive(id);
+		expect(restored).toMatchObject({ ok: true, value: { archivedAt: null } });
+		expect((await store.list('test-register')).some((r) => r.id === id)).toBe(true);
+		expect((await store.get(id))?.events.at(-1)?.kind).toBe('restored');
+		expect((await store.deadlines()).some((d) => d.recordId === id)).toBe(true);
 	});
 });

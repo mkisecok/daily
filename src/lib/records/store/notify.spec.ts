@@ -13,6 +13,7 @@ function fakeStore(): RecordStore & { clear: () => void } {
 		transition: vi.fn(async () => ok),
 		attachAssessment: vi.fn(async () => ok),
 		archive: vi.fn(async () => ok),
+		unarchive: vi.fn(async () => ok),
 		deadlines: vi.fn(async () => []),
 		clear: vi.fn()
 	};
@@ -32,8 +33,9 @@ describe('store change notifications', () => {
 		await store.transition('1', 'b', 1);
 		await store.attachAssessment('1', 'f', {}, 1);
 		await store.archive('1');
+		await store.unarchive('1');
 		store.clear?.();
-		expect(changed).toHaveBeenCalledTimes(6);
+		expect(changed).toHaveBeenCalledTimes(7);
 	});
 
 	it('passes results through unchanged', async () => {

@@ -24,7 +24,8 @@
 		updated: m.records_event_updated,
 		transition: m.records_event_transition,
 		assessment: m.records_event_assessment,
-		archived: m.records_event_archived
+		archived: m.records_event_archived,
+		restored: m.records_event_restored
 	};
 
 	function changesOf(event: RecordEvent) {

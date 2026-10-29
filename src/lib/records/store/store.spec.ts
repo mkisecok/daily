@@ -31,6 +31,30 @@ function browserStore(storage = fakeStorage()) {
 }
 
 describe('browser store', () => {
+	it('lists archived records apart and restores them with their deadlines', async () => {
+		const store = browserStore();
+		const created = await store.create('test-register', { name: 'Alt', due: '2026-12-01' });
+		if (!created.ok) throw new Error('create failed');
+		const id = created.value.id;
+		await store.archive(id);
+		expect(await store.list('test-register')).toEqual([]);
+		expect((await store.list('test-register', { archived: true })).map((r) => r.id)).toEqual([id]);
+		expect(await store.deadlines()).toEqual([]);
+
+		const restored = await store.unarchive(id);
+		expect(restored).toMatchObject({ ok: true, value: { archivedAt: null, version: 3 } });
+		expect((await store.list('test-register')).map((r) => r.id)).toEqual([id]);
+		expect(await store.list('test-register', { archived: true })).toEqual([]);
+		expect((await store.deadlines()).map((d) => d.recordId)).toEqual([id]);
+		expect((await store.get(id))?.events.map((e) => e.kind)).toEqual([
+			'created',
+			'archived',
+			'restored'
+		]);
+		expect(await store.unarchive(id)).toMatchObject({ ok: true, value: { version: 3 } });
+		expect(await store.unarchive('missing')).toEqual({ ok: false, error: 'not-found' });
+	});
+
 	it('only stores references to records of the named tool', async () => {
 		const store = browserStore();
 		const target = await store.create('test-register', { name: 'Ziel' });

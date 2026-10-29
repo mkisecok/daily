@@ -17,7 +17,8 @@
 		placeholder,
 		describedBy,
 		invalid = false,
-		required = false
+		required = false,
+		onchange
 	}: {
 		id: string;
 		value?: string;
@@ -26,6 +27,8 @@
 		describedBy?: string;
 		invalid?: boolean;
 		required?: boolean;
+		/** called with the new value after the user picks an item */
+		onchange?: (value: string) => void;
 	} = $props();
 
 	// optional fields offer the placeholder as an item, so a choice can be taken back
@@ -33,7 +36,7 @@
 	const selected = $derived(items.find((item) => item.value === value));
 </script>
 
-<Select.Root type="single" bind:value items={options}>
+<Select.Root type="single" bind:value items={options} onValueChange={onchange}>
 	<Select.Trigger
 		{id}
 		class="daily-control"
