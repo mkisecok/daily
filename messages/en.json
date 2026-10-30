@@ -373,5 +373,6 @@
 	"account_deleted_body": "Your data in Daily has been deleted.",
 	"account_deleted_backups": "Encrypted backups are overwritten within 30 days and are not used until then.",
 	"account_deleted_cancelled": "If you cancelled the deletion at sign-in, only your empty login remains. You can delete it under \"Account\" after signing in again.",
-	"account_deleted_home": "To the start page"
+	"account_deleted_home": "To the start page",
+	"legal_operator_missing": "The controller's details will be added before launch."
 }

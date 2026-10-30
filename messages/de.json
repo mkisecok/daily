@@ -373,5 +373,6 @@
 	"account_deleted_body": "Ihre Daten in Daily sind gelöscht.",
 	"account_deleted_backups": "Verschlüsselte Sicherungen werden innerhalb von 30 Tagen überschrieben und bis dahin nicht verwendet.",
 	"account_deleted_cancelled": "Falls Sie die Löschung bei der Anmeldung abgebrochen haben, besteht nur noch Ihr leeres Login. Sie können es nach einer neuen Anmeldung unter „Konto“ löschen.",
-	"account_deleted_home": "Zur Startseite"
+	"account_deleted_home": "Zur Startseite",
+	"legal_operator_missing": "Die Angaben zum Verantwortlichen werden vor dem Start ergänzt."
 }
