@@ -280,3 +280,31 @@ test('preview: the privacy notice describes the preview, not the signed-in app',
 		page.locator('article.legal').getByRole('heading', { name: '1. Controller' })
 	).toBeVisible();
 });
+
+test('preview: the tool catalogue groups by task and narrows by search and area', async ({
+	page
+}) => {
+	await page.goto('werkzeuge/', { waitUntil: 'networkidle' });
+	await expect(page.getByRole('heading', { level: 2 })).toHaveText([
+		/Einmal prüfen/,
+		/Dauerhaft dokumentieren/,
+		/Vorgänge mit Frist/,
+		/Im Browser arbeiten/
+	]);
+	await expect(page.locator('li.tool')).toHaveCount(30);
+
+	await page.getByRole('searchbox', { name: 'Werkzeuge durchsuchen' }).fill('Art. 35');
+	await expect(page.locator('li.tool .name')).toHaveText([
+		'DSFA-Schwellwertanalyse',
+		'Datenschutz-Folgenabschätzung'
+	]);
+
+	await page.getByRole('searchbox', { name: 'Werkzeuge durchsuchen' }).fill('');
+	const audit = page.getByRole('button', { name: /^Audit/ });
+	await audit.click();
+	await expect(audit).toHaveAttribute('aria-pressed', 'true');
+	await expect(page.locator('li.tool')).toHaveCount(4);
+
+	await page.getByRole('searchbox', { name: 'Werkzeuge durchsuchen' }).fill('xyz');
+	await expect(page.getByRole('status')).toHaveText('Kein Werkzeug passt zu „xyz“.');
+});
