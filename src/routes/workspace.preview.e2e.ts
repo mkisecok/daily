@@ -264,3 +264,19 @@ test('preview: a questionnaire result with long citations fits a phone screen', 
 	await expect(page.locator('.verdict .headline')).toBeVisible();
 	expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBe(0);
 });
+
+test('preview: the privacy notice describes the preview, not the signed-in app', async ({
+	page
+}) => {
+	await page.goto('datenschutz/');
+	const notice = page.locator('article.legal');
+	await expect(notice.getByRole('heading', { name: '3. Aufruf der Website' })).toBeVisible();
+	await expect(notice).toContainText('GitHub Pages');
+	await expect(notice).toContainText('daily.records.v1');
+	await expect(notice).not.toContainText('daily_session');
+	await expect(notice).not.toContainText('Hetzner');
+	await page.goto('en/datenschutz/');
+	await expect(
+		page.locator('article.legal').getByRole('heading', { name: '1. Controller' })
+	).toBeVisible();
+});
