@@ -40,6 +40,27 @@ describe('street and name patterns', () => {
 	});
 });
 
+describe('labelled values', () => {
+	it('keeps the label out of the value', () => {
+		const text =
+			'geb. 03.04.1981, Versichertennummer: A123456789\n' +
+			'Diagnose: Asthma bronchiale\nKonfession: evangelisch\nParteimitglied: Grüne';
+		expect(
+			values(text, new Set<RuleKey>(['date', 'insurance', 'health', 'religion', 'political']))
+		).toEqual(['03.04.1981', 'A123456789', 'Asthma bronchiale', 'evangelisch', 'Grüne']);
+	});
+
+	it('finds a condition named without a label', () => {
+		expect(values('Er leidet an Migräne.', only('health'))).toEqual(['Migräne']);
+	});
+
+	it('finds names after a title, a label and a first name, back to back', () => {
+		expect(
+			values('(Herr Weber, Frau Schmidt) Patientin: Dr. Lena Vogel; Anna Krüger', only('name'))
+		).toEqual(['Weber', 'Schmidt', 'Lena Vogel', 'Anna Krüger']);
+	});
+});
+
 describe('sexual orientation rule', () => {
 	it('ignores words that only begin with "trans"', () => {
 		const text =

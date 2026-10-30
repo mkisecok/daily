@@ -58,6 +58,13 @@ describe('note Markdown', () => {
 			{ type: 'text', text: '.' }
 		]);
 		expect(inline('Art. 5 ISO 27001').map((n) => n.type)).toEqual(['text']);
+		expect(inline('Art. 5 DSGVO (Art. 6 DSGVO)')).toEqual([
+			{ type: 'norm', path: '/normen/dsgvo/art-5', text: 'Art. 5 DSGVO' },
+			{ type: 'text', text: ' (' },
+			{ type: 'norm', path: '/normen/dsgvo/art-6', text: 'Art. 6 DSGVO' },
+			{ type: 'text', text: ')' }
+		]);
+		expect(inline('XArt. 5 DSGVO').map((n) => n.type)).toEqual(['text']);
 	});
 
 	it('gives plain text for lists and search', () => {

@@ -193,8 +193,12 @@ export const NAME_DICT = [
 	'Horst'
 ];
 
-/** no letter or digit before: `\b` only knows ASCII, so it splits "Müller" after "Mü" */
-const START = '(?<![\\p{L}\\p{N}])';
+/**
+ * no letter or digit before: `\b` only knows ASCII, so it splits "Müller"
+ * after "Mü". Matched, not looked behind: Safari before 16.4 cannot parse a
+ * lookbehind, so the value sits in a group named `v…` that ends the match.
+ */
+const START = '(?:^|[^\\p{L}\\p{N}])';
 /** a capitalised word, hyphenated parts allowed: "Weber", "Müller-Lüdenscheidt" */
 const PART = '\\p{Lu}\\p{Ll}{2,}(?:-\\p{Lu}\\p{Ll}+)*(?![\\p{L}\\p{N}])';
 const NAMECORE = `${PART}(?:[ \\t]+${PART})?`;
@@ -206,9 +210,9 @@ const PLABELS =
 	'Behandelnder Arzt|Direkte Führungskraft|Führungskraft';
 
 const NAME_RE = new RegExp(
-	`(?<=${START}(?:${TITLES})[ \\t]{1,2})${NAMECORE}` +
-		`|(?<=${START}(?:${PLABELS})[ \\t]*:[ \\t]*(?:(?:Dr|Prof|Herr|Frau|Rechtsanwalt|Rechtsanwältin)\\.?[ \\t]+)?)${NAMECORE}` +
-		`|${START}(?:${NAME_DICT.join('|')})[ \\t]+${NAMECORE}`,
+	`${START}(?:(?:${TITLES})[ \\t]{1,2}` +
+		`|(?:${PLABELS})[ \\t]*:[ \\t]*(?:(?:Dr|Prof|Herr|Frau|Rechtsanwalt|Rechtsanwältin)\\.?[ \\t]+)?)(?<v>${NAMECORE})` +
+		`|${START}(?<v2>(?:${NAME_DICT.join('|')})[ \\t]+${NAMECORE})`,
 	'gu'
 );
 
@@ -216,8 +220,8 @@ const NAME_RE = new RegExp(
 const STREET =
 	'(?:[Ss]tra(?:ß|ss)e|[Ss]tr\\.|[Gg]asse|[Aa]llee|[Ww]eg|[Pp]latz|[Rr]ing|[Dd]amm|[Cc]haussee|[Uu]fer)';
 const ADDRESS_RE = new RegExp(
-	`${START}(?:\\p{L}[\\p{L}\\-]+|(?:\\p{Lu}[\\p{L}\\-]*\\.?[ \\t]+){1,2})${STREET}` +
-		`[ \\t]*\\d+(?:[ \\t]?[a-zA-Z])?(?![\\p{L}\\p{N}])`,
+	`${START}(?<v>(?:\\p{L}[\\p{L}\\-]+|(?:\\p{Lu}[\\p{L}\\-]*\\.?[ \\t]+){1,2})${STREET}` +
+		`[ \\t]*\\d+(?:[ \\t]?[a-zA-Z])?)(?![\\p{L}\\p{N}])`,
 	'gu'
 );
 
@@ -256,8 +260,8 @@ export const RULES: Record<RuleKey, Rule> = {
 		re: ADDRESS_RE
 	},
 	date: {
-		// the lookbehind keeps "geb." out of the token, so the model keeps the context
-		re: /(?<=\b(?:born|DOB|geb\.?|Geburtsdatum|birthdate|birth date|date of birth)[:\s]{1,4})\d{1,2}[.\-/]\d{1,2}[.\-/]\d{2,4}/gi
+		// the label stays out of the token, so the model keeps the context
+		re: /\b(?:born|DOB|geb\.?|Geburtsdatum|birthdate|birth date|date of birth)[:\s]{1,4}(?<v>\d{1,2}[.\-/]\d{1,2}[.\-/]\d{2,4})/gi
 	},
 	passport: {
 		re: /\b[A-Z]{1,2}\s?\d{6,9}\b/g
@@ -279,20 +283,20 @@ export const RULES: Record<RuleKey, Rule> = {
 		validate: (match) => /^[1-9]/.test(match)
 	},
 	insurance: {
-		re: /(?<=\b(?:Versicherten(?:-Nr\.?|nummer)|KV-Nr\.?|Insurance\s+(?:No\.?|Nr\.?|Number))[:\s]{1,4})[A-Z0-9]{6,15}\b/gi
+		re: /\b(?:Versicherten(?:-Nr\.?|nummer)|KV-Nr\.?|Insurance\s+(?:No\.?|Nr\.?|Number))[:\s]{1,4}(?<v>[A-Z0-9]{6,15}\b)/gi
 	},
 	health: {
 		art9: true,
 		// a labelled clinical value (label kept out) or a condition named on its own
-		re: /(?<=\b(?:Diagnose|Medikation|Therapie(?:plan)?|Erkrankung|Befund|Symptome?|Behandlung|Operation|Krankheit|Allergie|Impfstatus|Blutgruppe|Blutzucker|Blutdruck|Cholesterin)[:\s]{1,4})[^\n]{3,80}|\b(?:HIV|AIDS|Diabetes(?:\s+mellitus(?:\s+Typ\s+\d)?)?|Hypertonie|Migräne|Depression|depressive\s+Episode|Hypothyreose|Asthma|Krebs|Karzinom|Tumor|Schizophrenie|Epilepsie|Demenz|Alzheimer|Multiple\s+Sklerose|Parkinson)\b/gi
+		re: /\b(?:Diagnose|Medikation|Therapie(?:plan)?|Erkrankung|Befund|Symptome?|Behandlung|Operation|Krankheit|Allergie|Impfstatus|Blutgruppe|Blutzucker|Blutdruck|Cholesterin)[:\s]{1,4}(?<v>[^\n]{3,80})|\b(?:HIV|AIDS|Diabetes(?:\s+mellitus(?:\s+Typ\s+\d)?)?|Hypertonie|Migräne|Depression|depressive\s+Episode|Hypothyreose|Asthma|Krebs|Karzinom|Tumor|Schizophrenie|Epilepsie|Demenz|Alzheimer|Multiple\s+Sklerose|Parkinson)\b/gi
 	},
 	religion: {
 		art9: true,
-		re: /(?<=\b(?:Religionszugehörigkeit|Religion|Konfession|Kirchensteuer|Glaube|faith|religious\s+affiliation|denomination)[:\s]{1,4})[^\n]{2,60}|\b(?:evangelisch|katholisch|römisch-katholisch|muslimisch|islamisch|jüdisch|buddhistisch|hinduistisch|orthodox|protestantisch)\b/gi
+		re: /\b(?:Religionszugehörigkeit|Religion|Konfession|Kirchensteuer|Glaube|faith|religious\s+affiliation|denomination)[:\s]{1,4}(?<v>[^\n]{2,60})|\b(?:evangelisch|katholisch|römisch-katholisch|muslimisch|islamisch|jüdisch|buddhistisch|hinduistisch|orthodox|protestantisch)\b/gi
 	},
 	political: {
 		art9: true,
-		re: /(?<=\b(?:Partei(?:mitglied(?:schaft)?)?|Politische\s+(?:Überzeugung|Ansicht|Zugehörigkeit)|Ortsverband|Kreisverband|political\s+(?:party|affiliation|view))[:\s]{1,4})[^\n]{2,80}/gi
+		re: /\b(?:Partei(?:mitglied(?:schaft)?)?|Politische\s+(?:Überzeugung|Ansicht|Zugehörigkeit)|Ortsverband|Kreisverband|political\s+(?:party|affiliation|view))[:\s]{1,4}(?<v>[^\n]{2,80})/gi
 	},
 	sexual: {
 		art9: true,
