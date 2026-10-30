@@ -24,8 +24,9 @@ export type MdBlock =
 
 const SAFE_URL = /^(https?:\/\/|mailto:|\/(?!\/))/i;
 
+/** the leading `(^|\W)` stands in for a lookbehind, which Safari before 16.4 cannot parse */
 const CITATION =
-	/(?<!\w)(Art\.|Artikel|§)\s*(\d+[a-z]?(?:\s+Abs\.\s*\d+[a-z]?)?(?:\s+(?:lit\.|S\.|Satz|Nr\.|UAbs\.)\s*[\w]+)?)\s+(DSGVO|KI-VO|BDSG|TDDDG)\b/g;
+	/(^|\W)(Art\.|Artikel|§)\s*(\d+[a-z]?(?:\s+Abs\.\s*\d+[a-z]?)?(?:\s+(?:lit\.|S\.|Satz|Nr\.|UAbs\.)\s*[\w]+)?)\s+(DSGVO|KI-VO|BDSG|TDDDG)\b/g;
 const URL = /\bhttps?:\/\/[^\s<>()]+[^\s<>().,;:!?'"]/g;
 
 /** citations and bare URLs inside plain text */
@@ -33,12 +34,13 @@ function links(text: string): Inline[] {
 	const out: Inline[] = [];
 	const matches = [
 		...[...text.matchAll(CITATION)].map((m) => {
-			const prefix = m[1] === '§' ? '§' : 'Art.';
-			const path = citationPath({ law: m[3] as Law, ref: `${prefix} ${m[2]}` });
+			const prefix = m[2] === '§' ? '§' : 'Art.';
+			const path = citationPath({ law: m[4] as Law, ref: `${prefix} ${m[3]}` });
+			const start = (m.index ?? 0) + m[1].length;
 			return {
-				start: m.index ?? 0,
+				start,
 				end: (m.index ?? 0) + m[0].length,
-				node: path ? ({ type: 'norm', path, text: m[0] } as Inline) : null
+				node: path ? ({ type: 'norm', path, text: m[0].slice(m[1].length) } as Inline) : null
 			};
 		}),
 		...[...text.matchAll(URL)].map((m) => ({

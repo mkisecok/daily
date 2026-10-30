@@ -78,13 +78,16 @@ export function detect(
 				re.lastIndex++;
 				continue;
 			}
-			if (rule.validate && !rule.validate(match[0])) continue;
-			const check = rule.confirm?.(match[0]);
+			// a labelled rule matches its label too and keeps the value in a
+			// `v…` group that ends the match
+			const value = Object.values(match.groups ?? {}).find((group) => group) ?? match[0];
+			if (rule.validate && !rule.validate(value)) continue;
+			const check = rule.confirm?.(value);
 
-			// a variable-length lookbehind lets a hit start on the separator space;
+			// a variable-length label separator lets a value start on a space;
 			// trim both edges so a placeholder never eats its own padding
-			let start = match.index;
-			let end = match.index + (check?.length ?? match[0].length);
+			let start = match.index + match[0].length - value.length;
+			let end = start + (check?.length ?? value.length);
 			while (start < end && /\s/.test(text[start]!)) start++;
 			while (end > start && /\s/.test(text[end - 1]!)) end--;
 			if (end <= start) continue;
