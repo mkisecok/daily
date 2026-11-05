@@ -28,6 +28,7 @@
 	import Citation from '#lib/tools/_shared/Citation.svelte';
 	import StatusBadge from '#lib/tools/_shared/StatusBadge.svelte';
 	import Verdict from '#lib/tools/_shared/Verdict.svelte';
+	import { recordDashboards } from '#lib/tools/dashboards.js';
 	import ConfirmDialog from '#lib/ui/ConfirmDialog.svelte';
 	import Icon from '#lib/ui/Icon.svelte';
 	import Select from '#lib/ui/form/Select.svelte';
@@ -52,6 +53,7 @@
 			label: text(state.label)
 		}))
 	);
+	const Dashboard = $derived(recordDashboards[data.definition.slug]);
 	const assessment = $derived(detail ? (engine?.assess?.(detail.record) ?? null) : null);
 
 	const listPath = $derived(localized(`/werkzeuge/${slug}/eintraege`));
@@ -391,6 +393,10 @@
 
 			{#if assessment}
 				<Verdict result={assessment} />
+			{/if}
+
+			{#if Dashboard}
+				<Dashboard record={detail.record} />
 			{/if}
 
 			<RecordView

@@ -4,7 +4,7 @@ import type { Localized } from '../types.js';
 const L = (de: string, en: string) => ({ de, en });
 
 /** the four steps the DSK uses for both likelihood and severity */
-const SCALE = [
+export const SCALE = [
 	{ value: '1', label: L('Geringfügig', 'Negligible') },
 	{ value: '2', label: L('Überschaubar', 'Limited') },
 	{ value: '3', label: L('Substanziell', 'Significant') },
@@ -14,13 +14,18 @@ const SCALE = [
 export type RiskLevel = 'gering' | 'risiko' | 'hoch';
 
 /**
- * risk from likelihood and severity (1–4 each), in the manner of the DSK
- * risk matrix (Kurzpapier Nr. 18): up to 4 points low, 5–6 a risk, from 7
- * high.
+ * the DSK risk matrix (Kurzpapier Nr. 18) by severity, then likelihood, both
+ * 1–4. The DSK draws curved bands; each cell takes the band at its centre.
  */
+const MATRIX: Record<number, readonly RiskLevel[]> = {
+	4: ['risiko', 'hoch', 'hoch', 'hoch'],
+	3: ['risiko', 'risiko', 'risiko', 'hoch'],
+	2: ['risiko', 'risiko', 'risiko', 'risiko'],
+	1: ['gering', 'gering', 'risiko', 'risiko']
+};
+
 export function riskLevel(likelihood: number, severity: number): RiskLevel {
-	const score = likelihood + severity;
-	return score <= 4 ? 'gering' : score <= 6 ? 'risiko' : 'hoch';
+	return MATRIX[severity][likelihood - 1];
 }
 
 function risk(id: string, title: Localized, help: Localized): FieldSection {
@@ -107,11 +112,17 @@ export const RISKS = [
 	)
 ];
 
+/** likelihood and severity, 1–4 each */
+export type Rating = { likelihood: number; severity: number };
+
 export type AssessedRisk = {
 	id: string;
 	title: Localized;
 	before: RiskLevel | null;
 	after: RiskLevel | null;
+	/** the ratings behind `before` and `after`, for the matrix */
+	initial: Rating | null;
+	residual: Rating | null;
 };
 
 const num = (record: RecordView, id: string) => {
@@ -130,7 +141,9 @@ export function assessRisks(record: RecordView): AssessedRisk[] {
 			id,
 			title,
 			before: w && s ? riskLevel(w, s) : null,
-			after: rw && rs ? riskLevel(rw, rs) : null
+			after: rw && rs ? riskLevel(rw, rs) : null,
+			initial: w && s ? { likelihood: w, severity: s } : null,
+			residual: rw && rs ? { likelihood: rw, severity: rs } : null
 		};
 	});
 }

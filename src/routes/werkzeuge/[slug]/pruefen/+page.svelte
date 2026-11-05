@@ -11,10 +11,13 @@
 	import QuestionRow from '#lib/tools/_shared/QuestionRow.svelte';
 	import ToolHeader from '#lib/tools/_shared/ToolHeader.svelte';
 	import Verdict from '#lib/tools/_shared/Verdict.svelte';
+	import { resultDashboards } from '#lib/tools/dashboards.js';
 	import AssessmentHandoff from '#lib/records/ui/AssessmentHandoff.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
+
+	const Dashboard = $derived(resultDashboards[data.tool.slug]);
 
 	const engine = $derived(getQuestionnaire(data.tool.slug)?.engine);
 	const toolHref = $derived(resolve(localized(`/werkzeuge/${data.tool.slug}`)));
@@ -68,7 +71,14 @@
 <AssessmentHandoff questionnaire={data.tool.slug} {answers} {result} />
 
 {#if result}
-	<Verdict {result} />
+	{#if Dashboard}
+		<div class="result-pair">
+			<Dashboard {result} />
+			<Verdict {result} />
+		</div>
+	{:else}
+		<Verdict {result} />
+	{/if}
 
 	<section class="answers card">
 		<h2>{m.run_answers()}</h2>
@@ -247,6 +257,23 @@
 		& .hint {
 			font-size: 13px;
 			color: var(--ink3);
+		}
+	}
+
+	/* a result with its picture: side by side, stacked on narrow screens */
+	.result-pair {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+		align-items: start;
+		gap: 1rem;
+		margin-top: 1.5rem;
+
+		& > :global(*) {
+			margin-top: 0;
+		}
+
+		@media (max-width: 64rem) {
+			grid-template-columns: minmax(0, 1fr);
 		}
 	}
 </style>
