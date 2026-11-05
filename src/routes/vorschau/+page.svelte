@@ -95,8 +95,8 @@
 					width: 1.5rem;
 					height: 1.5rem;
 					margin-top: 0.05rem;
-					color: var(--khaki);
-					background: var(--khaki-soft);
+					color: var(--primary);
+					background: var(--primary-soft);
 					border-radius: var(--radius-badge);
 				}
 			}

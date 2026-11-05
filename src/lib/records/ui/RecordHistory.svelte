@@ -126,7 +126,7 @@
 
 			&[data-kind='created'],
 			&[data-kind='assessment'] {
-				--dot: var(--khaki);
+				--dot: var(--primary);
 			}
 
 			&[data-kind='transition'] {

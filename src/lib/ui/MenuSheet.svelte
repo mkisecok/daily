@@ -205,8 +205,8 @@
 			}
 
 			&[aria-current='page'] {
-				box-shadow: inset 3px 0 0 var(--khaki);
-				background: var(--khaki-soft);
+				box-shadow: inset 3px 0 0 var(--primary);
+				background: var(--primary-soft);
 			}
 
 			& .ico {
@@ -216,7 +216,7 @@
 			}
 
 			&[aria-current='page'] .ico {
-				color: var(--khaki);
+				color: var(--primary);
 			}
 
 			& .label {

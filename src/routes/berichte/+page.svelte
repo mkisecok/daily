@@ -347,7 +347,7 @@
 					font-size: 14px;
 
 					& .terminal {
-						color: var(--khaki);
+						color: var(--primary);
 					}
 				}
 
@@ -366,7 +366,7 @@
 					}
 
 					& li[data-level='negative'] {
-						color: var(--khaki);
+						color: var(--primary);
 					}
 
 					& strong {

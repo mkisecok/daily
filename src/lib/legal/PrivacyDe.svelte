@@ -128,6 +128,15 @@
 				<td>merkt sich ein selbst gewähltes Farbschema (hell/dunkel)</td>
 				<td>1 Jahr</td>
 			</tr>
+			<tr>
+				<td
+					><code>daily.tools.recent.v1</code>, <code>daily.tools.pinned.v1</code> (localStorage)</td
+				>
+				<td
+					>merkt sich die zuletzt geöffneten und die angehefteten Werkzeuge, nur in Ihrem Browser</td
+				>
+				<td>bis Sie sie löschen</td>
+			</tr>
 			{#if preview}
 				<tr>
 					<td><code>daily.records.v1</code> (localStorage)</td>

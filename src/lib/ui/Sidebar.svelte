@@ -179,7 +179,7 @@
 				box-shadow: var(--shadow-raised);
 
 				& .ico {
-					color: var(--khaki);
+					color: var(--primary);
 				}
 			}
 		}

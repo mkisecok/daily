@@ -1,7 +1,7 @@
 <!--
 	@component
 	Single-choice dropdown on Bits UI: a field-like trigger, a floating list with
-	the chosen item checked in khaki and keyboard navigation. `id` sits on the
+	the chosen item checked in blue and keyboard navigation. `id` sits on the
 	trigger, so a `<label for>` names it. An empty value means nothing chosen.
 -->
 <script lang="ts">

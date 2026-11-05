@@ -1,6 +1,6 @@
 <!--
 	@component
-	Tool status as a small badge: available in khaki, beta in navy, planned
+	Tool status as a small badge: available in blue, beta in navy, planned
 	neutral.
 -->
 <script lang="ts">
@@ -19,6 +19,6 @@
 </script>
 
 <span
-	class={['badge', { khaki: status === 'stable', navy: status === 'beta' }]}
+	class={['badge', { primary: status === 'stable', navy: status === 'beta' }]}
 	data-status={status}>{label}</span
 >

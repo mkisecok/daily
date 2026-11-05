@@ -35,7 +35,7 @@
 	}
 }
 
-/** a row of actions: the main one khaki, the others `.quiet` */
+/** a row of actions: the main one blue, the others `.quiet` */
 .toolbar {
 	display: flex;
 	align-items: center;
@@ -54,7 +54,7 @@
 }
 
 /**
- * buttons: khaki for the main action, `.quiet` outlined, `.danger` in wax,
+ * buttons: blue for the main action, `.quiet` outlined, `.danger` in wax,
  * `.ghost` as a navy text button. Plain buttons in a toolbar count as `.button`.
  */
 .button,
@@ -70,9 +70,9 @@
 	letter-spacing: normal;
 	text-transform: none;
 	text-decoration: none;
-	color: var(--on-khaki);
-	background: var(--khaki);
-	border: 1px solid var(--khaki);
+	color: var(--on-primary);
+	background: var(--primary);
+	border: 1px solid var(--primary);
 	border-radius: var(--radius);
 	cursor: pointer;
 	transition:
@@ -82,8 +82,8 @@
 
 	&:hover {
 		text-decoration: none;
-		background: var(--khaki-strong);
-		border-color: var(--khaki-strong);
+		background: var(--primary-strong);
+		border-color: var(--primary-strong);
 	}
 
 	&.quiet {
@@ -152,20 +152,24 @@
 			var(--shadow-raised);
 
 		&[data-area='datenschutz'] {
-			--spine: var(--navy);
+			--spine: var(--area-datenschutz);
 		}
 
 		&[data-area='ki'] {
-			--spine: var(--wax);
+			--spine: var(--area-ki);
 		}
 
 		&[data-area='audit'] {
-			--spine: var(--khaki);
+			--spine: var(--area-audit);
+		}
+
+		&[data-area='entwickler'] {
+			--spine: var(--area-entwickler);
 		}
 	}
 }
 
-/** status word in a small tinted box: neutral by default, or navy, wax, khaki */
+/** status word in a small tinted box: neutral by default, or navy, wax, blue (`.primary`) */
 .badge {
 	display: inline-flex;
 	align-items: center;
@@ -189,9 +193,9 @@
 		background: var(--wax-soft);
 	}
 
-	&.khaki {
-		color: var(--khaki);
-		background: var(--khaki-soft);
+	&.primary {
+		color: var(--primary);
+		background: var(--primary-soft);
 	}
 }
 

@@ -1,7 +1,7 @@
 <!--
 	@component
 	Multiple choice as chips on a Bits UI toggle group: each option is a toggle
-	button, chosen ones in khaki with a check. `labelledBy` names the group.
+	button, chosen ones in blue with a check. `labelledBy` names the group.
 -->
 <script lang="ts">
 	import { ToggleGroup } from 'bits-ui';

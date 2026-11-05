@@ -3,7 +3,7 @@
  *
  * Base rules sit in :where() so they carry no specificity: components keep
  * control over layout (width, margins) without fighting these rules. Chosen
- * and checked states are khaki (act), focus is navy (navigate), invalid is
+ * and checked states are blue (act), focus is navy (navigate), invalid is
  * wax (warn).
  */
 
@@ -93,7 +93,7 @@
 			border-radius: 2px;
 
 			&::checkmark {
-				color: var(--khaki);
+				color: var(--primary);
 			}
 
 			&:hover,
@@ -137,15 +137,15 @@
 	}
 }
 
-/* check mark: Tabler "check" in --on-khaki */
+/* check mark: Tabler "check" in --on-primary */
 :where(input[type='checkbox']) {
 	border-radius: 2px;
 
 	&:checked {
-		background: var(--khaki)
+		background: var(--primary)
 			url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fffdf9' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5l10 -10'/%3E%3C/svg%3E")
 			center / 12px no-repeat;
-		border-color: var(--khaki);
+		border-color: var(--primary);
 	}
 }
 
@@ -154,7 +154,7 @@ html[data-theme='dark'] :where(input[type='checkbox']):checked {
 }
 
 /*
- * contrast themes force backgrounds to Canvas and would hide the khaki fill;
+ * contrast themes force backgrounds to Canvas and would hide the blue fill;
  * a filled square with an inner Canvas ring marks "checked" in any system theme
  */
 @media (forced-colors: active) {
@@ -170,11 +170,11 @@ html[data-theme='dark'] :where(input[type='checkbox']):checked {
 	border-radius: 50%;
 
 	&:checked {
-		border: 5px solid var(--khaki);
+		border: 5px solid var(--primary);
 	}
 }
 
-/** choice tiles: one bordered row per option, the chosen one in khaki */
+/** choice tiles: one bordered row per option, the chosen one in blue */
 .choices {
 	display: flex;
 	flex-wrap: wrap;
@@ -202,8 +202,8 @@ html[data-theme='dark'] :where(input[type='checkbox']):checked {
 
 		&:has(:checked) {
 			color: var(--ink);
-			background: var(--khaki-soft);
-			border-color: var(--khaki);
+			background: var(--primary-soft);
+			border-color: var(--primary);
 		}
 
 		&:has(:focus-visible) {

@@ -1,18 +1,19 @@
 /**
- * design tokens — the "Kanzlei" identity, palette "Tinte und Oliv"
+ * design tokens — the "Kanzlei" identity, palette "Tinte und Königsblau"
  *
  * Paper and ink, hairline rules, serif headings, mono for article numbers and
- * dates. Three signal colours only, and they are the wordmark's letters, each
- * with one job:
+ * dates. Three signal colours, and they are the wordmark's letters, each with
+ * one job:
  *
- *   khaki  L   law         act: primary buttons, chosen options, checked boxes, done
- *   navy   D   data        navigate and inform: links, citations, focus, tooltips
- *   wax    AI  AI          warn and destroy: overdue, destructive actions, required
+ *   primary  L   law    act: primary buttons, chosen options, checked boxes, done
+ *   navy     D   data   navigate and inform: links, citations, focus, tooltips
+ *   wax      AI  AI     warn and destroy: overdue, destructive actions, required
  *
- * Everything else is ink on paper. Layout "Arbeitsbereich": a warm canvas,
- * a sidebar surface and raised sheets with a soft shadow. Corners: 8px for
- * controls, 12px for cards and dialogs, 6px for badges. No gradients, no
- * pills (counters excepted), no emoji.
+ * The four tool areas carry their own hue (`--area-*`), used only for their
+ * icons and spines. Everything else is ink on paper. Layout "Arbeitsbereich":
+ * a warm canvas, a sidebar surface and raised sheets with a soft shadow; the
+ * dark theme is a cool graphite. Corners: 8px for controls, 12px for cards and
+ * dialogs, 6px for badges. No emoji.
  */
 
 :root,
@@ -33,12 +34,21 @@ html[data-theme='light'] {
 	--navy-soft: rgba(22, 41, 74, 0.09);
 	--wax: #8b2c1f;
 	--wax-soft: rgba(139, 44, 31, 0.09);
-	--khaki: #4f5126;
-	--khaki-strong: #3f411e;
-	--khaki-soft: rgba(79, 81, 38, 0.11);
+	--primary: #1e40af;
+	--primary-strong: #1e3a8a;
+	--primary-soft: rgba(30, 64, 175, 0.09);
+
+	--area-datenschutz: #1d4ed8;
+	--area-datenschutz-soft: #e9efff;
+	--area-ki: #7c3aed;
+	--area-ki-soft: #f2ecff;
+	--area-audit: #c2410c;
+	--area-audit-soft: #fff0e6;
+	--area-entwickler: #0e7490;
+	--area-entwickler-soft: #e3f5f9;
 
 	--on-navy: #fffdf9;
-	--on-khaki: #fffdf9;
+	--on-primary: #ffffff;
 	--on-wax: #fffdf9;
 
 	--radius: 8px;
@@ -60,32 +70,41 @@ html[data-theme='light'] {
 }
 
 html[data-theme='dark'] {
-	--paper: #141311;
-	--canvas: #141311;
-	--sidebar: #1b1a17;
-	--sheet: #211f1c;
-	--rule: #35322c;
-	--rule2: #2a2823;
-	--ink: #ede8df;
-	--ink2: #b5afa3;
-	--ink3: #9a958b;
-	--neutral-soft: rgba(237, 232, 223, 0.08);
+	--paper: #0e1014;
+	--canvas: #0e1014;
+	--sidebar: #13161b;
+	--sheet: #181b21;
+	--rule: #2c3039;
+	--rule2: #22262d;
+	--ink: #eceef2;
+	--ink2: #b0b5c0;
+	--ink3: #8f95a1;
+	--neutral-soft: rgba(236, 238, 242, 0.07);
 
-	--navy: #8fb0dc;
-	--navy-soft: rgba(143, 176, 220, 0.13);
-	--wax: #e07a6a;
-	--wax-soft: rgba(224, 122, 106, 0.14);
-	--khaki: #b9b97a;
-	--khaki-strong: #cfcf93;
-	--khaki-soft: rgba(185, 185, 122, 0.14);
+	--navy: #93b4e6;
+	--navy-soft: rgba(147, 180, 230, 0.13);
+	--wax: #f08473;
+	--wax-soft: rgba(240, 132, 115, 0.14);
+	--primary: #7c9cff;
+	--primary-strong: #a3b9ff;
+	--primary-soft: rgba(124, 156, 255, 0.15);
 
-	--on-navy: #141311;
-	--on-khaki: #141311;
-	--on-wax: #141311;
+	--area-datenschutz: #7aa2ff;
+	--area-datenschutz-soft: rgba(122, 162, 255, 0.14);
+	--area-ki: #b59bff;
+	--area-ki-soft: rgba(181, 155, 255, 0.14);
+	--area-audit: #ff9f66;
+	--area-audit-soft: rgba(255, 159, 102, 0.14);
+	--area-entwickler: #4dd4ec;
+	--area-entwickler-soft: rgba(77, 212, 236, 0.13);
 
-	--shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 14px rgba(0, 0, 0, 0.25);
-	--shadow-float: 0 6px 18px rgba(0, 0, 0, 0.4);
-	--shadow-modal: 0 16px 40px rgba(0, 0, 0, 0.55);
+	--on-navy: #0e1014;
+	--on-primary: #0b1124;
+	--on-wax: #0e1014;
+
+	--shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 14px rgba(0, 0, 0, 0.28);
+	--shadow-float: 0 8px 24px rgba(0, 0, 0, 0.45);
+	--shadow-modal: 0 16px 40px rgba(0, 0, 0, 0.6);
 
 	color-scheme: dark;
 }

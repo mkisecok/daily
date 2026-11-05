@@ -2,7 +2,7 @@
 	@component
 	The result of a questionnaire as a raised result card: an "Ergebnis" badge
 	and a left accent in the colour of the verdict (wax: action needed, navy:
-	open points, khaki: nothing to do), one serif sentence, then the reasons,
+	open points, blue: nothing to do), one serif sentence, then the reasons,
 	notes and sources as citation chips.
 -->
 <script lang="ts">
@@ -21,7 +21,7 @@
 			{
 				wax: result.verdict === 'positive',
 				navy: result.verdict === 'conditional',
-				khaki: result.verdict === 'negative'
+				primary: result.verdict === 'negative'
 			}
 		]}>{m.verdict_label()}</span
 	>
@@ -79,7 +79,7 @@
 		}
 
 		&[data-level='negative'] {
-			--accent: var(--khaki);
+			--accent: var(--primary);
 		}
 
 		@media (max-width: 40rem) {

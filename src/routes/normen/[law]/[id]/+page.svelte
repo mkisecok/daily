@@ -117,7 +117,7 @@
 			margin-bottom: 1.25rem;
 			padding: 0.6rem 0.9rem;
 			font-size: 14px;
-			background: var(--khaki-soft);
+			background: var(--primary-soft);
 			border-radius: var(--radius);
 		}
 
