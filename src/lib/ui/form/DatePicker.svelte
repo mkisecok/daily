@@ -31,6 +31,26 @@
 	} = $props();
 
 	const locale = getLocale() === 'de' ? 'de-DE' : 'en-GB';
+
+	let trigger = $state<HTMLElement | null>(null);
+	let content = $state<HTMLElement | null>(null);
+
+	/*
+	 * Bits UI moves focus into the popover before it is positioned and again
+	 * to the trigger on close; plain focus() scrolls the page to the top. Both
+	 * moves happen here instead, without scrolling.
+	 */
+	function focusDay(event: Event) {
+		const day = content?.querySelector<HTMLElement>('[data-bits-day][data-focused]');
+		if (!day) return;
+		event.preventDefault();
+		day.focus({ preventScroll: true });
+	}
+
+	function focusTrigger(event: Event) {
+		event.preventDefault();
+		trigger?.focus({ preventScroll: true });
+	}
 </script>
 
 <DatePicker.Root
@@ -69,12 +89,22 @@
 					>
 				{/each}
 			</span>
-			<DatePicker.Trigger class="daily-icon-button" aria-label={m.date_open_calendar()}>
+			<DatePicker.Trigger
+				bind:ref={trigger}
+				class="daily-icon-button"
+				aria-label={m.date_open_calendar()}
+			>
 				<Icon name="calendar" size={16} />
 			</DatePicker.Trigger>
 		{/snippet}
 	</DatePicker.Input>
-	<DatePicker.Content class="daily-popover daily-calendar-popover" sideOffset={6}>
+	<DatePicker.Content
+		bind:ref={content}
+		class="daily-popover daily-calendar-popover"
+		sideOffset={6}
+		onOpenAutoFocus={focusDay}
+		onCloseAutoFocus={focusTrigger}
+	>
 		<DatePicker.Calendar class="daily-calendar">
 			{#snippet children({ months, weekdays })}
 				<DatePicker.Header class="daily-calendar-header">
