@@ -257,8 +257,13 @@
 			}
 		}
 
+		/* paper shows where the case stands, not the buttons to move it on */
 		@media print {
 			box-shadow: none;
+
+			& .next {
+				display: none;
+			}
 		}
 	}
 </style>

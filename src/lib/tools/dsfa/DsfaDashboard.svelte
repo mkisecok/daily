@@ -2,10 +2,12 @@
 	@component
 	The risk picture of a DPIA: key figures, the DSK matrix before and after
 	measures side by side, and every risk in a table with its ratings and
-	measures. Unrated risks are left out of the matrices.
+	measures. Unrated risks are left out of the matrices. The whole picture
+	downloads as an Excel workbook or prints on its own landscape page.
 -->
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
+	import { getLocale } from '#lib/paraglide/runtime.js';
 	import Icon from '#lib/ui/Icon.svelte';
 	import type { RecordView } from '../../records/types.js';
 	import { text } from '../i18n.js';
@@ -13,6 +15,26 @@
 	import RiskMatrix from './RiskMatrix.svelte';
 
 	let { record }: { record: RecordView } = $props();
+
+	let exporting = $state(false);
+	let failed = $state(false);
+
+	async function downloadExcel() {
+		exporting = true;
+		failed = false;
+		try {
+			const { downloadDsfaWorkbook } = await import('./excel.js');
+			const name = String(record.data.bezeichnung ?? '')
+				.replace(/[^\p{L}\p{N}]+/gu, '-')
+				.replace(/^-|-$/g, '');
+			const day = new Date().toISOString().slice(0, 10);
+			await downloadDsfaWorkbook(record, getLocale(), `dsfa-${name || 'export'}-${day}.xlsx`);
+		} catch {
+			failed = true;
+		} finally {
+			exporting = false;
+		}
+	}
 
 	const LEVEL: Record<RiskLevel, () => string> = {
 		gering: m.risk_low,
@@ -46,6 +68,18 @@
 </script>
 
 <section class="dashboard" aria-label={m.dsfa_dash_title()}>
+	<div class="head">
+		<h2><Icon name="chart-dots" size={18} />{m.dsfa_dash_title()}</h2>
+		<div class="toolbar no-print">
+			<button type="button" class="quiet" onclick={downloadExcel} disabled={exporting}>
+				<Icon name="download" size={16} />{m.dsfa_xlsx_download()}
+			</button>
+			<button type="button" class="quiet" onclick={() => window.print()}>
+				<Icon name="printer" size={16} />{m.records_print()}
+			</button>
+		</div>
+		{#if failed}<p class="failed" role="alert">{m.dsfa_xlsx_failed()}</p>{/if}
+	</div>
 	<div class="figures">
 		<div class="figure card">
 			<span class="icon"><Icon name="list-details" size={18} /></span>
@@ -378,6 +412,113 @@
 			content: '';
 			background: var(--level);
 			border-radius: 50%;
+		}
+	}
+
+	.head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem 1rem;
+
+		& h2 {
+			margin: 0;
+			font-size: 20px;
+		}
+
+		& .toolbar {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+
+			& button {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.4rem;
+			}
+		}
+
+		& .failed {
+			flex-basis: 100%;
+			font-size: 14px;
+			color: var(--wax);
+		}
+	}
+
+	/*
+	 * on paper the picture fills one landscape page: four figures in a row,
+	 * both matrices side by side, the full table; band colours kept
+	 */
+	@media print {
+		@page dashboard {
+			size: A4 landscape;
+			margin: 12mm;
+		}
+
+		.dashboard {
+			page: dashboard;
+			gap: 4mm;
+			margin-top: 0;
+			print-color-adjust: exact;
+			break-after: page;
+
+			& :global(.card) {
+				padding: 3mm 4mm;
+				box-shadow: none;
+				border: 0.3mm solid #ccc;
+				break-inside: avoid;
+			}
+
+			& h2 {
+				margin-bottom: 2mm;
+				font-size: 12pt;
+			}
+		}
+
+		.figures {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+			gap: 3mm;
+		}
+
+		.figure {
+			& .icon {
+				display: none;
+			}
+
+			& strong {
+				font-size: 16pt;
+
+				&.word {
+					font-size: 13pt;
+				}
+			}
+		}
+
+		.matrices {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 4mm;
+
+			& :global(.matrix) {
+				max-width: 100%;
+				max-height: 105mm;
+			}
+		}
+
+		.table-card {
+			break-before: page;
+
+			& .scroll {
+				overflow: visible;
+			}
+		}
+
+		table {
+			font-size: 9pt;
+
+			& .measures {
+				min-width: 0;
+			}
 		}
 	}
 </style>

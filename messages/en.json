@@ -426,5 +426,11 @@
 	"aiact_tier_hoch": "High risk",
 	"aiact_tier_transparenz": "Transparency obligations",
 	"aiact_tier_minimal": "Minimal risk",
-	"aiact_none": "no obligations"
+	"aiact_none": "no obligations",
+	"dsfa_xlsx_title": "Data protection impact assessment",
+	"dsfa_xlsx_exported": "Exported on {date}",
+	"dsfa_xlsx_sheet_overview": "Overview",
+	"dsfa_xlsx_sheet_fields": "Details",
+	"dsfa_xlsx_download": "Download Excel",
+	"dsfa_xlsx_failed": "The Excel file could not be created."
 }

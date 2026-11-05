@@ -426,5 +426,11 @@
 	"aiact_tier_hoch": "Hochrisiko",
 	"aiact_tier_transparenz": "Transparenzpflichten",
 	"aiact_tier_minimal": "Minimales Risiko",
-	"aiact_none": "keine Pflichten"
+	"aiact_none": "keine Pflichten",
+	"dsfa_xlsx_title": "Datenschutz-Folgenabschätzung",
+	"dsfa_xlsx_exported": "Exportiert am {date}",
+	"dsfa_xlsx_sheet_overview": "Übersicht",
+	"dsfa_xlsx_sheet_fields": "Angaben",
+	"dsfa_xlsx_download": "Excel herunterladen",
+	"dsfa_xlsx_failed": "Die Excel-Datei konnte nicht erstellt werden."
 }
