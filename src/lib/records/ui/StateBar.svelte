@@ -114,7 +114,7 @@
 </section>
 
 <style>
-	/* a stepper: passed steps khaki, the current one navy, open ones neutral, untaken branches dashed */
+	/* a stepper: passed steps blue, the current one navy, open ones neutral, untaken branches dashed */
 	.state-bar {
 		margin-top: 1.5rem;
 
@@ -176,13 +176,13 @@
 
 					&::before {
 						content: '\2713';
-						color: var(--on-khaki);
-						background: var(--khaki);
-						border-color: var(--khaki);
+						color: var(--on-primary);
+						background: var(--primary);
+						border-color: var(--primary);
 					}
 
 					&::after {
-						background: var(--khaki);
+						background: var(--primary);
 					}
 				}
 

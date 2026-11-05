@@ -380,7 +380,7 @@
 </section>
 
 <style>
-	/* tier colours: Art. 9 alone in wax, identifiers navy, numbers khaki, the rest ink */
+	/* tier colours: Art. 9 alone in wax, identifiers navy, numbers blue, the rest ink */
 	[data-tier] {
 		--tier: var(--ink2);
 		--tier-soft: var(--neutral-soft);
@@ -396,8 +396,8 @@
 		}
 
 		&[data-tier='2'] {
-			--tier: var(--khaki);
-			--tier-soft: var(--khaki-soft);
+			--tier: var(--primary);
+			--tier-soft: var(--primary-soft);
 		}
 	}
 

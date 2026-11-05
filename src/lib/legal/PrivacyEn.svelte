@@ -121,6 +121,13 @@
 				<td>remembers a colour scheme you chose (light/dark)</td>
 				<td>1 year</td>
 			</tr>
+			<tr>
+				<td
+					><code>daily.tools.recent.v1</code>, <code>daily.tools.pinned.v1</code> (localStorage)</td
+				>
+				<td>the tools you opened last and the ones you pinned, only in your browser</td>
+				<td>until you delete them</td>
+			</tr>
 			{#if preview}
 				<tr>
 					<td><code>daily.records.v1</code> (localStorage)</td>

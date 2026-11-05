@@ -88,8 +88,8 @@
 				place-items: center;
 				width: 2.2rem;
 				height: 2.2rem;
-				color: var(--khaki);
-				background: var(--khaki-soft);
+				color: var(--primary);
+				background: var(--primary-soft);
 				border-radius: 50%;
 			}
 		}

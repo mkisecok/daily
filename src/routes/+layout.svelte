@@ -72,8 +72,8 @@
 		left: 0.5rem;
 		z-index: 100;
 		padding: 0.5rem 0.9rem;
-		color: var(--on-khaki);
-		background: var(--khaki);
+		color: var(--on-primary);
+		background: var(--primary);
 		border-radius: var(--radius);
 		transform: translateY(-200%);
 

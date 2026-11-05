@@ -1,6 +1,6 @@
 <!--
 	@component
-	On/off switch on Bits UI with its label beside it; khaki when on. Use it for
+	On/off switch on Bits UI with its label beside it; blue when on. Use it for
 	settings that apply at once, not for answers that may be left open.
 -->
 <script lang="ts">

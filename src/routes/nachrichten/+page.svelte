@@ -289,7 +289,7 @@
 			}
 		}
 
-		/* chips; the chosen one in khaki, big enough for a thumb on phones */
+		/* chips; the chosen one in blue, big enough for a thumb on phones */
 		& a {
 			display: inline-flex;
 			align-items: center;
@@ -312,9 +312,9 @@
 			}
 
 			&[aria-current='true'] {
-				color: var(--khaki);
-				background: var(--khaki-soft);
-				border-color: var(--khaki);
+				color: var(--primary);
+				background: var(--primary-soft);
+				border-color: var(--primary);
 			}
 
 			@media (max-width: 40rem) {
@@ -441,8 +441,8 @@
 						margin-left: auto;
 
 						& button[aria-pressed='true'] {
-							color: var(--khaki);
-							background: var(--khaki-soft);
+							color: var(--primary);
+							background: var(--primary-soft);
 						}
 					}
 				}

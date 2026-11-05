@@ -69,7 +69,7 @@ export type Answers = Record<string, YesNoAnswer>;
 /**
  * severity, not truth value: `positive` means something applies that demands
  * action (shown in wax red), `conditional` needs a judgement or open points
- * (navy), `negative` means nothing to do (khaki).
+ * (navy), `negative` means nothing to do (blue).
  */
 export type VerdictLevel = 'positive' | 'conditional' | 'negative';
 

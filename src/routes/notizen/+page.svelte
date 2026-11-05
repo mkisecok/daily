@@ -490,7 +490,7 @@
 			}
 		}
 
-		/* write and preview as a segmented control; the chosen tab is raised with a khaki rule */
+		/* write and preview as a segmented control; the chosen tab is raised with a blue rule */
 		& .tabs {
 			display: inline-flex;
 			gap: 0.2rem;
@@ -519,7 +519,7 @@
 					color: var(--ink);
 					background: var(--sheet);
 					box-shadow:
-						inset 0 -2px 0 var(--khaki),
+						inset 0 -2px 0 var(--primary),
 						var(--shadow-raised);
 				}
 

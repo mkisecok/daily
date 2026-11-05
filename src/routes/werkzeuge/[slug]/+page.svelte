@@ -154,7 +154,7 @@
 				}
 
 				&[data-level='negative'] {
-					color: var(--khaki);
+					color: var(--primary);
 				}
 			}
 		}

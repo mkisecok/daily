@@ -9,11 +9,15 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import PageHeader from '#lib/ui/PageHeader.svelte';
 	import { text } from '../i18n.js';
+	import { rememberVisit } from '../shelf.js';
 	import type { ToolManifest } from '../types.js';
 	import Citation from './Citation.svelte';
 	import StatusBadge from './StatusBadge.svelte';
 
 	let { tool }: { tool: ToolManifest } = $props();
+
+	// the catalogue offers the tool opened last as its first card
+	$effect(() => rememberVisit(tool.slug));
 
 	const categoryLabel = $derived(
 		tool.category === 'datenschutz'
@@ -54,15 +58,19 @@
 		margin-top: 0.75rem;
 
 		&[data-area='datenschutz'] {
-			--spine: var(--navy);
+			--spine: var(--area-datenschutz);
 		}
 
 		&[data-area='ki'] {
-			--spine: var(--wax);
+			--spine: var(--area-ki);
 		}
 
 		&[data-area='audit'] {
-			--spine: var(--khaki);
+			--spine: var(--area-audit);
+		}
+
+		&[data-area='entwickler'] {
+			--spine: var(--area-entwickler);
 		}
 
 		/* the area, marked with a dot in its spine colour as on the index cards */

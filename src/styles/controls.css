@@ -2,7 +2,7 @@
  * interactive controls built on Bits UI (select, combobox, date picker, chips,
  * switch). Bits renders these elements inside its own components and portals,
  * so they are styled here by class instead of in the wrappers' scoped styles.
- * Same language as forms.css: sheet fields, navy focus, khaki for chosen.
+ * Same language as forms.css: sheet fields, navy focus, blue for chosen.
  */
 
 /* the field-like box: select trigger, combobox frame, date segments */
@@ -124,7 +124,7 @@
 	flex: none;
 	place-items: center;
 	width: 1.2rem;
-	color: var(--khaki);
+	color: var(--primary);
 }
 
 .daily-empty {
@@ -200,8 +200,8 @@
 
 	&:focus {
 		outline: none;
-		color: var(--on-khaki);
-		background: var(--khaki);
+		color: var(--on-primary);
+		background: var(--primary);
 	}
 }
 
@@ -264,8 +264,8 @@
 	}
 
 	&[data-selected] {
-		color: var(--on-khaki);
-		background: var(--khaki);
+		color: var(--on-primary);
+		background: var(--primary);
 	}
 
 	&[data-disabled],
@@ -313,11 +313,11 @@
 
 	&[data-state='on'] {
 		color: var(--ink);
-		background: var(--khaki-soft);
-		border-color: var(--khaki);
+		background: var(--primary-soft);
+		border-color: var(--primary);
 
 		& .icon {
-			color: var(--khaki);
+			color: var(--primary);
 		}
 	}
 
@@ -328,7 +328,7 @@
 	}
 }
 
-/* switch: square track in the house style, khaki when on */
+/* switch: square track in the house style, blue when on */
 .daily-switch-row {
 	display: inline-flex;
 	align-items: center;
@@ -353,7 +353,7 @@
 	transition: background-color 0.15s ease;
 
 	&[data-state='checked'] {
-		background: var(--khaki);
+		background: var(--primary);
 	}
 
 	&:focus-visible {

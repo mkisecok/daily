@@ -1,7 +1,7 @@
 <!--
 	@component
 	The DAILY wordmark. Four letters, three colours: D navy (data), AI wax
-	(artificial intelligence), L khaki (law), Y ink (yield). Serif, no icon.
+	(artificial intelligence), L blue (law), Y ink (yield). Serif, no icon.
 -->
 <script lang="ts">
 	let { size = 'masthead' }: { size?: 'masthead' | 'hero' } = $props();
@@ -38,7 +38,7 @@
 		}
 
 		& .l {
-			color: var(--khaki);
+			color: var(--primary);
 		}
 
 		& .y {

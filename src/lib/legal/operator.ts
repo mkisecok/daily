@@ -29,7 +29,7 @@ export const OPERATOR: Operator = {
 };
 
 /** date of the current privacy notice */
-export const PRIVACY_VERSION = '2026-10-30';
+export const PRIVACY_VERSION = '2026-11-05';
 
 export function operatorMissing(operator: Operator = OPERATOR): boolean {
 	return !operator.name || !operator.street || !operator.city || !operator.email;

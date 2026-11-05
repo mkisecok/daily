@@ -281,30 +281,48 @@ test('preview: the privacy notice describes the preview, not the signed-in app',
 	).toBeVisible();
 });
 
-test('preview: the tool catalogue groups by task and narrows by search and area', async ({
-	page
-}) => {
+test('preview: the tool catalogue narrows by search and area', async ({ page }) => {
 	await page.goto('werkzeuge/', { waitUntil: 'networkidle' });
-	await expect(page.getByRole('heading', { level: 2 })).toHaveText([
-		/Einmal prüfen/,
-		/Dauerhaft dokumentieren/,
-		/Vorgänge mit Frist/,
-		/Im Browser arbeiten/
-	]);
-	await expect(page.locator('li.tool')).toHaveCount(30);
+	await expect(page.locator('li.tile')).toHaveCount(30);
 
 	await page.getByRole('searchbox', { name: 'Werkzeuge durchsuchen' }).fill('Art. 35');
-	await expect(page.locator('li.tool .name')).toHaveText([
+	await expect(page.locator('.bento')).toBeHidden();
+	await expect(page.locator('li.tile .name')).toHaveText([
 		'DSFA-Schwellwertanalyse',
 		'Datenschutz-Folgenabschätzung'
 	]);
 
 	await page.getByRole('searchbox', { name: 'Werkzeuge durchsuchen' }).fill('');
-	const audit = page.getByRole('button', { name: /^Audit/ });
+	const audit = page
+		.getByRole('group', { name: 'Nach Bereich filtern' })
+		.getByRole('button', { name: /^Audit/ });
 	await audit.click();
 	await expect(audit).toHaveAttribute('aria-pressed', 'true');
-	await expect(page.locator('li.tool')).toHaveCount(4);
+	await expect(page.locator('li.tile')).toHaveCount(4);
 
 	await page.getByRole('searchbox', { name: 'Werkzeuge durchsuchen' }).fill('xyz');
 	await expect(page.getByRole('status')).toHaveText('Kein Werkzeug passt zu „xyz“.');
+});
+
+test('preview: the bento offers the tool opened last and keeps pinned tools', async ({ page }) => {
+	await page.goto('werkzeuge/', { waitUntil: 'networkidle' });
+	const feature = page.locator('.bento .feature');
+	await expect(feature).toContainText('Zum Einstieg');
+	await expect(feature).toContainText('Verzeichnis von Verarbeitungstätigkeiten');
+	await expect(page.locator('.bento .hint')).toBeVisible();
+
+	await page.getByRole('button', { name: 'Löschkonzept anheften' }).click();
+	await expect(page.getByRole('button', { name: 'Löschkonzept lösen' })).toHaveAttribute(
+		'aria-pressed',
+		'true'
+	);
+	await expect(page.locator('.bento .side').first()).toContainText('Angeheftet');
+	await expect(page.locator('.bento .side').first()).toContainText('Löschkonzept');
+	await expect(page.locator('.bento .hint')).toBeHidden();
+
+	await page.goto('werkzeuge/datenpanne/', { waitUntil: 'networkidle' });
+	await page.goto('werkzeuge/', { waitUntil: 'networkidle' });
+	await expect(feature).toContainText('Zuletzt geöffnet');
+	await expect(feature).toContainText('Datenpanne');
+	await expect(page.getByRole('button', { name: 'Löschkonzept lösen' })).toBeVisible();
 });

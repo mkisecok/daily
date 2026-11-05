@@ -56,7 +56,7 @@
 				</span>
 				<span class="toolbar">
 					{#if active}
-						<span class="current badge khaki">{m.org_active()}</span>
+						<span class="current badge primary">{m.org_active()}</span>
 					{:else}
 						<form method="post" action="?/switch" use:enhance>
 							<input type="hidden" name="id" value={org.id} />
@@ -94,7 +94,7 @@
 		border-radius: var(--radius-card);
 	}
 
-	/* a raised list of rows; the active organisation carries a khaki spine */
+	/* a raised list of rows; the active organisation carries a blue spine */
 	.orgs {
 		list-style: none;
 		background: var(--sheet);
@@ -152,12 +152,12 @@
 			}
 
 			&.active {
-				background: var(--khaki-soft);
-				box-shadow: inset 3px 0 0 var(--khaki);
+				background: var(--primary-soft);
+				box-shadow: inset 3px 0 0 var(--primary);
 
 				& .icon {
-					color: var(--on-khaki);
-					background: var(--khaki);
+					color: var(--on-primary);
+					background: var(--primary);
 				}
 			}
 		}
