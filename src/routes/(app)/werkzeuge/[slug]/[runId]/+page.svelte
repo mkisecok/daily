@@ -7,9 +7,12 @@
 	import Citation from '#lib/tools/_shared/Citation.svelte';
 	import ToolHeader from '#lib/tools/_shared/ToolHeader.svelte';
 	import Verdict from '#lib/tools/_shared/Verdict.svelte';
+	import { resultDashboards } from '#lib/tools/dashboards.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
+
+	const Dashboard = $derived(resultDashboards[data.tool.slug]);
 
 	const answerLabel: Record<string, () => string> = {
 		yes: m.answer_yes,
@@ -45,7 +48,14 @@
 	<span>{m.run_catalog_version()} {data.run.catalogVersion}</span>
 </p>
 
-<Verdict result={data.run.result} />
+{#if Dashboard}
+	<div class="result-pair">
+		<Dashboard result={data.run.result} />
+		<Verdict result={data.run.result} />
+	</div>
+{:else}
+	<Verdict result={data.run.result} />
+{/if}
 
 <section class="answers card">
 	<h2>{m.run_answers()}</h2>
@@ -175,5 +185,22 @@
 
 	.actions {
 		margin-top: 1.5rem;
+	}
+
+	/* a result with its picture: side by side, stacked on narrow screens */
+	.result-pair {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+		align-items: start;
+		gap: 1rem;
+		margin-top: 1.5rem;
+
+		& > :global(*) {
+			margin-top: 0;
+		}
+
+		@media (max-width: 64rem) {
+			grid-template-columns: minmax(0, 1fr);
+		}
 	}
 </style>

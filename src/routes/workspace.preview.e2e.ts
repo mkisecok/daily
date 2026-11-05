@@ -346,3 +346,63 @@ test('preview: opening the calendar at the end of a long form keeps the scroll p
 	await expect(trigger).toBeFocused();
 	expect(await page.evaluate(() => scrollY)).toBe(before);
 });
+
+test('preview: a DPIA shows its risk picture before and after measures', async ({ page }) => {
+	const at = '2026-11-05T09:00:00.000Z';
+	const data = {
+		bezeichnung: 'Bewerbervorauswahl',
+		vertraulichkeit_w: '3',
+		vertraulichkeit_s: '4',
+		vertraulichkeit_massnahmen: 'Verschlüsselung',
+		vertraulichkeit_rw: '2',
+		vertraulichkeit_rs: '4',
+		integritaet_w: '2',
+		integritaet_s: '2',
+		integritaet_rw: '2',
+		integritaet_rs: '1'
+	};
+	await page.goto('', { waitUntil: 'networkidle' });
+	await page.evaluate(
+		(record) =>
+			localStorage.setItem('daily.records.v1', JSON.stringify({ records: [record], events: [] })),
+		{
+			id: 'dsfa-1',
+			toolSlug: 'dsfa',
+			definitionVersion: 2,
+			state: 'entwurf',
+			title: data.bezeichnung,
+			data,
+			version: 1,
+			createdAt: at,
+			updatedAt: at,
+			archivedAt: null
+		}
+	);
+	await page.goto('werkzeuge/dsfa/eintraege/?eintrag=dsfa-1', { waitUntil: 'networkidle' });
+
+	const dashboard = page.getByRole('region', { name: 'Risikobild' });
+	await expect(dashboard.locator('.figure strong')).toHaveText(['2', '1', '1', 'Erforderlich']);
+	await expect(dashboard.getByRole('img', { name: /^Risikomatrix Vor/ })).toHaveAttribute(
+		'aria-label',
+		/1 Unbefugte Offenlegung 3 \/ 4 Hohes Risiko; 2 Unbefugte Veränderung 2 \/ 2 Risiko/
+	);
+	const row = dashboard.getByRole('row', { name: /Unbefugte Veränderung/ });
+	await expect(row.locator('.level')).toHaveText(['Risiko', 'Geringes Risiko']);
+	await expect(dashboard.locator('tbody tr')).toHaveCount(5);
+});
+
+test('preview: the risk classification marks the AI Act tier', async ({ page }) => {
+	await page.goto('werkzeuge/risikoklassifizierung/pruefen/', { waitUntil: 'networkidle' });
+	const names = await page
+		.locator('input[type=radio]')
+		.evaluateAll((inputs) => [...new Set(inputs.map((input) => (input as HTMLInputElement).name))]);
+	for (const name of names) {
+		const value = ['answer.s_ai', 'answer.h_employment', 'answer.x_profiling'].includes(name)
+			? 'yes'
+			: 'no';
+		await page.locator(`input[name="${name}"][value="${value}"]`).check({ force: true });
+	}
+	await page.getByRole('button', { name: 'Auswerten' }).click();
+	await expect(page.getByRole('img', { name: 'Risikoklasse: Hochrisiko' })).toBeVisible();
+	await expect(page.locator('.tier[data-active]')).toHaveAttribute('data-tier', 'hoch');
+});

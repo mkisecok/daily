@@ -11,14 +11,14 @@ function view(data: RecordData, state = 'entwurf') {
 	return { state, data: validateRecord(definition, data).data };
 }
 
-/** every risk rated 3/3 (high) before and 2/2 (low) after measures */
+/** every risk rated 3/3 (a risk) before and 2/1 (low) after measures */
 const rated: RecordData = Object.fromEntries(
 	RISKS.flatMap(({ id }) => [
 		[`${id}_w`, '3'],
 		[`${id}_s`, '3'],
 		[`${id}_massnahmen`, 'Maßnahmen'],
 		[`${id}_rw`, '2'],
-		[`${id}_rs`, '2']
+		[`${id}_rs`, '1']
 	])
 );
 const complete: RecordData = {
@@ -41,12 +41,15 @@ const complete: RecordData = {
 const assess = (data: RecordData) => engine.assess!(view(data))!;
 
 describe('DSFA: risk matrix', () => {
-	it('rates likelihood plus severity: up to 4 low, 5–6 risk, from 7 high', () => {
-		expect(riskLevel(1, 3)).toBe('gering');
-		expect(riskLevel(2, 3)).toBe('risiko');
+	it('follows the cells of the DSK matrix', () => {
+		expect(riskLevel(1, 1)).toBe('gering');
+		expect(riskLevel(2, 1)).toBe('gering');
+		expect(riskLevel(1, 2)).toBe('risiko');
+		expect(riskLevel(2, 2)).toBe('risiko');
 		expect(riskLevel(3, 3)).toBe('risiko');
-		expect(riskLevel(3, 4)).toBe('hoch');
-		expect(riskLevel(4, 4)).toBe('hoch');
+		expect(riskLevel(2, 4)).toBe('hoch');
+		expect(riskLevel(4, 3)).toBe('hoch');
+		expect(riskLevel(1, 4)).toBe('risiko');
 	});
 });
 
