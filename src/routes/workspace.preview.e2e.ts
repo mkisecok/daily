@@ -326,3 +326,23 @@ test('preview: the bento offers the tool opened last and keeps pinned tools', as
 	await expect(feature).toContainText('Datenpanne');
 	await expect(page.getByRole('button', { name: 'Löschkonzept lösen' })).toBeVisible();
 });
+
+test('preview: opening the calendar at the end of a long form keeps the scroll position', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 1280, height: 720 });
+	await page.goto('werkzeuge/datenpanne/eintraege/?neu=1', { waitUntil: 'networkidle' });
+	const trigger = page.getByRole('button', { name: /Kalender/ }).last();
+	await trigger.scrollIntoViewIfNeeded();
+	const before = await page.evaluate(() => scrollY);
+	expect(before).toBeGreaterThan(500);
+
+	await trigger.click();
+	await expect(page.locator('.daily-calendar-popover')).toBeVisible();
+	expect(await page.evaluate(() => scrollY)).toBe(before);
+
+	await page.keyboard.press('Escape');
+	await expect(page.locator('.daily-calendar-popover')).toBeHidden();
+	await expect(trigger).toBeFocused();
+	expect(await page.evaluate(() => scrollY)).toBe(before);
+});
