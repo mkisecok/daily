@@ -389,6 +389,12 @@ test('preview: a DPIA shows its risk picture before and after measures', async (
 	const row = dashboard.getByRole('row', { name: /Unbefugte Veränderung/ });
 	await expect(row.locator('.level')).toHaveText(['Risiko', 'Geringes Risiko']);
 	await expect(dashboard.locator('tbody tr')).toHaveCount(5);
+
+	const [download] = await Promise.all([
+		page.waitForEvent('download'),
+		dashboard.getByRole('button', { name: 'Excel herunterladen' }).click()
+	]);
+	expect(download.suggestedFilename()).toMatch(/^dsfa-Bewerbervorauswahl-\d{4}-\d{2}-\d{2}\.xlsx$/);
 });
 
 test('preview: the risk classification marks the AI Act tier', async ({ page }) => {
