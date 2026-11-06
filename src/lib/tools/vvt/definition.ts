@@ -2,6 +2,48 @@ import type { RecordToolDefinition } from '../../records/types.js';
 
 const L = (de: string, en: string) => ({ de, en });
 
+/** the legal bases of Art. 6(1), with the special cases the record most often needs */
+export const LEGAL_BASES = [
+	{
+		value: 'einwilligung',
+		label: L('Einwilligung (Art. 6 Abs. 1 lit. a)', 'Consent (Art. 6(1)(a))')
+	},
+	{
+		value: 'vertrag',
+		label: L(
+			'Vertrag oder vorvertragliche Maßnahmen (lit. b)',
+			'Contract or pre-contractual steps ((b))'
+		)
+	},
+	{
+		value: 'pflicht',
+		label: L('Rechtliche Verpflichtung (lit. c)', 'Legal obligation ((c))')
+	},
+	{
+		value: 'lebenswichtig',
+		label: L('Lebenswichtige Interessen (lit. d)', 'Vital interests ((d))')
+	},
+	{ value: 'oeffentlich', label: L('Öffentliche Aufgabe (lit. e)', 'Public task ((e))') },
+	{
+		value: 'interesse',
+		label: L('Berechtigte Interessen (lit. f)', 'Legitimate interests ((f))')
+	},
+	{
+		value: 'art9',
+		label: L(
+			'Ausnahme nach Art. 9 Abs. 2 (besondere Kategorien)',
+			'Exception under Art. 9(2) (special categories)'
+		)
+	},
+	{
+		value: 'beschaeftigung',
+		label: L(
+			'Beschäftigungsverhältnis (Art. 88 DSGVO, § 26 BDSG)',
+			'Employment (Art. 88 GDPR, § 26 BDSG)'
+		)
+	}
+];
+
 /**
  * record of processing activities: one record per processing activity,
  * covering Art. 30(1) for controllers and Art. 30(2) for processors.
@@ -107,46 +149,7 @@ export const definition: RecordToolDefinition = {
 						'Art. 30 verlangt sie nicht ausdrücklich; die Aufsichtsbehörden empfehlen die Angabe, weil sie die Rechenschaftspflicht belegt.',
 						'Art. 30 does not require them expressly; authorities recommend including them as evidence of accountability.'
 					),
-					options: [
-						{
-							value: 'einwilligung',
-							label: L('Einwilligung (Art. 6 Abs. 1 lit. a)', 'Consent (Art. 6(1)(a))')
-						},
-						{
-							value: 'vertrag',
-							label: L(
-								'Vertrag oder vorvertragliche Maßnahmen (lit. b)',
-								'Contract or pre-contractual steps ((b))'
-							)
-						},
-						{
-							value: 'pflicht',
-							label: L('Rechtliche Verpflichtung (lit. c)', 'Legal obligation ((c))')
-						},
-						{
-							value: 'lebenswichtig',
-							label: L('Lebenswichtige Interessen (lit. d)', 'Vital interests ((d))')
-						},
-						{ value: 'oeffentlich', label: L('Öffentliche Aufgabe (lit. e)', 'Public task ((e))') },
-						{
-							value: 'interesse',
-							label: L('Berechtigte Interessen (lit. f)', 'Legitimate interests ((f))')
-						},
-						{
-							value: 'art9',
-							label: L(
-								'Ausnahme nach Art. 9 Abs. 2 (besondere Kategorien)',
-								'Exception under Art. 9(2) (special categories)'
-							)
-						},
-						{
-							value: 'beschaeftigung',
-							label: L(
-								'Beschäftigungsverhältnis (Art. 88 DSGVO, § 26 BDSG)',
-								'Employment (Art. 88 GDPR, § 26 BDSG)'
-							)
-						}
-					],
+					options: LEGAL_BASES,
 					cite: { law: 'DSGVO', ref: 'Art. 6 Abs. 1' }
 				}
 			]
