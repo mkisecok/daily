@@ -13,6 +13,7 @@ import {
 	type RiskLevel
 } from './definition.js';
 import { engine } from './engine.js';
+import { compareWithTom, type CoverageStatus } from './tom.js';
 
 /** the DSK bands as Excel fills: strong for the matrix, soft for table cells */
 const BAND: Record<RiskLevel, { fill: string; ink: string; soft: string; softInk: string }> = {
@@ -104,11 +105,24 @@ function matrixRows(caption: string, ratings: { n: number; rating: Rating | null
 	return rows;
 }
 
+const STATUS: Record<CoverageStatus, () => string> = {
+	abgedeckt: m.dsfa_tom_status_abgedeckt,
+	luecke: m.dsfa_tom_status_luecke,
+	unbelegt: m.dsfa_tom_status_unbelegt,
+	offen: m.dsfa_tom_status_offen
+};
+
 /**
  * the DPIA as three sheets: an overview with key figures and both matrices,
- * the risk table, and every field of the entry
+ * the risk table, and every field of the entry. With the linked TOM entry,
+ * the risk table also shows the measures in place per goal.
  */
-export function dsfaWorkbook(record: RecordView, locale: string): Sheet<Blob>[] {
+export function dsfaWorkbook(
+	record: RecordView,
+	locale: string,
+	tom: RecordView | null = null
+): Sheet<Blob>[] {
+	const coverage = tom ? compareWithTom(record, tom).goals : null;
 	const risks = assessRisks(record).map((risk, index) => ({ ...risk, n: index + 1 }));
 	const rated = risks.filter((risk) => risk.initial && risk.residual);
 	const highBefore = risks.filter((risk) => risk.before === 'hoch').length;
@@ -192,7 +206,8 @@ export function dsfaWorkbook(record: RecordView, locale: string): Sheet<Blob>[] 
 			head(m.dsfa_dash_col_measures()),
 			head(label('rw')),
 			head(label('rs')),
-			head(m.dsfa_dash_col_after())
+			head(m.dsfa_dash_col_after()),
+			...(coverage ? [head(m.dsfa_tom_col_measures()), head(m.dsfa_tom_col_status())] : [])
 		],
 		...risks.map((risk): Row => [
 			top(risk.n),
@@ -206,7 +221,13 @@ export function dsfaWorkbook(record: RecordView, locale: string): Sheet<Blob>[] 
 			top(value(`${risk.id}_massnahmen`)),
 			top(risk.residual ? risk.residual.likelihood : '—'),
 			top(risk.residual ? risk.residual.severity : '—'),
-			pill(risk.after)
+			pill(risk.after),
+			...(coverage
+				? [
+						top(coverage[risk.n - 1].measures.map((measure) => text(measure)).join(', ') || '—'),
+						top(STATUS[coverage[risk.n - 1].status]())
+					]
+				: [])
 		])
 	];
 
@@ -255,7 +276,8 @@ export function dsfaWorkbook(record: RecordView, locale: string): Sheet<Blob>[] 
 				{ width: 40 },
 				{ width: 13 },
 				{ width: 10 },
-				{ width: 15 }
+				{ width: 15 },
+				...(coverage ? [{ width: 40 }, { width: 20 }] : [])
 			]
 		},
 		{
@@ -267,9 +289,15 @@ export function dsfaWorkbook(record: RecordView, locale: string): Sheet<Blob>[] 
 }
 
 /** writes the workbook and offers it for download; loads the writer on demand */
-export async function downloadDsfaWorkbook(record: RecordView, locale: string, filename: string) {
+export async function downloadDsfaWorkbook(
+	record: RecordView,
+	locale: string,
+	filename: string,
+	tom: RecordView | null = null
+) {
 	const { default: writeXlsxFile } = await import('write-excel-file/browser');
-	await writeXlsxFile(dsfaWorkbook(record, locale), { fontFamily: 'Calibri', fontSize: 11 }).toFile(
-		filename
-	);
+	await writeXlsxFile(dsfaWorkbook(record, locale, tom), {
+		fontFamily: 'Calibri',
+		fontSize: 11
+	}).toFile(filename);
 }

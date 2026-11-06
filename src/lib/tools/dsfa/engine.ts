@@ -91,6 +91,14 @@ function assess(record: RecordView): QuestionnaireResult {
 			)
 		);
 	}
+	if (risks.some((r) => r.before) && isEmpty(record.data.tom)) {
+		notes.push(
+			L(
+				'Den Eintrag des Systems im TOM-Katalog verknüpfen, damit die Abhilfemaßnahmen je Gewährleistungsziel mit den umgesetzten Maßnahmen abgeglichen werden.',
+				'Link the system’s entry in the TOM catalogue so the measures are compared goal by goal with those in place.'
+			)
+		);
+	}
 	if (isEmpty(record.data.dsb)) {
 		notes.push(
 			L(
