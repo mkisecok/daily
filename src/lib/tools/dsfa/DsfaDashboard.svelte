@@ -2,7 +2,8 @@
 	@component
 	The risk picture of a DPIA: key figures, the DSK matrix before and after
 	measures side by side, and every risk in a table with its threats,
-	ratings and measures. Unrated risks are left out of the matrices. The whole picture
+	ratings and measures, then what Kurzpapier Nr. 5 still asks before sign-off.
+	Unrated risks are left out of the matrices. The whole picture
 	downloads as an Excel workbook or prints on its own landscape page.
 -->
 <script lang="ts">
@@ -15,8 +16,15 @@
 	import { fieldById } from '../../records/validate.js';
 	import { text } from '../i18n.js';
 	import { definition as tomDefinition } from '../tom-katalog/definition.js';
-	import { assessRisks, RISKS, type Rating, type RiskLevel } from './definition.js';
+	import {
+		assessRisks,
+		RISKS,
+		unbackedReductions,
+		type Rating,
+		type RiskLevel
+	} from './definition.js';
 	import RiskMatrix from './RiskMatrix.svelte';
+	import { signOffChecks, type CheckStatus } from './signoff.js';
 	import { compareWithTom, type CoverageStatus } from './tom.js';
 
 	let { record }: { record: RecordView } = $props();
@@ -45,6 +53,16 @@
 	const gaps = $derived(
 		comparison?.goals.filter((g) => g.status === 'luecke' || g.status === 'unbelegt').length ?? 0
 	);
+
+	const checks = $derived(signOffChecks(record));
+	const open = $derived(checks.filter((check) => check.status === 'offen').length);
+	/** risks rated lower after measures although none is named */
+	const unbacked = $derived(new Set(unbackedReductions(record).map((risk) => risk.id)));
+	const CHECK: Record<CheckStatus, { label: () => string; badge: string }> = {
+		erfuellt: { label: m.dsfa_signoff_erfuellt, badge: 'khaki' },
+		offen: { label: m.dsfa_signoff_offen, badge: 'wax' },
+		entfaellt: { label: m.dsfa_signoff_entfaellt, badge: '' }
+	};
 
 	const STATUS: Record<CoverageStatus, { label: () => string; badge: string }> = {
 		abgedeckt: { label: m.dsfa_tom_status_abgedeckt, badge: 'khaki' },
@@ -221,12 +239,37 @@
 							<td>{@render level(risk.before)}</td>
 							<td class="measures">{measures(risk.id)}</td>
 							<td class="rating">{rating(risk.residual)}</td>
-							<td>{@render level(risk.after)}</td>
+							<td>
+								{@render level(risk.after)}
+								{#if unbacked.has(risk.id)}
+									<span class="badge wax unbacked">{m.dsfa_dash_unbacked()}</span>
+								{/if}
+							</td>
 						</tr>
 					{/each}
 				</tbody>
 			</table>
 		</div>
+	</section>
+
+	<section class="card signoff-card" aria-labelledby="dsfa-signoff-title">
+		<h2 id="dsfa-signoff-title"><Icon name="checklist" size={18} />{m.dsfa_signoff_title()}</h2>
+		<p class="signoff-intro">
+			{m.dsfa_signoff_intro()} ·
+			<span class:gap={open > 0}>{m.dsfa_signoff_open({ count: open })}</span>
+		</p>
+		<ul class="checks">
+			{#each checks as check (check.id)}
+				<li data-status={check.status}>
+					<span class="badge {CHECK[check.status].badge}">{CHECK[check.status].label()}</span>
+					<span class="check">
+						<strong>{text(check.label)}</strong>
+						{#if check.detail}<span class="detail">{text(check.detail)}</span>{/if}
+					</span>
+					<small>{check.cite.ref} {check.cite.law}</small>
+				</li>
+			{/each}
+		</ul>
 	</section>
 
 	<section class="card table-card tom-card" aria-labelledby="dsfa-tom-title">
@@ -461,6 +504,77 @@
 		& tr[data-status='unbelegt'] > th {
 			box-shadow: inset 3px 0 0 var(--wax);
 		}
+	}
+
+	.signoff-card {
+		padding: 1.1rem 1.25rem;
+
+		& .signoff-intro {
+			margin: 0 0 0.6rem;
+			font-size: 14px;
+			color: var(--ink2);
+		}
+
+		& .gap {
+			color: var(--wax);
+		}
+	}
+
+	.checks {
+		display: grid;
+		gap: 0.5rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		& li {
+			display: grid;
+			grid-template-columns: 7.5rem minmax(0, 1fr) auto;
+			gap: 0.75rem;
+			align-items: baseline;
+			padding: 0.45rem 0.65rem;
+			font-size: 14px;
+			border-top: 1px solid var(--rule);
+
+			&:first-child {
+				border-top: 0;
+			}
+
+			&[data-status='offen'] {
+				box-shadow: inset 3px 0 0 var(--wax);
+			}
+
+			& .badge {
+				justify-self: start;
+			}
+		}
+
+		& .check {
+			display: grid;
+			gap: 0.15rem;
+		}
+
+		& strong {
+			font-weight: 500;
+		}
+
+		& .detail,
+		& small {
+			font-size: 12px;
+			color: var(--ink3);
+		}
+
+		@media (width <= 560px) {
+			& li {
+				grid-template-columns: minmax(0, 1fr);
+				gap: 0.25rem;
+			}
+		}
+	}
+
+	.unbacked {
+		margin-left: 0.35rem;
+		white-space: nowrap;
 	}
 
 	table {

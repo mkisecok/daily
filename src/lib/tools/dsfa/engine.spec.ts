@@ -28,6 +28,7 @@ const complete: RecordData = {
 	verarbeitung: 'Kameras im Lager, Speicherung 72 Stunden',
 	zwecke: 'Schutz vor Diebstahl',
 	notwendigkeit: 'Mildere Mittel geprüft',
+	rechtsgrundlagen: ['interesse'],
 	dsb: 'Zustimmung mit Auflagen',
 	schwellwert: {
 		tool: 'dsfa-schwellwert',
@@ -134,6 +135,33 @@ describe('DSFA: protection goals and threats', () => {
 		);
 	});
 
+	it('flags a lowered risk without measures and asks for the legal bases', () => {
+		const result = assess({ ...complete, integritaet_massnahmen: '', rechtsgrundlagen: [] });
+		expect(result.explanation.de).toBe(
+			'Nach Art. 35 Abs. 7 fehlen noch: Abhilfemaßnahmen (lit. d).'
+		);
+		const notes = result.notes!.map((n) => n.de);
+		expect(
+			notes.some((n) =>
+				n.startsWith('Unbefugte Veränderung: Das Risiko ist nach Maßnahmen niedriger eingestuft')
+			)
+		).toBe(true);
+		expect(notes).toContain(
+			'Die Rechtsgrundlagen der Verarbeitung festhalten (DSK Kurzpapier Nr. 5, Schritt 6).'
+		);
+		expect(assess(complete).notes!.some((n) => n.de.includes('Schritt 6'))).toBe(false);
+	});
+
+	it('reminds an assessed DPIA to implement its measures before sign-off', () => {
+		const pending = (data: RecordData) =>
+			engine.assess!(view(data, 'bewertet'))!.notes!.some((n) =>
+				n.de.includes('Schritte 11 und 12')
+			);
+		expect(pending(complete)).toBe(true);
+		expect(pending({ ...complete, umgesetzt: true })).toBe(false);
+		expect(assess(complete).notes!.some((n) => n.de.includes('Schritte 11 und 12'))).toBe(false);
+	});
+
 	it('keeps the ratings of an entry made before the two new goals', () => {
 		const older = { ...complete, zweck_w: '4', zweck_s: '4', zweck_rw: '4', zweck_rs: '4' };
 		expect(assess(older).reasons.map((r) => r.questionId)).toEqual(['zweck']);
@@ -160,6 +188,8 @@ describe('DSFA: workflow and deadlines', () => {
 	it('signs off directly or after consultation depending on the residual risk', () => {
 		const ok = {
 			...complete,
+			restrisiko: 'Restrisiken vertretbar',
+			umgesetzt: true,
 			entscheidung: 'Freigegeben',
 			konsultation_am: '2026-10-14T08:00:00.000Z'
 		};
@@ -174,6 +204,44 @@ describe('DSFA: workflow and deadlines', () => {
 			konsultation: true,
 			abgeschlossen: false
 		});
+	});
+
+	it('needs the legal bases and named measures for every lowered risk', () => {
+		expect(options({ ...complete, rechtsgrundlagen: [] }, 'entwurf')).toEqual({ bewertet: false });
+		const unbacked = { ...complete, integritaet_massnahmen: '' };
+		expect(options(unbacked, 'entwurf')).toEqual({ bewertet: false });
+		const blocked = allowedTransitions(definition, view(unbacked)).find(
+			(o) => o.transition.to === 'bewertet'
+		)!.blocked;
+		expect(blocked?.de).toBe(
+			'Ein Risiko sinkt nur durch benannte Abhilfemaßnahmen: Unbefugte Veränderung.'
+		);
+		// a risk that stays where it was needs no measure to pass
+		const unchanged = { ...unbacked, integritaet_rw: '3', integritaet_rs: '3' };
+		expect(options(unchanged, 'entwurf')).toEqual({ bewertet: true });
+	});
+
+	it('signs off only once the residual risks are handled and the measures are in place', () => {
+		const ready = { ...complete, restrisiko: 'Vertretbar', entscheidung: 'Freigegeben' };
+		expect(options({ ...ready, restrisiko: '' }, 'bewertet').abgeschlossen).toBe(false);
+		expect(options(ready, 'bewertet').abgeschlossen).toBe(false);
+		expect(options({ ...ready, umgesetzt: true }, 'bewertet').abgeschlossen).toBe(true);
+		const opinion = { ...ready, stellungnahme: 'Keine Einwände' };
+		expect(options(opinion, 'konsultation')).toEqual({ abgeschlossen: false });
+		expect(options({ ...opinion, umgesetzt: true }, 'konsultation')).toEqual({
+			abgeschlossen: true
+		});
+		// without any measure named there is nothing to implement
+		const none = Object.fromEntries(
+			Object.entries(ready).filter(([key]) => !key.endsWith('_massnahmen'))
+		);
+		const low = Object.fromEntries(
+			RISKS.flatMap(({ id }) => [
+				[`${id}_w`, '1'],
+				[`${id}_s`, '1']
+			])
+		);
+		expect(options({ ...none, ...low }, 'bewertet').abgeschlossen).toBe(true);
 	});
 
 	it('expects the authority’s opinion within eight weeks and keeps the review date', () => {

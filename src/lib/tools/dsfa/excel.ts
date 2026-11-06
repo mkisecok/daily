@@ -13,6 +13,7 @@ import {
 	type RiskLevel
 } from './definition.js';
 import { engine } from './engine.js';
+import { signOffChecks, type CheckStatus } from './signoff.js';
 import { compareWithTom, type CoverageStatus } from './tom.js';
 
 /** the DSK bands as Excel fills: strong for the matrix, soft for table cells */
@@ -105,6 +106,12 @@ function matrixRows(caption: string, ratings: { n: number; rating: Rating | null
 	return rows;
 }
 
+const CHECK: Record<CheckStatus, { label: () => string; level: RiskLevel | null }> = {
+	erfuellt: { label: m.dsfa_signoff_erfuellt, level: 'gering' },
+	offen: { label: m.dsfa_signoff_offen, level: 'hoch' },
+	entfaellt: { label: m.dsfa_signoff_entfaellt, level: null }
+};
+
 const STATUS: Record<CoverageStatus, () => string> = {
 	abgedeckt: m.dsfa_tom_status_abgedeckt,
 	luecke: m.dsfa_tom_status_luecke,
@@ -177,6 +184,26 @@ export function dsfaWorkbook(
 			highAfter > 0 ? m.dsfa_dash_consult_yes() : m.dsfa_dash_consult_no(),
 			highAfter > 0 ? 'hoch' : 'gering'
 		),
+		[],
+		[title(m.dsfa_signoff_title(), 11)],
+		...signOffChecks(record).map((check): Row => {
+			const { label, level } = CHECK[check.status];
+			const status: Cell = level
+				? { ...pill(level), value: label(), align: 'center' }
+				: { value: label(), align: 'center' };
+			return [
+				{ value: text(check.label), columnSpan: 2 },
+				null,
+				status,
+				{
+					value: [check.detail ? text(check.detail) : '', `${check.cite.ref} ${check.cite.law}`]
+						.filter(Boolean)
+						.join(' · '),
+					textColor: '#6E6960',
+					columnSpan: 8
+				}
+			];
+		}),
 		[],
 		// the two matrices side by side, a spacer column between them
 		...before.map((row, index): Row => [...row, null, ...after[index]]),

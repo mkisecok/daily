@@ -1,5 +1,6 @@
 import type { FieldSection, RecordToolDefinition, RecordView } from '../../records/types.js';
 import type { Localized } from '../types.js';
+import { LEGAL_BASES } from '../vvt/definition.js';
 import { threatsFor, type SdmGoal } from './threats.js';
 
 const L = (de: string, en: string) => ({ de, en });
@@ -221,13 +222,40 @@ export function assessRisks(record: RecordView): AssessedRisk[] {
 
 const highResidual = (record: RecordView) => assessRisks(record).some((r) => r.after === 'hoch');
 
+const ORDER: Record<RiskLevel, number> = { gering: 0, risiko: 1, hoch: 2 };
+
+const hasMeasures = (record: RecordView, risk: AssessedRisk) => {
+	const text = record.data[`${risk.id}_massnahmen`];
+	return typeof text === 'string' && text.trim() !== '';
+};
+
+/**
+ * risks rated lower after measures although no measure is named. Only
+ * measures lower a risk; acceptance or transfer are not open to the
+ * controller (SDM V3.1a, D3.1).
+ */
+export function unbackedReductions(record: RecordView): AssessedRisk[] {
+	return assessRisks(record).filter(
+		(r) => r.before && r.after && ORDER[r.after] < ORDER[r.before] && !hasMeasures(record, r)
+	);
+}
+
+/** measures are named, so they must be in place before processing starts */
+export const measuresPending = (record: RecordView) =>
+	record.data.umgesetzt !== true && assessRisks(record).some((r) => hasMeasures(record, r));
+
+const PENDING = L(
+	'Vor der Freigabe die Abhilfemaßnahmen umsetzen und auf Wirksamkeit testen (DSK Kurzpapier Nr. 5, Schritte 11 und 12).',
+	'Implement the measures and test that they work before sign-off (DSK Kurzpapier Nr. 5, steps 11 and 12).'
+);
+
 /** a data protection impact assessment from draft to sign-off (Art. 35, 36) */
 export const definition: RecordToolDefinition = {
 	slug: 'dsfa',
 	version: 3,
 	intro: L(
-		'Eine Datenschutz-Folgenabschätzung je Verarbeitungsvorgang mit voraussichtlich hohem Risiko: Beschreibung, Notwendigkeit, Risiken je Gewährleistungsziel des Standard-Datenschutzmodells vor und nach Abhilfemaßnahmen, Entscheidung und gegebenenfalls Konsultation der Aufsichtsbehörde. Zu jedem Ziel lassen sich die Gefährdungen nach BSI-Standard 200-3 und datenschutzspezifische Ereignisse auswählen; die Bewertung folgt der Risikomatrix der DSK, die Druckfassung dient als Bericht.',
-		'One DPIA per processing operation likely to result in a high risk: description, necessity, risks per protection goal of the Standard Data Protection Model before and after measures, decision and, where needed, consultation of the authority. For each goal the threats of BSI-Standard 200-3 and data protection events can be chosen; the rating follows the DSK risk matrix and the print version serves as the report.'
+		'Eine Datenschutz-Folgenabschätzung je Verarbeitungsvorgang mit voraussichtlich hohem Risiko nach dem Ablauf des DSK-Kurzpapiers Nr. 5: Umfang, Beschreibung, Akteure, Notwendigkeit, Rechtsgrundlagen, Risiken je Gewährleistungsziel des Standard-Datenschutzmodells vor und nach Abhilfemaßnahmen, Entscheidung und gegebenenfalls Konsultation der Aufsichtsbehörde. Zu jedem Ziel lassen sich die Gefährdungen nach BSI-Standard 200-3 und datenschutzspezifische Ereignisse auswählen; die Bewertung folgt der Risikomatrix der DSK, die Druckfassung dient als Bericht.',
+		'One DPIA per processing operation likely to result in a high risk, following the steps of DSK Kurzpapier Nr. 5: scope, description, actors, necessity, legal bases, risks per protection goal of the Standard Data Protection Model before and after measures, decision and, where needed, consultation of the authority. For each goal the threats of BSI-Standard 200-3 and data protection events can be chosen; the rating follows the DSK risk matrix and the print version serves as the report.'
 	),
 	sources: [
 		{ law: 'DSGVO', ref: 'Art. 35' },
@@ -271,6 +299,16 @@ export const definition: RecordToolDefinition = {
 					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 7 lit. d' }
 				},
 				{
+					id: 'umfang',
+					type: 'textarea',
+					label: L('Beurteilungsumfang', 'Scope of the assessment'),
+					help: L(
+						'Welche Verarbeitungsvorgänge, Systeme und Prozesse die DSFA umfasst und welche angrenzenden Prozesse ausdrücklich nicht.',
+						'Which processing operations, systems and processes the DPIA covers, and which neighbouring processes it expressly leaves out.'
+					),
+					cite: { law: 'DSK', ref: 'Kurzpapier Nr. 5, Schritt 3' }
+				},
+				{
 					id: 'verarbeitung',
 					type: 'textarea',
 					label: L(
@@ -288,6 +326,26 @@ export const definition: RecordToolDefinition = {
 					type: 'textarea',
 					label: L('Zwecke und berechtigte Interessen', 'Purposes and legitimate interests'),
 					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 7 lit. a' }
+				},
+				{
+					id: 'team',
+					type: 'textarea',
+					label: L('DSFA-Team', 'DPIA team'),
+					help: L(
+						'Wer die DSFA erstellt: Fachbereich, Datenschutz, IT-Sicherheit, gegebenenfalls Auftragsverarbeiter oder Hersteller.',
+						'Who carries out the DPIA: business unit, data protection, IT security and, where useful, processors or vendors.'
+					),
+					cite: { law: 'DSK', ref: 'Kurzpapier Nr. 5, Schritt 1' }
+				},
+				{
+					id: 'akteure',
+					type: 'textarea',
+					label: L('Akteure und betroffene Personen', 'Actors and data subjects'),
+					help: L(
+						'Beteiligte Stellen, Auftragsverarbeiter und Empfänger, die Gruppen betroffener Personen und wie sie eingebunden werden, etwa über den Betriebsrat.',
+						'Bodies involved, processors and recipients, the groups of data subjects and how they are involved, e.g. through the works council.'
+					),
+					cite: { law: 'DSK', ref: 'Kurzpapier Nr. 5, Schritt 4' }
 				},
 				{
 					id: 'schwellwert',
@@ -316,6 +374,27 @@ export const definition: RecordToolDefinition = {
 					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 7 lit. b' }
 				},
 				{
+					id: 'rechtsgrundlagen',
+					type: 'multiselect',
+					label: L('Rechtsgrundlagen', 'Legal bases'),
+					help: L(
+						'Die Rechtsgrundlagen der Verarbeitungsvorgänge, wie im Verzeichnis von Verarbeitungstätigkeiten.',
+						'The legal bases of the processing operations, as in the record of processing activities.'
+					),
+					options: LEGAL_BASES,
+					cite: { law: 'DSK', ref: 'Kurzpapier Nr. 5, Schritt 6' }
+				},
+				{
+					id: 'rechtsgrundlagen_details',
+					type: 'textarea',
+					label: L('Rechtsgrundlagen im Einzelnen', 'Legal bases in detail'),
+					help: L(
+						'Normen außerhalb der DSGVO, die Interessenabwägung zu lit. f oder die Ausnahme nach Art. 9 Abs. 2.',
+						'Provisions outside the GDPR, the balancing test for (f) or the exception under Art. 9(2).'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 6 Abs. 1' }
+				},
+				{
 					id: 'dsb',
 					type: 'textarea',
 					label: L('Rat des Datenschutzbeauftragten', 'Advice of the data protection officer'),
@@ -337,6 +416,26 @@ export const definition: RecordToolDefinition = {
 			id: 'ergebnis',
 			title: L('Ergebnis', 'Outcome'),
 			fields: [
+				{
+					id: 'restrisiko',
+					type: 'textarea',
+					label: L('Umgang mit den Restrisiken', 'Handling of the residual risks'),
+					help: L(
+						'Welche Risiken nach den Maßnahmen bleiben und warum die Verarbeitung mit ihnen vertretbar ist. Senken lassen sich Risiken nur durch Maßnahmen; Übernahme oder Übertragung wie in der Informationssicherheit sind nicht möglich.',
+						'Which risks remain after the measures and why processing is justifiable with them. Only measures lower a risk; acceptance or transfer as in information security are not available.'
+					),
+					cite: { law: 'DSK', ref: 'Kurzpapier Nr. 5, Schritt 10' }
+				},
+				{
+					id: 'umgesetzt',
+					type: 'boolean',
+					label: L('Abhilfemaßnahmen umgesetzt und getestet', 'Measures implemented and tested'),
+					help: L(
+						'Vor Beginn der Verarbeitung müssen die Maßnahmen umgesetzt und auf ihre Wirksamkeit getestet sein.',
+						'The measures must be in place and tested for effectiveness before processing starts.'
+					),
+					cite: { law: 'DSK', ref: 'Kurzpapier Nr. 5, Schritte 11 und 12' }
+				},
 				{
 					id: 'entscheidung',
 					type: 'textarea',
@@ -380,7 +479,7 @@ export const definition: RecordToolDefinition = {
 				from: 'entwurf',
 				to: 'bewertet',
 				label: L('Bewertung abschließen', 'Complete the assessment'),
-				requires: ['verarbeitung', 'zwecke', 'notwendigkeit'],
+				requires: ['verarbeitung', 'zwecke', 'notwendigkeit', 'rechtsgrundlagen'],
 				check: (record) => {
 					const risks = assessRisks(record);
 					if (risks.some((r) => r.before === null)) {
@@ -389,12 +488,19 @@ export const definition: RecordToolDefinition = {
 							'First rate every risk by likelihood and severity.'
 						);
 					}
-					return risks.some((r) => !r.justified)
-						? L(
-								'Jede Einstufung begründen (DSK Kurzpapier Nr. 18).',
-								'Give reasons for every rating (DSK Kurzpapier Nr. 18).'
-							)
-						: null;
+					if (risks.some((r) => !r.justified)) {
+						return L(
+							'Jede Einstufung begründen (DSK Kurzpapier Nr. 18).',
+							'Give reasons for every rating (DSK Kurzpapier Nr. 18).'
+						);
+					}
+					const unbacked = unbackedReductions(record);
+					if (unbacked.length === 0) return null;
+					const list = (lang: 'de' | 'en') => unbacked.map((r) => r.title[lang]).join(', ');
+					return L(
+						`Ein Risiko sinkt nur durch benannte Abhilfemaßnahmen: ${list('de')}.`,
+						`A risk only goes down through measures that are named: ${list('en')}.`
+					);
 				}
 			},
 			{ from: 'bewertet', to: 'entwurf', label: L('Zurück zum Entwurf', 'Back to draft') },
@@ -415,20 +521,23 @@ export const definition: RecordToolDefinition = {
 				from: 'bewertet',
 				to: 'abgeschlossen',
 				label: L('Freigeben', 'Sign off'),
-				requires: ['entscheidung'],
-				check: (record) =>
-					highResidual(record)
-						? L(
-								'Bei hohem Restrisiko vor Beginn der Verarbeitung die Aufsichtsbehörde konsultieren (Art. 36 Abs. 1).',
-								'With a high residual risk, consult the authority before processing starts (Art. 36(1)).'
-							)
-						: null
+				requires: ['restrisiko', 'entscheidung'],
+				check: (record) => {
+					if (highResidual(record)) {
+						return L(
+							'Bei hohem Restrisiko vor Beginn der Verarbeitung die Aufsichtsbehörde konsultieren (Art. 36 Abs. 1).',
+							'With a high residual risk, consult the authority before processing starts (Art. 36(1)).'
+						);
+					}
+					return measuresPending(record) ? PENDING : null;
+				}
 			},
 			{
 				from: 'konsultation',
 				to: 'abgeschlossen',
 				label: L('Nach Stellungnahme freigeben', 'Sign off after the opinion'),
-				requires: ['stellungnahme', 'entscheidung']
+				requires: ['stellungnahme', 'restrisiko', 'entscheidung'],
+				check: (record) => (measuresPending(record) ? PENDING : null)
 			},
 			{ from: 'abgeschlossen', to: 'bewertet', label: L('Überarbeiten', 'Revise') }
 		]

@@ -2,7 +2,15 @@ import { addHours, dayAt } from '../../records/deadlines.js';
 import type { DeadlineSpec, RecordData, RecordEngine, RecordView } from '../../records/types.js';
 import { isEmpty } from '../../records/validate.js';
 import type { LegalBasis, Localized, QuestionnaireResult, Reason } from '../types.js';
-import { assessRisks, definition, RISKS, riskLevel, type RiskLevel } from './definition.js';
+import {
+	assessRisks,
+	definition,
+	measuresPending,
+	RISKS,
+	riskLevel,
+	unbackedReductions,
+	type RiskLevel
+} from './definition.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
 
@@ -79,7 +87,35 @@ function assess(record: RecordView): QuestionnaireResult {
 	const unaddressed = risks.filter(
 		(r) => r.before && r.before !== 'gering' && isEmpty(record.data[`${r.id}_massnahmen`])
 	);
-	if (unaddressed.length > 0) missing.push(L('Abhilfemaßnahmen (lit. d)', 'measures ((d))'));
+	const unbacked = unbackedReductions(record);
+	if (unaddressed.length > 0 || unbacked.length > 0) {
+		missing.push(L('Abhilfemaßnahmen (lit. d)', 'measures ((d))'));
+	}
+	if (unbacked.length > 0) {
+		const list = (lang: 'de' | 'en') => unbacked.map((r) => r.title[lang]).join(', ');
+		notes.push(
+			L(
+				`${list('de')}: Das Risiko ist nach Maßnahmen niedriger eingestuft, aber keine Abhilfemaßnahme ist benannt. Risiken sinken nur durch Maßnahmen; Übernahme oder Übertragung sind nicht möglich (SDM V3.1a, D3.1).`,
+				`${list('en')}: the risk is rated lower after measures, but no measure is named. Only measures lower a risk; acceptance or transfer are not available (SDM V3.1a, D3.1).`
+			)
+		);
+	}
+	if (isEmpty(record.data.rechtsgrundlagen)) {
+		notes.push(
+			L(
+				'Die Rechtsgrundlagen der Verarbeitung festhalten (DSK Kurzpapier Nr. 5, Schritt 6).',
+				'Record the legal bases of the processing (DSK Kurzpapier Nr. 5, step 6).'
+			)
+		);
+	}
+	if (record.state === 'bewertet' && measuresPending(record)) {
+		notes.push(
+			L(
+				'Vor der Freigabe die Abhilfemaßnahmen umsetzen, auf Wirksamkeit testen und das im Ergebnis bestätigen (DSK Kurzpapier Nr. 5, Schritte 11 und 12).',
+				'Before sign-off, implement the measures, test that they work and confirm this in the outcome (DSK Kurzpapier Nr. 5, steps 11 and 12).'
+			)
+		);
+	}
 
 	const unsourced = risks.filter((r) => r.before && r.threats.length === 0);
 	if (unsourced.length > 0) {
