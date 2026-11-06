@@ -201,9 +201,12 @@ describe('DSFA: links and screening handoff', () => {
 		.slice(-2)
 		.map((question) => question.id);
 
-	it('links the DSFA to its processing activity', () => {
+	it('links the DSFA to its processing activity and the TOM catalogue', () => {
 		expect(definition.version).toBe(3);
-		expect(referenceFields(definition).map((f) => [f.id, f.tool])).toEqual([['vvt', 'vvt']]);
+		expect(referenceFields(definition).map((f) => [f.id, f.tool])).toEqual([
+			['vvt', 'vvt'],
+			['tom', 'tom-katalog']
+		]);
 	});
 
 	it('takes the screening reasons over as the reason for the DPIA', () => {
