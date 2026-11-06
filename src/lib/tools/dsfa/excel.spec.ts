@@ -6,8 +6,10 @@ const record = {
 	state: 'entwurf',
 	data: {
 		bezeichnung: 'Bewerbervorauswahl',
+		vertraulichkeit_gefaehrdungen: ['G 0.14', 'G 0.23'],
 		vertraulichkeit_w: '3',
 		vertraulichkeit_s: '4',
+		vertraulichkeit_begruendung: 'Bewerbungsunterlagen, viele Zugriffe',
 		vertraulichkeit_massnahmen: 'Verschlüsselung',
 		vertraulichkeit_rw: '2',
 		vertraulichkeit_rs: '4',
@@ -37,27 +39,43 @@ describe('DSFA: Excel workbook', () => {
 		const rows = values(overview.data);
 		const start = rows.findIndex((row) => row[0] === 'Vor Abhilfemaßnahmen');
 		expect(rows[start][6]).toBe('Nach Abhilfemaßnahmen (Restrisiko)');
-		// severity "Groß" row: risks 1 and 4 at likelihood 3 and 2 before, 1 at 2 after
+		// severity "Groß" row: risks 1 and 5 at likelihood 3 and 2 before, 1 at 2 after
 		const groß = overview.data[start + 1];
 		expect(cell(groß, 0)?.value).toBe('Groß');
-		expect(cell(groß, 2)?.value).toBe('4');
+		expect(cell(groß, 2)?.value).toBe('5');
 		expect(cell(groß, 3)?.value).toBe('1');
 		expect(cell(groß, 2)?.backgroundColor).toBe('#B3191B');
 		expect(cell(groß, 8)?.value).toBe('1');
-		// "Geringfügig" row after measures: risk 4 at likelihood 1, a low cell
+		// "Geringfügig" row after measures: risk 5 at likelihood 1, a low cell
 		const low = overview.data[start + 4];
-		expect(cell(low, 7)?.value).toBe('4');
+		expect(cell(low, 7)?.value).toBe('5');
 		expect(cell(low, 7)?.backgroundColor).toBe('#5A9A1A');
 	});
 
-	it('lists every risk with ratings, levels and measures', () => {
-		expect(table.data).toHaveLength(6);
+	it('lists every risk with threats, ratings, reasons, levels and measures', () => {
+		expect(table.data).toHaveLength(8);
+		expect(values(table.data)[0]).toEqual([
+			'#',
+			'Risiko',
+			'Gefährdungen',
+			'Risiko im Einzelfall',
+			'Eintrittswahrscheinlichkeit',
+			'Schwere',
+			'Begründung der Einstufung',
+			'Vorher',
+			'Abhilfemaßnahmen',
+			'Wahrscheinlichkeit nach Maßnahmen',
+			'Schwere nach Maßnahmen',
+			'Nachher'
+		]);
 		expect(values(table.data)[1]).toEqual([
 			1,
 			'Unbefugte Offenlegung',
+			'G 0.14, G 0.23',
 			'—',
 			3,
 			4,
+			'Bewerbungsunterlagen, viele Zugriffe',
 			'Hohes Risiko',
 			'Verschlüsselung',
 			2,
@@ -67,6 +85,8 @@ describe('DSFA: Excel workbook', () => {
 		expect(values(table.data)[3]).toEqual([
 			3,
 			'Verlust oder Nichtverfügbarkeit',
+			'—',
+			'—',
 			'—',
 			'—',
 			'—',

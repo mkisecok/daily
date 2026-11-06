@@ -74,11 +74,23 @@ function assess(record: RecordView): QuestionnaireResult {
 	const unrated = risks.filter((r) => r.before === null);
 	if (unrated.length > 0)
 		missing.push(L('Bewertung aller Risiken (lit. c)', 'rating of all risks ((c))'));
+	else if (risks.some((r) => !r.justified))
+		missing.push(L('Begründung der Einstufungen (lit. c)', 'reasons for the ratings ((c))'));
 	const unaddressed = risks.filter(
 		(r) => r.before && r.before !== 'gering' && isEmpty(record.data[`${r.id}_massnahmen`])
 	);
 	if (unaddressed.length > 0) missing.push(L('Abhilfemaßnahmen (lit. d)', 'measures ((d))'));
 
+	const unsourced = risks.filter((r) => r.before && r.threats.length === 0);
+	if (unsourced.length > 0) {
+		const list = (lang: 'de' | 'en') => unsourced.map((r) => r.title[lang]).join(', ');
+		notes.push(
+			L(
+				`Für ${list('de')} sind keine Gefährdungen ausgewählt; die Risikoquellen sollten benannt sein (DSK Kurzpapier Nr. 5, Schritt 7).`,
+				`No threats are chosen for ${list('en')}; the sources of risk should be named (DSK Kurzpapier Nr. 5, step 7).`
+			)
+		);
+	}
 	if (isEmpty(record.data.dsb)) {
 		notes.push(
 			L(

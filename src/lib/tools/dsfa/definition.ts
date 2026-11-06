@@ -1,5 +1,6 @@
 import type { FieldSection, RecordToolDefinition, RecordView } from '../../records/types.js';
 import type { Localized } from '../types.js';
+import { threatsFor, type SdmGoal } from './threats.js';
 
 const L = (de: string, en: string) => ({ de, en });
 
@@ -28,16 +29,38 @@ export function riskLevel(likelihood: number, severity: number): RiskLevel {
 	return MATRIX[severity][likelihood - 1];
 }
 
-function risk(id: string, title: Localized, help: Localized): FieldSection {
+/** a risk section: one SDM protection goal and what can go wrong with it */
+export type RiskSection = FieldSection & { goal: SdmGoal };
+
+function risk(id: string, goal: SdmGoal, title: Localized, help: Localized): RiskSection {
 	return {
 		id,
+		goal,
 		title,
 		intro: help,
 		fields: [
 			{
+				id: `${id}_gefaehrdungen`,
+				type: 'multiselect',
+				label: L('Relevante Gefährdungen', 'Relevant threats'),
+				help: L(
+					'Elementare Gefährdungen nach BSI-Standard 200-3 (G 0.x) und datenschutzspezifische Ereignisse (DS), die dieses Gewährleistungsziel verletzen können.',
+					'Elementary threats under BSI-Standard 200-3 (G 0.x) and data protection events (DS) that can violate this protection goal.'
+				),
+				options: threatsFor(goal).map((threat) => ({
+					value: threat.id,
+					label: L(`${threat.id} ${threat.title.de}`, `${threat.id} ${threat.title.en}`)
+				})),
+				cite: { law: 'DSK', ref: 'Kurzpapier Nr. 18' }
+			},
+			{
 				id: `${id}_beschreibung`,
 				type: 'textarea',
-				label: L('Risiko im Einzelfall', 'Risk in this case')
+				label: L('Risiko im Einzelfall', 'Risk in this case'),
+				help: L(
+					'Welcher Schaden kann den Betroffenen entstehen, durch welches Ereignis und aus welcher Risikoquelle?',
+					'What harm can the data subjects suffer, through which event and from which source of risk?'
+				)
 			},
 			{
 				id: `${id}_w`,
@@ -46,6 +69,16 @@ function risk(id: string, title: Localized, help: Localized): FieldSection {
 				options: SCALE
 			},
 			{ id: `${id}_s`, type: 'select', label: L('Schwere', 'Severity'), options: SCALE },
+			{
+				id: `${id}_begruendung`,
+				type: 'textarea',
+				label: L('Begründung der Einstufung', 'Reasons for the rating'),
+				help: L(
+					'Die Einordnung in die Stufen ist zu begründen, nach Art, Umfang, Umständen und Zwecken der Verarbeitung.',
+					'The rating must be justified by the nature, scope, context and purposes of the processing.'
+				),
+				cite: { law: 'DSK', ref: 'Kurzpapier Nr. 18' }
+			},
 			{
 				id: `${id}_massnahmen`,
 				type: 'textarea',
@@ -68,46 +101,74 @@ function risk(id: string, title: Localized, help: Localized): FieldSection {
 	};
 }
 
-/** the risk sources assessed, along the protection goals of the SDM */
-export const RISKS = [
+/**
+ * one risk per protection goal of the SDM, in the order of the TOM catalogue.
+ * `zweck` and `rechte` keep their ids from version 2, where they stood for
+ * function creep and impaired rights; they now hold unlinkability and
+ * intervenability, so earlier entries keep their ratings.
+ */
+export const RISKS: RiskSection[] = [
 	risk(
+		'vertraulichkeit',
 		'vertraulichkeit',
 		L('Unbefugte Offenlegung', 'Unauthorised disclosure'),
 		L(
-			'Kenntnisnahme durch Unbefugte, etwa durch Angriffe, Fehlversand oder zu weite Berechtigungen.',
-			'Access by unauthorised persons, e.g. through attacks, misdirected mail or overly broad permissions.'
+			'Vertraulichkeit: Kenntnisnahme durch Unbefugte, etwa durch Angriffe, Fehlversand oder zu weite Berechtigungen.',
+			'Confidentiality: access by unauthorised persons, e.g. through attacks, misdirected mail or overly broad permissions.'
 		)
 	),
 	risk(
 		'integritaet',
+		'integritaet',
 		L('Unbefugte Veränderung', 'Unauthorised alteration'),
 		L(
-			'Falsche oder manipulierte Daten mit Folgen für Entscheidungen über Personen.',
-			'Wrong or manipulated data affecting decisions about people.'
+			'Integrität: falsche oder manipulierte Daten mit Folgen für Entscheidungen über Personen.',
+			'Integrity: wrong or manipulated data affecting decisions about people.'
 		)
 	),
 	risk(
 		'verfuegbarkeit',
+		'verfuegbarkeit',
 		L('Verlust oder Nichtverfügbarkeit', 'Loss or unavailability'),
 		L(
-			'Daten fehlen, wenn sie gebraucht werden, oder gehen verloren.',
-			'Data is missing when needed or is lost.'
+			'Verfügbarkeit: Daten fehlen, wenn sie gebraucht werden, oder gehen verloren.',
+			'Availability: data is missing when needed or is lost.'
+		)
+	),
+	risk(
+		'datenminimierung',
+		'datenminimierung',
+		L('Übermäßige Verarbeitung', 'Excessive processing'),
+		L(
+			'Datenminimierung: mehr Daten, mehr Personen oder längere Speicherung als für den Zweck nötig.',
+			'Data minimisation: more data, more people or longer storage than the purpose needs.'
 		)
 	),
 	risk(
 		'zweck',
+		'nichtverkettung',
 		L('Zweckentfremdung und Verkettung', 'Function creep and linkage'),
 		L(
-			'Nutzung für andere Zwecke, Zusammenführung von Datenbeständen, übermäßige Erhebung.',
-			'Use for other purposes, combining datasets, excessive collection.'
+			'Nichtverkettung: Nutzung für andere Zwecke, Zusammenführung von Datenbeständen, Profilbildung.',
+			'Unlinkability: use for other purposes, combining datasets, profiling.'
+		)
+	),
+	risk(
+		'transparenz',
+		'transparenz',
+		L('Intransparente Verarbeitung', 'Opaque processing'),
+		L(
+			'Transparenz: Betroffene, Verantwortliche und Aufsicht können die Verarbeitung nicht nachvollziehen.',
+			'Transparency: data subjects, the controller and the authority cannot follow the processing.'
 		)
 	),
 	risk(
 		'rechte',
+		'intervenierbarkeit',
 		L('Beeinträchtigung von Betroffenenrechten', 'Impairment of data subject rights'),
 		L(
-			'Intransparenz, fehlende Eingriffsmöglichkeiten, Diskriminierung, Profilbildung.',
-			'Opacity, lack of intervention, discrimination, profiling.'
+			'Intervenierbarkeit: Betroffene können ihre Rechte nicht ausüben oder nicht eingreifen, etwa bei automatisierten Entscheidungen.',
+			'Intervenability: data subjects cannot exercise their rights or intervene, e.g. in automated decisions.'
 		)
 	)
 ];
@@ -117,7 +178,12 @@ export type Rating = { likelihood: number; severity: number };
 
 export type AssessedRisk = {
 	id: string;
+	goal: SdmGoal;
 	title: Localized;
+	/** ids of the threats chosen as relevant, e.g. `G 0.23` */
+	threats: string[];
+	/** the rating is explained, as DSK Kurzpapier Nr. 18 asks */
+	justified: boolean;
 	before: RiskLevel | null;
 	after: RiskLevel | null;
 	/** the ratings behind `before` and `after`, for the matrix */
@@ -132,14 +198,19 @@ const num = (record: RecordView, id: string) => {
 
 /** each risk before and after measures; residual falls back to the initial rating */
 export function assessRisks(record: RecordView): AssessedRisk[] {
-	return RISKS.map(({ id, title }) => {
+	return RISKS.map(({ id, goal, title }) => {
 		const w = num(record, `${id}_w`);
 		const s = num(record, `${id}_s`);
 		const rw = num(record, `${id}_rw`) ?? w;
 		const rs = num(record, `${id}_rs`) ?? s;
+		const threats = record.data[`${id}_gefaehrdungen`];
+		const reasons = record.data[`${id}_begruendung`];
 		return {
 			id,
+			goal,
 			title,
+			threats: Array.isArray(threats) ? threats : [],
+			justified: typeof reasons === 'string' && reasons.trim() !== '',
 			before: w && s ? riskLevel(w, s) : null,
 			after: rw && rs ? riskLevel(rw, rs) : null,
 			initial: w && s ? { likelihood: w, severity: s } : null,
@@ -153,16 +224,17 @@ const highResidual = (record: RecordView) => assessRisks(record).some((r) => r.a
 /** a data protection impact assessment from draft to sign-off (Art. 35, 36) */
 export const definition: RecordToolDefinition = {
 	slug: 'dsfa',
-	version: 2,
+	version: 3,
 	intro: L(
-		'Eine Datenschutz-Folgenabschätzung je Verarbeitungsvorgang mit voraussichtlich hohem Risiko: Beschreibung, Notwendigkeit, Risiken vor und nach Abhilfemaßnahmen, Entscheidung und gegebenenfalls Konsultation der Aufsichtsbehörde. Die Bewertung lehnt sich an die Risikomatrix der DSK an; die Druckfassung dient als Bericht.',
-		'One DPIA per processing operation likely to result in a high risk: description, necessity, risks before and after measures, decision and, where needed, consultation of the authority. The rating follows the DSK risk matrix; the print version serves as the report.'
+		'Eine Datenschutz-Folgenabschätzung je Verarbeitungsvorgang mit voraussichtlich hohem Risiko: Beschreibung, Notwendigkeit, Risiken je Gewährleistungsziel des Standard-Datenschutzmodells vor und nach Abhilfemaßnahmen, Entscheidung und gegebenenfalls Konsultation der Aufsichtsbehörde. Zu jedem Ziel lassen sich die Gefährdungen nach BSI-Standard 200-3 und datenschutzspezifische Ereignisse auswählen; die Bewertung folgt der Risikomatrix der DSK, die Druckfassung dient als Bericht.',
+		'One DPIA per processing operation likely to result in a high risk: description, necessity, risks per protection goal of the Standard Data Protection Model before and after measures, decision and, where needed, consultation of the authority. For each goal the threats of BSI-Standard 200-3 and data protection events can be chosen; the rating follows the DSK risk matrix and the print version serves as the report.'
 	),
 	sources: [
 		{ law: 'DSGVO', ref: 'Art. 35' },
 		{ law: 'DSGVO', ref: 'Art. 36' },
 		{ law: 'DSK', ref: 'Kurzpapier Nr. 5' },
-		{ law: 'DSK', ref: 'Kurzpapier Nr. 18' }
+		{ law: 'DSK', ref: 'Kurzpapier Nr. 18' },
+		{ law: 'DSK', ref: 'Standard-Datenschutzmodell V3.1a, D3' }
 	],
 	titleField: 'bezeichnung',
 	sections: [
@@ -298,13 +370,21 @@ export const definition: RecordToolDefinition = {
 				to: 'bewertet',
 				label: L('Bewertung abschließen', 'Complete the assessment'),
 				requires: ['verarbeitung', 'zwecke', 'notwendigkeit'],
-				check: (record) =>
-					assessRisks(record).some((r) => r.before === null)
+				check: (record) => {
+					const risks = assessRisks(record);
+					if (risks.some((r) => r.before === null)) {
+						return L(
+							'Erst alle Risiken nach Wahrscheinlichkeit und Schwere einstufen.',
+							'First rate every risk by likelihood and severity.'
+						);
+					}
+					return risks.some((r) => !r.justified)
 						? L(
-								'Erst alle Risiken nach Wahrscheinlichkeit und Schwere einstufen.',
-								'First rate every risk by likelihood and severity.'
+								'Jede Einstufung begründen (DSK Kurzpapier Nr. 18).',
+								'Give reasons for every rating (DSK Kurzpapier Nr. 18).'
 							)
-						: null
+						: null;
+				}
 			},
 			{ from: 'bewertet', to: 'entwurf', label: L('Zurück zum Entwurf', 'Back to draft') },
 			{

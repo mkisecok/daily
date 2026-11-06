@@ -26,8 +26,9 @@ const LEVEL: Record<RiskLevel, () => string> = {
 	hoch: m.risk_high
 };
 const RULE = '#D9D2C5';
-/** the fields every risk section shares: description, ratings, measures */
-const FIELDS = RISKS[0].fields;
+/** the label of a field every risk section shares, by its suffix, e.g. `w` */
+const label = (suffix: string) =>
+	text(RISKS[0].fields.find((field) => field.id === `${RISKS[0].id}_${suffix}`)!.label);
 
 const head = (value: string): Cell => ({
 	value,
@@ -182,21 +183,25 @@ export function dsfaWorkbook(record: RecordView, locale: string): Sheet<Blob>[] 
 		[
 			head('#'),
 			head(m.dsfa_dash_col_risk()),
-			head(text(FIELDS[0].label)),
-			head(text(FIELDS[1].label)),
-			head(text(FIELDS[2].label)),
+			head(m.dsfa_dash_col_threats()),
+			head(label('beschreibung')),
+			head(label('w')),
+			head(label('s')),
+			head(label('begruendung')),
 			head(m.dsfa_dash_col_before()),
 			head(m.dsfa_dash_col_measures()),
-			head(text(FIELDS[4].label)),
-			head(text(FIELDS[5].label)),
+			head(label('rw')),
+			head(label('rs')),
 			head(m.dsfa_dash_col_after())
 		],
 		...risks.map((risk): Row => [
 			top(risk.n),
 			{ ...top(text(risk.title)), fontWeight: 'bold' },
+			top(risk.threats.join(', ') || '—'),
 			top(value(`${risk.id}_beschreibung`)),
 			top(risk.initial ? risk.initial.likelihood : '—'),
 			top(risk.initial ? risk.initial.severity : '—'),
+			top(value(`${risk.id}_begruendung`)),
 			pill(risk.before),
 			top(value(`${risk.id}_massnahmen`)),
 			top(risk.residual ? risk.residual.likelihood : '—'),
@@ -241,9 +246,11 @@ export function dsfaWorkbook(record: RecordView, locale: string): Sheet<Blob>[] 
 			columns: [
 				{ width: 4 },
 				{ width: 28 },
+				{ width: 18 },
 				{ width: 34 },
 				{ width: 13 },
 				{ width: 10 },
+				{ width: 34 },
 				{ width: 15 },
 				{ width: 40 },
 				{ width: 13 },

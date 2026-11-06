@@ -1,8 +1,8 @@
 <!--
 	@component
 	The risk picture of a DPIA: key figures, the DSK matrix before and after
-	measures side by side, and every risk in a table with its ratings and
-	measures. Unrated risks are left out of the matrices. The whole picture
+	measures side by side, and every risk in a table with its threats,
+	ratings and measures. Unrated risks are left out of the matrices. The whole picture
 	downloads as an Excel workbook or prints on its own landscape page.
 -->
 <script lang="ts">
@@ -143,6 +143,7 @@
 					<tr>
 						<th>#</th>
 						<th>{m.dsfa_dash_col_risk()}</th>
+						<th>{m.dsfa_dash_col_threats()}</th>
 						<th>{m.dsfa_dash_col_rating()}</th>
 						<th>{m.dsfa_dash_col_before()}</th>
 						<th>{m.dsfa_dash_col_measures()}</th>
@@ -155,6 +156,12 @@
 						<tr>
 							<td><span class="number">{risk.n}</span></td>
 							<th scope="row">{text(risk.title)}</th>
+							<td class="threats">
+								{#each risk.threats as id, index (id)}<span>{id}</span>{index <
+									risk.threats.length - 1
+										? ', '
+										: ''}{:else}—{/each}
+							</td>
 							<td class="rating">{rating(risk.initial)}</td>
 							<td>{@render level(risk.before)}</td>
 							<td class="measures">{measures(risk.id)}</td>
@@ -372,6 +379,18 @@
 			font-size: 13px;
 			color: var(--ink2);
 			white-space: nowrap;
+		}
+
+		/* threat ids such as "G 0.23" wrap between ids, never inside one */
+		& .threats {
+			min-width: 7rem;
+			font-family: var(--mono);
+			font-size: 12px;
+			color: var(--ink2);
+
+			& span {
+				white-space: nowrap;
+			}
 		}
 
 		& .measures {

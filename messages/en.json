@@ -411,6 +411,7 @@
 	"dsfa_dash_none_rated": "no risk rated yet",
 	"dsfa_dash_table": "Risk table",
 	"dsfa_dash_col_risk": "Risk",
+	"dsfa_dash_col_threats": "Threats",
 	"dsfa_dash_col_rating": "L / S",
 	"dsfa_dash_col_before": "Before",
 	"dsfa_dash_col_measures": "Measures",
