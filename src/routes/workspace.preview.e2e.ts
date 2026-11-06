@@ -351,6 +351,7 @@ test('preview: a DPIA shows its risk picture before and after measures', async (
 	const at = '2026-11-05T09:00:00.000Z';
 	const data = {
 		bezeichnung: 'Bewerbervorauswahl',
+		vertraulichkeit_gefaehrdungen: ['G 0.14', 'G 0.23'],
 		vertraulichkeit_w: '3',
 		vertraulichkeit_s: '4',
 		vertraulichkeit_massnahmen: 'Verschlüsselung',
@@ -386,9 +387,12 @@ test('preview: a DPIA shows its risk picture before and after measures', async (
 		'aria-label',
 		/1 Unbefugte Offenlegung 3 \/ 4 Hohes Risiko; 2 Unbefugte Veränderung 2 \/ 2 Risiko/
 	);
+	await expect(
+		dashboard.getByRole('row', { name: /Unbefugte Offenlegung/ }).locator('.threats')
+	).toHaveText('G 0.14, G 0.23');
 	const row = dashboard.getByRole('row', { name: /Unbefugte Veränderung/ });
 	await expect(row.locator('.level')).toHaveText(['Risiko', 'Geringes Risiko']);
-	await expect(dashboard.locator('tbody tr')).toHaveCount(5);
+	await expect(dashboard.locator('tbody tr')).toHaveCount(7);
 
 	const [download] = await Promise.all([
 		page.waitForEvent('download'),

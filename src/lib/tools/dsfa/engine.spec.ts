@@ -11,11 +11,13 @@ function view(data: RecordData, state = 'entwurf') {
 	return { state, data: validateRecord(definition, data).data };
 }
 
-/** every risk rated 3/3 (a risk) before and 2/1 (low) after measures */
+/** every risk rated 3/3 (a risk) before and 2/1 (low) after measures, with reasons */
 const rated: RecordData = Object.fromEntries(
 	RISKS.flatMap(({ id }) => [
+		[`${id}_gefaehrdungen`, ['G 0.18']],
 		[`${id}_w`, '3'],
 		[`${id}_s`, '3'],
+		[`${id}_begruendung`, 'Begründung'],
 		[`${id}_massnahmen`, 'Maßnahmen'],
 		[`${id}_rw`, '2'],
 		[`${id}_rs`, '1']
@@ -92,6 +94,52 @@ describe('DSFA: assessment', () => {
 	});
 });
 
+describe('DSFA: protection goals and threats', () => {
+	it('assesses one risk per SDM protection goal, keeping the ids of version 2', () => {
+		expect(RISKS.map((r) => [r.id, r.goal])).toEqual([
+			['vertraulichkeit', 'vertraulichkeit'],
+			['integritaet', 'integritaet'],
+			['verfuegbarkeit', 'verfuegbarkeit'],
+			['datenminimierung', 'datenminimierung'],
+			['zweck', 'nichtverkettung'],
+			['transparenz', 'transparenz'],
+			['rechte', 'intervenierbarkeit']
+		]);
+	});
+
+	it('offers each goal only the threats that can violate it', () => {
+		const options = (id: string) => {
+			const field = RISKS.find((r) => r.id === id)!.fields[0];
+			return field.type === 'multiselect' ? field.options.map((o) => o.value) : [];
+		};
+		expect(options('vertraulichkeit')).toContain('G 0.15');
+		expect(options('vertraulichkeit')).not.toContain('G 0.1');
+		expect(options('transparenz')).toContain('DS 3');
+		expect(options('verfuegbarkeit')).toContain('G 0.1');
+	});
+
+	it('counts unexplained ratings as a gap under lit. c', () => {
+		const result = assess({ ...complete, datenminimierung_begruendung: '' });
+		expect(result.outcome).toBe('unvollstaendig');
+		expect(result.explanation.de).toBe(
+			'Nach Art. 35 Abs. 7 fehlen noch: Begründung der Einstufungen (lit. c).'
+		);
+	});
+
+	it('notes rated goals whose sources of risk are not named', () => {
+		const result = assess({ ...complete, transparenz_gefaehrdungen: [] });
+		expect(result.outcome).toBe('vertretbar');
+		expect(result.notes!.map((n) => n.de)).toContain(
+			'Für Intransparente Verarbeitung sind keine Gefährdungen ausgewählt; die Risikoquellen sollten benannt sein (DSK Kurzpapier Nr. 5, Schritt 7).'
+		);
+	});
+
+	it('keeps the ratings of an entry made before the two new goals', () => {
+		const older = { ...complete, zweck_w: '4', zweck_s: '4', zweck_rw: '4', zweck_rs: '4' };
+		expect(assess(older).reasons.map((r) => r.questionId)).toEqual(['zweck']);
+	});
+});
+
 describe('DSFA: workflow and deadlines', () => {
 	const options = (data: RecordData, state: string) =>
 		Object.fromEntries(
@@ -101,8 +149,11 @@ describe('DSFA: workflow and deadlines', () => {
 			])
 		);
 
-	it('completes the assessment only once every risk is rated', () => {
+	it('completes the assessment only once every risk is rated and justified', () => {
 		expect(options({ ...complete, zweck_w: '' }, 'entwurf')).toEqual({ bewertet: false });
+		expect(options({ ...complete, transparenz_begruendung: '' }, 'entwurf')).toEqual({
+			bewertet: false
+		});
 		expect(options(complete, 'entwurf')).toEqual({ bewertet: true });
 	});
 
@@ -151,7 +202,7 @@ describe('DSFA: links and screening handoff', () => {
 		.map((question) => question.id);
 
 	it('links the DSFA to its processing activity', () => {
-		expect(definition.version).toBe(2);
+		expect(definition.version).toBe(3);
 		expect(referenceFields(definition).map((f) => [f.id, f.tool])).toEqual([['vvt', 'vvt']]);
 	});
 
