@@ -36,16 +36,21 @@ describe('Vorfallmeldung: periods', () => {
 		expect(reportingDays(view({ art: ['infrastruktur'] }))).toBe(2);
 	});
 
-	it('counts days in absolute time from awareness', () => {
-		expect(due({})).toEqual({ meldung: '2026-11-07T10:00:00.000Z' });
-		expect(due({ todesfall: 'true' })).toEqual({ meldung: '2026-11-02T10:00:00.000Z' });
-		expect(due({ weitverbreitet: 'true' })).toEqual({ meldung: '2026-10-25T10:00:00.000Z' });
+	it('counts calendar days from the day after awareness to the end of the last day', () => {
+		// 23:59 in Berlin; daylight saving has ended, so 22:59 UTC
+		expect(due({})).toEqual({ meldung: '2026-11-07T22:59:00.000Z' });
+		expect(due({ todesfall: 'true' })).toEqual({ meldung: '2026-11-02T22:59:00.000Z' });
+		expect(due({ weitverbreitet: 'true' })).toEqual({ meldung: '2026-10-25T22:59:00.000Z' });
+		// awareness late in the evening still counts from the next day
+		expect(due({ kenntnis: '2026-10-23T21:30:00.000Z' })).toEqual({
+			meldung: '2026-11-07T22:59:00.000Z'
+		});
 	});
 
 	it('adds the internal target for deployers to inform the provider', () => {
 		expect(due({ rolle: 'betreiber' })).toEqual({
 			anbieter: '2026-10-24T10:00:00.000Z',
-			meldung: '2026-11-07T10:00:00.000Z'
+			meldung: '2026-11-07T22:59:00.000Z'
 		});
 		expect(Object.keys(due({ rolle: 'betreiber', anbieter_informiert_am: AWARE }))).toEqual([
 			'meldung'

@@ -69,8 +69,9 @@ export default defineConfig(({ mode }) => {
 								'img-src': ['self', 'data:', 'blob:'],
 								// Vite inlines small font subsets as data: URLs
 								'font-src': ['self', 'data:'],
-								// the Guardrail-Test calls endpoints the user enters
-								'connect-src': ['self', 'https:'],
+								// the Guardrail-Test calls endpoints the user enters, including local
+								// gateways such as Ollama on http://localhost:11434
+								'connect-src': ['self', 'https:', 'http://localhost:*', 'http://127.0.0.1:*'],
 								// the pdf.js worker of the Anonymisierer
 								'worker-src': ['self', 'blob:'],
 								'form-action': ['self'],
