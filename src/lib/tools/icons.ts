@@ -17,6 +17,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	anonymisierer: 'eye-off',
 	'avv-pruefung': 'file-certificate',
 	'tom-katalog': 'lock',
+	'sdm-wuerfel': 'box',
 	loeschkonzept: 'trash-x',
 	schulungsnachweis: 'school',
 	'ki-dsgvo-schnittstelle': 'arrows-exchange',

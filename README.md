@@ -36,6 +36,8 @@ entries stay in your browser).
   - Processor contract check (Art. 28 DSGVO) – checklist for Art. 28(3) (a)–(h), sub-processors,
     review dates
   - TOM catalogue (Art. 32 DSGVO) – measures per system along the SDM protection goals
+  - SDM cube (SDM V3.1a, D2.6) – a processing activity by operation or life-cycle phase,
+    level and protection goal; the result draws the cube with every gap and open cell
   - Retention schedule (Art. 5(1)(e), 17 DSGVO, HGB, AO) – statutory periods, erasure runs as
     deadlines
   - Training log (Art. 39(1)(b) DSGVO) – refresher deadlines
