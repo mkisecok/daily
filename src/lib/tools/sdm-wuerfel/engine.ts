@@ -2,7 +2,15 @@ import { dayAt } from '../../records/deadlines.js';
 import type { DeadlineSpec, RecordEngine, RecordView } from '../../records/types.js';
 import { isEmpty } from '../../records/validate.js';
 import type { LegalBasis, Localized, QuestionnaireResult, Reason } from '../types.js';
-import { activeVorgaenge, buildCube, EBENEN, levelStatus, VORGAENGE, ZIELE } from './cube.js';
+import {
+	activeVorgaenge,
+	countCells,
+	EBENEN,
+	levelStatus,
+	reader,
+	VORGAENGE,
+	ZIELE
+} from './cube.js';
 import { definition } from './definition.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
@@ -30,6 +38,7 @@ const join = (items: Localized[], lang: 'de' | 'en') => items.map((i) => i[lang]
 function assess(record: RecordView): QuestionnaireResult {
 	const citations: LegalBasis[] = [CITE, { law: 'DSGVO', ref: 'Art. 25' }];
 	const active = activeVorgaenge(record);
+	const read = reader(record);
 	const reasons: Reason[] = [];
 	const notes: Localized[] = [];
 	const open: Localized[] = [];
@@ -55,18 +64,36 @@ function assess(record: RecordView): QuestionnaireResult {
 			if (status === 'offen') open.push(where);
 			if (status === 'teilweise') partly.push(where);
 		}
-		const gaps = record.data[`${ziel.id}_luecken`];
+		const backed: Localized[] = [];
 		for (const v of VORGAENGE) {
-			if (!Array.isArray(gaps) || !gaps.includes(v.id) || !active.includes(v.id)) continue;
+			// the same check as the cube: performed, a relevant level, a gap recorded
+			if (!read.marked(v.id, ziel.id)) continue;
 			reasons.push({
-				questionId: `${ziel.id}_luecken`,
+				questionId: `${ziel.id}_luecken_${v.id}`,
 				text: L(
 					`${ziel.title.de}: Lücke beim ${v.title.de} (${v.code})`,
-					`${ziel.title.en}: gap when ${v.title.en.toLowerCase()} (${v.code})`
+					`${ziel.title.en}: gap for the operation ${v.title.en} (${v.code})`
 				),
 				cite: { law: 'DSK', ref: 'SDM V3.1a, D2.6 a' }
 			});
+			if (EBENEN.every((e) => read.cell(v.id, e.id, ziel.id) !== 'luecke')) {
+				backed.push(L(`${v.title.de} (${v.code})`, `${v.title.en} (${v.code})`));
+			}
 		}
+		if (backed.length > 0) {
+			notes.push(
+				L(
+					`${ziel.title.de}: Lücke bei ${join(backed, 'de')}, obwohl alle Ebenen als umgesetzt bewertet sind; die betroffene Ebene prüfen.`,
+					`${ziel.title.en}: gap for ${join(backed, 'en')} although every level is rated as in place; check which level it concerns.`
+				)
+			);
+		}
+	}
+
+	if (open.length > 0) {
+		notes.unshift(
+			L(`Noch nicht bewertet: ${join(open, 'de')}.`, `Not yet assessed: ${join(open, 'en')}.`)
+		);
 	}
 
 	if (active.length === 0) {
@@ -99,7 +126,7 @@ function assess(record: RecordView): QuestionnaireResult {
 		);
 	}
 
-	const counts = buildCube(record, 'vorgaenge').counts;
+	const counts = countCells(record);
 	const relevant = counts.umgesetzt + counts.teilweise + counts.luecke + counts.offen;
 	const figures = L(
 		`${relevant} von ${VORGAENGE.length * EBENEN.length * ZIELE.length} Zellen sind relevant, davon ${counts.luecke} mit Lücke und ${counts.offen} noch offen.`,
@@ -121,11 +148,6 @@ function assess(record: RecordView): QuestionnaireResult {
 		};
 	}
 	if (open.length > 0 || active.length === 0) {
-		if (open.length > 0) {
-			notes.unshift(
-				L(`Noch nicht bewertet: ${join(open, 'de')}.`, `Not yet assessed: ${join(open, 'en')}.`)
-			);
-		}
 		return {
 			verdict: 'conditional',
 			outcome: 'unvollstaendig',

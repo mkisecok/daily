@@ -227,7 +227,7 @@
 			{/each}
 			{#each cube.columns as column, i (column.id)}
 				<text x={X0 + (i + 0.5) * cw} y={Y0 + H + 16} text-anchor="middle"
-					>{axis === 'phasen' ? text(column.title) : column.code}</text
+					>{column.code ?? text(column.title)}</text
 				>
 			{/each}
 			<text class="axis" x={X0 + W / 2} y={Y0 + H + 38} text-anchor="middle">{m.sdm_cube_x()}</text>
@@ -255,7 +255,7 @@
 							<th>{m.sdm_cube_goal()}</th>
 							{#each cube.columns as column (column.id)}
 								<th title={text(column.title)}>
-									{axis === 'phasen' ? text(column.title) : column.code}
+									{column.code ?? text(column.title)}
 								</th>
 							{/each}
 						</tr>
@@ -266,7 +266,7 @@
 								<th scope="row">{text(ziel.title)}</th>
 								{#each cube.top[k] as status, i (i)}
 									<td class="dot s-{status}" title={STATUS[status]()}>
-										<span class="sr-only">{STATUS[status]()}</span>
+										<span class="visually-hidden">{STATUS[status]()}</span>
 									</td>
 								{/each}
 							</tr>
@@ -608,15 +608,6 @@
 			border: 1px solid var(--rule);
 			border-radius: 4px;
 		}
-	}
-
-	.sr-only {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		overflow: hidden;
-		clip-path: inset(50%);
-		white-space: nowrap;
 	}
 
 	.pill {

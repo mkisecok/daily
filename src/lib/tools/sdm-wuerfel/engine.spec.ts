@@ -34,6 +34,7 @@ describe('SDM cube: model', () => {
 			'Es',
 			'Bs'
 		]);
+		expect(columns('phasen').every((c) => c.code === undefined)).toBe(true);
 		expect(columns('phasen').map((c) => [c.id, c.vorgaenge])).toEqual([
 			['kollektion', ['sn']],
 			['bereithaltung', ['ab', 'aw']],
@@ -59,7 +60,9 @@ describe('SDM cube: model', () => {
 		expect(cell(record, 'ab', 'e1', 'transparenz')).toBe('entfaellt');
 		expect(cell(record, 'sn', 'e2', 'transparenz')).toBe('teilweise');
 		expect(cell(record, 'sn', 'e3', 'transparenz')).toBe('entfaellt');
-		expect(cell(record, 'bt', 'e1', 'transparenz')).toBe('luecke');
+		// a gap recorded for an operation marks only the levels not rated as in place
+		expect(cell(record, 'bt', 'e1', 'transparenz')).toBe('umgesetzt');
+		expect(cell(record, 'bt', 'e2', 'transparenz')).toBe('luecke');
 		expect(cell(record, 'bt', 'e3', 'transparenz')).toBe('entfaellt');
 		expect(cell(record, 'sn', 'e1', 'vertraulichkeit')).toBe('umgesetzt');
 	});
@@ -74,7 +77,7 @@ describe('SDM cube: model', () => {
 		// side: levels × goals as assessed
 		expect(cube.side[t]).toEqual(['umgesetzt', 'teilweise', 'umgesetzt']);
 		// front: operations × levels over all goals, or for the chosen goal
-		expect(cube.front[0]).toEqual(['umgesetzt', 'umgesetzt', 'luecke', 'umgesetzt']);
+		expect(cube.front[0]).toEqual(['umgesetzt', 'umgesetzt', 'umgesetzt', 'umgesetzt']);
 		expect(cube.front[1]).toEqual(['teilweise', 'teilweise', 'luecke', 'teilweise']);
 		expect(buildCube(record, 'phasen', 'vertraulichkeit').front[1]).toEqual([
 			'umgesetzt',
@@ -84,7 +87,8 @@ describe('SDM cube: model', () => {
 		]);
 		// 5 of 9 operations apply: 5 × 3 × 7 cells
 		expect(cube.counts.entfaellt).toBe(4 * 3 * 7);
-		expect(cube.counts.luecke).toBe(3);
+		// one recorded gap, on the one level not yet in place
+		expect(cube.counts.luecke).toBe(1);
 	});
 
 	it('marks a phase without any chosen operation as not relevant', () => {
@@ -117,6 +121,37 @@ describe('SDM cube: assessment', () => {
 			'Transparenz: Lücke auf Ebene 2 (Fachapplikation)',
 			'Intervenierbarkeit: Lücke beim Beseitigen (Bs)'
 		]);
+		expect(result.reasons[1].text.en).toBe('Intervenability: gap for the operation Erase (Bs)');
+		// every level of intervenability is rated in place, so the level is in question
+		expect(result.notes!.map((n) => n.de)).toContain(
+			'Intervenierbarkeit: Lücke bei Beseitigen (Bs), obwohl alle Ebenen als umgesetzt bewertet sind; die betroffene Ebene prüfen.'
+		);
+	});
+
+	it('gives every gap its own key, also several for one goal', () => {
+		const result = assess({ ...base, transparenz_luecken: ['sn', 'bt'], transparenz_e1: 'luecke' });
+		const ids = result.reasons.map((r) => r.questionId);
+		expect(ids).toEqual(['transparenz_e1', 'transparenz_luecken_sn', 'transparenz_luecken_bt']);
+		expect(new Set(ids).size).toBe(ids.length);
+	});
+
+	it('reports no gap for a goal whose levels are all not relevant, like the cube', () => {
+		const record = {
+			...base,
+			nichtverkettung_e1: 'entfaellt',
+			nichtverkettung_e2: 'entfaellt',
+			nichtverkettung_e3: 'entfaellt',
+			nichtverkettung_luecken: ['bt']
+		};
+		expect(assess(record).outcome).toBe('vollstaendig');
+		const n = ZIELE.findIndex((z) => z.id === 'nichtverkettung');
+		expect(buildCube(view(record), 'vorgaenge').top[n].every((s) => s === 'entfaellt')).toBe(true);
+	});
+
+	it('still names unassessed levels when there are gaps', () => {
+		const result = assess({ ...base, transparenz_e2: 'luecke', datenminimierung_e3: '' });
+		expect(result.outcome).toBe('luecken');
+		expect(result.notes![0].de).toBe('Noch nicht bewertet: Datenminimierung auf Ebene 3.');
 	});
 
 	it('stays incomplete while levels are unassessed or no operation is chosen', () => {

@@ -439,8 +439,8 @@ test('preview: the SDM cube shows its faces, slices and views', async ({ page })
 
 	await expect(page.locator('.verdict .headline')).toHaveText('Lücken im SDM-Würfel.');
 	const cube = page.getByRole('region', { name: 'SDM-Würfel', exact: true });
-	// 5 of 9 operations apply: 105 cells, 3 gaps (Bt on three levels), 4 partly, 10 open
-	await expect(cube.locator('.figure strong')).toHaveText(['105', '3', '4', '10']);
+	// 5 of 9 operations apply: 105 cells, 1 gap (Bt on level 2), 4 partly, 10 open
+	await expect(cube.locator('.figure strong')).toHaveText(['105', '1', '4', '10']);
 	const picture = cube.getByRole('img');
 	await expect(picture).toHaveAttribute('aria-label', /über alle Ziele\. Relevante Zellen: 105/);
 	// a normal risk starts with the four phases; the front has 4 × 3 cells
