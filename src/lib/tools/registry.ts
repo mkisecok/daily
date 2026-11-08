@@ -21,6 +21,7 @@ import { kiRegister } from './ki-register/tool.js';
 import type { RecordTool } from '../records/types.js';
 import { avvPruefung } from './avv-pruefung/tool.js';
 import { tomKatalog } from './tom-katalog/tool.js';
+import { sdmWuerfel } from './sdm-wuerfel/tool.js';
 import { loeschkonzept } from './loeschkonzept/tool.js';
 import { schulungsnachweis } from './schulungsnachweis/tool.js';
 import { kiKompetenz } from './ki-kompetenz/tool.js';
@@ -57,6 +58,7 @@ export const tools: readonly ToolManifest[] = [
 	anonymisierer.manifest,
 	avvPruefung.manifest,
 	tomKatalog.manifest,
+	sdmWuerfel.manifest,
 	loeschkonzept.manifest,
 	schulungsnachweis.manifest,
 	kiDsgvoSchnittstelle.manifest,
@@ -156,6 +158,7 @@ const recordTools: Record<string, RecordTool> = {
 	[schulungsnachweis.manifest.slug]: schulungsnachweis,
 	[loeschkonzept.manifest.slug]: loeschkonzept,
 	[tomKatalog.manifest.slug]: tomKatalog,
+	[sdmWuerfel.manifest.slug]: sdmWuerfel,
 	[avvPruefung.manifest.slug]: avvPruefung,
 	[vvt.manifest.slug]: vvt,
 	[datenpanne.manifest.slug]: datenpanne,
