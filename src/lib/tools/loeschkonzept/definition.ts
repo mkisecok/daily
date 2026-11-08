@@ -117,7 +117,7 @@ export const definition: RecordToolDefinition = {
 					required: true,
 					listColumn: true
 				},
-				{ id: 'frist_wert', type: 'number', label: L('Frist', 'Period'), min: 0 },
+				{ id: 'frist_wert', type: 'number', integer: true, label: L('Frist', 'Period'), min: 0 },
 				{
 					id: 'frist_einheit',
 					type: 'select',

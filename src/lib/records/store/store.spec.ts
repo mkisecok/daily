@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getTestQuestionnaire, linkedTool, testTool } from '../fixtures.js';
 import type { RecordTool } from '../types.js';
-import { createBrowserStore, STORAGE_KEY } from './browser.js';
+import { BACKUP_KEY, createBrowserStore, MAX_EVENTS_PER_RECORD, STORAGE_KEY } from './browser.js';
 import { createHttpStore } from './http.js';
 
 function fakeStorage() {
@@ -159,6 +159,8 @@ describe('browser store', () => {
 		const store = browserStore(storage);
 		expect(await store.list('test-register')).toEqual([]);
 		await store.create('test-register', { name: 'Neu' });
+		// the unreadable data is kept aside, not overwritten by the new entry
+		expect(storage.items.get(BACKUP_KEY)).toBe('{not json');
 		store.clear();
 		expect(storage.items.has(STORAGE_KEY)).toBe(false);
 
@@ -179,6 +181,37 @@ describe('browser store', () => {
 		expect(await blocked.list('test-register')).toEqual([]);
 		await expect(blocked.create('test-register', { name: 'x' })).rejects.toThrow();
 		expect(() => blocked.clear()).not.toThrow();
+	});
+});
+
+describe('browser store history', () => {
+	it('keeps the newest events per record and makes room when storage is full', async () => {
+		const storage = fakeStorage();
+		const store = browserStore(storage);
+		const created = await store.create('test-register', { name: 'A' });
+		if (!created.ok) throw new Error('create failed');
+		let version = created.value.version;
+		for (let i = 0; i < MAX_EVENTS_PER_RECORD + 5; i++) {
+			const updated = await store.update(created.value.id, { name: `A${i}` }, version);
+			if (!updated.ok) throw new Error('update failed');
+			version = updated.value.version;
+		}
+		const events = (await store.get(created.value.id))!.events;
+		expect(events).toHaveLength(MAX_EVENTS_PER_RECORD);
+		expect(events.at(-1)?.changes).toMatchObject({ name: ['A203', 'A204'] });
+
+		// a full storage refuses the long history; the save goes through with less
+		const full = {
+			...storage,
+			setItem: (key: string, value: string) => {
+				if (value.length > 20_000) throw new Error('QuotaExceededError');
+				return void storage.items.set(key, value);
+			}
+		};
+		const tight = browserStore(full);
+		const saved = await tight.update(created.value.id, { name: 'B' }, version);
+		expect(saved.ok).toBe(true);
+		expect((await tight.get(created.value.id))!.events).toHaveLength(20);
 	});
 });
 

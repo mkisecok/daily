@@ -47,6 +47,17 @@ export function monthsAfterDay(iso: string, months: number): string {
 }
 
 /**
+ * a period of days counted from the German calendar day of an event: the
+ * day of the event does not count, and the period ends at the end of the
+ * last day (23:59 German time; Art. 3 Regulation 1182/71). E.g. 15 days from
+ * 23 October end on 7 November.
+ */
+export function daysAfterDay(iso: string, days: number): string {
+	const start = Date.parse(`${dayKey(iso)}T00:00:00.000Z`);
+	return dayAt(new Date(start + days * 24 * HOUR).toISOString().slice(0, 10), '23:59');
+}
+
+/**
  * open deadlines of a record: none once a workflow reaches a terminal state
  * or the record is archived; otherwise whatever the tool's engine derives.
  */

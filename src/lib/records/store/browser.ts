@@ -14,6 +14,12 @@ import type { RecordEvent, RecordTool, StoredRecord } from '../types.js';
 import type { RecordStore, StoreError, StoreResult } from './types.js';
 
 export const STORAGE_KEY = 'daily.records.v1';
+/** where an unreadable store is kept, so the next save does not destroy it */
+export const BACKUP_KEY = `${STORAGE_KEY}.unreadable`;
+/** history kept per record; older events go first */
+export const MAX_EVENTS_PER_RECORD = 200;
+/** history kept per record when the browser's storage is full */
+const EVENTS_WHEN_FULL = 20;
 
 type Saved = { records: StoredRecord[]; events: RecordEvent[] };
 
@@ -39,21 +45,62 @@ export function createBrowserStore(
 		newId = () => crypto.randomUUID()
 	}: Options
 ): RecordStore & { clear(): void } {
-	function load(): Saved {
+	function read(): string | null {
 		try {
-			const raw = storage.getItem(STORAGE_KEY);
-			const saved = raw ? (JSON.parse(raw) as Partial<Saved>) : {};
+			return storage.getItem(STORAGE_KEY);
+		} catch {
+			return null;
+		}
+	}
+
+	function load(): Saved {
+		const raw = read();
+		if (!raw) return { records: [], events: [] };
+		try {
+			const saved = JSON.parse(raw) as Partial<Saved>;
 			return {
 				records: Array.isArray(saved.records) ? saved.records : [],
 				events: Array.isArray(saved.events) ? saved.events : []
 			};
 		} catch {
+			// keep the unreadable data aside before the next save replaces it
+			try {
+				if (storage.getItem(BACKUP_KEY) === null) storage.setItem(BACKUP_KEY, raw);
+			} catch {
+				// nothing more can be done without storage
+			}
 			return { records: [], events: [] };
 		}
 	}
 
+	/** the newest `limit` events of each record, in their original order */
+	function trimEvents(events: RecordEvent[], limit: number): RecordEvent[] {
+		const kept = new Map<string, number>();
+		const keep = new Set<RecordEvent>();
+		for (let i = events.length - 1; i >= 0; i--) {
+			const count = kept.get(events[i].recordId) ?? 0;
+			if (count < limit) {
+				keep.add(events[i]);
+				kept.set(events[i].recordId, count + 1);
+			}
+		}
+		return events.filter((event) => keep.has(event));
+	}
+
+	/**
+	 * writes the store, keeping the history of each record bounded. When the
+	 * storage is full, the history is cut back further before giving up, so
+	 * the records themselves can still be saved.
+	 */
 	function save(saved: Saved) {
-		storage.setItem(STORAGE_KEY, JSON.stringify(saved));
+		const events = trimEvents(saved.events, MAX_EVENTS_PER_RECORD);
+		try {
+			storage.setItem(STORAGE_KEY, JSON.stringify({ ...saved, events }));
+		} catch (error) {
+			const fewer = trimEvents(events, EVENTS_WHEN_FULL);
+			if (fewer.length === events.length) throw error;
+			storage.setItem(STORAGE_KEY, JSON.stringify({ ...saved, events: fewer }));
+		}
 	}
 
 	function event(

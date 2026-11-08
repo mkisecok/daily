@@ -76,7 +76,13 @@ function coerce(field: FieldDef, raw: unknown): { value: FieldValue; error?: Fie
 		}
 		case 'date': {
 			if (raw === '') return { value: null };
-			if (typeof raw !== 'string' || !DATE.test(raw) || Number.isNaN(Date.parse(raw))) {
+			// the round trip rejects dates JavaScript would roll over, e.g. 31 February
+			if (
+				typeof raw !== 'string' ||
+				!DATE.test(raw) ||
+				Number.isNaN(Date.parse(raw)) ||
+				new Date(raw).toISOString().slice(0, 10) !== raw
+			) {
 				return { value: null, error: 'invalid' };
 			}
 			return { value: raw };
@@ -93,6 +99,7 @@ function coerce(field: FieldDef, raw: unknown): { value: FieldValue; error?: Fie
 			const number = typeof raw === 'number' ? raw : Number(raw);
 			if (!Number.isFinite(number)) return { value: null, error: 'invalid' };
 			if (field.min !== undefined && number < field.min) return { value: null, error: 'invalid' };
+			if (field.integer && !Number.isInteger(number)) return { value: null, error: 'invalid' };
 			return { value: number };
 		}
 		case 'boolean': {
