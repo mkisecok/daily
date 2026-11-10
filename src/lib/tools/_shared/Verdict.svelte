@@ -1,74 +1,104 @@
 <!--
 	@component
-	The result of a questionnaire as a raised result card: an "Ergebnis" badge
-	and a left accent in the colour of the verdict (wax: action needed, navy:
-	open points, blue: nothing to do), one serif sentence, then the reasons,
-	notes and sources as citation chips.
+	The result of a questionnaire set like a short legal opinion: a dateline,
+	the verdict as one serif sentence in the colour of its level (wax: action
+	needed, navy: open points, blue: nothing to do), then numbered parts for
+	reasons, duties and sources. Each reason carries its citation in the
+	margin; on narrow widths the citation moves under its text.
 -->
 <script lang="ts">
+	import { formatShortDate } from '#lib/i18n/date.js';
 	import { m } from '#lib/paraglide/messages.js';
+	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { text } from '../i18n.js';
 	import type { QuestionnaireResult } from '../types.js';
 	import Citation from './Citation.svelte';
 
-	let { result }: { result: QuestionnaireResult } = $props();
+	let {
+		result,
+		tool,
+		at
+	}: {
+		result: QuestionnaireResult;
+		/** the tool's name for the dateline */
+		tool?: string;
+		/** when the result was produced; today when not given */
+		at?: string;
+	} = $props();
+
+	const NUMERALS = ['I', 'II', 'III', 'IV'];
+
+	const date = $derived(formatShortDate(at ?? new Date().toISOString(), getLocale()));
+	const hasNotes = $derived((result.notes?.length ?? 0) > 0);
+	// parts are numbered in the order they appear, whichever are present
+	const parts = $derived(
+		[result.reasons.length > 0 && 'reasons', hasNotes && 'notes', 'sources'].filter(Boolean)
+	);
+	const numeral = (part: string) => `${NUMERALS[parts.indexOf(part)]}.`;
 </script>
 
-<section class="verdict card" data-level={result.verdict}>
-	<span
-		class={[
-			'badge',
-			{
-				wax: result.verdict === 'positive',
-				navy: result.verdict === 'conditional',
-				primary: result.verdict === 'negative'
-			}
-		]}>{m.verdict_label()}</span
-	>
+<section class="verdict" data-level={result.verdict}>
+	<p class="dateline">
+		<span>{m.verdict_label()}</span>
+		{#if tool}<span aria-hidden="true">·</span><span>{tool}</span>{/if}
+		<span aria-hidden="true">·</span><time datetime={at}>{date}</time>
+	</p>
 	<h2 class="headline">{text(result.headline)}</h2>
-	<p class="explanation measure">{text(result.explanation)}</p>
+	<p class="explanation">{text(result.explanation)}</p>
 
 	{#if result.reasons.length > 0}
-		<h3 class="reasons-title">{m.verdict_reasons()}</h3>
-		<ol class="reasons">
-			{#each result.reasons as reason (reason.questionId)}
-				<li>
-					<span class="reason-text">{text(reason.text)}</span>
-					{#if reason.cite}<span class="chip"><Citation basis={reason.cite} /></span>{/if}
-				</li>
-			{/each}
-		</ol>
+		<section class="part">
+			<h3><span class="numeral">{numeral('reasons')}</span> {m.verdict_reasons()}</h3>
+			<ol class="reasons">
+				{#each result.reasons as reason (reason.questionId)}
+					<li>
+						<span class="reason-text">{text(reason.text)}</span>
+						{#if reason.cite}<span class="margin"><Citation basis={reason.cite} wrap /></span>{/if}
+					</li>
+				{/each}
+			</ol>
+		</section>
 	{/if}
 
-	{#if result.notes && result.notes.length > 0}
-		<h3 class="reasons-title">
-			{result.notesTitle ? text(result.notesTitle) : m.verdict_notes()}
-		</h3>
-		<ul class="notes">
-			{#each result.notes as note, index (index)}
-				<li>{text(note)}</li>
+	{#if hasNotes}
+		<section class="part">
+			<h3>
+				<span class="numeral">{numeral('notes')}</span>
+				{result.notesTitle ? text(result.notesTitle) : m.verdict_notes()}
+			</h3>
+			<ol class="notes">
+				{#each result.notes ?? [] as note, index (index)}
+					<li>{text(note)}</li>
+				{/each}
+			</ol>
+		</section>
+	{/if}
+
+	<section class="part">
+		<h3><span class="numeral">{numeral('sources')}</span> {m.verdict_sources()}</h3>
+		<ul class="sources">
+			{#each result.citations as basis (basis.law + basis.ref)}
+				<li><Citation {basis} wrap /></li>
 			{/each}
 		</ul>
-	{/if}
-
-	<p class="sources">
-		<span class="sources-label">{m.verdict_sources()}</span>
-		{#each result.citations as basis (basis.law + basis.ref)}
-			<span class="chip"><Citation {basis} /></span>
-		{/each}
-	</p>
+	</section>
 </section>
 
 <style>
-	/* a raised card; the accent is drawn as an inset shadow, so the corners stay round */
+	/*
+	 * one sheet with a hairline, no shadow or accent bar. The margin column
+	 * for citations exists only where the sheet is wide enough for it.
+	 */
 	.verdict {
-		--accent: var(--ink3);
+		--accent: var(--ink);
+		--margin: 11rem;
 
+		container-type: inline-size;
 		margin-top: 1.5rem;
-		padding: 1.5rem 1.75rem 1.5rem 2rem;
-		box-shadow:
-			inset 4px 0 0 var(--accent),
-			var(--shadow-raised);
+		padding: 1.5rem 1.75rem 1.75rem;
+		background: var(--sheet);
+		border: 1px solid var(--rule2);
+		border-radius: 4px;
 
 		&[data-level='positive'] {
 			--accent: var(--wax);
@@ -83,102 +113,143 @@
 		}
 
 		@media (max-width: 40rem) {
-			padding: 1.25rem 1rem 1.25rem 1.35rem;
+			padding: 1.25rem 1rem 1.5rem;
 		}
 
 		@media print {
-			box-shadow: inset 4px 0 0 var(--accent);
+			padding: 0;
+			border: 0;
+		}
+
+		& .dateline {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0 0.5rem;
+			font-size: 11px;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			color: var(--ink3);
+
+			& time {
+				font-variant-numeric: tabular-nums;
+			}
 		}
 
 		& .headline {
-			margin-top: 0.75rem;
-			font-size: clamp(24px, 3vw, 30px);
+			margin-top: 0.6rem;
+			font-size: clamp(22px, 2.6vw, 28px);
+			line-height: 1.25;
+			text-wrap: balance;
 			color: var(--accent);
 		}
 
 		& .explanation {
-			margin-top: 0.75rem;
-			font-size: 16px;
+			max-width: var(--measure);
+			margin-top: 0.6rem;
+			font-size: 15px;
+			line-height: 1.6;
 			color: var(--ink2);
 		}
 
-		& .reasons-title {
-			margin-top: 1.75rem;
+		& .part {
+			margin-top: 1.5rem;
 			padding-top: 1.25rem;
-			font-family: var(--sans);
-			font-size: 14px;
-			font-weight: 600;
-			color: var(--ink);
 			border-top: 1px solid var(--rule2);
-		}
 
-		& .chip {
-			display: inline-flex;
-			align-items: center;
-			min-height: 1.75rem;
-			padding: 0 0.5rem;
-			vertical-align: middle;
-			background: var(--sheet);
-			border: 1px solid var(--rule2);
-			border-radius: var(--radius-badge);
+			& h3 {
+				font-family: var(--serif);
+				font-size: 16px;
+				font-weight: 600;
+				color: var(--ink);
+			}
 
-			&:hover {
-				border-color: var(--navy);
+			& .numeral {
+				margin-right: 0.25rem;
+				font-variant-numeric: tabular-nums;
 			}
 		}
 
-		& .reasons {
-			margin: 0.5rem 0 0 1.25rem;
-			max-width: var(--measure);
+		& .reasons,
+		& .notes {
+			display: grid;
+			gap: 0.6rem;
+			max-width: calc(var(--measure) + var(--margin));
+			margin-top: 0.75rem;
+			list-style: none;
+			counter-reset: item;
 
 			& li {
-				padding: 0.4rem 0 0.4rem 0.25rem;
-				font-family: var(--serif);
+				position: relative;
+				padding-left: 1.75rem;
 				font-size: 15px;
-				line-height: 1.45;
+				line-height: 1.55;
+				counter-increment: item;
 
-				&::marker {
+				&::before {
+					position: absolute;
+					left: 0;
 					font-family: var(--mono);
 					font-size: 12px;
+					line-height: 1.55rem;
+					content: counter(item) '.';
 					color: var(--ink3);
+				}
+			}
+		}
+
+		& .reasons li {
+			font-family: var(--serif);
+			color: var(--ink);
+		}
+
+		& .notes li {
+			color: var(--ink2);
+		}
+
+		& .margin {
+			display: block;
+			margin-top: 0.15rem;
+		}
+
+		/* citations in the left margin, as in a printed opinion */
+		@container (min-width: 34rem) {
+			& .part h3,
+			& .notes,
+			& .sources {
+				margin-left: calc(var(--margin) + 1.25rem);
+			}
+
+			& .reasons li {
+				display: grid;
+				grid-template-columns: var(--margin) minmax(0, 1fr);
+				column-gap: 1.25rem;
+				padding-left: 0;
+
+				&::before {
+					left: calc(var(--margin) + 1.25rem);
 				}
 			}
 
 			& .reason-text {
-				margin-right: 0.6rem;
+				grid-row: 1;
+				grid-column: 2;
+				padding-left: 1.75rem;
 			}
-		}
 
-		& .notes {
-			margin: 0.5rem 0 0 1.25rem;
-			max-width: var(--measure);
-
-			& li {
-				padding: 0.3rem 0 0.3rem 0.25rem;
-				font-size: 15px;
-				color: var(--ink2);
-
-				&::marker {
-					color: var(--accent);
-				}
+			& .margin {
+				grid-row: 1;
+				grid-column: 1;
+				margin-top: 0.2rem;
+				line-height: 1.35;
+				text-align: right;
 			}
 		}
 
 		& .sources {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-			gap: 0.35rem;
-			margin-top: 1.75rem;
-			padding-top: 1.25rem;
-			border-top: 1px solid var(--rule2);
-
-			& .sources-label {
-				margin-right: 0.35rem;
-				font-size: 13px;
-				font-weight: 600;
-				color: var(--ink2);
-			}
+			display: grid;
+			gap: 0.2rem;
+			margin-top: 0.6rem;
+			list-style: none;
 		}
 	}
 </style>

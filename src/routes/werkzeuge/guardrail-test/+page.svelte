@@ -245,7 +245,7 @@
 </section>
 
 {#if result && outcomes}
-	<Verdict {result} />
+	<Verdict {result} tool={text(data.tool.name)} />
 	<div class="toolbar actions no-print">
 		<button type="button" class="quiet" onclick={exportCsv}>{text(T.csv)}</button>
 		<button type="button" class="quiet" onclick={() => window.print()}>{text(T.print)}</button>
