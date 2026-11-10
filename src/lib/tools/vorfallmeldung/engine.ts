@@ -106,6 +106,14 @@ function assess(record: RecordView): QuestionnaireResult {
 		)
 	);
 
+	notes.push(
+		L(
+			'In Deutschland ist die Bundesnetzagentur Marktüberwachungsbehörde und Beschwerdestelle für die KI-Verordnung (KI-MIG, in Kraft seit 29. Juli 2026). In vollharmonisierten Produktbereichen bleibt die Fachaufsicht zuständig, im Finanzsektor etwa die BaFin; die zuständige Behörde vor der Meldung klären.',
+			'In Germany the Bundesnetzagentur is the market surveillance authority and complaint point for the AI Act (KI-MIG, in force since 29 July 2026). In fully harmonised product areas the sector supervisor stays competent, e.g. BaFin in finance; establish the competent authority before reporting.'
+		)
+	);
+	citations.push({ law: 'KI-MIG', ref: 'Marktüberwachung durch die Bundesnetzagentur' });
+
 	if (!reportable(record)) {
 		return {
 			verdict: 'negative',

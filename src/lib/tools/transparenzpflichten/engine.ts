@@ -2,6 +2,7 @@ import { count, reasonFor } from '../checklist.js';
 import { DATES } from '../risikoklassifizierung/engine.js';
 import type {
 	Answers,
+	LegalBasis,
 	Localized,
 	QuestionnaireCatalog,
 	QuestionnaireResult,
@@ -24,6 +25,17 @@ const DECISIVE = [
 	'b_text',
 	'b_editorial'
 ];
+
+/** the Commission's voluntary code that puts Art. 50(2) and (4) into practice */
+const CODE = L(
+	'Der freiwillige Praxisleitfaden der Kommission zur Transparenz KI-generierter Inhalte (Code of Practice, Juni 2026) konkretisiert die Kennzeichnung: Abschnitt 1 für Anbieter (Art. 50 Abs. 2), Abschnitt 2 für Betreiber (Art. 50 Abs. 4). Inhalte, die vor dem 2. August 2026 bereitgestellt wurden, müssen nicht nachträglich gekennzeichnet werden.',
+	"The Commission's voluntary Code of Practice on Transparency of AI-generated Content (June 2026) puts the marking and labelling into practice: section 1 for providers (Art. 50(2)), section 2 for deployers (Art. 50(4)). Content made available before 2 August 2026 need not be marked or labelled retroactively."
+);
+
+const CODE_CITE: LegalBasis = {
+	law: 'EU-Kommission',
+	ref: 'Praxisleitfaden zur Transparenz KI-generierter Inhalte (Juni 2026)'
+};
 
 const TIMING = L(
 	'Die Information muss klar und unterscheidbar sein und spätestens bei der ersten Interaktion oder Konfrontation erfolgen; sie muss barrierefrei sein (Art. 50 Abs. 5).',
@@ -104,7 +116,11 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 	const unclear = DECISIVE.filter((id) => answers[id] === 'unknown').map((id) =>
 		reasonFor(catalog, id)
 	);
-	const citations = catalog.sources;
+	// the code covers marking by providers and labelling of deepfakes and public-interest text
+	const labelling =
+		(provider && yes('a_synthetic') && !yes('a_assistive')) ||
+		(deployer && (yes('b_deepfake') || (yes('b_text') && !yes('b_editorial'))));
+	const citations = labelling ? [...catalog.sources, CODE_CITE] : catalog.sources;
 
 	if (duties.length > 0) {
 		const n = count(duties.length, L('Pflicht', 'obligation'), L('Pflichten', 'obligations'));
@@ -118,7 +134,7 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 					(unclear.length ? ` ${unclear.length} question(s) remain open.` : '')
 			),
 			reasons,
-			notes: [...duties, TIMING],
+			notes: [...duties, ...(labelling ? [CODE] : []), TIMING],
 			citations
 		};
 	}
@@ -162,8 +178,8 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 		reasons: [],
 		notes: [
 			L(
-				'KI-Kompetenz der Beschäftigten sicherstellen (Art. 4, seit 2. Februar 2025).',
-				'Ensure AI literacy of staff (Art. 4, since 2 February 2025).'
+				'Maßnahmen ergreifen, die die KI-Kompetenz der Beschäftigten unterstützen (Art. 4, seit 2. Februar 2025).',
+				'Take measures to support the AI literacy of staff (Art. 4, since 2 February 2025).'
 			)
 		],
 		citations

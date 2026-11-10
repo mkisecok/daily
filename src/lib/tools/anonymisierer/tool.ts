@@ -14,7 +14,9 @@ export const manifest: ToolManifest = {
 	legalBasis: [
 		{ law: 'DSGVO', ref: 'Art. 4 Nr. 5' },
 		{ law: 'DSGVO', ref: 'Art. 25' },
-		{ law: 'DSGVO', ref: 'Art. 32' }
+		{ law: 'DSGVO', ref: 'Art. 32' },
+		{ law: 'EDPB', ref: 'Leitlinien 01/2025 zur Pseudonymisierung (Entwurf)' },
+		{ law: 'EDPB', ref: 'Leitlinien 02/2026 zur Anonymisierung (Entwurf, Juli 2026)' }
 	]
 };
 

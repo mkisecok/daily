@@ -9,6 +9,11 @@
 		{ "law": "DSGVO", "ref": "Art. 5, 6, 9, 13, 15–17, 22, 28, 35, 44" },
 		{ "law": "DSK", "ref": "Orientierungshilfe KI und Datenschutz (2024)" },
 		{ "law": "EDPB", "ref": "Stellungnahme 28/2024 zu KI-Modellen" },
+		{ "law": "EDPB", "ref": "Leitlinien 02/2026 zur Anonymisierung (Entwurf, Juli 2026)" },
+		{
+			"law": "EDPB",
+			"ref": "Leitlinien 03/2026 zu Web Scraping für generative KI (Entwurf, Juli 2026)"
+		},
 		{ "law": "EuGH", "ref": "C-634/21 (SCHUFA)" }
 	],
 	"sections": [

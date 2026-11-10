@@ -244,8 +244,8 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 					'Clearly inform persons that they are interacting with an AI system or that content is artificially generated; mark synthetic content in a machine-readable way.'
 				),
 				L(
-					'KI-Kompetenz der Beschäftigten sicherstellen (Art. 4, seit 2. Februar 2025).',
-					'Ensure AI literacy of staff (Art. 4, since 2 February 2025).'
+					'Maßnahmen ergreifen, die die KI-Kompetenz der Beschäftigten unterstützen (Art. 4, seit 2. Februar 2025).',
+					'Take measures to support the AI literacy of staff (Art. 4, since 2 February 2025).'
 				),
 				...unknownNote
 			],

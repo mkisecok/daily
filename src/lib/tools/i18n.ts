@@ -6,11 +6,19 @@ export function text(value: Localized, locale: string = getLocale()): string {
 	return locale === 'en' ? value.en : value.de;
 }
 
-const BODIES = new Set<LegalBasis['law']>(['EDPB', 'DSK', 'WP29', 'EuGH']);
+const BODIES = new Set<LegalBasis['law']>([
+	'EDPB',
+	'DSK',
+	'WP29',
+	'EuGH',
+	'EU-Kommission',
+	'KI-MIG'
+]);
 
 /**
  * statutes cite law-last, as German practice has it: "Art. 35 Abs. 3 DSGVO".
  * Documents of a body cite body-first: "DSK Kurzpapier Nr. 5", "WP29 WP 248".
+ * The KI-MIG is cited the same way while Daily names it as a whole, without a section.
  */
 export function cite(basis: LegalBasis): string {
 	return BODIES.has(basis.law) ? `${basis.law} ${basis.ref}` : `${basis.ref} ${basis.law}`;

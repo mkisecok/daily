@@ -80,4 +80,30 @@ describe('Transparenzpflichten engine', () => {
 		expect(result.verdict).toBe('conditional');
 		expect(result.reasons.map((r) => r.questionId)).toEqual(['a_interaction']);
 	});
+
+	it('points to the Code of Practice only where content is marked or labelled', () => {
+		const code = (overrides: Answers) => {
+			const result = evaluate(catalog, answers(overrides));
+			return {
+				note: result.notes!.some((n) => n.de.includes('Praxisleitfaden')),
+				cited: result.citations.some((c) => c.law === 'EU-Kommission')
+			};
+		};
+		expect(code({ r_provider: 'yes', a_synthetic: 'yes' })).toEqual({ note: true, cited: true });
+		expect(code({ r_deployer: 'yes', b_deepfake: 'yes' })).toEqual({ note: true, cited: true });
+		expect(code({ r_deployer: 'yes', b_text: 'yes' })).toEqual({ note: true, cited: true });
+		// a chatbot notice or an editorially reviewed text is not a labelling case
+		expect(code({ r_provider: 'yes', a_interaction: 'yes' })).toEqual({
+			note: false,
+			cited: false
+		});
+		expect(code({ r_deployer: 'yes', b_text: 'yes', b_editorial: 'yes' }).cited).toBe(false);
+	});
+
+	it('words AI literacy as supporting measures (Art. 4 as amended)', () => {
+		const result = evaluate(catalog, answers({ r_provider: 'yes' }));
+		expect(result.notes![0].de).toBe(
+			'Maßnahmen ergreifen, die die KI-Kompetenz der Beschäftigten unterstützen (Art. 4, seit 2. Februar 2025).'
+		);
+	});
 });

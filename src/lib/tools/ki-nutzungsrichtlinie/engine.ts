@@ -166,8 +166,8 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 				'Before first use, all users attend AI literacy training; attendance is documented (Art. 4 AI Act).'
 			),
 			L(
-				'Die Organisation stellt die KI-Kompetenz der Nutzenden auf andere geeignete Weise sicher (Art. 4 KI-VO).',
-				"The organisation ensures users' AI literacy by other suitable means (Art. 4 AI Act)."
+				'Die Organisation unterstützt die KI-Kompetenz der Nutzenden durch andere geeignete Maßnahmen (Art. 4 KI-VO).',
+				"The organisation supports users' AI literacy through other suitable measures (Art. 4 AI Act)."
 			),
 			L('Schulung', 'training')
 		),

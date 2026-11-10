@@ -138,8 +138,8 @@ function assess(record: RecordView): QuestionnaireResult {
 	if (riskClass === 'art6_3') {
 		notes.push(
 			L(
-				'Bewertung nach Art. 6 Abs. 4 dokumentieren und der Behörde auf Verlangen vorlegen.',
-				'Document the Art. 6(4) assessment and provide it to the authority on request.'
+				'Bewertung nach Art. 6 Abs. 4 dokumentieren und der Marktüberwachungsbehörde auf Verlangen vorlegen, in Deutschland in der Regel der Bundesnetzagentur (KI-MIG).',
+				'Document the Art. 6(4) assessment and provide it to the market surveillance authority on request, in Germany as a rule the Bundesnetzagentur (KI-MIG).'
 			)
 		);
 		if (provider) {
@@ -171,8 +171,8 @@ function assess(record: RecordView): QuestionnaireResult {
 	if (riskClass !== 'ausserhalb') {
 		notes.push(
 			L(
-				'KI-Kompetenz der Beschäftigten, die das System bedienen, sicherstellen (Art. 4).',
-				'Ensure AI literacy of the staff operating the system (Art. 4).'
+				'Maßnahmen ergreifen, die die KI-Kompetenz der Beschäftigten unterstützen, die das System bedienen (Art. 4).',
+				'Take measures to support the AI literacy of the staff operating the system (Art. 4).'
 			)
 		);
 		citations.push({ law: 'KI-VO', ref: 'Art. 4' });
