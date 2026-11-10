@@ -23,7 +23,7 @@ test('notes: today, Markdown with citations, a note from a provision, search', a
 		.fill(
 			`## Termin ${stamp}\n\n- **Rechtsgrundlage** nach Art. 6 Abs. 1 lit. f DSGVO prüfen\n- [EDPB](https://edpb.europa.eu)`
 		);
-	await page.getByRole('tab', { name: 'Vorschau' }).click();
+	await page.getByRole('button', { name: 'Vorschau öffnen' }).click();
 	await expect(page.locator('.preview a.norm')).toHaveText('Art. 6 Abs. 1 lit. f DSGVO');
 	await page.getByRole('button', { name: 'Speichern' }).click();
 	await expect(page.getByRole('status')).toHaveText('Gespeichert.');
