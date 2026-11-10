@@ -74,10 +74,10 @@
 	{#if Dashboard}
 		<div class="result-pair">
 			<Dashboard {result} />
-			<Verdict {result} />
+			<Verdict {result} tool={text(data.tool.name)} />
 		</div>
 	{:else}
-		<Verdict {result} />
+		<Verdict {result} tool={text(data.tool.name)} />
 	{/if}
 
 	<section class="answers card">

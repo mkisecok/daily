@@ -1,184 +1,358 @@
 <!--
 	@component
-	The result of a questionnaire as a raised result card: an "Ergebnis" badge
-	and a left accent in the colour of the verdict (wax: action needed, navy:
-	open points, blue: nothing to do), one serif sentence, then the reasons,
-	notes and sources as citation chips.
+	The result of a questionnaire set like a short legal opinion: a dateline,
+	the verdict as one serif sentence and a green-yellow-red scale with a
+	marker on its level (red: action needed, yellow: open points, green:
+	nothing to do), both in the same colour, then numbered parts for
+	reasons, duties and sources. Each reason carries its citation in the
+	margin; on narrow widths the citation moves under its text.
 -->
 <script lang="ts">
+	import { formatShortDate } from '#lib/i18n/date.js';
 	import { m } from '#lib/paraglide/messages.js';
+	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { text } from '../i18n.js';
 	import type { QuestionnaireResult } from '../types.js';
 	import Citation from './Citation.svelte';
 
-	let { result }: { result: QuestionnaireResult } = $props();
+	let {
+		result,
+		tool,
+		at
+	}: {
+		result: QuestionnaireResult;
+		/** the tool's name for the dateline */
+		tool?: string;
+		/** when the result was produced; today when not given */
+		at?: string;
+	} = $props();
+
+	const NUMERALS = ['I', 'II', 'III', 'IV'];
+
+	/** the traffic light from nothing to do to action needed, in reading order */
+	const LEVELS = [
+		{ id: 'negative', tone: 'low', label: m.verdict_level_negative },
+		{ id: 'conditional', tone: 'mid', label: m.verdict_level_conditional },
+		{ id: 'positive', tone: 'high', label: m.verdict_level_positive }
+	] as const;
+
+	const current = $derived(LEVELS.find((level) => level.id === result.verdict));
+
+	const date = $derived(formatShortDate(at ?? new Date().toISOString(), getLocale()));
+	const hasNotes = $derived((result.notes?.length ?? 0) > 0);
+	// parts are numbered in the order they appear, whichever are present
+	const parts = $derived(
+		[result.reasons.length > 0 && 'reasons', hasNotes && 'notes', 'sources'].filter(Boolean)
+	);
+	const numeral = (part: string) => `${NUMERALS[parts.indexOf(part)]}.`;
 </script>
 
-<section class="verdict card" data-level={result.verdict}>
-	<span
-		class={[
-			'badge',
-			{
-				wax: result.verdict === 'positive',
-				navy: result.verdict === 'conditional',
-				primary: result.verdict === 'negative'
-			}
-		]}>{m.verdict_label()}</span
-	>
+<section class="verdict" data-level={result.verdict}>
+	<p class="dateline">
+		<span>{m.verdict_label()}</span>
+		{#if tool}<span aria-hidden="true">·</span><span>{tool}</span>{/if}
+		<span aria-hidden="true">·</span><time datetime={at}>{date}</time>
+	</p>
 	<h2 class="headline">{text(result.headline)}</h2>
-	<p class="explanation measure">{text(result.explanation)}</p>
+	{#if current}
+		<div class="scale" role="img" aria-label={m.verdict_scale({ level: current.label() })}>
+			{#each LEVELS as level (level.id)}
+				<div class="step" data-tone={level.tone} data-current={level.id === current.id}>
+					<span class="bar"></span>
+					<span class="step-label">{level.label()}</span>
+				</div>
+			{/each}
+		</div>
+	{/if}
+	<p class="explanation">{text(result.explanation)}</p>
 
 	{#if result.reasons.length > 0}
-		<h3 class="reasons-title">{m.verdict_reasons()}</h3>
-		<ol class="reasons">
-			{#each result.reasons as reason (reason.questionId)}
-				<li>
-					<span class="reason-text">{text(reason.text)}</span>
-					{#if reason.cite}<span class="chip"><Citation basis={reason.cite} /></span>{/if}
-				</li>
-			{/each}
-		</ol>
+		<section class="part">
+			<h3><span class="numeral">{numeral('reasons')}</span> {m.verdict_reasons()}</h3>
+			<ol class="reasons">
+				{#each result.reasons as reason (reason.questionId)}
+					<li>
+						<span class="reason-text">{text(reason.text)}</span>
+						{#if reason.cite}<span class="margin"><Citation basis={reason.cite} wrap /></span>{/if}
+					</li>
+				{/each}
+			</ol>
+		</section>
 	{/if}
 
-	{#if result.notes && result.notes.length > 0}
-		<h3 class="reasons-title">
-			{result.notesTitle ? text(result.notesTitle) : m.verdict_notes()}
-		</h3>
-		<ul class="notes">
-			{#each result.notes as note, index (index)}
-				<li>{text(note)}</li>
+	{#if hasNotes}
+		<section class="part">
+			<h3>
+				<span class="numeral">{numeral('notes')}</span>
+				{result.notesTitle ? text(result.notesTitle) : m.verdict_notes()}
+			</h3>
+			<ol class="notes">
+				{#each result.notes ?? [] as note, index (index)}
+					<li>{text(note)}</li>
+				{/each}
+			</ol>
+		</section>
+	{/if}
+
+	<section class="part">
+		<h3><span class="numeral">{numeral('sources')}</span> {m.verdict_sources()}</h3>
+		<ul class="sources">
+			{#each result.citations as basis (basis.law + basis.ref)}
+				<li><Citation {basis} wrap /></li>
 			{/each}
 		</ul>
-	{/if}
-
-	<p class="sources">
-		<span class="sources-label">{m.verdict_sources()}</span>
-		{#each result.citations as basis (basis.law + basis.ref)}
-			<span class="chip"><Citation {basis} /></span>
-		{/each}
-	</p>
+	</section>
 </section>
 
 <style>
-	/* a raised card; the accent is drawn as an inset shadow, so the corners stay round */
+	/*
+	 * one sheet with a hairline, no shadow or accent bar. The margin column
+	 * for citations exists only where the sheet is wide enough for it.
+	 */
 	.verdict {
-		--accent: var(--ink3);
+		--accent: var(--ink);
+		--margin: 11rem;
 
+		container-type: inline-size;
 		margin-top: 1.5rem;
-		padding: 1.5rem 1.75rem 1.5rem 2rem;
-		box-shadow:
-			inset 4px 0 0 var(--accent),
-			var(--shadow-raised);
+		padding: 1.5rem 1.75rem 1.75rem;
+		background: var(--sheet);
+		border: 1px solid var(--rule2);
+		border-radius: 4px;
 
+		/* the headline takes the ink of its traffic-light step */
 		&[data-level='positive'] {
-			--accent: var(--wax);
+			--accent: var(--risk-high-ink);
 		}
 
 		&[data-level='conditional'] {
-			--accent: var(--navy);
+			--accent: var(--risk-mid-ink);
 		}
 
 		&[data-level='negative'] {
-			--accent: var(--primary);
+			--accent: var(--risk-low-ink);
 		}
 
 		@media (max-width: 40rem) {
-			padding: 1.25rem 1rem 1.25rem 1.35rem;
+			padding: 1.25rem 1rem 1.5rem;
 		}
 
 		@media print {
-			box-shadow: inset 4px 0 0 var(--accent);
+			padding: 0;
+			border: 0;
 		}
 
-		& .headline {
-			margin-top: 0.75rem;
-			font-size: clamp(24px, 3vw, 30px);
-			color: var(--accent);
-		}
+		& .dateline {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0 0.5rem;
+			font-size: 11px;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			color: var(--ink3);
 
-		& .explanation {
-			margin-top: 0.75rem;
-			font-size: 16px;
-			color: var(--ink2);
-		}
-
-		& .reasons-title {
-			margin-top: 1.75rem;
-			padding-top: 1.25rem;
-			font-family: var(--sans);
-			font-size: 14px;
-			font-weight: 600;
-			color: var(--ink);
-			border-top: 1px solid var(--rule2);
-		}
-
-		& .chip {
-			display: inline-flex;
-			align-items: center;
-			min-height: 1.75rem;
-			padding: 0 0.5rem;
-			vertical-align: middle;
-			background: var(--sheet);
-			border: 1px solid var(--rule2);
-			border-radius: var(--radius-badge);
-
-			&:hover {
-				border-color: var(--navy);
+			& time {
+				font-variant-numeric: tabular-nums;
 			}
 		}
 
-		& .reasons {
-			margin: 0.5rem 0 0 1.25rem;
+		& .headline {
+			margin-top: 0.6rem;
+			font-size: clamp(22px, 2.6vw, 28px);
+			line-height: 1.25;
+			text-wrap: balance;
+			color: var(--accent);
+		}
+
+		/* three equal segments; the current one is full colour with a marker above */
+		& .scale {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 3px;
+			max-width: 30rem;
+			margin-top: 1.1rem;
+
+			& .step {
+				--tone: var(--risk-low);
+				--tone-ink: var(--risk-low-ink);
+
+				position: relative;
+				display: grid;
+				gap: 0.4rem;
+				padding-top: 0.7rem;
+
+				&[data-tone='mid'] {
+					--tone: var(--risk-mid);
+					--tone-ink: var(--risk-mid-ink);
+				}
+
+				&[data-tone='high'] {
+					--tone: var(--risk-high);
+					--tone-ink: var(--risk-high-ink);
+				}
+
+				&:first-child .bar {
+					border-radius: 2px 0 0 2px;
+				}
+
+				&:last-child {
+					text-align: right;
+
+					& .bar {
+						border-radius: 0 2px 2px 0;
+					}
+				}
+
+				&:nth-child(2) {
+					text-align: center;
+				}
+
+				&[data-current='true'] {
+					& .bar {
+						opacity: 1;
+					}
+
+					& .step-label {
+						font-weight: 600;
+						color: var(--tone-ink);
+					}
+
+					&::before {
+						position: absolute;
+						top: 0;
+						left: 50%;
+						width: 0;
+						height: 0;
+						content: '';
+						border-top: 7px solid var(--ink);
+						border-right: 6px solid transparent;
+						border-left: 6px solid transparent;
+						translate: -50% 0;
+					}
+				}
+			}
+
+			& .bar {
+				height: 8px;
+				background: var(--tone);
+				opacity: 0.25;
+				print-color-adjust: exact;
+			}
+
+			& .step-label {
+				font-size: 12px;
+				line-height: 1.3;
+				color: var(--ink3);
+			}
+		}
+
+		& .explanation {
 			max-width: var(--measure);
+			margin-top: 0.6rem;
+			font-size: 15px;
+			line-height: 1.6;
+			color: var(--ink2);
+		}
+
+		& .part {
+			margin-top: 1.5rem;
+			padding-top: 1.25rem;
+			border-top: 1px solid var(--rule2);
+
+			& h3 {
+				font-family: var(--serif);
+				font-size: 16px;
+				font-weight: 600;
+				color: var(--ink);
+			}
+
+			& .numeral {
+				margin-right: 0.25rem;
+				font-variant-numeric: tabular-nums;
+			}
+		}
+
+		& .reasons,
+		& .notes {
+			display: grid;
+			gap: 0.6rem;
+			max-width: calc(var(--measure) + var(--margin));
+			margin-top: 0.75rem;
+			list-style: none;
+			counter-reset: item;
 
 			& li {
-				padding: 0.4rem 0 0.4rem 0.25rem;
-				font-family: var(--serif);
+				position: relative;
+				padding-left: 1.75rem;
 				font-size: 15px;
-				line-height: 1.45;
+				line-height: 1.55;
+				counter-increment: item;
 
-				&::marker {
+				&::before {
+					position: absolute;
+					left: 0;
 					font-family: var(--mono);
 					font-size: 12px;
+					line-height: 1.55rem;
+					content: counter(item) '.';
 					color: var(--ink3);
+				}
+			}
+		}
+
+		& .reasons li {
+			font-family: var(--serif);
+			color: var(--ink);
+		}
+
+		& .notes li {
+			color: var(--ink2);
+		}
+
+		& .margin {
+			display: block;
+			margin-top: 0.15rem;
+		}
+
+		/* citations in the left margin, as in a printed opinion */
+		@container (min-width: 34rem) {
+			& .part h3,
+			& .notes,
+			& .sources {
+				margin-left: calc(var(--margin) + 1.25rem);
+			}
+
+			& .reasons li {
+				display: grid;
+				grid-template-columns: var(--margin) minmax(0, 1fr);
+				column-gap: 1.25rem;
+				padding-left: 0;
+
+				&::before {
+					left: calc(var(--margin) + 1.25rem);
 				}
 			}
 
 			& .reason-text {
-				margin-right: 0.6rem;
+				grid-row: 1;
+				grid-column: 2;
+				padding-left: 1.75rem;
 			}
-		}
 
-		& .notes {
-			margin: 0.5rem 0 0 1.25rem;
-			max-width: var(--measure);
-
-			& li {
-				padding: 0.3rem 0 0.3rem 0.25rem;
-				font-size: 15px;
-				color: var(--ink2);
-
-				&::marker {
-					color: var(--accent);
-				}
+			& .margin {
+				grid-row: 1;
+				grid-column: 1;
+				margin-top: 0.2rem;
+				line-height: 1.35;
+				text-align: right;
 			}
 		}
 
 		& .sources {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-			gap: 0.35rem;
-			margin-top: 1.75rem;
-			padding-top: 1.25rem;
-			border-top: 1px solid var(--rule2);
-
-			& .sources-label {
-				margin-right: 0.35rem;
-				font-size: 13px;
-				font-weight: 600;
-				color: var(--ink2);
-			}
+			display: grid;
+			gap: 0.2rem;
+			margin-top: 0.6rem;
+			list-style: none;
 		}
 	}
 </style>

@@ -13,7 +13,14 @@
 	import { cite } from '../i18n.js';
 	import type { LegalBasis } from '../types.js';
 
-	let { basis }: { basis: LegalBasis } = $props();
+	let {
+		basis,
+		wrap = false
+	}: {
+		basis: LegalBasis;
+		/** break at spaces, for citations set in a narrow margin */
+		wrap?: boolean;
+	} = $props();
 
 	const path = $derived(citationPath(basis));
 </script>
@@ -21,11 +28,11 @@
 {#if path}
 	<Tooltip text={m.normen_open()}>
 		<a class="citation-link" href={resolve(localized(path))} target="_blank" rel="noopener"
-			><cite class="citation">{cite(basis)}</cite></a
+			><cite class="citation" data-wrap={wrap}>{cite(basis)}</cite></a
 		>
 	</Tooltip>
 {:else}
-	<cite class="citation">{cite(basis)}</cite>
+	<cite class="citation" data-wrap={wrap}>{cite(basis)}</cite>
 {/if}
 
 <style>
@@ -36,6 +43,10 @@
 		letter-spacing: 0.02em;
 		color: var(--ink3);
 		white-space: nowrap;
+
+		&[data-wrap='true'] {
+			white-space: normal;
+		}
 
 		/* long references such as implementing decisions wrap on phones */
 		@media (max-width: 40rem) {
