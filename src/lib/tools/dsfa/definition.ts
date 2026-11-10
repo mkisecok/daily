@@ -260,6 +260,17 @@ export const definition: RecordToolDefinition = {
 					)
 				},
 				{
+					id: 'tom',
+					type: 'reference',
+					tool: 'tom-katalog',
+					label: L('Maßnahmen im TOM-Katalog', 'Measures in the TOM catalogue'),
+					help: L(
+						'Der Eintrag im TOM-Katalog für das System, auf dem die Verarbeitung läuft. Seine Maßnahmen werden je Gewährleistungsziel mit den Risiken abgeglichen.',
+						'The TOM catalogue entry for the system the processing runs on. Its measures are compared with the risks goal by goal.'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 7 lit. d' }
+				},
+				{
 					id: 'verarbeitung',
 					type: 'textarea',
 					label: L(

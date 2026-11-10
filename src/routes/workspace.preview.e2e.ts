@@ -477,6 +477,65 @@ test('preview: the SDM cube shows its faces, slices and views', async ({ page })
 	);
 });
 
+test('preview: a DPIA compares its risks with the linked TOM entry', async ({ page }) => {
+	const at = '2026-11-05T09:00:00.000Z';
+	const stored = (
+		id: string,
+		toolSlug: string,
+		version: number,
+		state: string | null,
+		data: object
+	) => ({
+		id,
+		toolSlug,
+		definitionVersion: version,
+		state,
+		title: String(
+			(data as Record<string, unknown>).system ?? (data as Record<string, unknown>).bezeichnung
+		),
+		data,
+		version: 1,
+		createdAt: at,
+		updatedAt: at,
+		archivedAt: null
+	});
+	const tom = stored('tom-1', 'tom-katalog', 2, null, {
+		system: 'Bewerberportal',
+		schutzbedarf: 'normal',
+		status: 'teilweise',
+		vertraulichkeit_massnahmen: ['mfa', 'ruhe']
+	});
+	const dsfa = stored('dsfa-2', 'dsfa', 3, 'entwurf', {
+		bezeichnung: 'Bewerbervorauswahl',
+		tom: 'tom-1',
+		vertraulichkeit_gefaehrdungen: ['G 0.23'],
+		vertraulichkeit_w: '3',
+		vertraulichkeit_s: '4',
+		integritaet_w: '2',
+		integritaet_s: '2'
+	});
+	await page.goto('', { waitUntil: 'networkidle' });
+	await page.evaluate(
+		(records) => localStorage.setItem('daily.records.v1', JSON.stringify({ records, events: [] })),
+		[tom, dsfa]
+	);
+	await page.goto('werkzeuge/dsfa/eintraege/?eintrag=dsfa-2', { waitUntil: 'networkidle' });
+
+	const card = page.getByRole('region', { name: 'Abgleich mit dem TOM-Katalog' });
+	await expect(card).toContainText('TOM-Katalog: Bewerberportal · Teilweise umgesetzt');
+	await expect(card).toContainText('Ziele mit Lücke: 1');
+	await expect(card.locator('.tom-need')).toContainText(
+		'Schutzbedarf nach den Ausgangsrisiken dieser DSFA: hoch; im TOM-Katalog: normal.'
+	);
+	const row = (goal: string) => card.getByRole('row', { name: new RegExp(`^${goal}`) });
+	await expect(row('Vertraulichkeit')).toContainText(
+		'Mehr-Faktor-Authentisierung, Verschlüsselung gespeicherter Daten'
+	);
+	await expect(row('Vertraulichkeit').locator('.badge')).toHaveText('Maßnahmen umgesetzt');
+	await expect(row('Integrität').locator('.badge')).toHaveText('Lücke');
+	await expect(row('Transparenz').locator('.badge')).toHaveText('Offen');
+});
+
 test('preview: the risk classification marks the AI Act tier', async ({ page }) => {
 	await page.goto('werkzeuge/risikoklassifizierung/pruefen/', { waitUntil: 'networkidle' });
 	const names = await page

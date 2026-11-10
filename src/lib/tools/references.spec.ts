@@ -22,10 +22,13 @@ describe('links between registers', () => {
 		}
 	});
 
-	it('links DSFA, breaches, processor checks and TOM to the VVT, and the FRIA to the AI register', () => {
+	it('links DSFA, breaches, processor checks and TOM to the VVT, the DSFA to the TOM catalogue, and the FRIA to the AI register', () => {
 		const links = (slug: string) =>
 			referenceFields(getRecordTool(slug)!.definition).map((f) => [f.id, f.tool]);
-		expect(links('dsfa')).toEqual([['vvt', 'vvt']]);
+		expect(links('dsfa')).toEqual([
+			['vvt', 'vvt'],
+			['tom', 'tom-katalog']
+		]);
 		expect(links('datenpanne')).toEqual([['vvt', 'vvt']]);
 		expect(links('avv-pruefung')).toEqual([['vvt', 'vvt']]);
 		expect(links('tom-katalog')).toEqual([['vvt', 'vvt']]);

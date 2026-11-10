@@ -98,6 +98,17 @@ describe('DSFA: Excel workbook', () => {
 		]);
 	});
 
+	it('adds the measures in place and the comparison when a TOM entry is linked', () => {
+		const tom = { state: null, data: { vertraulichkeit_massnahmen: ['mfa'] } };
+		const [, linked] = dsfaWorkbook(record, 'de', tom);
+		const rows = values(linked.data);
+		expect(rows[0].slice(-2)).toEqual(['Umgesetzte Maßnahmen (TOM)', 'Abgleich']);
+		expect(rows[1].slice(-2)).toEqual(['Mehr-Faktor-Authentisierung', 'Maßnahmen umgesetzt']);
+		expect(rows[5].slice(-2)).toEqual(['—', 'Senkung nicht belegt']);
+		expect(linked.columns).toHaveLength(14);
+		expect(values(table.data)[0]).toHaveLength(12);
+	});
+
 	it('names the consultation when a residual risk stays high', () => {
 		const figures = values(overview.data).filter((row) => row[0] === 'Konsultation (Art. 36)');
 		expect(figures[0][2]).toBe('Erforderlich');

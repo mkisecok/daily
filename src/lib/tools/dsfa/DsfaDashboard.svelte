@@ -9,12 +9,62 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import Icon from '#lib/ui/Icon.svelte';
-	import type { RecordView } from '../../records/types.js';
+	import { formatValue } from '../../records/format.js';
+	import { getStore } from '../../records/store/index.js';
+	import type { RecordView, StoredRecord } from '../../records/types.js';
+	import { fieldById } from '../../records/validate.js';
 	import { text } from '../i18n.js';
+	import { definition as tomDefinition } from '../tom-katalog/definition.js';
 	import { assessRisks, RISKS, type Rating, type RiskLevel } from './definition.js';
 	import RiskMatrix from './RiskMatrix.svelte';
+	import { compareWithTom, type CoverageStatus } from './tom.js';
 
 	let { record }: { record: RecordView } = $props();
+
+	/** the linked TOM entry: undefined while none is linked or it loads, null when it is gone */
+	let tom = $state<StoredRecord | null | undefined>(undefined);
+	const tomId = $derived(
+		typeof record.data.tom === 'string' && record.data.tom ? record.data.tom : null
+	);
+	$effect(() => {
+		const id = tomId;
+		tom = undefined;
+		if (!id) return;
+		let live = true;
+		getStore()
+			.get(id)
+			.then(
+				(detail) => live && (tom = detail?.record ?? null),
+				() => live && (tom = null)
+			);
+		return () => {
+			live = false;
+		};
+	});
+	const comparison = $derived(tom ? compareWithTom(record, tom) : null);
+	const gaps = $derived(
+		comparison?.goals.filter((g) => g.status === 'luecke' || g.status === 'unbelegt').length ?? 0
+	);
+
+	const STATUS: Record<CoverageStatus, { label: () => string; badge: string }> = {
+		abgedeckt: { label: m.dsfa_tom_status_abgedeckt, badge: 'khaki' },
+		luecke: { label: m.dsfa_tom_status_luecke, badge: 'wax' },
+		unbelegt: { label: m.dsfa_tom_status_unbelegt, badge: 'wax' },
+		offen: { label: m.dsfa_tom_status_offen, badge: '' }
+	};
+	const NEED: Record<string, () => string> = {
+		normal: m.dsfa_tom_need_normal,
+		hoch: m.dsfa_tom_need_hoch,
+		sehr_hoch: m.dsfa_tom_need_sehr_hoch
+	};
+	const need = (value: string | null) => (value && NEED[value]?.()) || m.dsfa_tom_need_unknown();
+	/** the entry's title and status, e.g. "TOM-Katalog: Portal · Teilweise umgesetzt" */
+	const tomLine = $derived.by(() => {
+		if (!tom) return '';
+		const field = fieldById(tomDefinition, 'status');
+		const status = field ? formatValue(field, tom.data.status, getLocale()) : '';
+		return [m.dsfa_tom_entry({ title: tom.title }), status].filter(Boolean).join(' · ');
+	});
 
 	let exporting = $state(false);
 	let failed = $state(false);
@@ -28,7 +78,12 @@
 				.replace(/[^\p{L}\p{N}]+/gu, '-')
 				.replace(/^-|-$/g, '');
 			const day = new Date().toISOString().slice(0, 10);
-			await downloadDsfaWorkbook(record, getLocale(), `dsfa-${name || 'export'}-${day}.xlsx`);
+			await downloadDsfaWorkbook(
+				record,
+				getLocale(),
+				`dsfa-${name || 'export'}-${day}.xlsx`,
+				tom ?? null
+			);
 		} catch {
 			failed = true;
 		} finally {
@@ -172,6 +227,52 @@
 				</tbody>
 			</table>
 		</div>
+	</section>
+
+	<section class="card table-card tom-card" aria-labelledby="dsfa-tom-title">
+		<h2 id="dsfa-tom-title"><Icon name="shield-check" size={18} />{m.dsfa_tom_title()}</h2>
+		{#if !tomId}
+			<p class="tom-note">{m.dsfa_tom_unlinked()}</p>
+		{:else if tom === null}
+			<p class="tom-note">{m.dsfa_tom_missing()}</p>
+		{:else if tom && comparison}
+			<p class="tom-entry">
+				{tomLine} ·
+				<span class:gap={gaps > 0}>{m.dsfa_tom_gaps({ count: gaps })}</span>
+			</p>
+			<p class="tom-need" class:low={comparison.needTooLow}>
+				{m.dsfa_tom_need({ need: need(comparison.need), tom: need(comparison.tomNeed) })}
+				{#if comparison.needTooLow}{m.dsfa_tom_need_low()}{/if}
+			</p>
+			<div class="scroll">
+				<table>
+					<thead>
+						<tr>
+							<th>{m.dsfa_tom_col_goal()}</th>
+							<th>{m.dsfa_tom_col_status()}</th>
+							<th>{m.dsfa_dash_col_threats()}</th>
+							<th>{m.dsfa_dash_col_before()}</th>
+							<th>{m.dsfa_tom_col_measures()}</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each comparison.goals as row (row.risk.id)}
+							<tr data-status={row.status}>
+								<th scope="row">{text(row.goal)}</th>
+								<td>
+									<span class="badge {STATUS[row.status].badge}">{STATUS[row.status].label()}</span>
+								</td>
+								<td class="threats">{row.risk.threats.length}</td>
+								<td>{@render level(row.risk.before)}</td>
+								<td class="measures">
+									{row.measures.map((measure) => text(measure)).join(', ') || m.dsfa_tom_none()}
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		{/if}
 	</section>
 </section>
 
@@ -338,6 +439,27 @@
 
 		& .scroll {
 			overflow-x: auto;
+		}
+	}
+
+	.tom-card {
+		& .tom-note,
+		& .tom-entry,
+		& .tom-need {
+			margin: 0 0 0.6rem;
+			font-size: 14px;
+			color: var(--ink2);
+		}
+
+		& .gap,
+		& .tom-need.low {
+			color: var(--wax);
+		}
+
+		/* goals with a gap carry a wax rule on the left */
+		& tr[data-status='luecke'] > th,
+		& tr[data-status='unbelegt'] > th {
+			box-shadow: inset 3px 0 0 var(--wax);
 		}
 	}
 
