@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { afterNavigate, goto, invalidate } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { dayKey, formatShortDate } from '#lib/i18n/date.js';
@@ -12,10 +13,12 @@
 	import type { StoredRecord } from '#lib/records/types.js';
 	import ConfirmDialog from '#lib/ui/ConfirmDialog.svelte';
 	import DatePicker from '#lib/ui/form/DatePicker.svelte';
+	import Icon from '#lib/ui/Icon.svelte';
 	import PageHeader from '#lib/ui/PageHeader.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
+	const uid = $props.id();
 
 	const store = getStore();
 	const locale = getLocale();
@@ -28,6 +31,7 @@
 	let query = $state('');
 	let editing = $state(false);
 	let preview = $state(false);
+	let textarea = $state<HTMLTextAreaElement>();
 	let busy = $state(false);
 	let confirmArchive = $state(false);
 	let message = $state<string | null>(null);
@@ -69,6 +73,21 @@
 			editing = false;
 		}
 	});
+
+	function togglePreview() {
+		preview = !preview;
+	}
+
+	// Esc on the toggle closes the preview and returns to the text
+	async function closePreviewOnEscape(event: KeyboardEvent) {
+		if (event.key !== 'Escape' || !preview) return;
+
+		event.preventDefault();
+		preview = false;
+		// the text is inert until the closed state reaches the DOM
+		await tick();
+		textarea?.focus();
+	}
 
 	async function run<T>(action: () => Promise<T>): Promise<T | undefined> {
 		busy = true;
@@ -153,23 +172,40 @@
 			<span>{m.notes_title()}</span>
 			<input type="text" bind:value={draft.titel} required />
 		</label>
-		<div class="tabs" role="tablist">
-			<button type="button" role="tab" aria-selected={!preview} onclick={() => (preview = false)}>
-				{m.notes_write()}
-			</button>
-			<button type="button" role="tab" aria-selected={preview} onclick={() => (preview = true)}>
-				{m.notes_preview()}
-			</button>
+		<div class="field">
+			<label class="visually-hidden" for="{uid}-text">{m.notes_text()}</label>
+			<!-- one box: the preview slides in over the text from the right and back out -->
+			<div class="pane" data-preview={preview ? 'open' : 'closed'}>
+				<textarea
+					id="{uid}-text"
+					bind:this={textarea}
+					rows="14"
+					bind:value={draft.text}
+					aria-describedby="{uid}-help"
+					inert={preview}></textarea>
+				<div
+					class="preview"
+					id="{uid}-preview"
+					role="region"
+					aria-label={m.notes_preview()}
+					inert={!preview}
+				>
+					<div class="sheet"><Markdown source={draft.text} /></div>
+				</div>
+				<button
+					type="button"
+					class="slide"
+					aria-controls="{uid}-preview"
+					aria-expanded={preview}
+					aria-label={preview ? m.notes_preview_close() : m.notes_preview_open()}
+					onclick={togglePreview}
+					onkeydown={closePreviewOnEscape}
+				>
+					<span class="chevron"><Icon name="chevron-left" size={18} /></span>
+				</button>
+			</div>
+			<small id="{uid}-help">{m.notes_text_help()}</small>
 		</div>
-		{#if preview}
-			<div class="preview"><Markdown source={draft.text} /></div>
-		{:else}
-			<label class="field">
-				<span class="visually-hidden">{m.notes_text()}</span>
-				<textarea rows="14" bind:value={draft.text}></textarea>
-				<small>{m.notes_text_help()}</small>
-			</label>
-		{/if}
 		<div class="row">
 			<div class="field">
 				<DatePicker bind:value={draft.tag} label={m.notes_day()} granularity="day" />
@@ -490,52 +526,102 @@
 			}
 		}
 
-		/* write and preview as a segmented control; the chosen tab is raised with a blue rule */
-		& .tabs {
-			display: inline-flex;
-			gap: 0.2rem;
-			margin-top: 1.25rem;
-			padding: 0.2rem;
-			font-size: 14px;
-			font-weight: 500;
-			background: var(--paper);
-			border: 1px solid var(--rule2);
-			border-radius: var(--radius);
+		/*
+		 * text and preview share one box: the preview sheet slides in over the
+		 * text from the right and back out, clipped by its frame so the page
+		 * never scrolls sideways.
+		 */
+		& .pane {
+			--slide: 0.26s cubic-bezier(0.2, 0.8, 0.2, 1);
 
-			& button {
-				min-height: 36px;
-				padding: 0.3rem 0.9rem;
-				color: var(--ink3);
-				border-radius: calc(var(--radius) - 2px);
+			position: relative;
+			display: inline-block;
+			width: 100%;
+			margin-top: 0.3rem;
+
+			& textarea {
+				display: block;
+				margin-top: 0;
+				padding-right: 3.4rem;
+			}
+
+			& .preview {
+				position: absolute;
+				inset: 0;
+				overflow: clip;
+				visibility: hidden;
+				border-radius: var(--radius);
+				transition: visibility 0s linear 0.26s;
+			}
+
+			& .sheet {
+				height: 100%;
+				padding: 1rem 3.4rem 1rem 1.1rem;
+				overflow-y: auto;
+				background: var(--canvas);
+				border: 1px solid var(--rule2);
+				border-radius: var(--radius);
+				translate: 100% 0;
+				transition: translate var(--slide);
+			}
+
+			/* round, so it reads as part of the box rather than one of the form buttons */
+			& .slide {
+				position: absolute;
+				top: 50%;
+				right: 0.6rem;
+				display: grid;
+				place-items: center;
+				width: 2.25rem;
+				height: 2.25rem;
+				padding: 0;
+				color: var(--ink2);
+				background: var(--sheet);
+				border: 1px solid var(--rule);
+				border-radius: 50%;
+				box-shadow: var(--shadow-raised);
+				translate: 0 -50%;
 				transition:
-					background-color 0.12s ease,
-					color 0.12s ease;
+					color 0.12s ease,
+					border-color 0.12s ease;
 
 				&:hover {
 					color: var(--ink);
-				}
-
-				&[aria-selected='true'] {
-					color: var(--ink);
-					background: var(--sheet);
-					box-shadow:
-						inset 0 -2px 0 var(--primary),
-						var(--shadow-raised);
+					border-color: var(--ink3);
 				}
 
 				@media (max-width: 40rem) {
-					min-height: 44px;
+					width: 2.75rem;
+					height: 2.75rem;
 				}
 			}
-		}
 
-		& .preview {
-			min-height: 10rem;
-			margin-top: 0.6rem;
-			padding: 1rem 1.1rem;
-			background: var(--canvas);
-			border: 1px solid var(--rule2);
-			border-radius: var(--radius);
+			& .chevron {
+				display: grid;
+				transition: rotate var(--slide);
+			}
+
+			&[data-preview='open'] {
+				& .preview {
+					visibility: visible;
+					transition: visibility 0s;
+				}
+
+				& .sheet {
+					translate: 0 0;
+				}
+
+				& .chevron {
+					rotate: 180deg;
+				}
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				& .sheet,
+				& .chevron {
+					transition: none;
+				}
+			}
 		}
 
 		& .toolbar {

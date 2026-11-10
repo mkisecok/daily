@@ -219,6 +219,37 @@ test('preview: typing "/" in a text field does not open the palette', async ({ p
 	await expect(page.getByRole('dialog', { name: 'Suche öffnen' })).toBeHidden();
 });
 
+test('preview: the note preview slides over the text and back', async ({ page }) => {
+	await page.goto('notizen/?neu=1', { waitUntil: 'networkidle' });
+	const text = page.getByRole('textbox', { name: 'Text' });
+	await text.fill('## Termin\n\nsiehe Art. 6 DSGVO');
+	const preview = page.getByRole('region', { name: 'Vorschau' });
+	await expect(preview).toBeHidden();
+
+	await page.getByRole('button', { name: 'Vorschau öffnen' }).click();
+	const toggle = page.getByRole('button', { name: 'Vorschau schließen' });
+	await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+	await expect(preview.getByRole('heading', { name: 'Termin' })).toBeVisible();
+	await expect(preview.locator('a.norm')).toHaveText('Art. 6 DSGVO');
+	// the sheet lands exactly on the text box and the page never scrolls sideways
+	const box = await text.boundingBox();
+	await expect
+		.poll(async () => (await preview.locator('.sheet').boundingBox())?.x)
+		.toBeCloseTo(box!.x, 0);
+	expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
+		await page.evaluate(() => document.documentElement.clientWidth)
+	);
+
+	// Esc closes it and returns to the text
+	await toggle.press('Escape');
+	await expect(page.getByRole('button', { name: 'Vorschau öffnen' })).toHaveAttribute(
+		'aria-expanded',
+		'false'
+	);
+	await expect(text).toBeFocused();
+	await expect(preview).toBeHidden();
+});
+
 test('preview: the sidebar counter follows saves and clearing without navigation', async ({
 	page
 }) => {

@@ -29,6 +29,7 @@ export const ICONS = {
 		'M12 15v3'
 	],
 	check: ['M5 12l5 5l10 -10'],
+	'chevron-left': ['M15 6l-6 6l6 6'],
 	clock: ['M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0', 'M12 7v5l3 3'],
 	download: ['M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2', 'M7 11l5 5l5 -5', 'M12 4l0 12'],
 	edit: [
