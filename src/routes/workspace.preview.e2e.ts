@@ -283,7 +283,7 @@ test('preview: the privacy notice describes the preview, not the signed-in app',
 
 test('preview: the tool catalogue narrows by search and area', async ({ page }) => {
 	await page.goto('werkzeuge/', { waitUntil: 'networkidle' });
-	await expect(page.locator('li.tile')).toHaveCount(30);
+	await expect(page.locator('li.tile')).toHaveCount(31);
 
 	await page.getByRole('searchbox', { name: 'Werkzeuge durchsuchen' }).fill('Art. 35');
 	await expect(page.locator('.bento')).toBeHidden();
@@ -399,6 +399,82 @@ test('preview: a DPIA shows its risk picture before and after measures', async (
 		dashboard.getByRole('button', { name: 'Excel herunterladen' }).click()
 	]);
 	expect(download.suggestedFilename()).toMatch(/^dsfa-Bewerbervorauswahl-\d{4}-\d{2}-\d{2}\.xlsx$/);
+});
+
+test('preview: the SDM cube shows its faces, slices and views', async ({ page }) => {
+	const at = '2026-11-08T09:00:00.000Z';
+	const met = (goal: string) => ({
+		[`${goal}_e1`]: 'umgesetzt',
+		[`${goal}_e2`]: 'umgesetzt',
+		[`${goal}_e3`]: 'umgesetzt'
+	});
+	const data = {
+		bezeichnung: 'Bewerbermanagement',
+		risikostufe: 'normal',
+		vorgaenge: ['sn', 'aw', 'bn', 'bt', 'bs'],
+		...met('vertraulichkeit'),
+		...met('integritaet'),
+		...met('verfuegbarkeit'),
+		...met('datenminimierung'),
+		...met('nichtverkettung'),
+		...met('transparenz'),
+		transparenz_e2: 'teilweise',
+		transparenz_luecken: ['bt'],
+		intervenierbarkeit_e1: 'umgesetzt'
+	};
+	await page.goto('', { waitUntil: 'networkidle' });
+	await page.evaluate(
+		(record) =>
+			localStorage.setItem('daily.records.v1', JSON.stringify({ records: [record], events: [] })),
+		{
+			id: 'sdm-1',
+			toolSlug: 'sdm-wuerfel',
+			definitionVersion: 1,
+			state: null,
+			title: data.bezeichnung,
+			data,
+			version: 1,
+			createdAt: at,
+			updatedAt: at,
+			archivedAt: null
+		}
+	);
+	await page.goto('werkzeuge/sdm-wuerfel/eintraege/?eintrag=sdm-1', { waitUntil: 'networkidle' });
+
+	await expect(page.locator('.verdict .headline')).toHaveText('Lücken im SDM-Würfel.');
+	const cube = page.getByRole('region', { name: 'SDM-Würfel', exact: true });
+	// 5 of 9 operations apply: 105 cells, 1 gap (Bt on level 2), 4 partly, 10 open
+	await expect(cube.locator('.figure strong')).toHaveText(['105', '1', '4', '10']);
+	const picture = cube.getByRole('img');
+	await expect(picture).toHaveAttribute('aria-label', /über alle Ziele\. Relevante Zellen: 105/);
+	// a normal risk starts with the four phases; the front has 4 × 3 cells
+	await expect(cube.locator('svg.cube rect.cell')).toHaveCount(12);
+	await cube.getByRole('button', { name: '9 Vorgangsgruppen' }).click();
+	await expect(cube.locator('svg.cube rect.cell')).toHaveCount(27);
+
+	await cube.getByRole('button', { name: /Transparenz/ }).click();
+	await expect(cube.getByRole('button', { name: /Transparenz/ })).toHaveAttribute(
+		'aria-pressed',
+		'true'
+	);
+	await expect(cube.locator('.front')).toHaveText('Vorderseite: Vorgänge × Ebenen für Transparenz');
+	await expect(cube.locator('svg.cube .chosen')).toHaveCount(2);
+
+	const viewB = cube.getByRole('region', { name: /Sicht b/ });
+	await expect(viewB.getByRole('row', { name: /Transparenz/ }).locator('.pill')).toHaveText([
+		'Umgesetzt',
+		'Teilweise',
+		'Umgesetzt'
+	]);
+	await expect(viewB.getByRole('row', { name: /Intervenierbarkeit/ }).locator('.pill')).toHaveText([
+		'Umgesetzt',
+		'Offen',
+		'Offen'
+	]);
+	const viewA = cube.getByRole('region', { name: /Sicht a/ });
+	await expect(viewA.getByRole('row', { name: /Transparenz/ }).locator('td.s-luecke')).toHaveCount(
+		1
+	);
 });
 
 test('preview: the risk classification marks the AI Act tier', async ({ page }) => {

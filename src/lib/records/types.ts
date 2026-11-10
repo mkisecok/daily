@@ -26,7 +26,8 @@ export type FieldDef = FieldBase &
 		| { type: 'select'; options: Option[] }
 		| { type: 'multiselect'; options: Option[] }
 		| { type: 'date' | 'datetime' }
-		| { type: 'number'; unit?: Localized; min?: number }
+		/** `integer` for counts and periods: fractions are rejected */
+		| { type: 'number'; unit?: Localized; min?: number; integer?: boolean }
 		| { type: 'boolean' }
 		/** a frozen snapshot of a questionnaire result, e.g. the risk classification */
 		| { type: 'assessment'; tool: string }

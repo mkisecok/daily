@@ -148,6 +148,7 @@ export const definition: RecordToolDefinition = {
 				{
 					id: 'anzahl_betroffene',
 					type: 'number',
+					integer: true,
 					label: L('Ungefähre Zahl der Betroffenen', 'Approximate number of data subjects'),
 					unit: L('Personen', 'persons'),
 					min: 0,
@@ -157,6 +158,7 @@ export const definition: RecordToolDefinition = {
 				{
 					id: 'anzahl_datensaetze',
 					type: 'number',
+					integer: true,
 					label: L('Ungefähre Zahl der Datensätze', 'Approximate number of records'),
 					min: 0
 				},

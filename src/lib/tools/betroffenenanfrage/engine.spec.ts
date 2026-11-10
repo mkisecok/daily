@@ -37,6 +37,21 @@ describe('Betroffenenanfrage: deadlines', () => {
 		expect(engine.deadlines!(extended).map((d) => d.kind)).toEqual(['antwort']);
 	});
 
+	it('keeps the one-month deadline when the extension is communicated too late', () => {
+		const late = view({
+			verlaengerung: 'true',
+			verlaengerung_mitgeteilt_am: '2026-03-05T10:00:00.000Z'
+		});
+		expect(replyDue(late)).toBe('2026-02-28T22:59:00.000Z');
+		const replied = {
+			verlaengerung: 'true',
+			verlaengerung_mitgeteilt_am: '2026-03-05T10:00:00.000Z'
+		};
+		expect(assess({ ...replied, antwort_am: '2026-03-20T10:00:00.000Z' }).outcome).toBe(
+			'verspaetet'
+		);
+	});
+
 	it('has no deadline once the reply is sent', () => {
 		expect(kinds({ antwort_am: '2026-02-20T10:00:00.000Z' })).toEqual([]);
 	});

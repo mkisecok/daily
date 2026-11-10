@@ -95,4 +95,15 @@ describe('Guardrail-Test', () => {
 		});
 		expect((sent?.headers as Record<string, string>).authorization).toBe('Bearer k');
 	});
+
+	it('gives up when the signal aborts, e.g. on a timeout', async () => {
+		const hanging = ((_url: string, init?: RequestInit) =>
+			new Promise((_resolve, reject) => {
+				init?.signal?.addEventListener('abort', () => reject(init.signal!.reason));
+			})) as typeof fetch;
+		const endpoint = { url: 'http://localhost:1/v1', model: 'm', key: '', system: '' };
+		await expect(ask(endpoint, 'P', hanging, AbortSignal.timeout(10))).rejects.toMatchObject({
+			name: 'TimeoutError'
+		});
+	});
 });
