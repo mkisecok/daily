@@ -140,6 +140,7 @@ export const definition: RecordToolDefinition = {
 				{
 					id: 'anzahl',
 					type: 'number',
+					integer: true,
 					label: L('Anzahl Personen', 'Number of people'),
 					unit: L('Personen', 'persons'),
 					min: 0
@@ -178,6 +179,7 @@ export const definition: RecordToolDefinition = {
 				{
 					id: 'wiederholung_monate',
 					type: 'number',
+					integer: true,
 					label: L('Auffrischung nach', 'Refresh after'),
 					unit: L('Monaten', 'months'),
 					min: 1

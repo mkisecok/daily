@@ -13,15 +13,28 @@ const str = (record: RecordView, field: string) => {
 };
 
 /**
+ * the extension counts only once it is communicated, and only if that
+ * happens within the first month (Art. 12(3), third sentence)
+ */
+function extensionInTime(record: RecordView, received: string): boolean {
+	const notified = str(record, 'verlaengerung_mitgeteilt_am');
+	return (
+		record.data.verlaengerung === true &&
+		notified !== null &&
+		notified <= monthsAfterDay(received, 1)
+	);
+}
+
+/**
  * when the reply is due: one month after the day of receipt, three months
- * once an extension has been communicated (Art. 12(3)). An extension that
- * was decided but not yet communicated does not move the deadline.
+ * once an extension has been communicated in time (Art. 12(3)). An extension
+ * that was decided but not yet communicated, or communicated too late, does
+ * not move the deadline.
  */
 export function replyDue(record: RecordView): string | null {
 	const received = str(record, 'eingang');
 	if (!received) return null;
-	const extended = record.data.verlaengerung === true && str(record, 'verlaengerung_mitgeteilt_am');
-	return monthsAfterDay(received, extended ? 3 : 1);
+	return monthsAfterDay(received, extensionInTime(record, received) ? 3 : 1);
 }
 
 function deadlines(record: RecordView): DeadlineSpec[] {

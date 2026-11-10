@@ -2,7 +2,7 @@
 	import Switch from '#lib/ui/form/Switch.svelte';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { downloadText } from '#lib/records/ui/download.js';
-	import { ask } from '#lib/tools/guardrail-test/endpoint.js';
+	import { ANSWER_TIMEOUT_MS, ask } from '#lib/tools/guardrail-test/endpoint.js';
 	import {
 		classify,
 		outcomesCsv,
@@ -47,6 +47,9 @@
 		query: L('Endpunkt abfragen und auswerten', 'Query the endpoint and evaluate'),
 		progress: L('Abfrage', 'Query'),
 		failed: L('Anfrage fehlgeschlagen', 'Request failed'),
+		stop: L('Abbrechen', 'Stop'),
+		timeout: L('Keine Antwort innerhalb von 60 Sekunden', 'No answer within 60 seconds'),
+		stopped: L('Abgebrochen', 'Stopped'),
 		csv: L('Ergebnis als CSV', 'Result as CSV'),
 		print: L('Drucken', 'Print'),
 		expect: L('Erwartet', 'Expected'),
@@ -78,6 +81,8 @@
 	let key = $state('');
 	let system = $state('');
 	let running = $state(false);
+	/** stops the current run; the answers received so far are kept */
+	let stopper: AbortController | null = null;
 	let done = $state(0);
 	let errors = $state<Record<string, string>>({});
 	let outcomes = $state<Outcome[] | null>(null);
@@ -102,16 +107,32 @@
 		running = true;
 		done = 0;
 		errors = {};
+		const run = new AbortController();
+		stopper = run;
 		const endpoint = { url, model, key, system: system || defaultSystem };
 		for (const p of prompts) {
+			if (run.signal.aborted) {
+				errors[p.id] = text(T.stopped, locale);
+				continue;
+			}
 			try {
-				answers[p.id] = await ask(endpoint, text(p.text, locale));
+				const signal = AbortSignal.any([run.signal, AbortSignal.timeout(ANSWER_TIMEOUT_MS)]);
+				answers[p.id] = await ask(endpoint, text(p.text, locale), fetch, signal);
 			} catch (error) {
 				answers[p.id] = '';
-				errors[p.id] = error instanceof Error ? error.message : String(error);
+				const name = error instanceof Error ? error.name : '';
+				errors[p.id] =
+					name === 'TimeoutError'
+						? text(T.timeout, locale)
+						: run.signal.aborted
+							? text(T.stopped, locale)
+							: error instanceof Error
+								? error.message
+								: String(error);
 			}
 			done++;
 		}
+		stopper = null;
 		running = false;
 		evaluate();
 	}
@@ -188,9 +209,12 @@
 			<button type="button" onclick={query} disabled={running || prompts.length === 0 || !url}>
 				{text(T.query)}
 			</button>
-			{#if running}<span class="status" aria-live="polite"
-					>{text(T.progress)} {done}/{prompts.length}</span
-				>{/if}
+			{#if running}
+				<button type="button" class="quiet" onclick={() => stopper?.abort()}>
+					{text(T.stop)}
+				</button>
+				<span class="status" aria-live="polite">{text(T.progress)} {done}/{prompts.length}</span>
+			{/if}
 		</div>
 	{/if}
 

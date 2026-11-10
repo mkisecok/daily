@@ -21,6 +21,14 @@ const registers: Register[] = [
 		}
 	},
 	{
+		slug: 'sdm-wuerfel',
+		titleLabel: 'Verarbeitungstätigkeit',
+		fill: async (page, title) => {
+			await page.getByLabel('Verarbeitungstätigkeit', { exact: true }).fill(title);
+			await choose(page.locator('#field-risikostufe'), 'hoch');
+		}
+	},
+	{
 		slug: 'loeschkonzept',
 		titleLabel: 'Datenart oder Dokumentenklasse',
 		fill: async (page, title) => {

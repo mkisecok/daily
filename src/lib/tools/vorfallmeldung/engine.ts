@@ -1,4 +1,4 @@
-import { addHours } from '../../records/deadlines.js';
+import { addHours, daysAfterDay } from '../../records/deadlines.js';
 import type { DeadlineSpec, RecordEngine, RecordView } from '../../records/types.js';
 import { DATES } from '../risikoklassifizierung/engine.js';
 import type { LegalBasis, Localized, QuestionnaireResult } from '../types.js';
@@ -30,7 +30,8 @@ const PARAGRAPH: Record<2 | 10 | 15, string> = {
 };
 
 /**
- * the authority deadline runs from awareness while the incident may be
+ * the authority deadline runs in calendar days from the day of awareness to
+ * the end of the last day, while the incident may be
  * reportable and no report is entered; an unclear link counts. Deployers
  * also get an internal 24-hour target for informing the provider, which
  * Art. 26(5) wants "immediately".
@@ -58,7 +59,7 @@ function deadlines(record: RecordView): DeadlineSpec[] {
 				`Meldung an die Marktüberwachungsbehörde (spätestens ${days} Tage)`,
 				`Report to the market surveillance authority (at most ${days} days)`
 			),
-			dueAt: addHours(aware, days * 24),
+			dueAt: daysAfterDay(aware, days),
 			cite: { law: 'KI-VO', ref: PARAGRAPH[days] }
 		});
 	}
