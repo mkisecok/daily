@@ -63,6 +63,8 @@
 	"verdict_label": "Result",
 	"verdict_reasons": "Reasons",
 	"verdict_sources": "Sources",
+	"switch_on": "on",
+	"switch_off": "off",
 	"verdict_scale": "Rating: {level}",
 	"verdict_level_negative": "No action needed",
 	"verdict_level_conditional": "Open points",
