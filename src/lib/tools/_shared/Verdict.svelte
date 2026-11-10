@@ -1,8 +1,9 @@
 <!--
 	@component
 	The result of a questionnaire set like a short legal opinion: a dateline,
-	the verdict as one serif sentence in the colour of its level (wax: action
-	needed, navy: open points, blue: nothing to do), then numbered parts for
+	the verdict as one serif sentence and a green-yellow-red scale with a
+	marker on its level (red: action needed, yellow: open points, green:
+	nothing to do), both in the same colour, then numbered parts for
 	reasons, duties and sources. Each reason carries its citation in the
 	margin; on narrow widths the citation moves under its text.
 -->
@@ -28,6 +29,15 @@
 
 	const NUMERALS = ['I', 'II', 'III', 'IV'];
 
+	/** the traffic light from nothing to do to action needed, in reading order */
+	const LEVELS = [
+		{ id: 'negative', tone: 'low', label: m.verdict_level_negative },
+		{ id: 'conditional', tone: 'mid', label: m.verdict_level_conditional },
+		{ id: 'positive', tone: 'high', label: m.verdict_level_positive }
+	] as const;
+
+	const current = $derived(LEVELS.find((level) => level.id === result.verdict));
+
 	const date = $derived(formatShortDate(at ?? new Date().toISOString(), getLocale()));
 	const hasNotes = $derived((result.notes?.length ?? 0) > 0);
 	// parts are numbered in the order they appear, whichever are present
@@ -44,6 +54,16 @@
 		<span aria-hidden="true">·</span><time datetime={at}>{date}</time>
 	</p>
 	<h2 class="headline">{text(result.headline)}</h2>
+	{#if current}
+		<div class="scale" role="img" aria-label={m.verdict_scale({ level: current.label() })}>
+			{#each LEVELS as level (level.id)}
+				<div class="step" data-tone={level.tone} data-current={level.id === current.id}>
+					<span class="bar"></span>
+					<span class="step-label">{level.label()}</span>
+				</div>
+			{/each}
+		</div>
+	{/if}
 	<p class="explanation">{text(result.explanation)}</p>
 
 	{#if result.reasons.length > 0}
@@ -100,16 +120,17 @@
 		border: 1px solid var(--rule2);
 		border-radius: 4px;
 
+		/* the headline takes the ink of its traffic-light step */
 		&[data-level='positive'] {
-			--accent: var(--wax);
+			--accent: var(--risk-high-ink);
 		}
 
 		&[data-level='conditional'] {
-			--accent: var(--navy);
+			--accent: var(--risk-mid-ink);
 		}
 
 		&[data-level='negative'] {
-			--accent: var(--primary);
+			--accent: var(--risk-low-ink);
 		}
 
 		@media (max-width: 40rem) {
@@ -141,6 +162,88 @@
 			line-height: 1.25;
 			text-wrap: balance;
 			color: var(--accent);
+		}
+
+		/* three equal segments; the current one is full colour with a marker above */
+		& .scale {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 3px;
+			max-width: 30rem;
+			margin-top: 1.1rem;
+
+			& .step {
+				--tone: var(--risk-low);
+				--tone-ink: var(--risk-low-ink);
+
+				position: relative;
+				display: grid;
+				gap: 0.4rem;
+				padding-top: 0.7rem;
+
+				&[data-tone='mid'] {
+					--tone: var(--risk-mid);
+					--tone-ink: var(--risk-mid-ink);
+				}
+
+				&[data-tone='high'] {
+					--tone: var(--risk-high);
+					--tone-ink: var(--risk-high-ink);
+				}
+
+				&:first-child .bar {
+					border-radius: 2px 0 0 2px;
+				}
+
+				&:last-child {
+					text-align: right;
+
+					& .bar {
+						border-radius: 0 2px 2px 0;
+					}
+				}
+
+				&:nth-child(2) {
+					text-align: center;
+				}
+
+				&[data-current='true'] {
+					& .bar {
+						opacity: 1;
+					}
+
+					& .step-label {
+						font-weight: 600;
+						color: var(--tone-ink);
+					}
+
+					&::before {
+						position: absolute;
+						top: 0;
+						left: 50%;
+						width: 0;
+						height: 0;
+						content: '';
+						border-top: 7px solid var(--ink);
+						border-right: 6px solid transparent;
+						border-left: 6px solid transparent;
+						translate: -50% 0;
+					}
+				}
+			}
+
+			& .bar {
+				height: 8px;
+				background: var(--tone);
+				opacity: 0.25;
+				print-color-adjust: exact;
+			}
+
+			& .step-label {
+				font-size: 12px;
+				line-height: 1.3;
+				color: var(--ink3);
+			}
 		}
 
 		& .explanation {
