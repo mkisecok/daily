@@ -246,9 +246,18 @@ test('DSFA: a high residual risk blocks sign-off until the authority is consulte
 	await page.getByLabel('Systematische Beschreibung der Verarbeitung').fill('Kameras im Lager');
 	await page.getByLabel('Zwecke und berechtigte Interessen').fill('Diebstahlschutz');
 	await page.getByLabel('Notwendigkeit und Verhältnismäßigkeit').fill('Mildere Mittel geprüft');
-	for (const id of ['vertraulichkeit', 'integritaet', 'verfuegbarkeit', 'zweck', 'rechte']) {
+	for (const id of [
+		'vertraulichkeit',
+		'integritaet',
+		'verfuegbarkeit',
+		'datenminimierung',
+		'zweck',
+		'transparenz',
+		'rechte'
+	]) {
 		await choose(page.locator(`#field-${id}_w`), '2');
 		await choose(page.locator(`#field-${id}_s`), '2');
+		await page.locator(`#field-${id}_begruendung`).fill('Begründet');
 	}
 	await choose(page.locator('#field-vertraulichkeit_w'), '4');
 	await choose(page.locator('#field-vertraulichkeit_s'), '4');
