@@ -121,6 +121,7 @@
 					{id}
 					type="number"
 					min={field.min}
+					step={field.integer ? 1 : 'any'}
 					bind:value
 					aria-describedby={describedBy}
 					aria-invalid={!!error}

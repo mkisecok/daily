@@ -396,7 +396,10 @@
 			{/if}
 
 			{#if Dashboard}
-				<Dashboard record={detail.record} />
+				<!-- a fresh picture per entry, so choices made in one do not carry over -->
+				{#key detail.record.id}
+					<Dashboard record={detail.record} />
+				{/key}
 			{/if}
 
 			<RecordView

@@ -39,7 +39,7 @@ export const testDefinition: RecordToolDefinition = {
 				},
 				{ id: 'due', type: 'date', label: L('Fällig', 'Due') },
 				{ id: 'seen', type: 'datetime', label: L('Gesehen', 'Seen') },
-				{ id: 'count', type: 'number', label: L('Anzahl', 'Count'), min: 0 },
+				{ id: 'count', type: 'number', label: L('Anzahl', 'Count'), min: 0, integer: true },
 				{ id: 'flag', type: 'boolean', label: L('Markiert', 'Flagged') },
 				{ id: 'check', type: 'assessment', label: L('Prüfung', 'Assessment'), tool: 'demo' }
 			]

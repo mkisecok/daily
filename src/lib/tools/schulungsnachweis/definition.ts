@@ -88,6 +88,7 @@ export const definition: RecordToolDefinition = {
 				{
 					id: 'anzahl',
 					type: 'number',
+					integer: true,
 					label: L('Anzahl', 'Number'),
 					unit: L('Personen', 'persons'),
 					min: 0,
@@ -123,6 +124,7 @@ export const definition: RecordToolDefinition = {
 				{
 					id: 'wiederholung_monate',
 					type: 'number',
+					integer: true,
 					label: L('Wiederholung nach', 'Repeat after'),
 					unit: L('Monaten', 'months'),
 					min: 1,

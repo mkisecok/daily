@@ -26,15 +26,20 @@ export function responseText(body: unknown): string {
 	return '';
 }
 
+/** how long one answer may take before the request is given up */
+export const ANSWER_TIMEOUT_MS = 60_000;
+
 /**
  * one prompt against the endpoint, straight from the browser. Works when
  * the endpoint allows cross-origin requests (local gateways, most proxies);
- * otherwise use the manual mode.
+ * otherwise use the manual mode. `signal` cancels the request, e.g. on a
+ * timeout or when the user stops the run.
  */
 export async function ask(
 	endpoint: Endpoint,
 	prompt: string,
-	fetchFn: typeof fetch = fetch
+	fetchFn: typeof fetch = fetch,
+	signal?: AbortSignal
 ): Promise<string> {
 	const messages = [
 		...(endpoint.system.trim() ? [{ role: 'system', content: endpoint.system }] : []),
@@ -46,7 +51,8 @@ export async function ask(
 			'content-type': 'application/json',
 			...(endpoint.key ? { authorization: `Bearer ${endpoint.key}` } : {})
 		},
-		body: JSON.stringify({ model: endpoint.model, messages })
+		body: JSON.stringify({ model: endpoint.model, messages }),
+		signal
 	});
 	if (!response.ok) throw new Error(`HTTP ${response.status}`);
 	const type = response.headers.get('content-type') ?? '';

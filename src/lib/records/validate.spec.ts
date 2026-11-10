@@ -64,6 +64,15 @@ describe('validateRecord', () => {
 		});
 	});
 
+	it('rejects calendar dates that do not exist and fractions in whole-number fields', () => {
+		for (const due of ['2026-02-31', '2026-02-29', '2026-04-31']) {
+			expect(validateRecord(def, { name: 'n', due }).errors, due).toEqual({ due: 'invalid' });
+		}
+		expect(validateRecord(def, { name: 'n', due: '2028-02-29' }).errors).toEqual({});
+		expect(validateRecord(def, { name: 'n', count: '1.5' }).errors).toEqual({ count: 'invalid' });
+		expect(validateRecord(def, { name: 'n', count: '2' }).data.count).toBe(2);
+	});
+
 	it('accepts a complete assessment snapshot', () => {
 		const check = {
 			tool: 'demo',
