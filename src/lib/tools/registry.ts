@@ -22,6 +22,7 @@ import type { RecordTool } from '../records/types.js';
 import { avvPruefung } from './avv-pruefung/tool.js';
 import { tomKatalog } from './tom-katalog/tool.js';
 import { sdmWuerfel } from './sdm-wuerfel/tool.js';
+import { standortwechsel } from './standortwechsel/tool.js';
 import { loeschkonzept } from './loeschkonzept/tool.js';
 import { schulungsnachweis } from './schulungsnachweis/tool.js';
 import { kiKompetenz } from './ki-kompetenz/tool.js';
@@ -59,6 +60,7 @@ export const tools: readonly ToolManifest[] = [
 	avvPruefung.manifest,
 	tomKatalog.manifest,
 	sdmWuerfel.manifest,
+	standortwechsel.manifest,
 	loeschkonzept.manifest,
 	schulungsnachweis.manifest,
 	kiDsgvoSchnittstelle.manifest,
@@ -159,6 +161,7 @@ const recordTools: Record<string, RecordTool> = {
 	[loeschkonzept.manifest.slug]: loeschkonzept,
 	[tomKatalog.manifest.slug]: tomKatalog,
 	[sdmWuerfel.manifest.slug]: sdmWuerfel,
+	[standortwechsel.manifest.slug]: standortwechsel,
 	[avvPruefung.manifest.slug]: avvPruefung,
 	[vvt.manifest.slug]: vvt,
 	[datenpanne.manifest.slug]: datenpanne,

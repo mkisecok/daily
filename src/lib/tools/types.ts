@@ -19,7 +19,8 @@ export type Law =
 	| 'WP29'
 	| 'EuGH'
 	| 'KI-MIG'
-	| 'EU-Kommission';
+	| 'EU-Kommission'
+	| 'BSI';
 
 /** a citation such as { law: 'DSGVO', ref: 'Art. 35 Abs. 3 lit. a' } */
 export type LegalBasis = { law: Law; ref: string; title?: Localized };
