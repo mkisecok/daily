@@ -34,7 +34,7 @@ import { feststellungen } from './feststellungen/tool.js';
 import { auditbericht } from './auditbericht/tool.js';
 import { aimsGap } from './aims-gap/tool.js';
 import { repoCheck } from './repo-check/tool.js';
-import { anonymisierer } from './anonymisierer/tool.js';
+import { pseudonymisierer } from './pseudonymisierer/tool.js';
 import { guardrailTest } from './guardrail-test/tool.js';
 import { notes } from '../notes/tool.js';
 import { planned } from './planned.js';
@@ -55,7 +55,7 @@ export const tools: readonly ToolManifest[] = [
 	drittlandTransfer.manifest,
 	datenpanne.manifest,
 	betroffenenanfrage.manifest,
-	anonymisierer.manifest,
+	pseudonymisierer.manifest,
 	avvPruefung.manifest,
 	tomKatalog.manifest,
 	sdmWuerfel.manifest,

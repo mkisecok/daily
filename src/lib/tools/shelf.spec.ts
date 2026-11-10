@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { TOOL_ICONS } from './icons.js';
 import { tools } from './registry.js';
-import { remember, togglePin } from './shelf.js';
+import { migrate, remember, RENAMED, togglePin } from './shelf.js';
 
 describe('remember', () => {
 	it('puts the latest first without duplicates', () => {
@@ -22,4 +22,22 @@ describe('togglePin', () => {
 
 it('gives every tool its own icon', () => {
 	for (const tool of tools) expect(TOOL_ICONS[tool.slug], tool.slug).toBeDefined();
+});
+
+describe('migrate', () => {
+	it('moves renamed tools to their new slug and keeps the order', () => {
+		expect(migrate(['vvt', 'anonymisierer', 'dsfa'])).toEqual(['vvt', 'pseudonymisierer', 'dsfa']);
+	});
+
+	it('does not list a tool twice when both slugs were stored', () => {
+		expect(migrate(['pseudonymisierer', 'anonymisierer'])).toEqual(['pseudonymisierer']);
+	});
+
+	it('only renames to slugs that exist', () => {
+		const slugs = new Set(tools.map((tool) => tool.slug));
+		for (const [from, to] of Object.entries(RENAMED)) {
+			expect(slugs.has(to), to).toBe(true);
+			expect(slugs.has(from), from).toBe(false);
+		}
+	});
 });

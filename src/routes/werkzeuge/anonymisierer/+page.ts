@@ -1,10 +1,13 @@
-import { error } from '@sveltejs/kit';
-import { getTool } from '#lib/tools/registry.js';
+import { redirect } from '@sveltejs/kit';
+import { resolve } from '$app/paths';
+import { localized } from '#lib/i18n/links.js';
 import type { PageLoad } from './$types';
 
-/** detection and restoring run in the browser; the page itself is static */
+/**
+ * the tool was called Anonymisierer until November 2026; old links and
+ * bookmarks land on its new address. Prerendered, this becomes a page that
+ * forwards by meta refresh.
+ */
 export const load: PageLoad = () => {
-	const tool = getTool('anonymisierer');
-	if (!tool) error(404, 'Werkzeug nicht gefunden');
-	return { tool };
+	redirect(308, resolve(localized('/werkzeuge/pseudonymisierer')));
 };

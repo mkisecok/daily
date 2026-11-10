@@ -183,9 +183,10 @@
 
 <h2>{preview ? 5 : 7}. Tools that work only in the browser</h2>
 <p>
-	The Anonymiser, the repository check and the guardrail test run entirely in your browser. Texts,
-	files and results are not sent to us. The guardrail test sends requests only to the endpoint you
-	enter yourself, directly from your browser; that connection is subject to the provider's terms.
+	The Pseudonymiser, the repository check and the guardrail test run entirely in your browser.
+	Texts, files and results are not sent to us. The guardrail test sends requests only to the
+	endpoint you enter yourself, directly from your browser; that connection is subject to the
+	provider's terms.
 </p>
 
 <h2>{preview ? 6 : 8}. News and legal texts</h2>

@@ -17,10 +17,20 @@ export function togglePin(list: readonly string[], slug: string): string[] {
 	return list.includes(slug) ? list.filter((entry) => entry !== slug) : [...list, slug];
 }
 
+/** tools that changed their slug: old slug → new slug */
+export const RENAMED: Readonly<Record<string, string>> = {
+	anonymisierer: 'pseudonymisierer'
+};
+
+/** stored slugs with renamed tools under their new slug, without duplicates */
+export function migrate(list: readonly string[]): string[] {
+	return [...new Set(list.map((slug) => RENAMED[slug] ?? slug))];
+}
+
 export function readList(key: string): string[] {
 	try {
 		const value: unknown = JSON.parse(localStorage.getItem(key) ?? '[]');
-		return Array.isArray(value) ? value.filter((entry) => typeof entry === 'string') : [];
+		return Array.isArray(value) ? migrate(value.filter((entry) => typeof entry === 'string')) : [];
 	} catch {
 		return [];
 	}

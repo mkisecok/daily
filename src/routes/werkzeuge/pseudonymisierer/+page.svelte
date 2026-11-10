@@ -1,24 +1,24 @@
 <script lang="ts">
 	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 	import { m } from '#lib/paraglide/messages.js';
-	import { buildRun, detect } from '#lib/tools/anonymisierer/detect.js';
-	import { extract, ExtractError } from '#lib/tools/anonymisierer/ingest/index.js';
-	import { restoreFrom } from '#lib/tools/anonymisierer/restore.js';
+	import { buildRun, detect } from '#lib/tools/pseudonymisierer/detect.js';
+	import { extract, ExtractError } from '#lib/tools/pseudonymisierer/ingest/index.js';
+	import { restoreFrom } from '#lib/tools/pseudonymisierer/restore.js';
 	import {
 		RULE_GROUPS,
 		RULE_KEYS,
 		TIER_ORDER,
 		TOKEN_TIER,
 		TOKEN_TYPES
-	} from '#lib/tools/anonymisierer/rules.js';
-	import { SAMPLE } from '#lib/tools/anonymisierer/sample.js';
+	} from '#lib/tools/pseudonymisierer/rules.js';
+	import { SAMPLE } from '#lib/tools/pseudonymisierer/sample.js';
 	import type {
 		Finding,
 		Mapping,
 		RuleKey,
 		Tier,
 		TokenType
-	} from '#lib/tools/anonymisierer/types.js';
+	} from '#lib/tools/pseudonymisierer/types.js';
 	import { text } from '#lib/tools/i18n.js';
 	import ToolHeader from '#lib/tools/_shared/ToolHeader.svelte';
 	import Select from '#lib/ui/form/Select.svelte';

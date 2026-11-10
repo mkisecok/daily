@@ -72,7 +72,7 @@ export default defineConfig(({ mode }) => {
 								// the Guardrail-Test calls endpoints the user enters, including local
 								// gateways such as Ollama on http://localhost:11434
 								'connect-src': ['self', 'https:', 'http://localhost:*', 'http://127.0.0.1:*'],
-								// the pdf.js worker of the Anonymisierer
+								// the pdf.js worker of the Pseudonymisierer
 								'worker-src': ['self', 'blob:'],
 								'form-action': ['self'],
 								'frame-ancestors': ['none'],

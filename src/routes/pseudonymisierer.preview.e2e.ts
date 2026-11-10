@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
 
-test('preview: the Anonymisierer replaces personal data and restores the reply', async ({
+test('preview: the Pseudonymisierer replaces personal data and restores the reply', async ({
 	page
 }) => {
-	await page.goto('werkzeuge/anonymisierer/', { waitUntil: 'networkidle' });
+	await page.goto('werkzeuge/pseudonymisierer/', { waitUntil: 'networkidle' });
 	await page
 		.getByLabel('Text', { exact: true })
 		.fill(
@@ -30,4 +30,12 @@ test('preview: the Anonymisierer replaces personal data and restores the reply',
 	await expect(output).toHaveValue(
 		'Patientin: «NAME_1», Müllerstraße 5\nE-Mail: «EMAIL_1»\nDer Transport ist bezahlt.'
 	);
+});
+
+test('preview: the old Anonymisierer address forwards to the Pseudonymisierer', async ({
+	page
+}) => {
+	await page.goto('werkzeuge/anonymisierer/');
+	await expect(page).toHaveURL(/\/daily\/werkzeuge\/pseudonymisierer\/$/);
+	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Pseudonymisierer');
 });

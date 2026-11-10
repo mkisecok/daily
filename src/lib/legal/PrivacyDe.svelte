@@ -196,7 +196,7 @@
 
 <h2>{preview ? 5 : 7}. Werkzeuge, die nur im Browser arbeiten</h2>
 <p>
-	Der Anonymisierer, der Repository-Check und der Guardrail-Test laufen vollständig in Ihrem
+	Der Pseudonymisierer, der Repository-Check und der Guardrail-Test laufen vollständig in Ihrem
 	Browser. Texte, Dateien und Ergebnisse werden nicht an uns übertragen. Der Guardrail-Test sendet
 	Anfragen nur an den Endpunkt, den Sie selbst eintragen, und zwar direkt aus Ihrem Browser; für
 	diese Verbindung gelten die Bedingungen des jeweiligen Anbieters.

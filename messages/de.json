@@ -297,7 +297,7 @@
 	"records_leave_body": "Die Eingaben in diesem Formular sind noch nicht gespeichert.",
 	"records_leave_confirm": "Verwerfen",
 	"records_matches": "{shown} von {total} Einträgen",
-	"anon_intro": "Text einfügen oder eine Datei importieren (PDF, DOCX, TXT, MD, CSV). Personenbezogene Daten werden durch Platzhalter ersetzt; die Zuordnung liegt nur im Arbeitsspeicher dieses Tabs und ist beim Schließen weg. Nichts wird hochgeladen, keine KI wird aufgerufen.",
+	"anon_intro": "Text einfügen oder eine Datei importieren (PDF, DOCX, TXT, MD, CSV). Personenbezogene Daten werden durch Platzhalter ersetzt; die Zuordnung liegt nur im Arbeitsspeicher dieses Tabs und ist beim Schließen weg. Nichts wird hochgeladen, keine KI wird aufgerufen. Das ist Pseudonymisierung, keine Anonymisierung: Solange die Zuordnung besteht, bleiben die Daten personenbezogen (Art. 4 Nr. 5, Erwägungsgrund 26 DSGVO).",
 	"anon_import": "Datei importieren",
 	"anon_sample": "Beispieltext",
 	"anon_clear": "Alles leeren",
