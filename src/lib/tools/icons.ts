@@ -14,7 +14,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	'drittland-transfer': 'world',
 	datenpanne: 'alert-triangle',
 	betroffenenanfrage: 'user-question',
-	anonymisierer: 'eye-off',
+	pseudonymisierer: 'eye-off',
 	'avv-pruefung': 'file-certificate',
 	'tom-katalog': 'lock',
 	'sdm-wuerfel': 'box',

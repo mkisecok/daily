@@ -25,7 +25,7 @@ tools. The checks so far were for code defects and for the 2026 law changes belo
 | New Art. 5 prohibition (nudifier, CSAM generation), transition to 2 Dec 2026                                  | Yes in the Risikoklassifizierung catalogue.                                                   |
 | Art. 50 applies since 2 Aug 2026; marking grace for existing generative systems to 2 Dec 2026                 | Dates yes. **Missing:** the final Code of Practice on marking and labelling and the EU icons. |
 | KI-MIG in force 29 Jul 2026: Bundesnetzagentur is market surveillance authority and complaint point           | **Missing:** no tool names the authority, e.g. Vorfallmeldung for Art. 73 reports.            |
-| EDPB Guidelines 02/2026 (anonymisation) and 03/2026 (web scraping for AI), drafts of 7 Jul 2026               | **Missing** in Anonymisierer, Interessenabwägung and KI-DSGVO-Schnittstelle.                  |
+| EDPB Guidelines 02/2026 (anonymisation) and 03/2026 (web scraping for AI), drafts of 7 Jul 2026               | **Missing** in Pseudonymisierer, Interessenabwägung and KI-DSGVO-Schnittstelle.               |
 | GDPR part of the Digital Omnibus (e.g. reported 96 h breach deadline): still a proposal                       | Correctly not applied. Needs a watch item, see phase 0.                                       |
 
 Every row was taken from secondary sources on 2026-11-10 and must be checked against the Official

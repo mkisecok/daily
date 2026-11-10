@@ -1,12 +1,12 @@
 import type { ToolManifest } from '../types.js';
 
 export const manifest: ToolManifest = {
-	slug: 'anonymisierer',
+	slug: 'pseudonymisierer',
 	category: 'datenschutz',
 	status: 'beta',
 	shape: 'utility',
 	version: 1,
-	name: { de: 'Anonymisierer', en: 'Anonymiser' },
+	name: { de: 'Pseudonymisierer', en: 'Pseudonymiser' },
 	summary: {
 		de: 'Text im Browser pseudonymisieren, bevor er in einen KI-Chat geht, und die Antwort danach mit den echten Werten zurückübersetzen. Nichts verlässt den Browser.',
 		en: 'Pseudonymise text in the browser before it goes into an AI chat, then restore the real values in the reply. Nothing leaves the browser.'
@@ -20,4 +20,4 @@ export const manifest: ToolManifest = {
 	]
 };
 
-export const anonymisierer = { manifest };
+export const pseudonymisierer = { manifest };

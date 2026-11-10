@@ -19,18 +19,18 @@ line (both need the server), and Firefox and Safari.
 The global print stylesheet is 25 lines: black on white, link targets spelled out, 20 mm margins.
 There is no document header, no page footer and no page number anywhere.
 
-| Page                                                         | Print button | What lands on paper                                                                                                                                |
-| ------------------------------------------------------------ | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Questionnaire result (11 tools)                              | yes          | Breadcrumb, the status badge ("Verfügbar"/"Beta"), category dot, citation chips, tinted rounded cards. 5 pages for one result. No date, no author. |
-| Entry of a register or workflow (18)                         | yes          | The screen cards. Workflow stepper as circles. Every empty field as "—": a nearly empty VVT entry is 3 pages. No entry id, version or date.        |
-| Whole register (11)                                          | yes          | Its own layout (`PrintRegister`), the best of the per-tool prints. But no overview table, every empty field listed, citation glued to the label.   |
-| DSFA entry                                                   | yes          | Own layout since PR #16; about 7 pages; cards and coloured matrix.                                                                                 |
-| SDM-Würfel entry                                             | yes          | Cube and views print, in cards; status only as colour, unreadable on a black-and-white printer.                                                    |
-| Reports                                                      | yes          | Closest to a document: title, period, creation date. But disclosure triangles print, and a sentence about "the full installation".                 |
-| Notes                                                        | yes          | The page intro ("… bleiben sie in diesem Browser") prints above the note.                                                                          |
-| Deadlines                                                    | no           | Cards with "vor 3 Tagen", which is wrong the day after printing.                                                                                   |
-| Law article                                                  | no           | Readable; breadcrumb prints.                                                                                                                       |
-| Repo-Check, Anonymisierer, forms, tool start page, catalogue | partly       | The web page: buttons, toggles, empty inputs, "Prüfung beginnen →".                                                                                |
+| Page                                                            | Print button | What lands on paper                                                                                                                                |
+| --------------------------------------------------------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Questionnaire result (11 tools)                                 | yes          | Breadcrumb, the status badge ("Verfügbar"/"Beta"), category dot, citation chips, tinted rounded cards. 5 pages for one result. No date, no author. |
+| Entry of a register or workflow (18)                            | yes          | The screen cards. Workflow stepper as circles. Every empty field as "—": a nearly empty VVT entry is 3 pages. No entry id, version or date.        |
+| Whole register (11)                                             | yes          | Its own layout (`PrintRegister`), the best of the per-tool prints. But no overview table, every empty field listed, citation glued to the label.   |
+| DSFA entry                                                      | yes          | Own layout since PR #16; about 7 pages; cards and coloured matrix.                                                                                 |
+| SDM-Würfel entry                                                | yes          | Cube and views print, in cards; status only as colour, unreadable on a black-and-white printer.                                                    |
+| Reports                                                         | yes          | Closest to a document: title, period, creation date. But disclosure triangles print, and a sentence about "the full installation".                 |
+| Notes                                                           | yes          | The page intro ("… bleiben sie in diesem Browser") prints above the note.                                                                          |
+| Deadlines                                                       | no           | Cards with "vor 3 Tagen", which is wrong the day after printing.                                                                                   |
+| Law article                                                     | no           | Readable; breadcrumb prints.                                                                                                                       |
+| Repo-Check, Pseudonymisierer, forms, tool start page, catalogue | partly       | The web page: buttons, toggles, empty inputs, "Prüfung beginnen →".                                                                                |
 
 The shared causes: print reuses the screen components, tool chrome is not marked `no-print`, and
 nothing supplies what a document needs (who, when, which version, page x of y, signature).
@@ -85,7 +85,7 @@ Tool-specific documents on top of the Vorgangsblatt, each in the order its recip
 - Auditbericht: scope, criteria, findings table, conclusion (ISO 19011).
 - TOM-Katalog, Löschkonzept: one table per protection goal, one row per retention rule.
 - KI-Nutzungsrichtlinie: a numbered policy with a sign-off line.
-- Repo-Check and Guardrail-Test: result tables. Anonymisierer: prints only a notice, because its
+- Repo-Check and Guardrail-Test: result tables. Pseudonymisierer: prints only a notice, because its
   mapping holds the personal data it is meant to protect.
 
 ### 4.3 Print dialog
