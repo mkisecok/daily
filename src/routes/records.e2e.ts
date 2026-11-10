@@ -246,6 +246,7 @@ test('DSFA: a high residual risk blocks sign-off until the authority is consulte
 	await page.getByLabel('Systematische Beschreibung der Verarbeitung').fill('Kameras im Lager');
 	await page.getByLabel('Zwecke und berechtigte Interessen').fill('Diebstahlschutz');
 	await page.getByLabel('Notwendigkeit und Verhältnismäßigkeit').fill('Mildere Mittel geprüft');
+	await chip(page, 'Berechtigte Interessen (lit. f)');
 	for (const id of [
 		'vertraulichkeit',
 		'integritaet',

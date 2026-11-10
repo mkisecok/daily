@@ -52,6 +52,22 @@ describe('DSFA: Excel workbook', () => {
 		expect(cell(low, 7)?.backgroundColor).toBe('#5A9A1A');
 	});
 
+	it('lists what is still open before sign-off', () => {
+		const rows = values(overview.data);
+		const start = rows.findIndex((row) => row[0] === 'Vor der Freigabe');
+		expect(rows.slice(start + 1, start + 5).map((row) => [row[0], row[2], row[3]])).toEqual([
+			['Rechtsgrundlagen festgehalten', 'Offen', 'Kurzpapier Nr. 5, Schritt 6 DSK'],
+			[
+				'Jede Senkung durch Maßnahmen belegt',
+				'Offen',
+				'Zweckentfremdung und Verkettung · Kurzpapier Nr. 5, Schritt 9 DSK'
+			],
+			['Restrisiken und Umgang dokumentiert', 'Offen', 'Kurzpapier Nr. 5, Schritt 10 DSK'],
+			['Maßnahmen umgesetzt und getestet', 'Offen', 'Kurzpapier Nr. 5, Schritte 11 und 12 DSK']
+		]);
+		expect(cell(overview.data[start + 1], 2)?.backgroundColor).toBe('#FDE9E8');
+	});
+
 	it('lists every risk with threats, ratings, reasons, levels and measures', () => {
 		expect(table.data).toHaveLength(8);
 		expect(values(table.data)[0]).toEqual([
