@@ -131,7 +131,8 @@ function longDate(yyyymmdd: string, lang: Lang): string {
 const clean = (text: string) =>
 	text
 		.replace(/[\u00a0\u2002-\u200b]/g, ' ')
-		.replace(/[▼►◄]\s*[A-Z]\d*/g, '')
+		.replace(/[▼►]\s*[A-Z]\d*/g, '')
+		.replace(/◄/g, '')
 		.replace(/\s+/g, ' ')
 		.trim();
 
@@ -146,6 +147,11 @@ function corrigendumLines(html: string): string[] {
 		.filter(Boolean);
 }
 
+const SKIPPED =
+	/title-article-norm|eli-title|title-annex|title-division|separator|modref|arrow|footnote|title-doc|title-fam/;
+/** elements that hold blocks; everything else is inline text */
+const BLOCK_TAGS = new Set(['div', 'p', 'table']);
+
 /** block structure of EU (consolidated) markup: numbered paragraphs, grid lists, plain paragraphs */
 function euBlocks($: cheerio.CheerioAPI, parent: AnyNode): Block[] {
 	const out: Block[] = [];
@@ -154,20 +160,34 @@ function euBlocks($: cheerio.CheerioAPI, parent: AnyNode): Block[] {
 			? { label, text: inner[0].text, ...(inner.length > 1 ? { children: inner.slice(1) } : {}) }
 			: { label, text: '', ...(inner.length > 0 ? { children: inner } : {}) };
 
+	// text that sits directly in a container, beside inline markers, is a paragraph of its own
+	let loose = '';
+	const flush = () => {
+		const text = clean(loose);
+		loose = '';
+		// punctuation left between a quoted amendment and the next element is not a paragraph
+		if (text && !/^[;,.]+$/.test(text)) out.push({ text });
+	};
+
 	$(parent)
-		.children()
+		.contents()
 		.each((_, node) => {
+			if (node.type === 'text') {
+				loose += $(node).text();
+				return;
+			}
+			if (node.type !== 'tag') return;
+
 			const el = $(node);
 			const cls = el.attr('class') ?? '';
 			const tag = (node as Element).tagName;
-			if (
-				tag === 'hr' ||
-				/title-article-norm|eli-title|title-annex|title-division|separator|modref|arrow|footnote|title-doc|title-fam/.test(
-					cls
-				)
-			) {
+			if (tag === 'hr' || SKIPPED.test(cls)) return;
+
+			if (!BLOCK_TAGS.has(tag)) {
+				loose += el.text();
 				return;
 			}
+			flush();
 			if (el.is('div.norm') && el.children('span.no-parag').length > 0) {
 				const label = clean(el.children('span.no-parag').first().text());
 				const clone = el.clone();
@@ -185,13 +205,14 @@ function euBlocks($: cheerio.CheerioAPI, parent: AnyNode): Block[] {
 						.filter(Boolean);
 					if (cells.length > 0) out.push({ text: cells.join(' · ') });
 				});
-			} else if (tag === 'p' || (tag === 'div' && el.children().length === 0)) {
+			} else if (tag === 'p') {
 				const text = clean(el.text());
 				if (text) out.push({ text });
 			} else {
 				out.push(...euBlocks($, node));
 			}
 		});
+	flush();
 	return out;
 }
 
