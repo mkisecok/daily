@@ -94,4 +94,19 @@ describe('Vorfallmeldung: assessment and workflow', () => {
 			)
 		).toEqual({ ok: true, state: 'kein_meldefall' });
 	});
+
+	it('names the German market surveillance authority', () => {
+		const result = assess({});
+		expect(result.notes!.some((n) => n.de.includes('Bundesnetzagentur'))).toBe(true);
+		expect(result.citations).toContainEqual({
+			law: 'KI-MIG',
+			ref: 'Marktüberwachung durch die Bundesnetzagentur'
+		});
+		// also when the incident is not reportable, so the reasons name who would be asked
+		expect(
+			assess({ kausalitaet: 'ausgeschlossen' }).notes!.some((n) =>
+				n.en.includes('Bundesnetzagentur')
+			)
+		).toBe(true);
+	});
 });

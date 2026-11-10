@@ -17,7 +17,11 @@ const manifest: ToolManifest = {
 	},
 	legalBasis: [
 		{ law: 'KI-VO', ref: 'Art. 50 Abs. 1–5' },
-		{ law: 'KI-VO', ref: 'Verordnung (EU) 2026/1744' }
+		{ law: 'KI-VO', ref: 'Verordnung (EU) 2026/1744' },
+		{
+			law: 'EU-Kommission',
+			ref: 'Praxisleitfaden zur Transparenz KI-generierter Inhalte (Juni 2026)'
+		}
 	]
 };
 

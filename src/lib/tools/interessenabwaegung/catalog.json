@@ -8,7 +8,11 @@
 	"sources": [
 		{ "law": "DSGVO", "ref": "Art. 6 Abs. 1 lit. f" },
 		{ "law": "DSGVO", "ref": "Erwägungsgründe 47–49" },
-		{ "law": "EDPB", "ref": "Leitlinien 1/2024 zu Art. 6 Abs. 1 lit. f" }
+		{ "law": "EDPB", "ref": "Leitlinien 1/2024 zu Art. 6 Abs. 1 lit. f" },
+		{
+			"law": "EDPB",
+			"ref": "Leitlinien 03/2026 zu Web Scraping für generative KI (Entwurf, Juli 2026)"
+		}
 	],
 	"sections": [
 		{
