@@ -22,6 +22,10 @@
 						"de": "Sind Sie Anbieter des Systems, entwickeln es also oder lassen es entwickeln und bringen es unter Ihrem Namen in Verkehr?",
 						"en": "Are you the provider of the system, i.e. do you develop it or have it developed and place it on the market under your name?"
 					},
+					"help": {
+						"de": "Wer ein fremdes System nur einsetzt, ist Betreiber; die technische Dokumentation ist Pflicht des Anbieters. Zum Anbieter wird auch, wer ein Hochrisiko-System unter eigenem Namen anbietet oder wesentlich ändert (Art. 25).",
+						"en": "Whoever only uses someone else’s system is a deployer; the technical documentation is the provider’s duty. One also becomes the provider by offering a high-risk system under one’s own name or modifying it substantially (Art. 25)."
+					},
 					"cite": { "law": "KI-VO", "ref": "Art. 3 Nr. 3" }
 				},
 				{
@@ -30,6 +34,10 @@
 					"text": {
 						"de": "Ist das System ein Hochrisiko-KI-System nach Art. 6?",
 						"en": "Is the system a high-risk AI system under Art. 6?"
+					},
+					"help": {
+						"de": "Die Einstufung liefert das Werkzeug Risikoklassifizierung.",
+						"en": "The risk classification tool gives the classification."
 					},
 					"cite": { "law": "KI-VO", "ref": "Art. 6" }
 				}
@@ -46,6 +54,10 @@
 						"de": "Allgemeine Beschreibung: Zweckbestimmung, Anbieter, Version, Zusammenwirken mit Hard- und Software, Formen des Inverkehrbringens, Benutzeroberfläche und Betriebsanleitung?",
 						"en": "General description: intended purpose, provider, version, interaction with hardware and software, forms in which it is placed on the market, user interface and instructions for use?"
 					},
+					"help": {
+						"de": "Das Deckblatt der Dokumentation: was das System tut, für wen, in welcher Version und wie es ausgeliefert wird.",
+						"en": "The cover of the documentation: what the system does, for whom, in which version and how it is delivered."
+					},
 					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 1" },
 					"remedy": {
 						"de": "Systemsteckbrief mit Zweckbestimmung, Versionen, Schnittstellen und Betriebsanleitung anlegen.",
@@ -58,6 +70,10 @@
 					"text": {
 						"de": "Detaillierte Beschreibung von Bestandteilen und Entwicklung: Methoden, Designentscheidungen, Systemarchitektur, Datenanforderungen und Datenblätter, Maßnahmen zur menschlichen Aufsicht, vorab festgelegte Änderungen, Validierung und Tests mit Metriken und Protokollen?",
 						"en": "Detailed description of elements and development: methods, design choices, system architecture, data requirements and datasheets, human oversight measures, predetermined changes, validation and testing with metrics and logs?"
+					},
+					"help": {
+						"de": "Der umfangreichste Teil. Die Datenblätter beschreiben Herkunft, Umfang, Auswahl und Aufbereitung der Trainings-, Validierungs- und Testdaten.",
+						"en": "The largest part. The datasheets describe the origin, scope, selection and preparation of the training, validation and test data."
 					},
 					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 2" },
 					"remedy": {
@@ -72,6 +88,10 @@
 						"de": "Überwachung, Funktionsweise und Kontrolle: Fähigkeiten und Grenzen, Genauigkeit für bestimmte Personengruppen, vorhersehbare unbeabsichtigte Ergebnisse und Risiken, Aufsichtsmaßnahmen, Spezifikationen der Eingabedaten?",
 						"en": "Monitoring, functioning and control: capabilities and limitations, accuracy for specific groups of persons, foreseeable unintended outcomes and risks, oversight measures, input data specifications?"
 					},
+					"help": {
+						"de": "Gemeint sind auch Grenzen der Genauigkeit für einzelne Gruppen, etwa nach Alter, Sprache oder Hautfarbe, und bekannte Fehlerbilder.",
+						"en": "This includes limits of accuracy for particular groups, for example by age, language or skin colour, and known failure patterns."
+					},
 					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 3" },
 					"remedy": {
 						"de": "Leistungsgrenzen und Genauigkeit je Personengruppe messen und die bekannten Risiken mit Gegenmaßnahmen beschreiben.",
@@ -84,6 +104,10 @@
 					"text": {
 						"de": "Begründung, warum die gewählten Leistungskennzahlen für dieses System angemessen sind?",
 						"en": "Justification why the chosen performance metrics are appropriate for this system?"
+					},
+					"help": {
+						"de": "Etwa warum Präzision statt Trefferquote gemessen wird oder welche Fehlerquote für den Einsatzzweck vertretbar ist.",
+						"en": "For example why precision rather than recall is measured, or which error rate is acceptable for the intended purpose."
 					},
 					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 4" },
 					"remedy": {
@@ -98,6 +122,10 @@
 						"de": "Ausführliche Beschreibung des Risikomanagementsystems nach Art. 9?",
 						"en": "Detailed description of the risk management system under Art. 9?"
 					},
+					"help": {
+						"de": "Ein Verweis genügt nicht: Die Dokumentation beschreibt das Risikomanagement selbst, mit Risiken, Maßnahmen und Tests.",
+						"en": "A reference is not enough: the documentation describes the risk management itself, with risks, measures and tests."
+					},
 					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 5, Art. 9" },
 					"remedy": {
 						"de": "Risikomanagementprozess über den gesamten Lebenszyklus aufsetzen und Risikoanalyse, Bewertung und Maßnahmen dokumentieren.",
@@ -110,6 +138,10 @@
 					"text": {
 						"de": "Beschreibung der relevanten Änderungen am System während seines Lebenszyklus?",
 						"en": "Description of relevant changes made to the system through its life cycle?"
+					},
+					"help": {
+						"de": "Etwa neue Modellversionen, neu trainierte Daten oder geänderte Schwellenwerte, jeweils mit Datum und Begründung.",
+						"en": "For example new model versions, retrained data or changed thresholds, each with date and reason."
 					},
 					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 6" },
 					"remedy": {
@@ -124,6 +156,10 @@
 						"de": "Liste der angewandten harmonisierten Normen oder, wo keine angewandt wurden, Beschreibung der gewählten Lösungen und angewandten gemeinsamen Spezifikationen?",
 						"en": "List of harmonised standards applied or, where none were applied, a description of the solutions adopted and any common specifications applied?"
 					},
+					"help": {
+						"de": "Solange keine einschlägige harmonisierte Norm im Amtsblatt der EU veröffentlicht ist, die gewählten technischen Lösungen beschreiben.",
+						"en": "As long as no relevant harmonised standard is published in the EU Official Journal, describe the technical solutions chosen."
+					},
 					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 7" },
 					"remedy": {
 						"de": "Angewandte Normen auflisten; wo keine vorliegen, die eigenen Lösungen je Anforderung der Art. 8–15 beschreiben.",
@@ -137,6 +173,10 @@
 						"de": "Kopie der EU-Konformitätserklärung nach Art. 47?",
 						"en": "Copy of the EU declaration of conformity under Art. 47?"
 					},
+					"help": {
+						"de": "Die Konformitätserklärung entsteht erst nach der Konformitätsbewertung; bis dahin bleibt der Punkt offen.",
+						"en": "The declaration of conformity is issued only after the conformity assessment; until then the point stays open."
+					},
 					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 8, Art. 47" },
 					"remedy": {
 						"de": "Nach abgeschlossener Konformitätsbewertung die EU-Konformitätserklärung ausstellen und der Dokumentation beifügen.",
@@ -149,6 +189,10 @@
 					"text": {
 						"de": "Beschreibung des Systems zur Beobachtung nach dem Inverkehrbringen einschließlich des Plans nach Art. 72?",
 						"en": "Description of the post-market monitoring system, including the plan under Art. 72?"
+					},
+					"help": {
+						"de": "Der Plan beschreibt, wie Erfahrungen aus dem Betrieb gesammelt und ausgewertet werden, etwa Meldungen der Betreiber. Art. 72 Abs. 3 sieht dafür eine Vorlage der Kommission vor.",
+						"en": "The plan describes how experience from operation is collected and evaluated, for example reports from deployers. Art. 72(3) provides for a Commission template."
 					},
 					"cite": { "law": "KI-VO", "ref": "Anhang IV Nr. 9, Art. 72" },
 					"remedy": {
@@ -169,6 +213,10 @@
 						"de": "Wird die Dokumentation vor dem Inverkehrbringen erstellt und danach laufend aktualisiert?",
 						"en": "Is the documentation drawn up before placing on the market and kept up to date afterwards?"
 					},
+					"help": {
+						"de": "Die Dokumentation gehört zum Produkt: Jede wesentliche Änderung am System zieht eine Aktualisierung nach sich.",
+						"en": "The documentation is part of the product: every substantial change to the system requires an update."
+					},
 					"cite": { "law": "KI-VO", "ref": "Art. 11 Abs. 1" },
 					"remedy": {
 						"de": "Aktualisierung der Dokumentation in den Freigabeprozess jeder neuen Version aufnehmen.",
@@ -181,6 +229,10 @@
 					"text": {
 						"de": "Wird die Dokumentation zehn Jahre nach dem Inverkehrbringen für die Behörden bereitgehalten?",
 						"en": "Is the documentation kept available for the authorities for ten years after placing on the market?"
+					},
+					"help": {
+						"de": "Die zehn Jahre laufen ab dem Inverkehrbringen oder der Inbetriebnahme. Für den Fall, dass der Anbieter vorher aufgibt, regeln die Mitgliedstaaten die Aufbewahrung (Art. 18 Abs. 2).",
+						"en": "The ten years run from placing on the market or putting into service. If the provider ceases earlier, the member states regulate the retention (Art. 18(2))."
 					},
 					"cite": { "law": "KI-VO", "ref": "Art. 18 Abs. 1" },
 					"remedy": {

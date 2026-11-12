@@ -264,7 +264,11 @@ export const definition: RecordToolDefinition = {
 					id: 'vorlage',
 					type: 'select',
 					label: L('Vorlage', 'Template'),
-					options: Object.entries(TEMPLATES).map(([value, t]) => ({ value, label: t.label }))
+					options: Object.entries(TEMPLATES).map(([value, t]) => ({ value, label: t.label })),
+					help: L(
+						'Eine Vorlage bringt die üblichen Fragen zum Thema mit; eigene Fragen darunter ergänzen.',
+						'A template brings the usual questions on the topic; add your own below.'
+					)
 				},
 				{ id: 'bereich', type: 'text', label: L('Geprüfter Bereich', 'Area audited') },
 				{
@@ -278,9 +282,33 @@ export const definition: RecordToolDefinition = {
 			id: 'pruefung',
 			title: L('Prüfung', 'Review'),
 			fields: [
-				{ id: 'stichproben', type: 'textarea', label: L('Stichproben', 'Samples') },
-				{ id: 'interviews', type: 'textarea', label: L('Interviewnotizen', 'Interview notes') },
-				{ id: 'nachweise', type: 'textarea', label: L('Nachweise', 'Evidence') },
+				{
+					id: 'stichproben',
+					type: 'textarea',
+					label: L('Stichproben', 'Samples'),
+					help: L(
+						'Was konkret angesehen wurde, mit Bezeichnung oder Nummer, damit man es wiederfindet, etwa „VVT-Einträge 3, 7 und 12“.',
+						'What exactly was looked at, with name or number so it can be found again, for example “VVT entries 3, 7 and 12”.'
+					)
+				},
+				{
+					id: 'interviews',
+					type: 'textarea',
+					label: L('Interviewnotizen', 'Interview notes'),
+					help: L(
+						'Wer wann befragt wurde und die Kernaussagen. Die Rolle genügt oft; Namen nur, wenn nötig.',
+						'Who was interviewed when, and the key statements. The role is often enough; names only where needed.'
+					)
+				},
+				{
+					id: 'nachweise',
+					type: 'textarea',
+					label: L('Nachweise', 'Evidence'),
+					help: L(
+						'Dokumente mit Titel, Version und Datum, Bildschirmfotos, Protokollauszüge.',
+						'Documents with title, version and date, screenshots, log extracts.'
+					)
+				},
 				{
 					id: 'ergebnis',
 					type: 'select',
@@ -290,9 +318,21 @@ export const definition: RecordToolDefinition = {
 						{ value: 'teilweise', label: L('Teilweise erfüllt', 'Partly met') },
 						{ value: 'nicht_erfuellt', label: L('Nicht erfüllt', 'Not met') }
 					],
-					listColumn: true
+					listColumn: true,
+					help: L(
+						'„Teilweise erfüllt“ und „Nicht erfüllt“ zusätzlich als Feststellung erfassen, damit die Maßnahme verfolgt wird.',
+						'Also record “partly met” and “not met” as a finding, so the action is tracked.'
+					)
 				},
-				{ id: 'bewertung', type: 'textarea', label: L('Begründung', 'Reasoning') }
+				{
+					id: 'bewertung',
+					type: 'textarea',
+					label: L('Begründung', 'Reasoning'),
+					help: L(
+						'Kriterium, Befund, Nachweis: woran gemessen wurde, was gefunden wurde und worauf sich das stützt.',
+						'Criterion, observation, evidence: what was measured against, what was found and what it rests on.'
+					)
+				}
 			]
 		}
 	]

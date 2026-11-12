@@ -38,7 +38,11 @@ export const definition: RecordToolDefinition = {
 					id: 'zusammenfassung',
 					type: 'textarea',
 					label: L('Zusammenfassung', 'Summary'),
-					required: true
+					required: true,
+					help: L(
+						'Für die Leitung geschrieben: Umfang, Gesamturteil und die wichtigsten Abweichungen in wenigen Absätzen.',
+						'Written for management: scope, overall conclusion and the main nonconformities in a few paragraphs.'
+					)
 				},
 				{
 					id: 'gesamturteil',
@@ -55,17 +59,45 @@ export const definition: RecordToolDefinition = {
 							label: L('Wesentliche Anforderungen nicht erfüllt', 'Essential requirements not met')
 						}
 					],
-					listColumn: true
+					listColumn: true,
+					help: L(
+						'Das Urteil ergibt sich aus den Feststellungen und wird in der Zusammenfassung begründet.',
+						'The conclusion follows from the findings and is explained in the summary.'
+					)
 				},
-				{ id: 'staerken', type: 'textarea', label: L('Stärken', 'Strengths') },
-				{ id: 'empfehlungen', type: 'textarea', label: L('Empfehlungen', 'Recommendations') }
+				{
+					id: 'staerken',
+					type: 'textarea',
+					label: L('Stärken', 'Strengths'),
+					help: L(
+						'Was gut funktioniert. Das macht den Bericht ausgewogen und hilft, Gutes auf andere Bereiche zu übertragen.',
+						'What works well. It makes the report balanced and helps carry good practice to other areas.'
+					)
+				},
+				{
+					id: 'empfehlungen',
+					type: 'textarea',
+					label: L('Empfehlungen', 'Recommendations'),
+					help: L(
+						'Verbesserungen ohne Abweichung. Abweichungen gehören in die Feststellungen.',
+						'Improvements without a nonconformity. Nonconformities belong in the findings.'
+					)
+				}
 			]
 		},
 		{
 			id: 'freigabe',
 			title: L('Verteilung und Freigabe', 'Distribution and approval'),
 			fields: [
-				{ id: 'verteiler', type: 'text', label: L('Verteiler', 'Distribution') },
+				{
+					id: 'verteiler',
+					type: 'text',
+					label: L('Verteiler', 'Distribution'),
+					help: L(
+						'Wer den Bericht erhält, etwa Leitung, geprüfter Bereich und Datenschutzbeauftragte. Der Bericht kann vertrauliche Angaben enthalten.',
+						'Who receives the report, for example management, the audited area and the DPO. The report may contain confidential details.'
+					)
+				},
 				{
 					id: 'erstellt_am',
 					type: 'date',
