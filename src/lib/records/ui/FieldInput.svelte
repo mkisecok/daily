@@ -175,7 +175,11 @@
 			padding-top: 0.15rem;
 		}
 
-		@media (max-width: 40rem) {
+		/*
+		 * a narrow card (on phones, or beside the section index) puts the
+		 * citation under the field instead of taking a column from it
+		 */
+		@container (max-width: 44rem) {
 			grid-template-columns: 1fr;
 
 			& .cite {

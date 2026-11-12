@@ -4,10 +4,14 @@
 	sections. Assessment fields are not edited here: they come from their
 	questionnaire. Leaving with unsaved input asks first. With a `draftKey`
 	the input is kept as a draft in this tab while one types and offered
-	again after a reload.
+	again after a reload. Forms of three or more sections get an index of
+	their sections with how far each is filled, beside the form on wide
+	screens and in the save bar on narrow ones; the save bar stays at the
+	bottom of the window.
 -->
 <script lang="ts">
 	import { beforeNavigate, goto } from '$app/navigation';
+	import type { Attachment } from 'svelte/attachments';
 	import { formatShortDate, formatTime } from '#lib/i18n/date.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { clearDraft, loadDraft, saveDraft } from '../drafts.js';
@@ -16,8 +20,9 @@
 	import type { Option, RecordData, RecordToolDefinition } from '../types.js';
 	import type { ValidationErrors } from '../validate.js';
 	import ConfirmDialog from '#lib/ui/ConfirmDialog.svelte';
+	import Icon from '#lib/ui/Icon.svelte';
 	import FieldInput from './FieldInput.svelte';
-	import { fromInputs, toInputs, type FormValues } from './inputs.js';
+	import { fromInputs, toInputs, type FormValue, type FormValues } from './inputs.js';
 
 	let {
 		definition,
@@ -130,6 +135,76 @@
 	);
 	const hasErrors = $derived(Object.keys(errors).length > 0);
 
+	const filled = (value: FormValue | undefined) =>
+		Array.isArray(value)
+			? value.length > 0
+			: value !== null && value !== undefined && `${value}`.trim() !== '';
+
+	type SectionState = 'done' | 'partial' | 'empty' | 'error';
+	const STATE_LABEL: Record<SectionState, () => string> = {
+		done: m.form_section_done,
+		partial: m.form_section_partial,
+		empty: m.form_section_empty,
+		error: m.form_section_error
+	};
+
+	/** how far each section is filled; a section with an error shows the error */
+	const progress = $derived(
+		sections.map((section) => {
+			const total = section.fields.length;
+			const count = section.fields.filter((field) => filled(values[field.id])).length;
+			const state: SectionState = section.fields.some((field) => errors[field.id])
+				? 'error'
+				: count === total
+					? 'done'
+					: count > 0
+						? 'partial'
+						: 'empty';
+			return { section, total, count, state };
+		})
+	);
+	const totals = $derived({
+		filled: progress.reduce((n, p) => n + p.count, 0),
+		total: progress.reduce((n, p) => n + p.total, 0),
+		required: sections
+			.flatMap((section) => section.fields)
+			.filter((field) => field.required && !filled(values[field.id])).length
+	});
+
+	const showIndex = $derived(sections.length >= 3);
+	let active = $state<string | null>(null);
+	let menuOpen = $state(false);
+	/** after a jump the chosen section stays current until the scroll settles */
+	let jumpedAt = 0;
+	const position = $derived(Math.max(1, sections.findIndex((s) => s.id === active) + 1));
+
+	/** marks the section in the upper part of the window as the current one */
+	function watch(id: string): Attachment {
+		return (element) => {
+			const observer = new IntersectionObserver(
+				(entries) => {
+					if (Date.now() - jumpedAt < 1500) return;
+					if (entries.some((entry) => entry.isIntersecting)) active = id;
+				},
+				{ rootMargin: '-25% 0px -65% 0px' }
+			);
+			observer.observe(element);
+			return () => observer.disconnect();
+		};
+	}
+
+	/** scrolls to a section and focuses its first field */
+	function jump(id: string) {
+		menuOpen = false;
+		active = id;
+		jumpedAt = Date.now();
+		const section = document.getElementById(`sec-${id}`);
+		section?.scrollIntoView({ block: 'start' });
+		section
+			?.querySelector<HTMLElement>('input:not([type=hidden]), select, textarea, button')
+			?.focus({ preventScroll: true });
+	}
+
 	async function submit(event: SubmitEvent) {
 		event.preventDefault();
 		leaving = true;
@@ -141,42 +216,90 @@
 	}
 </script>
 
-<form class="record-form" onsubmit={submit} novalidate>
-	{#if restored}
-		<p class="draft" role="status">
-			<span>
-				{m.draft_restored({ time: restoredAt })}
-				{#if older}{m.draft_older()}{/if}
-			</span>
-			<button type="button" class="quiet" onclick={discardDraft}>{m.draft_discard()}</button>
-		</p>
-	{/if}
-	{#if hasErrors}
-		<p class="errors" role="alert">{m.records_errors()}</p>
-	{/if}
+{#snippet sectionList()}
+	<ol class="section-list">
+		{#each progress as { section, total, count, state } (section.id)}
+			<li>
+				<button
+					type="button"
+					class="section-link"
+					aria-current={active === section.id ? 'location' : undefined}
+					onclick={() => jump(section.id)}
+				>
+					<span class="mark" data-state={state} aria-hidden="true"></span>
+					<span class="name">{text(section.title)}</span>
+					<span class="count">{count}/{total}</span>
+					<span class="visually-hidden">{STATE_LABEL[state]()}</span>
+				</button>
+			</li>
+		{/each}
+	</ol>
+{/snippet}
 
-	{#each sections as section (section.id)}
-		<section class="section card">
-			<h2>{text(section.title)}</h2>
-			{#if section.intro}<p class="measure intro">{text(section.intro)}</p>{/if}
-			{#each section.fields as field (field.id)}
-				<FieldInput
-					{field}
-					bind:value={values[field.id]}
-					error={errors[field.id]}
-					choices={choices[field.id]}
-				/>
+<div class="form-shell">
+	<div class="form-layout" data-index={showIndex}>
+		{#if showIndex}
+			<nav class="index" aria-label={m.form_sections()}>
+				<p class="index-title">{m.form_sections()}</p>
+				{@render sectionList()}
+			</nav>
+		{/if}
+
+		<form class="record-form" onsubmit={submit} novalidate>
+			{#if restored}
+				<p class="draft" role="status">
+					<span>
+						{m.draft_restored({ time: restoredAt })}
+						{#if older}{m.draft_older()}{/if}
+					</span>
+					<button type="button" class="quiet" onclick={discardDraft}>{m.draft_discard()}</button>
+				</p>
+			{/if}
+			{#if hasErrors}
+				<p class="errors" role="alert">{m.records_errors()}</p>
+			{/if}
+
+			{#each sections as section (section.id)}
+				<section class="section card" id="sec-{section.id}" {@attach watch(section.id)}>
+					<h2>{text(section.title)}</h2>
+					{#if section.intro}<p class="measure intro">{text(section.intro)}</p>{/if}
+					{#each section.fields as field (field.id)}
+						<FieldInput
+							{field}
+							bind:value={values[field.id]}
+							error={errors[field.id]}
+							choices={choices[field.id]}
+						/>
+					{/each}
+				</section>
 			{/each}
-		</section>
-	{/each}
 
-	<div class="toolbar actions">
-		<button type="submit" disabled={busy}>{m.records_save()}</button>
-		<button type="button" class="quiet" onclick={cancel} disabled={busy}>
-			{m.records_cancel()}
-		</button>
+			<!-- stays at the bottom of the window, so saving never needs a scroll to the end -->
+			<div class="toolbar actions save-bar">
+				<p class="progress">
+					<span>{m.form_progress(totals)}</span>
+					{#if totals.required > 0}
+						<span class="required">{m.form_required_open({ count: totals.required })}</span>
+					{/if}
+				</p>
+				{#if showIndex}
+					<details class="sections-menu" bind:open={menuOpen}>
+						<summary aria-label="{m.form_sections()} {position}/{sections.length}">
+							<Icon name="list-details" size={16} />
+							<span class="summary-label">{m.form_sections()}</span>
+							<span class="summary-count">{position}/{sections.length}</span>
+						</summary>
+						<div class="menu">{@render sectionList()}</div>
+					</details>
+				{/if}
+				<button type="submit" disabled={busy}>{m.records_save()}</button>
+				<button type="button" class="quiet" onclick={cancel} disabled={busy}>
+					{m.records_cancel()}
+				</button>
+			</div>
+		</form>
 	</div>
-</form>
+</div>
 
 <ConfirmDialog
 	bind:open={confirmLeave}
@@ -188,11 +311,127 @@
 />
 
 <style>
+	/*
+	 * the shell is the size container; from 56rem of width the index stands
+	 * beside the form and stays in view, below that it lives in the save bar
+	 */
+	.form-shell {
+		container-type: inline-size;
+		margin-top: 1.5rem;
+	}
+
+	.form-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 1.5rem;
+		align-items: start;
+	}
+
+	.index {
+		display: none;
+	}
+
+	@container (min-width: 56rem) {
+		.form-layout[data-index='true'] {
+			grid-template-columns: 13rem minmax(0, 1fr);
+		}
+
+		.index {
+			position: sticky;
+			top: 5rem;
+			display: block;
+			max-height: calc(100dvh - 6rem);
+			overflow-y: auto;
+		}
+
+		.sections-menu {
+			display: none;
+		}
+	}
+
+	.index-title {
+		margin-bottom: 0.5rem;
+		font-size: 11px;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--ink3);
+	}
+
+	.section-list {
+		display: grid;
+		gap: 1px;
+		list-style: none;
+	}
+
+	/* reset, since the phone menu sits in the toolbar, whose buttons are filled */
+	.section-link {
+		display: grid;
+		margin: 0;
+		font-family: var(--sans);
+		font-weight: 400;
+		background: none;
+		border: 0;
+		box-shadow: none;
+		grid-template-columns: 0.75rem minmax(0, 1fr) auto;
+		gap: 0.6rem;
+		align-items: center;
+		width: 100%;
+		min-height: 2.25rem;
+		padding: 0.3rem 0.5rem;
+		font-size: 13px;
+		line-height: 1.3;
+		text-align: left;
+		color: var(--ink2);
+		border-radius: var(--radius);
+
+		&:hover {
+			color: var(--ink);
+			background: var(--sheet);
+		}
+
+		&[aria-current='location'] {
+			font-weight: 600;
+			color: var(--ink);
+			background: var(--sheet);
+			box-shadow: inset 2px 0 0 var(--primary);
+		}
+
+		& .count {
+			font-family: var(--mono);
+			font-size: 11px;
+			font-variant-numeric: tabular-nums;
+			color: var(--ink3);
+		}
+
+		/* empty ring, half-filled, full, or an error dot */
+		& .mark {
+			width: 0.7rem;
+			height: 0.7rem;
+			border: 1.5px solid var(--ink3);
+			border-radius: 50%;
+
+			&[data-state='partial'] {
+				background: linear-gradient(90deg, var(--primary) 50%, transparent 50%);
+				border-color: var(--primary);
+			}
+
+			&[data-state='done'] {
+				background: var(--risk-low);
+				border-color: var(--risk-low);
+			}
+
+			&[data-state='error'] {
+				background: var(--wax);
+				border-color: var(--wax);
+			}
+		}
+	}
+
 	/* one raised card per section, the fields inside */
 	.record-form {
 		display: grid;
 		gap: 1.25rem;
-		margin-top: 1.5rem;
+		min-width: 0;
 
 		& .errors {
 			padding: 0.75rem 1rem;
@@ -216,9 +455,13 @@
 			border-radius: var(--radius-card);
 		}
 
+		/* a size container, so its fields can stack their citation when it is narrow */
 		& .section {
+			container-type: inline-size;
 			min-width: 0;
 			padding-bottom: 0.25rem;
+			/* clear of the top bar when jumped to */
+			scroll-margin-top: 5rem;
 
 			& h2 {
 				font-size: 18px;
@@ -232,9 +475,93 @@
 				color: var(--ink2);
 			}
 		}
+	}
 
-		& .actions {
-			margin-top: 0.25rem;
+	/* the save bar, held at the bottom of the window */
+	.save-bar {
+		position: sticky;
+		bottom: 0;
+		z-index: 2;
+		margin-top: 0.25rem;
+		padding: 0.75rem 0;
+		background: var(--canvas);
+		border-top: 1px solid var(--rule2);
+
+		@media print {
+			display: none;
+		}
+
+		& .progress {
+			display: flex;
+			flex: 1 1 14rem;
+			flex-wrap: wrap;
+			gap: 0 0.75rem;
+			font-size: 13px;
+			font-variant-numeric: tabular-nums;
+			color: var(--ink2);
+
+			& .required {
+				font-weight: 600;
+				color: var(--wax);
+			}
+		}
+
+		/* phones: sections, save and cancel in one row; the counts move into the menu */
+		@media (max-width: 40rem) {
+			flex-wrap: nowrap;
+			gap: 0.5rem;
+
+			& > button {
+				flex: 0 0 auto;
+			}
+
+			& .progress,
+			& .summary-label {
+				display: none;
+			}
+		}
+	}
+
+	/* the section list in the save bar, opening upwards */
+	.sections-menu {
+		position: relative;
+		flex: 1 1 auto;
+
+		& summary {
+			display: inline-flex;
+			gap: 0.4rem;
+			align-items: center;
+			white-space: nowrap;
+			min-height: 44px;
+			padding: 0 0.9rem;
+			font-size: 14px;
+			font-weight: 500;
+			list-style: none;
+			cursor: pointer;
+			border: 1px solid var(--rule);
+			border-radius: var(--radius);
+
+			&::-webkit-details-marker {
+				display: none;
+			}
+		}
+
+		& .summary-count {
+			font-variant-numeric: tabular-nums;
+		}
+
+		& .menu {
+			position: absolute;
+			bottom: calc(100% + 0.5rem);
+			left: 0;
+			width: min(20rem, calc(100vw - 2rem));
+			max-height: 60dvh;
+			padding: 0.4rem;
+			overflow-y: auto;
+			background: var(--sheet);
+			border: 1px solid var(--rule2);
+			border-radius: var(--radius-card);
+			box-shadow: var(--shadow-raised);
 		}
 	}
 </style>

@@ -215,3 +215,9 @@ html[data-theme='dark'] :where(input[type='checkbox']):checked {
 		}
 	}
 }
+
+/* fields of a record form keep clear of its sticky save bar and of the top bar when focused */
+.record-form :is(input, select, textarea, button) {
+	scroll-margin-top: 5rem;
+	scroll-margin-bottom: 6rem;
+}
