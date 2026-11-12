@@ -10,6 +10,7 @@
 	import { PUBLIC_PREVIEW } from '$app/env/public';
 	import { afterNavigate } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { clearDrafts } from '#lib/records/drafts.js';
 	import { page } from '$app/state';
 	import { m } from '#lib/paraglide/messages.js';
 	import { localized, type RoutePath } from '#lib/i18n/links.js';
@@ -104,7 +105,7 @@
 						>{m.org_working_in({ name: organisation.name })}</a
 					>
 				{/if}
-				<form method="post" action={resolve('/auth/logout')}>
+				<form method="post" action={resolve('/auth/logout')} onsubmit={() => clearDrafts()}>
 					<button type="submit" class="button quiet">{m.nav_logout()}</button>
 				</form>
 			</div>

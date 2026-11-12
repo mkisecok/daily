@@ -2,10 +2,15 @@
 	@component
 	The form for a new or existing record, grouped into the definition's
 	sections. Assessment fields are not edited here: they come from their
-	questionnaire. Leaving with unsaved input asks first.
+	questionnaire. Leaving with unsaved input asks first. With a `draftKey`
+	the input is kept as a draft in this tab while one types and offered
+	again after a reload.
 -->
 <script lang="ts">
 	import { beforeNavigate, goto } from '$app/navigation';
+	import { formatShortDate, formatTime } from '#lib/i18n/date.js';
+	import { getLocale } from '#lib/paraglide/runtime.js';
+	import { clearDraft, loadDraft, saveDraft } from '../drafts.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { text } from '#lib/tools/i18n.js';
 	import type { Option, RecordData, RecordToolDefinition } from '../types.js';
@@ -21,6 +26,8 @@
 		errors = {},
 		busy = false,
 		choices = {},
+		draftKey,
+		version,
 		onsave,
 		oncancel
 	}: {
@@ -32,6 +39,10 @@
 		busy?: boolean;
 		/** options for reference fields, by field id */
 		choices?: Record<string, Option[]>;
+		/** where the input is kept as a draft while unsaved; none keeps no draft */
+		draftKey?: string;
+		/** the stored record's version, to tell a draft from an older one */
+		version?: number;
 		/** `values` is the raw form state, for keeping the input after a conflict */
 		onsave: (input: Record<string, unknown>, values: FormValues) => void | Promise<void>;
 		oncancel: () => void;
@@ -40,9 +51,42 @@
 	// seeded once from the stored record; the parent remounts the form to reset it.
 	// svelte-ignore state_referenced_locally
 	const stored = JSON.stringify(toInputs(definition, data));
+	// a kept draft wins over the stored data, unless input from a conflict is passed in
 	// svelte-ignore state_referenced_locally
-	let values = $state<FormValues>(draft ? $state.snapshot(draft) : JSON.parse(stored));
+	const kept = !draft && draftKey ? loadDraft<FormValues>(draftKey) : null;
+	const resumed = kept && JSON.stringify(kept.values) !== stored ? kept : null;
+	// svelte-ignore state_referenced_locally
+	let values = $state<FormValues>(
+		draft ? $state.snapshot(draft) : resumed ? resumed.values : JSON.parse(stored)
+	);
 	const dirty = $derived(JSON.stringify(values) !== stored);
+
+	let restored = $state(resumed);
+	// svelte-ignore state_referenced_locally
+	const older = !!(resumed?.version && version && resumed.version !== version);
+	const restoredAt = $derived(
+		restored
+			? `${formatShortDate(restored.savedAt, getLocale())}, ${formatTime(restored.savedAt, getLocale())}`
+			: ''
+	);
+
+	// keeps the input a moment after the last change; an unchanged form keeps no draft
+	$effect(() => {
+		if (!draftKey) return;
+		const snapshot = $state.snapshot(values);
+		const changed = dirty;
+		const timer = setTimeout(() => {
+			if (changed) saveDraft(draftKey, snapshot, version);
+			else clearDraft(draftKey);
+		}, 400);
+		return () => clearTimeout(timer);
+	});
+
+	function discardDraft() {
+		values = JSON.parse(stored);
+		restored = null;
+		if (draftKey) clearDraft(draftKey);
+	}
 
 	/** set while saving or after the user chose to discard, so navigation goes ahead */
 	let leaving = false;
@@ -60,13 +104,17 @@
 	});
 
 	function cancel() {
-		if (!dirty) return oncancel();
+		if (!dirty) {
+			if (draftKey) clearDraft(draftKey);
+			return oncancel();
+		}
 		pending = null;
 		confirmLeave = true;
 	}
 
 	function discard() {
 		leaving = true;
+		if (draftKey) clearDraft(draftKey);
 		// eslint-disable-next-line svelte/no-navigation-without-resolve -- the URL comes from SvelteKit's own navigation and is resolved already
 		if (pending) void goto(pending);
 		else oncancel();
@@ -94,6 +142,15 @@
 </script>
 
 <form class="record-form" onsubmit={submit} novalidate>
+	{#if restored}
+		<p class="draft" role="status">
+			<span>
+				{m.draft_restored({ time: restoredAt })}
+				{#if older}{m.draft_older()}{/if}
+			</span>
+			<button type="button" class="quiet" onclick={discardDraft}>{m.draft_discard()}</button>
+		</p>
+	{/if}
 	{#if hasErrors}
 		<p class="errors" role="alert">{m.records_errors()}</p>
 	{/if}
@@ -143,6 +200,19 @@
 			color: var(--wax);
 			background: var(--wax-soft);
 			border: 1px solid var(--wax-soft);
+			border-radius: var(--radius-card);
+		}
+
+		& .draft {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem 1rem;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0.6rem 1rem;
+			font-size: 14px;
+			color: var(--navy);
+			background: var(--navy-soft);
 			border-radius: var(--radius-card);
 		}
 

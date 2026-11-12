@@ -124,6 +124,7 @@ export const ICONS = {
 	],
 	user: ['M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0', 'M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2'],
 	'arrow-right': ['M5 12l14 0', 'M13 18l6 -6', 'M13 6l6 6'],
+	'arrow-down': ['M12 5l0 14', 'M18 13l-6 6', 'M6 13l6 6'],
 	'arrows-exchange': ['M7 10h14l-4 -4', 'M17 14h-14l4 4'],
 	'barrier-block': [
 		'M4 7m0 1a1 1 0 0 1 1 -1h14a1 1 0 0 1 1 1v7a1 1 0 0 1 -1 1h-14a1 1 0 0 1 -1 -1z',

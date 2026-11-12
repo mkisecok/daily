@@ -30,7 +30,7 @@
 	const options = $derived(optionsFor(question));
 </script>
 
-<fieldset class="row">
+<fieldset class="row" id="q-{question.id}">
 	<legend class="legend">
 		<span class="number">{number}.</span>
 		<span class="text">{text(question.text)}</span>
@@ -58,8 +58,13 @@
 </fieldset>
 
 <style>
-	/* one row inside a section card; hairlines between rows */
+	/*
+	 * one row inside a section card; hairlines between rows. The scroll margin
+	 * keeps room for the questionnaire's sticky bar, so a focused answer is
+	 * never behind it.
+	 */
 	.row {
+		scroll-margin-bottom: 7rem;
 		display: grid;
 		grid-template-columns: 1fr auto;
 		grid-template-areas:
@@ -80,6 +85,10 @@
 				'help'
 				'cite'
 				'answers';
+		}
+
+		& input {
+			scroll-margin-bottom: 7rem;
 		}
 
 		& .legend {

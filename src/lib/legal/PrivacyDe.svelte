@@ -137,6 +137,14 @@
 				>
 				<td>bis Sie sie löschen</td>
 			</tr>
+			<tr>
+				<td><code>daily.draft.v1:…</code> (sessionStorage)</td>
+				<td>
+					hält noch nicht gespeicherte Eingaben in Formularen und Fragebögen als Entwurf, nur in
+					diesem Browser-Tab
+				</td>
+				<td>bis zum Speichern, Verwerfen, Abmelden oder Schließen des Tabs</td>
+			</tr>
 			{#if preview}
 				<tr>
 					<td><code>daily.records.v1</code> (localStorage)</td>
