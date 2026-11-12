@@ -2,8 +2,10 @@
 	@component
 	The tool catalogue as a bento: the tool opened last (or a good first one)
 	as a large card, pinned, recent and often used tools beside it, then every
-	tool as a compact tile with its own icon. Recent and pinned tools live in
-	this browser only. A search or an area chip hides the bento and narrows the
+	tool as a compact tile with its own icon. Above them, "Was steht an?" opens
+	the tool for a situation, and visitors who have not opened a tool yet see
+	three first steps. Recent and pinned tools live in this browser only. A
+	search or an area chip hides the situations and the bento and narrows the
 	tiles; the full legal basis stays on each tool's own page.
 -->
 <script lang="ts">
@@ -14,6 +16,7 @@
 	import { text } from '#lib/tools/i18n.js';
 	import { AREA_ICONS, toolIcon } from '#lib/tools/icons.js';
 	import { PINNED_KEY, RECENT_KEY, readList, togglePin, writeList } from '#lib/tools/shelf.js';
+	import { SITUATIONS, SITUATIONS_SHOWN } from '#lib/tools/situations.js';
 	import type { ToolCategory, ToolManifest, ToolShape } from '#lib/tools/types.js';
 	import StatusBadge from '#lib/tools/_shared/StatusBadge.svelte';
 	import Icon from '#lib/ui/Icon.svelte';
@@ -61,7 +64,15 @@
 	};
 	const href = (tool: ToolManifest) => resolve(localized(`/werkzeuge/${tool.slug}`));
 
+	/** three steps for someone new: what most organisations need first */
+	const FIRST_STEPS = [
+		{ label: m.tools_step_vvt, path: '/werkzeuge/vvt/eintraege?neu=1' },
+		{ label: m.tools_step_tom, path: '/werkzeuge/tom-katalog/eintraege?neu=1' },
+		{ label: m.tools_step_deadlines, path: '/fristen' }
+	] as const;
+
 	let query = $state('');
+	let allSituations = $state(false);
 	let area = $state<ToolCategory | null>(null);
 	let recent = $state<string[]>([]);
 	let pinned = $state<string[]>([]);
@@ -125,6 +136,44 @@
 </PageHeader>
 
 {#if browsing}
+	<section class="situations" aria-labelledby="situations-title">
+		<h2 id="situations-title">{m.tools_situations_title()}</h2>
+		<ul id="situation-list">
+			{#each allSituations ? SITUATIONS : SITUATIONS.slice(0, SITUATIONS_SHOWN) as situation (situation.id)}
+				{@const tool = bySlug.get(situation.tool)!}
+				<li>
+					<a class="situation" href={href(tool)} data-area={tool.category}>
+						<span class="icon"><Icon name={situation.icon} size={18} /></span>
+						<span class="text">
+							<strong>{text(situation.label)}</strong>
+							<span class="target">{text(tool.name)}</span>
+						</span>
+					</a>
+				</li>
+			{/each}
+		</ul>
+		<button
+			type="button"
+			class="more"
+			aria-expanded={allSituations}
+			aria-controls="situation-list"
+			onclick={() => (allSituations = !allSituations)}
+		>
+			{allSituations ? m.tools_situations_less() : m.tools_situations_more()}
+			<Icon name={allSituations ? 'chevron-up' : 'chevron-down'} size={16} />
+		</button>
+		{#if recent.length === 0}
+			<nav class="first-steps" aria-label={m.tools_first_steps_label()}>
+				<span class="label">{m.tools_first_steps()}</span>
+				<ol>
+					{#each FIRST_STEPS as step (step.path)}
+						<li><a href={resolve(localized(step.path))}>{step.label()}</a></li>
+					{/each}
+				</ol>
+			</nav>
+		{/if}
+	</section>
+
 	<section class="bento" aria-label={m.tools_recent()}>
 		<a class="feature" href={href(lead)} data-area={lead.category}>
 			<span class="label">{recent[0] === lead.slug ? m.tools_recent() : m.tools_start()}</span>
@@ -285,6 +334,134 @@
 			min-height: 2.75rem;
 			padding-left: 2.5rem;
 			border-radius: var(--radius-card);
+		}
+	}
+
+	/* situations as small link cards; the first steps as a numbered line below */
+	.situations {
+		display: grid;
+		gap: 0.875rem;
+		margin-bottom: 2.25rem;
+
+		& h2 {
+			font-size: 20px;
+		}
+
+		& ul {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+			gap: 0.625rem;
+			list-style: none;
+
+			/* two compact columns on a phone, so the tools stay within reach */
+			@media (max-width: 40rem) {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+				gap: 0.5rem;
+			}
+		}
+
+		& .more {
+			justify-self: start;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.4rem;
+			padding: 0;
+			font-size: 14px;
+			color: var(--navy);
+			background: none;
+			border: 0;
+			cursor: pointer;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	.situation {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		height: 100%;
+		padding: 0.75rem 0.875rem;
+		color: var(--ink);
+		text-decoration: none;
+		background: var(--sheet);
+		border: 1px solid var(--rule2);
+		border-radius: 12px;
+		transition: border-color 0.15s ease;
+
+		&:hover {
+			text-decoration: none;
+			border-color: var(--area);
+		}
+
+		& .icon {
+			width: 2.25rem;
+			height: 2.25rem;
+		}
+
+		& .text {
+			display: grid;
+			gap: 0.1rem;
+			min-width: 0;
+		}
+
+		& strong {
+			font-size: 14px;
+			font-weight: 600;
+			line-height: 1.3;
+		}
+
+		& .target {
+			font-size: 12.5px;
+			color: var(--ink3);
+		}
+
+		@media (max-width: 40rem) {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.5rem;
+			padding: 0.75rem;
+
+			& strong {
+				font-size: 13.5px;
+			}
+
+			& .target {
+				display: none;
+			}
+		}
+	}
+
+	.first-steps {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.5rem 1rem;
+
+		& ol {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem 1.25rem;
+			padding: 0;
+			list-style: none;
+			counter-reset: step;
+
+			@media (max-width: 40rem) {
+				flex-direction: column;
+			}
+		}
+
+		& li {
+			counter-increment: step;
+
+			&::before {
+				content: counter(step) ' · ';
+				font-family: var(--mono);
+				font-size: 12px;
+				color: var(--ink3);
+			}
 		}
 	}
 
