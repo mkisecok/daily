@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { visibleQuestions } from '../answers.js';
 import type { Answers, QuestionnaireCatalog } from '../types.js';
 import catalogJson from './catalog.json' with { type: 'json' };
 import { DATES, evaluate } from './engine.js';
@@ -107,5 +108,36 @@ describe('Risikoklassifizierung engine', () => {
 		expect(outcome(answers(['h_employment', 'x_preparatory']))).toBe('art6-3');
 		expect(outcome(answers(['t_interaction']))).toBe('art50');
 		expect(outcome(answers())).toBe('minimal');
+	});
+});
+
+describe('Risikoklassifizierung: questions asked', () => {
+	const asked = (answers: Answers) => visibleQuestions(catalog, answers).map((q) => q.id);
+	const all = catalog.sections.flatMap((s) => s.questions).length;
+
+	it('asks everything until an answer makes parts pointless', () => {
+		expect(asked({})).toHaveLength(
+			all - catalog.sections.find((s) => s.id === 'exception')!.questions.length
+		);
+	});
+
+	it('stops after the first question for something that is not an AI system', () => {
+		expect(asked({ s_ai: 'no' })).toEqual(['s_ai']);
+	});
+
+	it('stops after the scope for a system outside the AI Act', () => {
+		expect(asked({ s_ai: 'yes', s_excluded: 'yes' })).toEqual(['s_ai', 's_excluded']);
+	});
+
+	it('skips high risk, exception and transparency once a prohibited practice applies', () => {
+		const ids = asked({ s_ai: 'yes', s_excluded: 'no', p_scraping: 'yes' });
+		expect(
+			ids.some((id) => id.startsWith('h_') || id.startsWith('x_') || id.startsWith('t_'))
+		).toBe(false);
+	});
+
+	it('asks the Art. 6(3) exception only after an Annex III area', () => {
+		expect(asked({ s_ai: 'yes', h_annex1: 'yes' })).not.toContain('x_procedural');
+		expect(asked({ s_ai: 'yes', h_employment: 'yes' })).toContain('x_procedural');
 	});
 });

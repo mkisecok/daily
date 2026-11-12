@@ -7,6 +7,7 @@
 	import Citation from '#lib/tools/_shared/Citation.svelte';
 	import ToolHeader from '#lib/tools/_shared/ToolHeader.svelte';
 	import Verdict from '#lib/tools/_shared/Verdict.svelte';
+	import NextSteps from '#lib/tools/_shared/NextSteps.svelte';
 	import { resultDashboards } from '#lib/tools/dashboards.js';
 	import type { PageProps } from './$types';
 
@@ -21,16 +22,18 @@
 		na: m.answer_na
 	};
 
-	/** every question with its continuous number and the stored answer */
+	/** every asked question with its continuous number and the stored answer */
 	const rows = $derived.by(() => {
 		let number = 0;
-		return data.catalog.sections.flatMap((section) =>
-			section.questions.map((question) => ({
-				question,
-				number: ++number,
-				answer: data.run.answers[question.id]
-			}))
-		);
+		return data.catalog.sections
+			.flatMap((section) =>
+				section.questions.map((question) => ({
+					question,
+					number: ++number,
+					answer: data.run.answers[question.id]
+				}))
+			)
+			.filter((row) => row.answer !== undefined);
 	});
 </script>
 
@@ -56,6 +59,8 @@
 {:else}
 	<Verdict result={data.run.result} tool={text(data.tool.name)} at={data.run.createdAt} />
 {/if}
+
+<NextSteps tool={data.tool.slug} result={data.run.result} />
 
 <section class="answers card">
 	<h2>{m.run_answers()}</h2>

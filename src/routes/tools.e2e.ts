@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { answerAll } from './e2e-helpers.js';
 
 /** requires the local stack from compose.yaml; see auth.e2e.ts */
 const username = process.env.E2E_USER ?? 'test@dai-ly.de';
@@ -95,14 +96,11 @@ test('risk classification runs in the browser without an account', async ({ page
 	await page.getByRole('link', { name: /Prüfung beginnen/ }).click();
 	await expect(page).toHaveURL(/\/werkzeuge\/risikoklassifizierung\/pruefen$/);
 
-	const questions = page.locator('fieldset');
-	const count = await questions.count();
-	expect(count).toBeGreaterThan(20);
-	for (let i = 0; i < count; i++) {
-		await questions.nth(i).getByLabel('Nein').check();
-	}
-	await questions.nth(0).getByLabel('Ja').check(); // it is an AI system
-	await page.locator('input[name="answer.t_interaction"][value="yes"]').check();
+	expect(await page.locator('fieldset').count()).toBeGreaterThan(20);
+	// an AI system that talks to people; questions revealed by answers are answered too
+	await answerAll(page, (name) =>
+		['answer.s_ai', 'answer.t_interaction'].includes(name) ? 'yes' : 'no'
+	);
 
 	await page.getByRole('button', { name: 'Auswerten' }).click();
 	await expect(

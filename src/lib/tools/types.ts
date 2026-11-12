@@ -42,7 +42,17 @@ export type ToolManifest = {
 export type QuestionType = 'yesno' | 'yesnona';
 export type YesNoAnswer = 'yes' | 'no' | 'unknown' | 'na';
 
-export type Question = {
+/** an earlier question and the answers that trigger a condition */
+export type Condition = { q: string; is: YesNoAnswer[] };
+
+/**
+ * when a question or section is asked: `hideIf` hides it as soon as any
+ * condition holds; `showIf` shows it only once one holds. An unanswered
+ * question holds no condition.
+ */
+export type Visibility = { showIf?: Condition[]; hideIf?: Condition[] };
+
+export type Question = Visibility & {
 	id: string;
 	type: QuestionType;
 	text: Localized;
@@ -52,7 +62,7 @@ export type Question = {
 	remedy?: Localized;
 };
 
-export type QuestionSection = {
+export type QuestionSection = Visibility & {
 	id: string;
 	title: Localized;
 	intro?: Localized;

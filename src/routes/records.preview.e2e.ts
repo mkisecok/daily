@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { chip, choose, pickDate } from './e2e-helpers.js';
+import { answerAll, chip, choose, pickDate } from './e2e-helpers.js';
 
 test('preview keeps records in the browser across reloads and can delete them', async ({
 	page
@@ -51,12 +51,9 @@ test('preview: a questionnaire result is evaluated again when it is attached', a
 	await expect(
 		page.getByText('Prüfung für den Eintrag „Bewerbungsfilter“ in KI-Register.')
 	).toBeVisible();
-	for (const fieldset of await page.locator('form fieldset').all()) {
-		const yes = ['answer.s_ai', 'answer.h_employment'].includes(
-			(await fieldset.locator('input').first().getAttribute('name')) ?? ''
-		);
-		await fieldset.locator(`input[value="${yes ? 'yes' : 'no'}"]`).check();
-	}
+	await answerAll(page, (name) =>
+		['answer.s_ai', 'answer.h_employment'].includes(name) ? 'yes' : 'no'
+	);
 	await page.getByRole('button', { name: 'Auswerten' }).click();
 	await expect(page.locator('.verdict .headline')).toHaveText('Hochrisiko-KI-System.');
 	await page.getByRole('button', { name: 'In KI-Register übernehmen' }).click();
