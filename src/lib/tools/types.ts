@@ -22,6 +22,8 @@ export type Law =
 	| 'StGB'
 	| 'DDG'
 	| 'UWG'
+	| 'VwGO'
+	| 'OWiG'
 	| 'KI-MIG'
 	| 'EU-Kommission'
 	| 'BSI';

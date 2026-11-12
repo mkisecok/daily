@@ -24,6 +24,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	personalwechsel: 'id-badge',
 	videoueberwachung: 'video',
 	'website-start': 'browser',
+	aufsichtsanfrage: 'mail-opened',
 	loeschkonzept: 'trash-x',
 	schulungsnachweis: 'school',
 	'ki-dsgvo-schnittstelle': 'arrows-exchange',
