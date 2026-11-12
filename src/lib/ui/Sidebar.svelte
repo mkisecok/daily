@@ -8,6 +8,7 @@
 <script lang="ts">
 	import { PUBLIC_PREVIEW } from '$app/env/public';
 	import { resolve } from '$app/paths';
+	import { clearDrafts } from '#lib/records/drafts.js';
 	import { page } from '$app/state';
 	import { m } from '#lib/paraglide/messages.js';
 	import { localized } from '#lib/i18n/links.js';
@@ -72,7 +73,7 @@
 					<span class="ico"><Icon name="user" size={18} /></span>
 					<span>{m.nav_account()}</span>
 				</a>
-				<form method="post" action={resolve('/auth/logout')}>
+				<form method="post" action={resolve('/auth/logout')} onsubmit={() => clearDrafts()}>
 					<button type="submit">
 						<span class="ico"><Icon name="logout" size={18} /></span>
 						<span>{m.nav_logout()} · {user.displayName}</span>

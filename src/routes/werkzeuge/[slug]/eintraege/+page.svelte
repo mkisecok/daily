@@ -6,6 +6,7 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { toCsv } from '#lib/records/csv.js';
+	import { clearDraft, draftKey, loadDraft } from '#lib/records/drafts.js';
 	import { stateLabel } from '#lib/records/format.js';
 	import { applyListQuery, readListQuery, writeListQuery } from '#lib/records/listing.js';
 	import { getStore } from '#lib/records/store/index.js';
@@ -22,7 +23,7 @@
 	import StateBar from '#lib/records/ui/StateBar.svelte';
 	import type { FormValues } from '#lib/records/ui/inputs.js';
 	import { fieldById, type ValidationErrors } from '#lib/records/validate.js';
-	import { formatShortDate } from '#lib/i18n/date.js';
+	import { formatShortDate, formatTime } from '#lib/i18n/date.js';
 	import { text } from '#lib/tools/i18n.js';
 	import { getRecordTool } from '#lib/tools/registry.js';
 	import Citation from '#lib/tools/_shared/Citation.svelte';
@@ -152,6 +153,7 @@
 			fail(result);
 			return;
 		}
+		clearDraft(draftKey.newRecord(slug));
 		await goto(resolve(recordPath(result.value.id)));
 	}
 
@@ -159,6 +161,7 @@
 		const result = await run(() => store.update(record.id, input, record.version));
 		if (!result) return;
 		if (result.ok) {
+			clearDraft(draftKey.record(slug, record.id));
 			errors = {};
 			draft = null;
 			editing = false;
@@ -169,6 +172,24 @@
 			if (result.error === 'conflict') draft = values;
 		}
 		await invalidate('records:data');
+	}
+
+	/**
+	 * unsaved changes to the open entry kept from earlier in this tab; read
+	 * again whenever the entry or the editing mode changes
+	 */
+	const pending = $derived.by(() => {
+		if (!detail || editing) return null;
+		const kept = loadDraft(draftKey.record(slug, detail.record.id));
+		return kept
+			? `${formatShortDate(kept.savedAt, locale)}, ${formatTime(kept.savedAt, locale)}`
+			: null;
+	});
+	let pendingDropped = $state<string | null>(null);
+
+	function dropPending(record: StoredRecord) {
+		clearDraft(draftKey.record(slug, record.id));
+		pendingDropped = record.id;
 	}
 
 	function loadNewest() {
@@ -286,6 +307,7 @@
 		{errors}
 		{busy}
 		choices={data.choices}
+		draftKey={draftKey.newRecord(slug)}
 		onsave={create}
 		oncancel={() => goto(resolve(listPath))}
 	/>
@@ -307,6 +329,15 @@
 					</span>
 				{/if}
 			</div>
+			{#if pending && pendingDropped !== record.id && !record.archivedAt}
+				<p class="pending no-print" role="status">
+					<span>{m.draft_pending({ time: pending })}</span>
+					<button type="button" onclick={() => (editing = true)}>{m.draft_continue()}</button>
+					<button type="button" class="quiet" onclick={() => dropPending(record)}
+						>{m.draft_discard()}</button
+					>
+				</p>
+			{/if}
 			{#if !editing}
 				<div class="toolbar actions no-print">
 					{#if !record.archivedAt}
@@ -361,8 +392,11 @@
 					{errors}
 					{busy}
 					choices={data.choices}
+					draftKey={draftKey.record(slug, record.id)}
+					version={record.version}
 					onsave={(input, values) => save(record, input, values)}
 					oncancel={() => {
+						pendingDropped = record.id;
 						editing = false;
 						errors = {};
 						draft = null;
@@ -638,6 +672,24 @@
 			@media (max-width: 40rem) {
 				flex: 1 1 100%;
 				justify-content: flex-start;
+			}
+		}
+
+		/* unsaved changes from earlier in this tab, across the whole header */
+		& .pending {
+			display: flex;
+			flex: 1 1 100%;
+			flex-wrap: wrap;
+			gap: 0.5rem 1rem;
+			align-items: center;
+			padding: 0.6rem 1rem;
+			font-size: 14px;
+			color: var(--navy);
+			background: var(--navy-soft);
+			border-radius: var(--radius-card);
+
+			& span {
+				flex: 1 1 14rem;
 			}
 		}
 	}

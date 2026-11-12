@@ -128,6 +128,14 @@
 				<td>the tools you opened last and the ones you pinned, only in your browser</td>
 				<td>until you delete them</td>
 			</tr>
+			<tr>
+				<td><code>daily.draft.v1:…</code> (sessionStorage)</td>
+				<td
+					>keeps input not yet saved in forms and questionnaires as a draft, only in this browser
+					tab</td
+				>
+				<td>until you save, discard, log out or close the tab</td>
+			</tr>
 			{#if preview}
 				<tr>
 					<td><code>daily.records.v1</code> (localStorage)</td>

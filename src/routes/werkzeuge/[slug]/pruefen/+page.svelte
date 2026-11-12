@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { PUBLIC_PREVIEW } from '$app/env/public';
 	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
+	import { onMount, tick } from 'svelte';
+	import { formatShortDate, formatTime } from '#lib/i18n/date.js';
+	import { getLocale } from '#lib/paraglide/runtime.js';
+	import { clearDraft, draftKey, loadDraft, saveDraft } from '#lib/records/drafts.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { localized } from '#lib/i18n/links.js';
 	import { readAnswers } from '#lib/tools/answers.js';
@@ -13,6 +18,7 @@
 	import Verdict from '#lib/tools/_shared/Verdict.svelte';
 	import { resultDashboards } from '#lib/tools/dashboards.js';
 	import AssessmentHandoff from '#lib/records/ui/AssessmentHandoff.svelte';
+	import Icon from '#lib/ui/Icon.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -28,6 +34,49 @@
 
 	let answers = $state<Answers>({});
 	let result = $state<QuestionnaireResult | null>(null);
+
+	/** the answers as given so far, read from the form on every change */
+	let current = $state<Answers>({});
+	let form = $state<HTMLFormElement>();
+	let restoredAt = $state<string | null>(null);
+
+	// a questionnaire answered for an entry keeps its own draft
+	const key = $derived(draftKey.check(data.tool.slug, page.url.searchParams.get('fuer') ?? ''));
+
+	onMount(() => {
+		const kept = loadDraft<Answers>(key);
+		if (!kept || Object.keys(kept.values).length === 0) return;
+		answers = kept.values;
+		current = kept.values;
+		restoredAt = `${formatShortDate(kept.savedAt, getLocale())}, ${formatTime(kept.savedAt, getLocale())}`;
+	});
+
+	function track() {
+		if (!form) return;
+		current = readAnswers(data.catalog, new FormData(form)).answers;
+		saveDraft(key, current);
+	}
+
+	async function restart() {
+		clearDraft(key);
+		answers = {};
+		current = {};
+		restoredAt = null;
+		await tick();
+		form?.reset();
+	}
+
+	const total = $derived(data.catalog.sections.reduce((n, s) => n + s.questions.length, 0));
+	const answered = $derived(Object.keys(current).length);
+
+	/** scrolls to the first question still without an answer and focuses its first choice */
+	function firstOpen() {
+		const open = rows.find(({ question }) => !current[question.id]);
+		if (!open) return;
+		const row = document.getElementById(`q-${open.question.id}`);
+		row?.scrollIntoView({ block: 'center' });
+		row?.querySelector('input')?.focus({ preventScroll: true });
+	}
 
 	const answerLabel: Record<YesNoAnswer, () => string> = {
 		yes: m.answer_yes,
@@ -114,7 +163,14 @@
 	<p class="measure intro">{text(data.catalog.intro)}</p>
 	<noscript><p class="note">{m.check_noscript()}</p></noscript>
 
-	<form onsubmit={evaluate}>
+	{#if restoredAt}
+		<p class="restored" role="status">
+			<span>{m.check_restored({ time: restoredAt })}</span>
+			<button type="button" class="quiet" onclick={restart}>{m.check_restart()}</button>
+		</p>
+	{/if}
+
+	<form onsubmit={evaluate} onchange={track} bind:this={form}>
 		{#each sections as section (section.id)}
 			<section class="section card">
 				<header class="section-head">
@@ -129,10 +185,28 @@
 			</section>
 		{/each}
 
-		<div class="toolbar actions">
+		<!-- stays in view at the bottom while answering -->
+		<div class="toolbar actions form-bar">
+			<span class="progress" aria-live="polite">
+				<span class="meter" aria-hidden="true">
+					<span style:width="{(answered / total) * 100}%"></span>
+				</span>
+				{m.check_progress({ answered, total })}
+			</span>
+			{#if answered < total}
+				<button
+					type="button"
+					class="quiet jump"
+					aria-label={m.check_first_open()}
+					onclick={firstOpen}
+				>
+					<Icon name="arrow-down" size={16} />
+					<span class="jump-label">{m.check_first_open()}</span>
+				</button>
+			{/if}
 			<button type="submit">{m.form_check()}</button>
-			<span class="hint">{m.check_not_saved()}</span>
 		</div>
+		<p class="hint">{m.check_not_saved()}</p>
 	</form>
 {/if}
 
@@ -253,11 +327,88 @@
 
 	.actions {
 		margin-top: 1.5rem;
+	}
 
-		& .hint {
-			font-size: 13px;
-			color: var(--ink3);
+	.restored {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1rem;
+		align-items: center;
+		justify-content: space-between;
+		margin-top: 1.25rem;
+		padding: 0.6rem 1rem;
+		font-size: 14px;
+		color: var(--navy);
+		background: var(--navy-soft);
+		border-radius: var(--radius-card);
+	}
+
+	/* progress and the evaluate button, held at the bottom of the window while answering */
+	.form-bar {
+		position: sticky;
+		bottom: 0;
+		z-index: 2;
+		padding: 0.75rem 0;
+		background: var(--canvas);
+		border-top: 1px solid var(--rule2);
+
+		@media print {
+			position: static;
 		}
+
+		& .progress {
+			display: inline-flex;
+			flex: 1 1 12rem;
+			gap: 0.6rem;
+			align-items: center;
+			font-size: 14px;
+			font-variant-numeric: tabular-nums;
+			color: var(--ink2);
+		}
+
+		& .meter {
+			display: block;
+			flex: 0 0 6rem;
+			height: 4px;
+			overflow: hidden;
+			background: var(--rule2);
+			border-radius: 2px;
+
+			& span {
+				display: block;
+				height: 100%;
+				background: var(--primary);
+				transition: width 0.2s ease;
+			}
+		}
+
+		/* one row on phones: the jump shrinks to its arrow, the meter goes */
+		@media (max-width: 40rem) {
+			flex-wrap: nowrap;
+			gap: 0.5rem;
+
+			& > button {
+				flex: 0 0 auto;
+			}
+
+			& .meter,
+			& .jump-label {
+				display: none;
+			}
+
+			& .jump {
+				min-width: 44px;
+				min-height: 44px;
+				justify-content: center;
+				padding: 0;
+			}
+		}
+	}
+
+	.hint {
+		margin-top: 0.5rem;
+		font-size: 13px;
+		color: var(--ink3);
 	}
 
 	/* a result with its picture: side by side, stacked on narrow screens */
