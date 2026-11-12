@@ -8,7 +8,7 @@
 	import { clearDraft, draftKey, loadDraft, saveDraft } from '#lib/records/drafts.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { localized } from '#lib/i18n/links.js';
-	import { readAnswers } from '#lib/tools/answers.js';
+	import { askedAnswers, formAnswers, visibleQuestions } from '#lib/tools/answers.js';
 	import { text } from '#lib/tools/i18n.js';
 	import { getQuestionnaire } from '#lib/tools/registry.js';
 	import type { Answers, QuestionnaireResult, YesNoAnswer } from '#lib/tools/types.js';
@@ -16,6 +16,7 @@
 	import QuestionRow from '#lib/tools/_shared/QuestionRow.svelte';
 	import ToolHeader from '#lib/tools/_shared/ToolHeader.svelte';
 	import Verdict from '#lib/tools/_shared/Verdict.svelte';
+	import NextSteps from '#lib/tools/_shared/NextSteps.svelte';
 	import { resultDashboards } from '#lib/tools/dashboards.js';
 	import AssessmentHandoff from '#lib/records/ui/AssessmentHandoff.svelte';
 	import Icon from '#lib/ui/Icon.svelte';
@@ -35,7 +36,10 @@
 	let answers = $state<Answers>({});
 	let result = $state<QuestionnaireResult | null>(null);
 
-	/** the answers as given so far, read from the form on every change */
+	/**
+	 * the answers as given so far, read from the form on every change. Answers
+	 * in parts an earlier answer hides are kept, so they return when it changes back.
+	 */
 	let current = $state<Answers>({});
 	let form = $state<HTMLFormElement>();
 	let restoredAt = $state<string | null>(null);
@@ -53,7 +57,7 @@
 
 	function track() {
 		if (!form) return;
-		current = readAnswers(data.catalog, new FormData(form)).answers;
+		current = { ...current, ...formAnswers(data.catalog, new FormData(form)) };
 		saveDraft(key, current);
 	}
 
@@ -66,12 +70,14 @@
 		form?.reset();
 	}
 
-	const total = $derived(data.catalog.sections.reduce((n, s) => n + s.questions.length, 0));
-	const answered = $derived(Object.keys(current).length);
+	/** the questions asked, given the answers so far */
+	const asked = $derived(new Set(visibleQuestions(data.catalog, current).map((q) => q.id)));
+	const total = $derived(asked.size);
+	const answered = $derived([...asked].filter((id) => current[id] !== undefined).length);
 
 	/** scrolls to the first question still without an answer and focuses its first choice */
 	function firstOpen() {
-		const open = rows.find(({ question }) => !current[question.id]);
+		const open = rows.find(({ question }) => asked.has(question.id) && !current[question.id]);
 		if (!open) return;
 		const row = document.getElementById(`q-${open.question.id}`);
 		row?.scrollIntoView({ block: 'center' });
@@ -99,9 +105,12 @@
 	function evaluate(event: SubmitEvent & { currentTarget: HTMLFormElement }) {
 		event.preventDefault();
 		if (!engine) return;
-		const read = readAnswers(data.catalog, new FormData(event.currentTarget));
-		answers = read.answers;
-		result = engine(data.catalog, read.answers);
+		// only what is asked is evaluated; hidden answers stay in `current` for going back
+		answers = askedAnswers(data.catalog, {
+			...current,
+			...formAnswers(data.catalog, new FormData(event.currentTarget))
+		});
+		result = engine(data.catalog, answers);
 		window.scrollTo({ top: 0 });
 	}
 
@@ -129,10 +138,12 @@
 		<Verdict {result} tool={text(data.tool.name)} />
 	{/if}
 
+	<NextSteps tool={data.tool.slug} {result} />
+
 	<section class="answers card">
 		<h2>{m.run_answers()}</h2>
 		<ol>
-			{#each rows as { question, number } (question.id)}
+			{#each rows.filter(({ question }) => answers[question.id] !== undefined) as { question, number } (question.id)}
 				<li>
 					<span class="number">{number}.</span>
 					<span class="question">{text(question.text)}</span>
@@ -172,15 +183,18 @@
 
 	<form onsubmit={evaluate} onchange={track} bind:this={form}>
 		{#each sections as section (section.id)}
-			<section class="section card">
+			{@const shown = section.questions.filter(({ question }) => asked.has(question.id))}
+			<section class="section card" data-asked={shown.length > 0}>
 				<header class="section-head">
 					<h2>{text(section.title)}</h2>
-					{#if section.intro}
+					{#if shown.length === 0}
+						<p class="section-intro">{m.check_section_skipped()}</p>
+					{:else if section.intro}
 						<p class="measure section-intro">{text(section.intro)}</p>
 					{/if}
 				</header>
-				{#each section.questions as { question, number } (question.id)}
-					<QuestionRow {number} {question} value={answers[question.id]} />
+				{#each shown as { question, number } (question.id)}
+					<QuestionRow {number} {question} value={current[question.id]} />
 				{/each}
 			</section>
 		{/each}
@@ -218,6 +232,15 @@
 
 	/* a questionnaire section: a raised card with its question rows inside */
 	.section {
+		/* a part an earlier answer makes pointless: its title and why, nothing to answer */
+		&[data-asked='false'] {
+			padding-bottom: 0.5rem;
+
+			& h2 {
+				color: var(--ink3);
+			}
+		}
+
 		margin-top: 1.25rem;
 		padding: 1.25rem 1.5rem 0.25rem;
 

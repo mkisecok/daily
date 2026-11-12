@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { visibleQuestions } from '../answers.js';
 import type { Answers, QuestionnaireCatalog } from '../types.js';
 import catalogJson from './catalog.json' with { type: 'json' };
 import { evaluate } from './engine.js';
@@ -105,5 +106,29 @@ describe('Transparenzpflichten engine', () => {
 		expect(result.notes![0].de).toBe(
 			'Maßnahmen ergreifen, die die KI-Kompetenz der Beschäftigten unterstützen (Art. 4, seit 2. Februar 2025).'
 		);
+	});
+});
+
+describe('Transparenzpflichten: questions asked', () => {
+	const asked = (answers: Answers) => visibleQuestions(catalog, answers).map((q) => q.id);
+
+	it('asks the provider or the deployer part only for that role', () => {
+		expect(asked({ r_provider: 'yes', r_deployer: 'no' })).toEqual(
+			expect.arrayContaining(['r_existing', 'a_interaction', 'a_synthetic'])
+		);
+		expect(asked({ r_provider: 'yes', r_deployer: 'no' }).some((id) => id.startsWith('b_'))).toBe(
+			false
+		);
+		expect(
+			asked({ r_provider: 'no', r_deployer: 'yes' }).some(
+				(id) => id.startsWith('a_') || id === 'r_existing'
+			)
+		).toBe(false);
+	});
+
+	it('asks a follow-up only after the question it refines', () => {
+		expect(asked({ r_provider: 'yes', a_interaction: 'no' })).not.toContain('a_obvious');
+		expect(asked({ r_provider: 'yes', a_interaction: 'yes' })).toContain('a_obvious');
+		expect(asked({ r_deployer: 'yes', b_text: 'yes' })).toContain('b_editorial');
 	});
 });

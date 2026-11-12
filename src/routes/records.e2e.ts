@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { choose, pickDate, chip } from './e2e-helpers.js';
+import { answerAll, choose, pickDate, chip } from './e2e-helpers.js';
 
 /** requires the local stack from compose.yaml; see auth.e2e.ts */
 const username = process.env.E2E_USER ?? 'test@dai-ly.de';
@@ -71,12 +71,9 @@ test('KI-Register: create, edit, history, CSV and handoff from the risk classifi
 	// handoff: classify as high-risk (employment, Annex III) and attach the result
 	await page.getByRole('link', { name: /Prüfung durchführen/ }).click();
 	await expect(page.getByText(`Prüfung für den Eintrag „${name}“ in KI-Register.`)).toBeVisible();
-	for (const fieldset of await page.locator('form fieldset').all()) {
-		const yes = ['answer.s_ai', 'answer.h_employment'].includes(
-			(await fieldset.locator('input').first().getAttribute('name')) ?? ''
-		);
-		await fieldset.locator(`input[value="${yes ? 'yes' : 'no'}"]`).check();
-	}
+	await answerAll(page, (name) =>
+		['answer.s_ai', 'answer.h_employment'].includes(name) ? 'yes' : 'no'
+	);
 	await page.getByRole('button', { name: 'Auswerten' }).click();
 	await expect(page.locator('.verdict .headline')).toHaveText('Hochrisiko-KI-System.');
 	await page.getByRole('button', { name: 'In KI-Register übernehmen' }).click();

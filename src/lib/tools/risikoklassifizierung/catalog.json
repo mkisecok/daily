@@ -45,6 +45,12 @@
 				},
 				{
 					"id": "s_excluded",
+					"hideIf": [
+						{
+							"q": "s_ai",
+							"is": ["no"]
+						}
+					],
 					"type": "yesno",
 					"text": {
 						"de": "Wird das System ausschließlich für militärische, Verteidigungs- oder nationale Sicherheitszwecke, ausschließlich für wissenschaftliche Forschung und Entwicklung oder von einer natürlichen Person im Rahmen einer rein persönlichen, nicht beruflichen Tätigkeit genutzt?",
@@ -59,6 +65,16 @@
 		},
 		{
 			"id": "prohibited",
+			"hideIf": [
+				{
+					"q": "s_ai",
+					"is": ["no"]
+				},
+				{
+					"q": "s_excluded",
+					"is": ["yes"]
+				}
+			],
 			"title": {
 				"de": "Verbotene Praktiken (Art. 5)",
 				"en": "Prohibited practices (Art. 5)"
@@ -184,6 +200,52 @@
 		},
 		{
 			"id": "highrisk",
+			"hideIf": [
+				{
+					"q": "s_ai",
+					"is": ["no"]
+				},
+				{
+					"q": "s_excluded",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_subliminal",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_vulnerable",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_socialscoring",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_crimerisk",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_scraping",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_emotionwork",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_biocategorisation",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_rbi",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_ncii",
+					"is": ["yes"]
+				}
+			],
 			"title": {
 				"de": "Hochrisiko-Bereiche (Art. 6, Anhang I und III)",
 				"en": "High-risk areas (Art. 6, Annexes I and III)"
@@ -301,6 +363,52 @@
 		},
 		{
 			"id": "exception",
+			"hideIf": [
+				{
+					"q": "s_ai",
+					"is": ["no"]
+				},
+				{
+					"q": "s_excluded",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_subliminal",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_vulnerable",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_socialscoring",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_crimerisk",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_scraping",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_emotionwork",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_biocategorisation",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_rbi",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_ncii",
+					"is": ["yes"]
+				}
+			],
 			"title": {
 				"de": "Ausnahme nach Art. 6 Abs. 3",
 				"en": "Exception under Art. 6(3)"
@@ -374,10 +482,90 @@
 						"ref": "Art. 6 Abs. 3 UAbs. 3"
 					}
 				}
+			],
+			"showIf": [
+				{
+					"q": "h_biometrics",
+					"is": ["yes", "unknown"]
+				},
+				{
+					"q": "h_infrastructure",
+					"is": ["yes", "unknown"]
+				},
+				{
+					"q": "h_education",
+					"is": ["yes", "unknown"]
+				},
+				{
+					"q": "h_employment",
+					"is": ["yes", "unknown"]
+				},
+				{
+					"q": "h_services",
+					"is": ["yes", "unknown"]
+				},
+				{
+					"q": "h_lawenforcement",
+					"is": ["yes", "unknown"]
+				},
+				{
+					"q": "h_migration",
+					"is": ["yes", "unknown"]
+				},
+				{
+					"q": "h_justice",
+					"is": ["yes", "unknown"]
+				}
 			]
 		},
 		{
 			"id": "transparency",
+			"hideIf": [
+				{
+					"q": "s_ai",
+					"is": ["no"]
+				},
+				{
+					"q": "s_excluded",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_subliminal",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_vulnerable",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_socialscoring",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_crimerisk",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_scraping",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_emotionwork",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_biocategorisation",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_rbi",
+					"is": ["yes"]
+				},
+				{
+					"q": "p_ncii",
+					"is": ["yes"]
+				}
+			],
 			"title": {
 				"de": "Transparenzpflichten (Art. 50)",
 				"en": "Transparency obligations (Art. 50)"

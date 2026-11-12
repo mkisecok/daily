@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { chip, choose, pickDate } from './e2e-helpers.js';
+import { answerAll, chip, choose, pickDate } from './e2e-helpers.js';
 
 test('preview: Navigator pages and search work under the base path', async ({ page }) => {
 	// the search loads its index on input, which needs the hydrated page
@@ -577,15 +577,9 @@ test('preview: a DPIA compares its risks with the linked TOM entry', async ({ pa
 
 test('preview: the risk classification marks the AI Act tier', async ({ page }) => {
 	await page.goto('werkzeuge/risikoklassifizierung/pruefen/', { waitUntil: 'networkidle' });
-	const names = await page
-		.locator('input[type=radio]')
-		.evaluateAll((inputs) => [...new Set(inputs.map((input) => (input as HTMLInputElement).name))]);
-	for (const name of names) {
-		const value = ['answer.s_ai', 'answer.h_employment', 'answer.x_profiling'].includes(name)
-			? 'yes'
-			: 'no';
-		await page.locator(`input[name="${name}"][value="${value}"]`).check({ force: true });
-	}
+	await answerAll(page, (name) =>
+		['answer.s_ai', 'answer.h_employment', 'answer.x_profiling'].includes(name) ? 'yes' : 'no'
+	);
 	await page.getByRole('button', { name: 'Auswerten' }).click();
 	await expect(page.getByRole('img', { name: 'Risikoklasse: Hochrisiko' })).toBeVisible();
 	await expect(page.locator('.tier[data-active]')).toHaveAttribute('data-tier', 'hoch');

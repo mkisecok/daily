@@ -35,3 +35,23 @@ export async function pickDate(page: Page, label: string, value: string) {
 export async function chip(scope: Page | Locator, name: string) {
 	await scope.getByRole('button', { name, exact: true }).click();
 }
+
+/**
+ * answers every question of a questionnaire, including the ones an answer
+ * reveals, with the value `pick` gives for the field name (e.g. `answer.s_ai`)
+ */
+export async function answerAll(page: Page, pick: (name: string) => string) {
+	for (let round = 0; round < 10; round++) {
+		const open = await page
+			.locator('form fieldset.row')
+			.evaluateAll((rows) =>
+				rows
+					.filter((row) => !row.querySelector('input:checked'))
+					.map((row) => row.querySelector('input')?.getAttribute('name') ?? '')
+			);
+		if (open.length === 0) return;
+		for (const name of open) {
+			await page.locator(`input[name="${name}"][value="${pick(name)}"]`).check({ force: true });
+		}
+	}
+}
