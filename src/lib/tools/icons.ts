@@ -19,6 +19,8 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	'tom-katalog': 'lock',
 	'sdm-wuerfel': 'box',
 	standortwechsel: 'truck',
+	'software-einfuehrung': 'package',
+	'ki-einfuehrung': 'rocket',
 	loeschkonzept: 'trash-x',
 	schulungsnachweis: 'school',
 	'ki-dsgvo-schnittstelle': 'arrows-exchange',

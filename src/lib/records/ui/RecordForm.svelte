@@ -153,8 +153,13 @@
 	};
 
 	/** how far each section is filled; a section with an error shows the error */
-	/** the input as stored data, for sections that apply only to some records */
-	const current = $derived(validateRecord(definition, fromInputs(definition, values)).data);
+	/**
+	 * the input as stored data, for sections that apply only to some records;
+	 * attached questionnaire results are not form fields, so they come from the record
+	 */
+	const current = $derived(
+		validateRecord(definition, { ...data, ...fromInputs(definition, values) }).data
+	);
 	const applies = (section: { when?: (data: RecordData) => boolean }) =>
 		!section.when || section.when(current);
 
