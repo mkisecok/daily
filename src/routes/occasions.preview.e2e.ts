@@ -261,3 +261,24 @@ test('preview: changing a cloud provider adds the Data Act switching points', as
 	await expect(page.locator('.verdict .headline')).toHaveText('Noch nicht abschließbar.');
 	await expect(page.locator('.verdict')).toContainText('Art. 25, 29 Data Act');
 });
+
+test('preview: a hiring procedure adds the AI part and names the deletion date', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/bewerbungsverfahren/eintraege/?neu=1', { waitUntil: 'networkidle' });
+	await page.getByLabel('Stelle', { exact: true }).fill('Buchhaltung');
+	await expect(page.locator('#sec-ki')).toContainText('Entfällt für den gewählten Umfang.');
+	await page
+		.locator('#sec-vorhaben')
+		.getByRole('button', { name: 'KI sichtet, filtert oder bewertet Bewerbungen' })
+		.click();
+	await expect(page.locator('.check', { hasText: 'ein Mensch entscheidet' })).toBeVisible();
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await expect(page.locator('.verdict .headline')).toHaveText('Verfahren läuft.');
+	await expect(page.locator('.verdict')).toContainText(
+		'Noch durchzuführen: Risikoklassifizierung.'
+	);
+});

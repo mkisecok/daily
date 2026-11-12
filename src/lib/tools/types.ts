@@ -25,6 +25,8 @@ export type Law =
 	| 'VwGO'
 	| 'OWiG'
 	| 'Data Act'
+	| 'AGG'
+	| 'ArbGG'
 	| 'KI-MIG'
 	| 'EU-Kommission'
 	| 'BSI';
