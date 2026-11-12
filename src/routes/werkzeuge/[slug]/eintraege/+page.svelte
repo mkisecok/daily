@@ -60,6 +60,14 @@
 	const listPath = $derived(localized(`/werkzeuge/${slug}/eintraege`));
 	const archivePath = $derived(localized(`/werkzeuge/${slug}/eintraege?archiviert=1`));
 	const recordPath = (id: string) => localized(`/werkzeuge/${slug}/eintraege?eintrag=${id}`);
+	const copyPath = (id: string) => localized(`/werkzeuge/${slug}/eintraege?neu=1&vorlage=${id}`);
+	const examplePath = $derived(localized(`/werkzeuge/${slug}/eintraege?neu=1&beispiel=1`));
+	/** a copy and the example keep their own draft, apart from an empty new entry */
+	const newDraftKey = $derived.by(() => {
+		if (data.view !== 'new' || data.start.kind === 'empty') return draftKey.newRecord(slug);
+		const source = page.url.searchParams.get('vorlage');
+		return draftKey.newFrom(slug, source ? `copy:${source}` : 'example');
+	});
 	const referenceHref = (tool: string, id: string) =>
 		localized(`/werkzeuge/${tool}/eintraege?eintrag=${id}`);
 
@@ -153,7 +161,7 @@
 			fail(result);
 			return;
 		}
-		clearDraft(draftKey.newRecord(slug));
+		clearDraft(newDraftKey);
 		await goto(resolve(recordPath(result.value.id)));
 	}
 
@@ -301,16 +309,36 @@
 {/if}
 
 {#if data.view === 'new'}
-	<h2 class="mode-title">{m.records_new()}</h2>
-	<RecordForm
-		definition={data.definition}
-		{errors}
-		{busy}
-		choices={data.choices}
-		draftKey={draftKey.newRecord(slug)}
-		onsave={create}
-		oncancel={() => goto(resolve(listPath))}
-	/>
+	{@const start = data.start}
+	<div class="mode-head">
+		<h2 class="mode-title">
+			{start.kind === 'copy'
+				? m.records_copy_title({ title: start.of })
+				: start.kind === 'example'
+					? m.records_example_title()
+					: m.records_new()}
+		</h2>
+		{#if start.kind === 'empty' && data.definition.example}
+			<a class="button quiet no-print" href={resolve(examplePath)}>{m.records_example_load()}</a>
+		{/if}
+	</div>
+	{#if start.kind !== 'empty'}
+		<p class="start-note measure">
+			{start.kind === 'copy' ? m.records_copy_note() : m.records_example_note()}
+		</p>
+	{/if}
+	{#key page.url.search}
+		<RecordForm
+			definition={data.definition}
+			data={data.prefill}
+			{errors}
+			{busy}
+			choices={data.choices}
+			draftKey={newDraftKey}
+			onsave={create}
+			oncancel={() => goto(resolve(listPath))}
+		/>
+	{/key}
 {:else if data.view === 'detail'}
 	{#if !detail}
 		<p class="quiet-text">{m.records_not_found()}</p>
@@ -351,6 +379,7 @@
 						>{m.records_print()}</button
 					>
 					<a class="button quiet" href={resolve(listPath)}>{m.records_back()}</a>
+					<a class="button quiet" href={resolve(copyPath(record.id))}>{m.records_duplicate()}</a>
 					<a
 						class="button quiet"
 						href={resolve(
@@ -592,6 +621,20 @@
 
 	.mode-title {
 		font-size: clamp(22px, 2.6vw, 26px);
+	}
+
+	/* the new-entry title with "Beispiel laden" at the far end */
+	.mode-head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem 1rem;
+	}
+
+	.start-note {
+		margin-block-start: 0.5rem;
+		color: var(--ink2);
 	}
 
 	.message {

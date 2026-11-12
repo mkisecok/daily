@@ -360,6 +360,13 @@ export const definition: RecordToolDefinition = {
 		{ law: 'BetrVG', ref: '§ 87, § 90' }
 	],
 	titleField: 'bezeichnung',
+	example: {
+		bezeichnung: 'Schreibassistent (Beispiel)',
+		anbieter: 'Beispiel KI AG',
+		zweck: 'Entwürfe für E-Mails, Protokolle und Texte für die Website.',
+		verantwortlich: 'KI-Beauftragte',
+		umfang: ['personenbezug', 'beschaeftigte', 'inhalte']
+	},
 	sections: [
 		{
 			id: 'vorhaben',

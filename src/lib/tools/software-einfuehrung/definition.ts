@@ -332,6 +332,19 @@ export const definition: RecordToolDefinition = {
 		BSI('IT-Grundschutz-Kompendium, Edition 2023')
 	],
 	titleField: 'bezeichnung',
+	example: {
+		bezeichnung: 'Bewerbermanagement (Beispiel)',
+		anbieter: 'Beispiel Software GmbH',
+		zweck:
+			'Stellenanzeigen veröffentlichen, Bewerbungen sammeln und mit den Fachbereichen abstimmen.',
+		verantwortlich: 'Leitung Personal',
+		umfang: ['personenbezug', 'cloud', 'beschaeftigte'],
+		d_zweck: 'ja',
+		d_minimierung: 'ja',
+		d_avv: 'nein',
+		d_avv_notiz: 'Vertragsentwurf liegt beim Anbieter.',
+		b_betriebsrat: 'ja'
+	},
 	sections: [
 		{
 			id: 'vorhaben',

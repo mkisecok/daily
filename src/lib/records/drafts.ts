@@ -27,6 +27,8 @@ function session(): DraftStorage | null {
 /** the draft key of a new record, an edited record or a questionnaire */
 export const draftKey = {
 	newRecord: (tool: string) => `record:${tool}:new`,
+	/** a new entry started from a copy of another or from the tool's example */
+	newFrom: (tool: string, source: string) => `record:${tool}:new:${source}`,
 	record: (tool: string, id: string) => `record:${tool}:${id}`,
 	check: (tool: string, target = '') => `check:${tool}${target ? `:${target}` : ''}`
 };
