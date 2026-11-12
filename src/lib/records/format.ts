@@ -8,6 +8,12 @@ function pick(value: { de: string; en: string }, locale: Locale): string {
 	return locale === 'en' ? value.en : value.de;
 }
 
+const CHECK_LABELS: Record<string, { de: string; en: string }> = {
+	ja: { de: 'Ja', en: 'Yes' },
+	nein: { de: 'Nein', en: 'No' },
+	entfaellt: { de: 'Entfällt', en: 'Not applicable' }
+};
+
 /** titles of referenced records by id, for reference fields */
 export type Titles = Record<string, string>;
 
@@ -36,6 +42,11 @@ export function formatValue(
 			return value === true
 				? pick({ de: 'Ja', en: 'Yes' }, locale)
 				: pick({ de: 'Nein', en: 'No' }, locale);
+		case 'check': {
+			const status = value === true ? 'ja' : value === false ? 'nein' : value;
+			const label = CHECK_LABELS[String(status)];
+			return label ? pick(label, locale) : String(value);
+		}
 		case 'date':
 			return typeof value === 'string' ? formatShortDate(value, locale) : '';
 		case 'datetime':

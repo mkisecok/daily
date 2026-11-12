@@ -197,4 +197,23 @@ describe('Standortwechsel: workflow and deadlines', () => {
 		);
 		expect(after.map((d) => d.kind)).toEqual(['begehung']);
 	});
+
+	it('settles a point marked not applicable and dates a gap with a due date', () => {
+		const scope = ['akten'];
+		const done = { ...allDone(scope), ...allRatedLow(scope), a_post: 'entfaellt' };
+		expect(assess(done).outcome).toBe('erledigt');
+		const gap = computeDeadlines(
+			tool,
+			stored({ ...done, a_post: 'nein', a_post_frist: '2026-12-20' }, 'nachbereitung')
+		);
+		expect(gap.map((d) => [d.kind, d.dueAt.slice(0, 10)])).toEqual([
+			['luecke-a_post', '2026-12-20']
+		]);
+		// a gap in a part that does not move sets no deadline
+		const outOfScope = computeDeadlines(
+			tool,
+			stored({ ...done, s_strom: 'nein', s_strom_frist: '2026-12-20' }, 'nachbereitung')
+		);
+		expect(outOfScope).toEqual([]);
+	});
 });

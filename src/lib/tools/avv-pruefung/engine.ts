@@ -1,3 +1,4 @@
+import { checkStatus, gapDeadlines } from '../../records/checks.js';
 import { dayAt } from '../../records/deadlines.js';
 import type { DeadlineSpec, RecordEngine, RecordView } from '../../records/types.js';
 import type { LegalBasis, Localized, QuestionnaireResult, Reason } from '../types.js';
@@ -5,17 +6,20 @@ import { CLAUSES, definition } from './definition.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
 
+/** the review date, and each missing clause that has a date to be fixed by */
 function deadlines(record: RecordView): DeadlineSpec[] {
+	if (record.data.status === 'beendet') return [];
+	const specs: DeadlineSpec[] = [];
 	const date = record.data.wiedervorlage;
-	if (typeof date !== 'string' || record.data.status === 'beendet') return [];
-	return [
-		{
+	if (typeof date === 'string') {
+		specs.push({
 			kind: 'wiedervorlage',
 			label: L('Wiedervorlage Auftragsverarbeitungsvertrag', 'Processor contract review'),
 			dueAt: dayAt(date),
 			cite: { law: 'DSGVO', ref: 'Art. 28 Abs. 1' }
-		}
-	];
+		});
+	}
+	return [...specs, ...gapDeadlines(definition, record)];
 }
 
 const reason = (id: string, text: Localized, cite?: LegalBasis): Reason => ({
@@ -30,10 +34,10 @@ const reason = (id: string, text: Localized, cite?: LegalBasis): Reason => ({
  * guarantees, transfers, sub-processors, breach reporting.
  */
 function assess(record: RecordView): QuestionnaireResult {
-	const missing = CLAUSES.filter((c) => record.data[c.id] === false).map((c) =>
+	const missing = CLAUSES.filter((c) => checkStatus(record.data[c.id]) === 'nein').map((c) =>
 		reason(c.id, c.label, c.cite)
 	);
-	const open = CLAUSES.filter((c) => record.data[c.id] !== true && record.data[c.id] !== false);
+	const open = CLAUSES.filter((c) => checkStatus(record.data[c.id]) === null);
 	const notes: Localized[] = [];
 	const citations: LegalBasis[] = [{ law: 'DSGVO', ref: 'Art. 28' }];
 

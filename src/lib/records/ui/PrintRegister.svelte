@@ -10,7 +10,9 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { cite, text } from '#lib/tools/i18n.js';
 	import type { Localized } from '#lib/tools/types.js';
+	import { formatCheck } from '../checks.js';
 	import { formatValue, stateLabel, type Titles } from '../format.js';
+	import { allFields } from '../validate.js';
 	import type { RecordToolDefinition, StoredRecord } from '../types.js';
 
 	let {
@@ -32,6 +34,7 @@
 	} = $props();
 
 	const locale = getLocale();
+	const fields = $derived(allFields(definition));
 </script>
 
 <div class="print-only print-register">
@@ -52,13 +55,17 @@
 					<dd>{stateLabel(definition, record.state, locale)}</dd>
 				{/if}
 				{#each definition.sections as section (section.id)}
-					{#each section.fields as field (field.id)}
+					{#each section.fields.filter((f) => !f.partOf) as field (field.id)}
 						<dt>
 							{text(field.label)}{#if field.cite}<span class="cite">
 									({cite(field.cite)})</span
 								>{/if}
 						</dt>
-						<dd>{formatValue(field, record.data[field.id], locale, titles) || '—'}</dd>
+						<dd>
+							{(field.type === 'check'
+								? formatCheck(field, record.data, locale, fields)
+								: formatValue(field, record.data[field.id], locale, titles)) || '—'}
+						</dd>
 					{/each}
 				{/each}
 			</dl>

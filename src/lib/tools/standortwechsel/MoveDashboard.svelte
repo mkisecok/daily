@@ -7,6 +7,7 @@
 -->
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
+	import { checkStatus, settled } from '../../records/checks.js';
 	import type { RecordView } from '../../records/types.js';
 	import RiskMatrix from '../dsfa/RiskMatrix.svelte';
 	import type { Rating, RiskLevel } from '../dsfa/definition.js';
@@ -50,8 +51,8 @@
 			const items = block.items.filter((item) =>
 				applies(record, { ...item, scope: item.scope ?? block.scope })
 			);
-			const done = items.filter((item) => record.data[item.id] === true).length;
-			const gap = items.filter((item) => record.data[item.id] === false).length;
+			const done = items.filter((item) => settled(checkStatus(record.data[item.id]))).length;
+			const gap = items.filter((item) => checkStatus(record.data[item.id]) === 'nein').length;
 			return { block, total: items.length, done, gap, open: items.length - done - gap };
 		})
 	);

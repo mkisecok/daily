@@ -109,6 +109,15 @@ function coerce(field: FieldDef, raw: unknown): { value: FieldValue; error?: Fie
 			if (typeof raw === 'string' && FALSE.has(raw)) return { value: false };
 			return { value: null, error: 'invalid' };
 		}
+		case 'check': {
+			// yes/no answers stored before checklist points existed
+			if (raw === true || raw === 'true') return { value: 'ja' };
+			if (raw === false || raw === 'false') return { value: 'nein' };
+			if (raw === '') return { value: null };
+			if (raw === 'ja' || raw === 'nein' || (raw === 'entfaellt' && field.na))
+				return { value: raw };
+			return { value: null, error: 'invalid' };
+		}
 		case 'reference': {
 			if (raw === '') return { value: null };
 			if (typeof raw !== 'string' || raw.length > 100) return { value: null, error: 'invalid' };
