@@ -79,6 +79,12 @@ export const SITUATIONS: Situation[] = [
 		tool: 'mobiles-arbeiten'
 	},
 	{
+		id: 'wechsel',
+		label: L('Ein Dienstleister wird gewechselt', 'A provider is being changed'),
+		icon: 'replace',
+		tool: 'dienstleisterwechsel'
+	},
+	{
 		id: 'drittland',
 		label: L('Daten gehen in ein Drittland', 'Data goes to a third country'),
 		icon: 'world',
