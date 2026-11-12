@@ -85,6 +85,12 @@ export const SITUATIONS: Situation[] = [
 		tool: 'dienstleisterwechsel'
 	},
 	{
+		id: 'bewerbung',
+		label: L('Eine Stelle wird besetzt', 'A job is being filled'),
+		icon: 'user-search',
+		tool: 'bewerbungsverfahren'
+	},
+	{
 		id: 'drittland',
 		label: L('Daten gehen in ein Drittland', 'Data goes to a third country'),
 		icon: 'world',
