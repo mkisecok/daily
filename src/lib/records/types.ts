@@ -20,6 +20,8 @@ type FieldBase = {
 	listColumn?: boolean;
 	/** a companion shown inside another field's row, e.g. the note of a checklist point */
 	partOf?: string;
+	/** whether the field applies to the record as entered so far; when not, it is hidden */
+	when?: (data: RecordData) => boolean;
 };
 
 export type FieldDef = FieldBase &

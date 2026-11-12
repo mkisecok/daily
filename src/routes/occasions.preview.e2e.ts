@@ -94,3 +94,36 @@ test('preview: introducing an AI tool adds the high-risk duties after a high-ris
 		'Entfällt für den gewählten Umfang.'
 	);
 });
+
+test('preview: a leaver gets the exit points, the gap and the note on access requests', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/personalwechsel/eintraege/?neu=1', { waitUntil: 'networkidle' });
+	await page.getByLabel('Person', { exact: true }).fill('P-1042');
+	await page.getByLabel('Vorgang', { exact: true }).click();
+	await page.getByRole('option', { name: 'Austritt' }).click();
+	await page
+		.locator('#sec-vorgang')
+		.getByRole('button', { name: 'Administrative Rechte oder gemeinsam genutzte Zugänge' })
+		.click();
+
+	// the joining part folds, the exit points and the admin point appear
+	await expect(page.locator('#sec-eintritt')).toContainText('Entfällt für den gewählten Umfang.');
+	await expect(page.locator('.check', { hasText: 'Gemeinsam genutzte Passwörter' })).toBeVisible();
+	await expect(page.locator('.check', { hasText: 'Private Inhalte nicht eingesehen' })).toHaveCount(
+		0
+	);
+	await page
+		.locator('.check', { hasText: 'Konten und Zugänge zum letzten Arbeitstag gesperrt' })
+		.getByText('Nein', { exact: true })
+		.click();
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await expect(page.locator('.verdict .headline')).toHaveText('Noch nicht abschließbar.');
+	await expect(page.locator('.verdict')).toContainText(
+		'Austritt: Konten und Zugänge zum letzten Arbeitstag gesperrt'
+	);
+	await expect(page.locator('.verdict')).toContainText('Betroffenenanfrage');
+});

@@ -25,6 +25,7 @@ import { sdmWuerfel } from './sdm-wuerfel/tool.js';
 import { standortwechsel } from './standortwechsel/tool.js';
 import { softwareEinfuehrung } from './software-einfuehrung/tool.js';
 import { kiEinfuehrung } from './ki-einfuehrung/tool.js';
+import { personalwechsel } from './personalwechsel/tool.js';
 import { loeschkonzept } from './loeschkonzept/tool.js';
 import { schulungsnachweis } from './schulungsnachweis/tool.js';
 import { kiKompetenz } from './ki-kompetenz/tool.js';
@@ -64,6 +65,7 @@ export const tools: readonly ToolManifest[] = [
 	sdmWuerfel.manifest,
 	standortwechsel.manifest,
 	softwareEinfuehrung.manifest,
+	personalwechsel.manifest,
 	loeschkonzept.manifest,
 	schulungsnachweis.manifest,
 	kiDsgvoSchnittstelle.manifest,
@@ -168,6 +170,7 @@ const recordTools: Record<string, RecordTool> = {
 	[standortwechsel.manifest.slug]: standortwechsel,
 	[softwareEinfuehrung.manifest.slug]: softwareEinfuehrung,
 	[kiEinfuehrung.manifest.slug]: kiEinfuehrung,
+	[personalwechsel.manifest.slug]: personalwechsel,
 	[avvPruefung.manifest.slug]: avvPruefung,
 	[vvt.manifest.slug]: vvt,
 	[datenpanne.manifest.slug]: datenpanne,
