@@ -326,3 +326,21 @@ test('preview: AI for staff names the works council duties and the emotion ban',
 		'Noch durchzuführen: Risikoklassifizierung, DSFA-Schwellwertanalyse.'
 	);
 });
+
+test('preview: a self-built chatbot without the AI notice shows the gap and the checks to run', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/chatbot/eintraege/?neu=1&beispiel=1', { waitUntil: 'networkidle' });
+	await expect(page.locator('.check', { hasText: 'Grundlage für die Übermittlung' })).toBeVisible();
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await expect(page.locator('.verdict .headline')).toHaveText('Noch nicht startklar.');
+	await expect(page.locator('.verdict')).toContainText(
+		'Transparenz: Klar erkennbar und barrierefrei'
+	);
+	await expect(page.locator('.verdict')).toContainText(
+		'Noch durchzuführen: Risikoklassifizierung, Prüfung der Transparenzpflichten, Drittlandprüfung.'
+	);
+});

@@ -77,12 +77,12 @@ describe('Website oder Shop starten', () => {
 		expect(invalid.reasons[0].questionId).toBe('consent_check');
 	});
 
-	it('names gaps with their part and points chatbots to the AI tool', () => {
+	it('names gaps with their part and points chatbots to the chatbot tool', () => {
 		const result = assess({ ...allDone({ umfang: ['chatbot'] }), k_hinweis: 'nein' });
 		expect(result.reasons[0].text.de).toBe(
 			'KI-Chatbot: Klarer Hinweis, dass man mit einer KI schreibt (Werkzeug Transparenzpflichten)'
 		);
-		expect(result.notes!.some((n) => n.de.includes('KI-Tool einführen'))).toBe(true);
+		expect(result.notes!.some((n) => n.de.includes('Chatbot auf der Website'))).toBe(true);
 	});
 
 	it('approves only when the checklist and the checks needed are complete', () => {
