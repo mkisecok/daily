@@ -127,3 +127,41 @@ test('preview: a leaver gets the exit points, the gap and the note on access req
 	);
 	await expect(page.locator('.verdict')).toContainText('Betroffenenanfrage');
 });
+
+test('preview: video surveillance adds the storage part with recording and asks for the balancing test', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/videoueberwachung/eintraege/?neu=1', { waitUntil: 'networkidle' });
+	await page.getByLabel('Anlage oder Standort').fill('Lager Nord');
+	await expect(page.locator('#sec-speicherung')).toContainText(
+		'Entfällt für den gewählten Umfang.'
+	);
+	await expect(page.locator('.check', { hasText: 'Tonaufnahme abgeschaltet' })).toHaveCount(0);
+
+	const scope = page.locator('#sec-anlage');
+	await scope
+		.getByRole('button', { name: 'Bilder werden gespeichert, nicht nur live gezeigt' })
+		.click();
+	await scope
+		.getByRole('button', { name: 'Kameras können schwenken, zoomen oder Ton aufnehmen' })
+		.click();
+	await expect(page.locator('.check', { hasText: 'Speicherdauer festgelegt' })).toBeVisible();
+	await expect(page.locator('.check', { hasText: 'Tonaufnahme abgeschaltet' })).toBeVisible();
+	await page
+		.locator('.check', { hasText: 'Speicherdauer festgelegt' })
+		.getByText('Nein', { exact: true })
+		.click();
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await expect(page.locator('.verdict .headline')).toHaveText('Noch nicht freigabefähig.');
+	await expect(page.locator('.verdict')).toContainText(
+		'Noch durchzuführen: Interessenabwägung, DSFA-Schwellwertanalyse.'
+	);
+	await expect(
+		page.locator('.record-view .row', { hasText: 'Interessenabwägung' }).getByRole('link', {
+			name: /Prüfung durchführen/
+		})
+	).toBeVisible();
+});

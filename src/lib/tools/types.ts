@@ -18,6 +18,8 @@ export type Law =
 	| 'DSK'
 	| 'WP29'
 	| 'EuGH'
+	| 'BVerwG'
+	| 'StGB'
 	| 'KI-MIG'
 	| 'EU-Kommission'
 	| 'BSI';
