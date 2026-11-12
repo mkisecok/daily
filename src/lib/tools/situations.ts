@@ -91,6 +91,12 @@ export const SITUATIONS: Situation[] = [
 		tool: 'bewerbungsverfahren'
 	},
 	{
+		id: 'werbung',
+		label: L('Ein Newsletter oder eine Werbeaktion geht raus', 'A newsletter or campaign goes out'),
+		icon: 'speakerphone',
+		tool: 'werbekampagne'
+	},
+	{
 		id: 'drittland',
 		label: L('Daten gehen in ein Drittland', 'Data goes to a third country'),
 		icon: 'world',

@@ -28,6 +28,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	'mobiles-arbeiten': 'home',
 	dienstleisterwechsel: 'replace',
 	bewerbungsverfahren: 'user-search',
+	werbekampagne: 'speakerphone',
 	loeschkonzept: 'trash-x',
 	schulungsnachweis: 'school',
 	'ki-dsgvo-schnittstelle': 'arrows-exchange',

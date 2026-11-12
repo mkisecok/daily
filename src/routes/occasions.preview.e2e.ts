@@ -282,3 +282,26 @@ test('preview: a hiring procedure adds the AI part and names the deletion date',
 		'Noch durchzuführen: Risikoklassifizierung.'
 	);
 });
+
+test('preview: a phone campaign asks for documented consent under § 7a UWG', async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/werbekampagne/eintraege/?neu=1', { waitUntil: 'networkidle' });
+	await page.getByLabel('Bezeichnung', { exact: true }).fill('Rückruf-Aktion');
+	await page
+		.locator('#sec-vorhaben')
+		.getByRole('button', { name: 'Anrufe bei Verbrauchern' })
+		.click();
+	await expect(page.locator('#sec-email')).toContainText('Entfällt für den gewählten Umfang.');
+	await page
+		.locator('.check', { hasText: 'fünf Jahre ab Erteilung' })
+		.getByText('Nein', { exact: true })
+		.click();
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await expect(page.locator('.verdict .headline')).toHaveText('Noch nicht versandbereit.');
+	await expect(page.locator('.verdict')).toContainText(
+		'Telefon: Einwilligung bei Erteilung dokumentiert'
+	);
+	await expect(page.locator('.verdict')).toContainText('§ 7a UWG');
+});
