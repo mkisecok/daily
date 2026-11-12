@@ -20,6 +20,8 @@ export type Law =
 	| 'EuGH'
 	| 'BVerwG'
 	| 'StGB'
+	| 'DDG'
+	| 'UWG'
 	| 'KI-MIG'
 	| 'EU-Kommission'
 	| 'BSI';

@@ -165,3 +165,34 @@ test('preview: video surveillance adds the storage part with recording and asks 
 		})
 	).toBeVisible();
 });
+
+test('preview: a website with tracking gets the consent part and asks for the consent check', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/website-start/eintraege/?neu=1', { waitUntil: 'networkidle' });
+	await page.getByLabel('Website oder Shop').fill('beispiel.de');
+	await expect(page.locator('#sec-einwilligung')).toContainText(
+		'Entfällt für den gewählten Umfang.'
+	);
+
+	await page
+		.locator('#sec-vorhaben')
+		.getByRole('button', { name: 'Analyse- oder Marketing-Werkzeuge, nicht nötige Cookies' })
+		.click();
+	await expect(
+		page.locator('.check', { hasText: 'Ablehnen schon auf der ersten Ebene' })
+	).toBeVisible();
+	await expect(page.locator('.check', { hasText: 'Videos, Karten' })).toHaveCount(0);
+	await page
+		.locator('.check', { hasText: 'Ablehnen schon auf der ersten Ebene' })
+		.getByText('Nein', { exact: true })
+		.click();
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await expect(page.locator('.verdict .headline')).toHaveText('Noch nicht startklar.');
+	await expect(page.locator('.verdict')).toContainText(
+		'Noch durchzuführen: Einwilligungs-Check für das Banner.'
+	);
+});

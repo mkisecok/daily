@@ -23,6 +23,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	'ki-einfuehrung': 'rocket',
 	personalwechsel: 'id-badge',
 	videoueberwachung: 'video',
+	'website-start': 'browser',
 	loeschkonzept: 'trash-x',
 	schulungsnachweis: 'school',
 	'ki-dsgvo-schnittstelle': 'arrows-exchange',

@@ -27,6 +27,7 @@ import { softwareEinfuehrung } from './software-einfuehrung/tool.js';
 import { kiEinfuehrung } from './ki-einfuehrung/tool.js';
 import { personalwechsel } from './personalwechsel/tool.js';
 import { videoueberwachung } from './videoueberwachung/tool.js';
+import { websiteStart } from './website-start/tool.js';
 import { loeschkonzept } from './loeschkonzept/tool.js';
 import { schulungsnachweis } from './schulungsnachweis/tool.js';
 import { kiKompetenz } from './ki-kompetenz/tool.js';
@@ -68,6 +69,7 @@ export const tools: readonly ToolManifest[] = [
 	softwareEinfuehrung.manifest,
 	personalwechsel.manifest,
 	videoueberwachung.manifest,
+	websiteStart.manifest,
 	loeschkonzept.manifest,
 	schulungsnachweis.manifest,
 	kiDsgvoSchnittstelle.manifest,
@@ -174,6 +176,7 @@ const recordTools: Record<string, RecordTool> = {
 	[kiEinfuehrung.manifest.slug]: kiEinfuehrung,
 	[personalwechsel.manifest.slug]: personalwechsel,
 	[videoueberwachung.manifest.slug]: videoueberwachung,
+	[websiteStart.manifest.slug]: websiteStart,
 	[avvPruefung.manifest.slug]: avvPruefung,
 	[vvt.manifest.slug]: vvt,
 	[datenpanne.manifest.slug]: datenpanne,
