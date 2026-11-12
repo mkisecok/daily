@@ -67,6 +67,12 @@ export const SITUATIONS: Situation[] = [
 		tool: 'videoueberwachung'
 	},
 	{
+		id: 'behoerde',
+		label: L('Post von der Aufsichtsbehörde', 'A letter from the supervisory authority'),
+		icon: 'mail-opened',
+		tool: 'aufsichtsanfrage'
+	},
+	{
 		id: 'drittland',
 		label: L('Daten gehen in ein Drittland', 'Data goes to a third country'),
 		icon: 'world',

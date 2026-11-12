@@ -196,3 +196,22 @@ test('preview: a website with tracking gets the consent part and asks for the co
 		'Noch durchzuführen: Einwilligungs-Check für das Banner.'
 	);
 });
+
+test('preview: a complaint to the authority starts from the example and shows the open request as a gap', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/aufsichtsanfrage/eintraege/?neu=1', { waitUntil: 'networkidle' });
+	await page.getByRole('link', { name: 'Beispiel laden' }).click();
+	await expect(page.getByLabel('Betreff')).toHaveValue('Beschwerde wegen Auskunft (Beispiel)');
+	await expect(page.locator('#sec-vor_ort')).toContainText('Entfällt für den gewählten Umfang.');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await expect(page.locator('.verdict .headline')).toHaveText('Noch nicht antwortbereit.');
+	await expect(page.locator('.verdict')).toContainText('Beschwerde: Das ursprüngliche Anliegen');
+	await expect(page.locator('.verdict')).toContainText(
+		'Die zugrunde liegende Betroffenenanfrage verknüpfen.'
+	);
+	await expect(page.locator('section.deadlines')).toContainText('Antwort an die Aufsichtsbehörde');
+});
