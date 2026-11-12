@@ -97,6 +97,12 @@ export const SITUATIONS: Situation[] = [
 		tool: 'werbekampagne'
 	},
 	{
+		id: 'ki-personal',
+		label: L('KI soll Beschäftigte bewerten oder einplanen', 'AI is to rate or schedule staff'),
+		icon: 'users',
+		tool: 'ki-personal'
+	},
+	{
 		id: 'drittland',
 		label: L('Daten gehen in ein Drittland', 'Data goes to a third country'),
 		icon: 'world',

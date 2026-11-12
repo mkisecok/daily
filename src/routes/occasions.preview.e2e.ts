@@ -305,3 +305,24 @@ test('preview: a phone campaign asks for documented consent under § 7a UWG', as
 	);
 	await expect(page.locator('.verdict')).toContainText('§ 7a UWG');
 });
+
+test('preview: AI for staff names the works council duties and the emotion ban', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/ki-personal/eintraege/?neu=1&beispiel=1', {
+		waitUntil: 'networkidle'
+	});
+	await expect(page.locator('.check', { hasText: 'Keine Ableitung von Emotionen' })).toBeVisible();
+	await expect(page.locator('#sec-hochrisiko')).toContainText('Entfällt für den gewählten Umfang.');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await expect(page.locator('.verdict .headline')).toHaveText('Noch nicht freigabefähig.');
+	await expect(page.locator('.verdict')).toContainText(
+		'Betriebsrat: Mitbestimmung bei technischer'
+	);
+	await expect(page.locator('.verdict')).toContainText(
+		'Noch durchzuführen: Risikoklassifizierung, DSFA-Schwellwertanalyse.'
+	);
+});
