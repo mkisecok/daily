@@ -380,6 +380,19 @@ export const definition: RecordToolDefinition = {
 		{ law: 'BetrVG', ref: '§ 87 Abs. 1 Nr. 6' }
 	],
 	titleField: 'bezeichnung',
+	example: {
+		bezeichnung: 'Kameras Lager Nord (Beispiel)',
+		kameras: 3,
+		zweck: 'Schutz vor Einbruch und Diebstahl außerhalb der Geschäftszeiten.',
+		verantwortlich: 'Standortleitung',
+		umfang: ['aufzeichnung', 'beschaeftigte'],
+		z_zweck: 'ja',
+		z_anlass: 'ja',
+		z_anlass_notiz: 'Zwei Einbrüche 2025, Anzeigen liegen vor.',
+		z_tabu: 'ja',
+		s_dauer: 'ja',
+		b_betriebsrat: 'nein'
+	},
 	sections: [
 		{
 			id: 'anlage',

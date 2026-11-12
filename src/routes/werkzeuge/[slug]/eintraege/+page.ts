@@ -1,10 +1,12 @@
 import { error } from '@sveltejs/kit';
 import { browser } from '$app/env';
 import type { Titles } from '#lib/records/format.js';
+import { copyData } from '#lib/records/copy.js';
 import { createLinks, type Backlinks } from '#lib/records/links.js';
 import { getStore } from '#lib/records/store/index.js';
-import type { Option, RecordTool, StoredRecord } from '#lib/records/types.js';
+import type { Option, RecordData, RecordTool, StoredRecord } from '#lib/records/types.js';
 import { fieldById } from '#lib/records/validate.js';
+import { getLocale } from '#lib/paraglide/runtime.js';
 import { getRecordTool, getTool, listRecordTools, tools } from '#lib/tools/registry.js';
 import type { EntryGenerator, PageLoad } from './$types';
 
@@ -23,9 +25,14 @@ export const entries: EntryGenerator = () =>
 /** a referenced record shown in full, with the records pointing to it */
 export type Composed = { tool: RecordTool; record: StoredRecord; backlinks: Backlinks };
 
+/** where a new entry starts from: nothing, a copy of another entry, or the tool's example */
+export type Start = { kind: 'empty' } | { kind: 'copy'; of: string } | { kind: 'example' };
+
 /**
  * `?eintrag=<id>` shows a record, `?neu=1` the empty form, otherwise the
- * list; `?archiviert=1` lists the archived records instead
+ * list; `?archiviert=1` lists the archived records instead. With `?neu=1`,
+ * `&vorlage=<id>` starts from a copy of that entry and `&beispiel=1` from
+ * the tool's example.
  */
 export const load: PageLoad = async ({ params, data, url, depends }) => {
 	const tool = getTool(params.slug);
@@ -84,7 +91,22 @@ export const load: PageLoad = async ({ params, data, url, depends }) => {
 		};
 	}
 	if (url.searchParams.get('neu') === '1') {
-		return { ...base, view: 'new' as const, choices: await links.choices(definition) };
+		const choices = await links.choices(definition);
+		const template = url.searchParams.get('vorlage');
+		let prefill: RecordData = {};
+		let start: Start = { kind: 'empty' };
+		if (template) {
+			const source = await store.get(template);
+			if (source && source.record.toolSlug === tool.slug) {
+				const locale = getLocale() === 'en' ? 'en' : 'de';
+				prefill = copyData(definition, source.record.data, locale);
+				start = { kind: 'copy', of: source.record.title };
+			}
+		} else if (url.searchParams.get('beispiel') === '1' && definition.example) {
+			prefill = definition.example;
+			start = { kind: 'example' };
+		}
+		return { ...base, view: 'new' as const, choices, prefill, start };
 	}
 	const archived = url.searchParams.get('archiviert') === '1';
 	const [records, titles] = await Promise.all([

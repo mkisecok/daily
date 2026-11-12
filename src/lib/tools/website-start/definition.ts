@@ -420,6 +420,18 @@ export const definition: RecordToolDefinition = {
 		{ law: 'UWG', ref: '§ 7' }
 	],
 	titleField: 'bezeichnung',
+	example: {
+		bezeichnung: 'beispiel.de, Relaunch',
+		adresse: 'https://www.beispiel.de',
+		verantwortlich: 'Marketing',
+		umfang: ['tracking', 'einbindungen', 'formulare', 'newsletter'],
+		g_impressum: 'ja',
+		g_datenschutz: 'ja',
+		g_https: 'ja',
+		c_ablehnen: 'nein',
+		c_ablehnen_notiz: 'Banner zeigt Ablehnen erst unter „Einstellungen“.',
+		d_lokal: 'ja'
+	},
 	sections: [
 		{
 			id: 'vorhaben',

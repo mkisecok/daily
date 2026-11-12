@@ -396,6 +396,17 @@ export const definition: RecordToolDefinition = {
 		BSI('IT-Grundschutz-Kompendium, Edition 2023: ORP.2, ORP.4')
 	],
 	titleField: 'person',
+	example: {
+		person: 'P-1042',
+		vorgang: 'austritt',
+		bereich: 'Vertrieb',
+		verantwortlich: 'Personal und IT',
+		umfang: ['admin', 'geraete'],
+		a_konten: 'ja',
+		a_admin: 'nein',
+		a_admin_notiz: 'Passwort des Shop-Admin-Kontos noch ändern.',
+		a_rueckgabe: 'ja'
+	},
 	sections: [
 		{
 			id: 'vorgang',

@@ -89,6 +89,8 @@ export type RecordToolDefinition = {
 	 * its audit and the audit's findings.
 	 */
 	composes?: string[];
+	/** a filled-in fictional entry the new form can start from ("Beispiel laden") */
+	example?: RecordData;
 };
 
 /* ---------- values ---------- */

@@ -60,6 +60,27 @@ export const definition: RecordToolDefinition = {
 		{ law: 'DSK', ref: 'Hinweise zum Verzeichnis von Verarbeitungstätigkeiten' }
 	],
 	titleField: 'bezeichnung',
+	example: {
+		bezeichnung: 'Lohn- und Gehaltsabrechnung',
+		rolle: 'verantwortlicher',
+		fachbereich: 'Personal',
+		ansprechpartner: 'Leitung Personal',
+		zwecke:
+			'Abrechnung von Lohn und Gehalt, Meldungen an Finanzamt und Sozialversicherung, Bescheinigungen für Beschäftigte.',
+		rechtsgrundlagen: ['vertrag', 'pflicht'],
+		betroffene: ['beschaeftigte'],
+		datenkategorien: ['stammdaten', 'kontakt', 'vertrag', 'zahlung', 'art9'],
+		datenkategorien_details:
+			'Steuer-ID, Sozialversicherungsnummer, Bankverbindung; Religionszugehörigkeit für die Kirchensteuer.',
+		empfaenger: ['intern', 'auftragsverarbeiter', 'behoerden', 'banken'],
+		empfaenger_details: 'Lohnbüro als Auftragsverarbeiter, Finanzamt, Krankenkassen, Hausbank.',
+		drittland: false,
+		loeschfristen:
+			'Lohnkonto 6 Jahre (§ 41 EStG), Lohnabrechnungen als Buchungsbelege 8 Jahre (§ 147 AO), jeweils ab Ende des Kalenderjahres.',
+		tom: 'Zugriff nur Personalabteilung und Lohnbüro, verschlüsselte Übertragung, Protokollierung.',
+		dsfa: 'nicht_erforderlich',
+		status: 'aktiv'
+	},
 	sections: [
 		{
 			id: 'taetigkeit',
