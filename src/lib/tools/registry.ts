@@ -23,6 +23,8 @@ import { avvPruefung } from './avv-pruefung/tool.js';
 import { tomKatalog } from './tom-katalog/tool.js';
 import { sdmWuerfel } from './sdm-wuerfel/tool.js';
 import { standortwechsel } from './standortwechsel/tool.js';
+import { softwareEinfuehrung } from './software-einfuehrung/tool.js';
+import { kiEinfuehrung } from './ki-einfuehrung/tool.js';
 import { loeschkonzept } from './loeschkonzept/tool.js';
 import { schulungsnachweis } from './schulungsnachweis/tool.js';
 import { kiKompetenz } from './ki-kompetenz/tool.js';
@@ -61,6 +63,7 @@ export const tools: readonly ToolManifest[] = [
 	tomKatalog.manifest,
 	sdmWuerfel.manifest,
 	standortwechsel.manifest,
+	softwareEinfuehrung.manifest,
 	loeschkonzept.manifest,
 	schulungsnachweis.manifest,
 	kiDsgvoSchnittstelle.manifest,
@@ -69,6 +72,7 @@ export const tools: readonly ToolManifest[] = [
 	aimsGap.manifest,
 	kiRegister.manifest,
 	kiKompetenz.manifest,
+	kiEinfuehrung.manifest,
 	vorfallmeldung.manifest,
 	grundrechteFolgenabschaetzung.manifest,
 	auditprogramm.manifest,
@@ -162,6 +166,8 @@ const recordTools: Record<string, RecordTool> = {
 	[tomKatalog.manifest.slug]: tomKatalog,
 	[sdmWuerfel.manifest.slug]: sdmWuerfel,
 	[standortwechsel.manifest.slug]: standortwechsel,
+	[softwareEinfuehrung.manifest.slug]: softwareEinfuehrung,
+	[kiEinfuehrung.manifest.slug]: kiEinfuehrung,
 	[avvPruefung.manifest.slug]: avvPruefung,
 	[vvt.manifest.slug]: vvt,
 	[datenpanne.manifest.slug]: datenpanne,
