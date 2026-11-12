@@ -216,6 +216,23 @@ html[data-theme='dark'] :where(input[type='checkbox']):checked {
 	}
 }
 
+/*
+ * a record field is a grid: label, control and help in the first column, the
+ * citation in the second. Placed here and not in FieldInput, because select,
+ * combobox and date picker come from Bits UI components that the field's
+ * scoped styles do not reach; without it they drift into the second column.
+ * The date picker's own label gap gives way to the field's row gap.
+ */
+.record-form .field {
+	& > :not(.cite) {
+		grid-column: 1;
+	}
+
+	& .daily-label-row {
+		margin-bottom: 0;
+	}
+}
+
 /* fields of a record form keep clear of its sticky save bar and of the top bar when focused */
 .record-form :is(input, select, textarea, button) {
 	scroll-margin-top: 5rem;

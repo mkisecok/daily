@@ -17,7 +17,7 @@
 	import { clearDraft, loadDraft, saveDraft } from '../drafts.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { text } from '#lib/tools/i18n.js';
-	import type { Option, RecordData, RecordToolDefinition } from '../types.js';
+	import type { FieldDef, Option, RecordData, RecordToolDefinition } from '../types.js';
 	import type { ValidationErrors } from '../validate.js';
 	import ConfirmDialog from '#lib/ui/ConfirmDialog.svelte';
 	import Icon from '#lib/ui/Icon.svelte';
@@ -194,6 +194,32 @@
 	const showIndex = $derived(sections.length >= 3);
 	/** field types that keep the full width in a two-column section */
 	const WIDE = new Set(['textarea', 'multiselect', 'reference', 'assessment']);
+
+	/**
+	 * the fields in the last row of a two-column section, which lose their
+	 * hairline because the card frames them; a pair can end the section, not
+	 * only a single field
+	 */
+	function lastRow(fields: FieldDef[]): Set<string> {
+		const shown = fields.filter((field) => !field.partOf && applies(field));
+		const rows: string[][] = [];
+		let row: string[] = [];
+		for (const field of shown) {
+			if (WIDE.has(field.type)) {
+				if (row.length > 0) rows.push(row);
+				rows.push([field.id]);
+				row = [];
+			} else {
+				row.push(field.id);
+				if (row.length === 2) {
+					rows.push(row);
+					row = [];
+				}
+			}
+		}
+		if (row.length > 0) rows.push(row);
+		return new Set(rows.at(-1) ?? []);
+	}
 	let active = $state<string | null>(null);
 	let menuOpen = $state(false);
 	/** after a jump the chosen section stays current until the scroll settles */
@@ -295,6 +321,7 @@
 						<p class="skipped">{m.form_skipped()}</p>
 					{:else}
 						{#if section.intro}<p class="measure intro">{text(section.intro)}</p>{/if}
+						{@const closing = section.columns === 2 ? lastRow(section.fields) : null}
 						<div class="fields" data-columns={section.columns ?? 1}>
 							{#each section.fields as field (field.id)}
 								{#if field.partOf || !applies(field)}
@@ -308,7 +335,11 @@
 										error={errors[field.id]}
 									/>
 								{:else if section.columns === 2}
-									<div class="cell" data-wide={WIDE.has(field.type)}>
+									<div
+										class="cell"
+										data-wide={WIDE.has(field.type)}
+										data-last-row={closing?.has(field.id)}
+									>
 										<FieldInput
 											{field}
 											bind:value={values[field.id]}
@@ -560,13 +591,18 @@
 					grid-column: 1 / -1;
 				}
 
-				&:last-child {
+				&[data-last-row='true'] {
 					border-bottom: 0;
 				}
 			}
 
+			/* one column: only the very last field goes without a hairline */
 			@container (max-width: 30rem) {
 				grid-template-columns: minmax(0, 1fr);
+
+				& .cell[data-last-row='true']:not(:last-child) {
+					border-bottom: 1px solid var(--rule2);
+				}
 			}
 		}
 	}

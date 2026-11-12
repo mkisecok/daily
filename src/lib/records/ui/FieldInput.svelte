@@ -1,7 +1,10 @@
 <!--
 	@component
-	One field of a record form: label, help and citation on the left like a
-	questionnaire row, the input below. Datetimes are entered in German time.
+	One field of a record form: label, input and help in the first column, the
+	citation beside them, or below on a narrow card. The column placement lives
+	in forms.css, since the select, combobox and date controls come from Bits UI
+	and do not carry this component's scoped class. Datetimes are entered in
+	German time.
 -->
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
@@ -165,14 +168,16 @@
 			border-bottom: 0;
 		}
 
-		& > *:not(.cite) {
-			grid-column: 1;
-		}
-
+		/* the citation spans label and control, so a tall citation does not push the control down */
 		& .cite {
 			grid-column: 2;
-			grid-row: 1;
+			grid-row: 1 / span 2;
 			padding-top: 0.15rem;
+		}
+
+		/* yes/no is one block, so its citation keeps to one row */
+		&[data-type='boolean'] .cite {
+			grid-row: 1;
 		}
 
 		/*
@@ -182,7 +187,8 @@
 		@container (max-width: 44rem) {
 			grid-template-columns: 1fr;
 
-			& .cite {
+			& .cite,
+			&[data-type='boolean'] .cite {
 				grid-column: 1;
 				grid-row: auto;
 			}
