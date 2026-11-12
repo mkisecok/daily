@@ -29,6 +29,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	dienstleisterwechsel: 'replace',
 	bewerbungsverfahren: 'user-search',
 	werbekampagne: 'speakerphone',
+	'ki-personal': 'users',
 	loeschkonzept: 'trash-x',
 	schulungsnachweis: 'school',
 	'ki-dsgvo-schnittstelle': 'arrows-exchange',
