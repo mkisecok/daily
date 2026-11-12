@@ -25,10 +25,7 @@ export const SCOPES = [
 	{ value: 'betriebsrat', label: L('Es gibt einen Betriebsrat', 'There is a works council') },
 	{
 		value: 'richtlinien',
-		label: L(
-			'Hilft beim Aufstellen von Auswahlrichtlinien',
-			'Helps draw up selection guidelines'
-		)
+		label: L('Hilft beim Aufstellen von Auswahlrichtlinien', 'Helps draw up selection guidelines')
 	},
 	{
 		value: 'oeffentlich',

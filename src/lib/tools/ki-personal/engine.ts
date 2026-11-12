@@ -20,7 +20,10 @@ function deadlines(record: RecordView): DeadlineSpec[] {
 	if (start && record.state === 'pruefung') {
 		specs.push({
 			kind: 'einsatz',
-			label: L('KI-Einsatz im Personalbereich: Freigabe nötig', 'AI use for staff: approval needed'),
+			label: L(
+				'KI-Einsatz im Personalbereich: Freigabe nötig',
+				'AI use for staff: approval needed'
+			),
 			dueAt: dayAt(start),
 			cite: { law: 'KI-VO', ref: 'Art. 26 Abs. 7' }
 		});
@@ -62,7 +65,8 @@ function assess(record: RecordView): QuestionnaireResult {
 			cite: { law: 'KI-VO', ref: 'Art. 5' }
 		});
 	}
-	if (!snapshot(data, 'einstufung')) pending.push(L('Risikoklassifizierung', 'risk classification'));
+	if (!snapshot(data, 'einstufung'))
+		pending.push(L('Risikoklassifizierung', 'risk classification'));
 	if (!snapshot(data, 'dsfa_check')) pending.push(L('DSFA-Schwellwertanalyse', 'DPIA screening'));
 	if (dpiaNeeded(data) && isEmpty(data.dsfa)) {
 		reasons.push({
