@@ -38,11 +38,11 @@
 </script>
 
 <div class="record-view card">
-	{#each definition.sections as section (section.id)}
+	{#each definition.sections.filter((s) => !s.when || s.when(record.data)) as section (section.id)}
 		<section class="section">
 			<h2>{text(section.title)}</h2>
 			<dl>
-				{#each section.fields.filter((f) => !f.partOf) as field (field.id)}
+				{#each section.fields.filter((f) => !f.partOf && (!f.when || f.when(record.data))) as field (field.id)}
 					{@const value = record.data[field.id]}
 					<div class="row">
 						<dt>

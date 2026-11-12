@@ -55,7 +55,7 @@
 					<dd>{stateLabel(definition, record.state, locale)}</dd>
 				{/if}
 				{#each definition.sections as section (section.id)}
-					{#each section.fields.filter((f) => !f.partOf) as field (field.id)}
+					{#each section.fields.filter((f) => !f.partOf && (!f.when || f.when(record.data))) as field (field.id)}
 						<dt>
 							{text(field.label)}{#if field.cite}<span class="cite">
 									({cite(field.cite)})</span

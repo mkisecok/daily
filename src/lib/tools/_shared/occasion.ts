@@ -51,7 +51,11 @@ export function blockSections(blocks: Block[]): FieldSection[] {
 		title: block.title,
 		intro: block.intro,
 		when: block.scope || block.when ? (data: RecordData) => blockApplies(data, block) : undefined,
-		fields: block.items.flatMap((item) => checkFields(item))
+		fields: block.items.flatMap((item) =>
+			checkFields(item).map((field) =>
+				item.scope ? { ...field, when: (data: RecordData) => inScope(data, item.scope) } : field
+			)
+		)
 	}));
 }
 

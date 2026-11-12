@@ -59,6 +59,14 @@ describe('occasion tools', () => {
 		]);
 	});
 
+	it('hide a point and its companions outside the point’s own scope', () => {
+		const fields = blockSections(blocks)[1].fields;
+		expect(fields.filter((f) => f.when).map((f) => f.id)).toEqual(['b2', 'b2_notiz', 'b2_frist']);
+		const b2 = fields.find((f) => f.id === 'b2')!;
+		expect(b2.when!({ umfang: ['cloud'] })).toBe(false);
+		expect(b2.when!({ umfang: ['cloud', 'drittland'] })).toBe(true);
+	});
+
 	it('sort points into gaps, open and done, old yes/no answers included', () => {
 		const state = checklist({ umfang: ['cloud'], a1: 'nein', b1: true }, blocks);
 		expect(state.gaps.map(({ item }) => item.id)).toEqual(['a1']);

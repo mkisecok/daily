@@ -21,6 +21,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	standortwechsel: 'truck',
 	'software-einfuehrung': 'package',
 	'ki-einfuehrung': 'rocket',
+	personalwechsel: 'id-badge',
 	loeschkonzept: 'trash-x',
 	schulungsnachweis: 'school',
 	'ki-dsgvo-schnittstelle': 'arrows-exchange',

@@ -160,14 +160,15 @@
 	const current = $derived(
 		validateRecord(definition, { ...data, ...fromInputs(definition, values) }).data
 	);
-	const applies = (section: { when?: (data: RecordData) => boolean }) =>
-		!section.when || section.when(current);
+	/** a section or field applies unless its condition says otherwise */
+	const applies = (part: { when?: (data: RecordData) => boolean }) =>
+		!part.when || part.when(current);
 
 	const progress = $derived(
 		sections.map((section) => {
 			if (!applies(section)) return { section, total: 0, count: 0, state: 'skipped' as const };
 			// a checklist point counts once; its note and due date are extras
-			const own = section.fields.filter((field) => !field.partOf);
+			const own = section.fields.filter((field) => !field.partOf && applies(field));
 			const total = own.length;
 			const count = own.filter((field) => filled(values[field.id])).length;
 			const state: Exclude<SectionState, 'skipped'> = section.fields.some(
@@ -296,8 +297,8 @@
 						{#if section.intro}<p class="measure intro">{text(section.intro)}</p>{/if}
 						<div class="fields" data-columns={section.columns ?? 1}>
 							{#each section.fields as field (field.id)}
-								{#if field.partOf}
-									<!-- shown inside its checklist point -->
+								{#if field.partOf || !applies(field)}
+									<!-- shown inside its checklist point, or outside the chosen scope -->
 								{:else if field.type === 'check'}
 									<CheckRow
 										{field}
