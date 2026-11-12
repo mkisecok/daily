@@ -215,3 +215,28 @@ test('preview: a complaint to the authority starts from the example and shows th
 	);
 	await expect(page.locator('section.deadlines')).toContainText('Antwort an die Aufsichtsbehörde');
 });
+
+test('preview: remote work adds the private-device part when own devices are allowed', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/mobiles-arbeiten/eintraege/?neu=1', { waitUntil: 'networkidle' });
+	await page.getByLabel('Bezeichnung', { exact: true }).fill('Mobiles Arbeiten Vertrieb');
+	await expect(page.locator('#sec-privat')).toContainText('Entfällt für den gewählten Umfang.');
+	await page
+		.locator('#sec-vorhaben')
+		.getByRole('button', { name: 'Private Geräte dürfen genutzt werden' })
+		.click();
+	await page
+		.locator('.check', { hasText: 'Dienstliche Daten getrennt' })
+		.getByText('Nein', { exact: true })
+		.click();
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await expect(page.locator('.verdict .headline')).toHaveText('Noch nicht freigabefähig.');
+	await expect(page.locator('.verdict')).toContainText(
+		'Private Geräte: Dienstliche Daten getrennt'
+	);
+	await expect(page.locator('.verdict')).toContainText('Den TOM-Katalog verknüpfen.');
+});
