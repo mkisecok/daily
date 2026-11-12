@@ -330,7 +330,7 @@
 			{/each}
 
 			<!-- stays at the bottom of the window, so saving never needs a scroll to the end -->
-			<div class="toolbar actions save-bar">
+			<div class="toolbar actions save-bar action-dock">
 				<p class="progress">
 					<span>{m.form_progress(totals)}</span>
 					{#if totals.required > 0}
@@ -571,18 +571,9 @@
 	}
 
 	/* the save bar, held at the bottom of the window */
+	/* position and panel come from the shared action dock */
 	.save-bar {
-		position: sticky;
-		bottom: 0;
-		z-index: 2;
 		margin-top: 0.25rem;
-		padding: 0.75rem 0;
-		background: var(--canvas);
-		border-top: 1px solid var(--rule2);
-
-		@media print {
-			display: none;
-		}
 
 		& .progress {
 			display: flex;

@@ -200,7 +200,7 @@
 		{/each}
 
 		<!-- stays in view at the bottom while answering -->
-		<div class="toolbar actions form-bar">
+		<div class="toolbar actions form-bar action-dock">
 			<span class="progress" aria-live="polite">
 				<span class="meter" aria-hidden="true">
 					<span style:width="{(answered / total) * 100}%"></span>
@@ -367,18 +367,8 @@
 	}
 
 	/* progress and the evaluate button, held at the bottom of the window while answering */
+	/* position and panel come from the shared action dock */
 	.form-bar {
-		position: sticky;
-		bottom: 0;
-		z-index: 2;
-		padding: 0.75rem 0;
-		background: var(--canvas);
-		border-top: 1px solid var(--rule2);
-
-		@media print {
-			position: static;
-		}
-
 		& .progress {
 			display: inline-flex;
 			flex: 1 1 12rem;
