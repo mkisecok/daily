@@ -25,6 +25,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	videoueberwachung: 'video',
 	'website-start': 'browser',
 	aufsichtsanfrage: 'mail-opened',
+	'mobiles-arbeiten': 'home',
 	loeschkonzept: 'trash-x',
 	schulungsnachweis: 'school',
 	'ki-dsgvo-schnittstelle': 'arrows-exchange',

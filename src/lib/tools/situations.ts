@@ -73,6 +73,12 @@ export const SITUATIONS: Situation[] = [
 		tool: 'aufsichtsanfrage'
 	},
 	{
+		id: 'homeoffice',
+		label: L('Homeoffice oder eigene Geräte', 'Working from home or on own devices'),
+		icon: 'home',
+		tool: 'mobiles-arbeiten'
+	},
+	{
 		id: 'drittland',
 		label: L('Daten gehen in ein Drittland', 'Data goes to a third country'),
 		icon: 'world',
