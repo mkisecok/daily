@@ -26,6 +26,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	'website-start': 'browser',
 	aufsichtsanfrage: 'mail-opened',
 	'mobiles-arbeiten': 'home',
+	dienstleisterwechsel: 'replace',
 	loeschkonzept: 'trash-x',
 	schulungsnachweis: 'school',
 	'ki-dsgvo-schnittstelle': 'arrows-exchange',
