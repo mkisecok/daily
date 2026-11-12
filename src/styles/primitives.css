@@ -217,3 +217,28 @@
 		display: block;
 	}
 }
+
+/*
+ * the actions of a long form, floating above its content at the bottom of
+ * the window: a raised panel, so it reads as a control and not as a cut
+ * through the cards below. Used by questionnaires and record forms.
+ */
+.action-dock {
+	position: sticky;
+	bottom: 0.75rem;
+	z-index: 3;
+	padding: 0.55rem 0.6rem 0.55rem 1rem;
+	background: var(--sheet);
+	border: 1px solid var(--rule2);
+	border-radius: 12px;
+	box-shadow: var(--shadow-float);
+
+	@media (max-width: 40rem) {
+		bottom: 0.5rem;
+		padding: 0.45rem 0.45rem 0.45rem 0.75rem;
+	}
+
+	@media print {
+		display: none;
+	}
+}
