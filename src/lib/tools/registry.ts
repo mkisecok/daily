@@ -32,6 +32,7 @@ import { aufsichtsanfrage } from './aufsichtsanfrage/tool.js';
 import { mobilesArbeiten } from './mobiles-arbeiten/tool.js';
 import { dienstleisterwechsel } from './dienstleisterwechsel/tool.js';
 import { bewerbungsverfahren } from './bewerbungsverfahren/tool.js';
+import { werbekampagne } from './werbekampagne/tool.js';
 import { loeschkonzept } from './loeschkonzept/tool.js';
 import { schulungsnachweis } from './schulungsnachweis/tool.js';
 import { kiKompetenz } from './ki-kompetenz/tool.js';
@@ -78,6 +79,7 @@ export const tools: readonly ToolManifest[] = [
 	mobilesArbeiten.manifest,
 	dienstleisterwechsel.manifest,
 	bewerbungsverfahren.manifest,
+	werbekampagne.manifest,
 	loeschkonzept.manifest,
 	schulungsnachweis.manifest,
 	kiDsgvoSchnittstelle.manifest,
@@ -189,6 +191,7 @@ const recordTools: Record<string, RecordTool> = {
 	[mobilesArbeiten.manifest.slug]: mobilesArbeiten,
 	[dienstleisterwechsel.manifest.slug]: dienstleisterwechsel,
 	[bewerbungsverfahren.manifest.slug]: bewerbungsverfahren,
+	[werbekampagne.manifest.slug]: werbekampagne,
 	[avvPruefung.manifest.slug]: avvPruefung,
 	[vvt.manifest.slug]: vvt,
 	[datenpanne.manifest.slug]: datenpanne,
