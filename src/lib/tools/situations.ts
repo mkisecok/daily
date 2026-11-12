@@ -103,6 +103,12 @@ export const SITUATIONS: Situation[] = [
 		tool: 'ki-personal'
 	},
 	{
+		id: 'chatbot',
+		label: L('Ein Chatbot kommt auf die Website', 'A chatbot goes on the website'),
+		icon: 'message-chatbot',
+		tool: 'chatbot'
+	},
+	{
 		id: 'drittland',
 		label: L('Daten gehen in ein Drittland', 'Data goes to a third country'),
 		icon: 'world',

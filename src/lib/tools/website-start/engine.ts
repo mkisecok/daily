@@ -108,8 +108,8 @@ function assess(record: RecordView): QuestionnaireResult {
 		citations.push({ law: 'KI-VO', ref: 'Art. 50' });
 		notes.push(
 			L(
-				'Der Chatbot ist ein KI-System: zusätzlich das Werkzeug KI-Tool einführen nutzen.',
-				'The chatbot is an AI system: also use the AI tool introduction.'
+				'Der Chatbot ist ein KI-System: Einzelheiten prüft das Werkzeug Chatbot auf der Website.',
+				'The chatbot is an AI system: the chatbot tool checks the details.'
 			)
 		);
 	}
