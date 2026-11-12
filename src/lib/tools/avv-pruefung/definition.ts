@@ -1,15 +1,19 @@
+import { checkFields } from '../../records/checks.js';
 import type { FieldDef, RecordToolDefinition } from '../../records/types.js';
 import type { Localized } from '../types.js';
 
 const L = (de: string, en: string) => ({ de, en });
 
-/** one Art. 28(3) clause: a yes/no field citing its letter */
-function clause(id: string, ref: string, label: Localized): FieldDef {
-	return { id, type: 'boolean', label, cite: { law: 'DSGVO', ref } };
+/**
+ * one Art. 28(3) clause: a checklist point citing its letter. Every clause
+ * is required by law, so none can be "not applicable".
+ */
+function clause(id: string, ref: string, label: Localized): FieldDef & { type: 'check' } {
+	return { id, type: 'check', label, cite: { law: 'DSGVO', ref }, na: false };
 }
 
 /** the clauses Art. 28(3) requires, in the order of the provision */
-export const CLAUSES: FieldDef[] = [
+export const CLAUSES: (FieldDef & { type: 'check' })[] = [
 	clause(
 		'grundlagen',
 		'Art. 28 Abs. 3 Satz 1',
@@ -186,7 +190,9 @@ export const definition: RecordToolDefinition = {
 				'"Yes" if the contract covers the obligation expressly; leave open while not yet checked.'
 			),
 			fields: [
-				...CLAUSES,
+				...CLAUSES.flatMap((c) =>
+					checkFields({ id: c.id, label: c.label, cite: c.cite, na: false })
+				),
 				{
 					id: 'meldung_pannen',
 					type: 'boolean',

@@ -11,7 +11,9 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import Citation from '#lib/tools/_shared/Citation.svelte';
 	import { text } from '#lib/tools/i18n.js';
+	import { formatCheck } from '../checks.js';
 	import { formatValue, type Titles } from '../format.js';
+	import { allFields } from '../validate.js';
 	import type { FieldDef, RecordToolDefinition, StoredRecord } from '../types.js';
 
 	let {
@@ -32,6 +34,7 @@
 	} = $props();
 
 	const locale = getLocale();
+	const fields = $derived(allFields(definition));
 </script>
 
 <div class="record-view card">
@@ -39,7 +42,7 @@
 		<section class="section">
 			<h2>{text(section.title)}</h2>
 			<dl>
-				{#each section.fields as field (field.id)}
+				{#each section.fields.filter((f) => !f.partOf) as field (field.id)}
 					{@const value = record.data[field.id]}
 					<div class="row">
 						<dt>
@@ -63,6 +66,8 @@
 								<a href={resolve(referenceHref(field.tool, value))}
 									>{formatValue(field, value, locale, titles)}</a
 								>
+							{:else if field.type === 'check'}
+								{formatCheck(field, record.data, locale, fields) || '—'}
 							{:else}
 								{formatValue(field, value, locale, titles) || '—'}
 							{/if}

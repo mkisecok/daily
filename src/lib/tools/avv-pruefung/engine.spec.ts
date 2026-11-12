@@ -65,4 +65,15 @@ describe('AVV-Prüfung', () => {
 		);
 		expect(engine.deadlines!(view({ wiedervorlage: '2027-03-01', status: 'beendet' }))).toEqual([]);
 	});
+
+	it('dates a missing clause that has a date to be fixed by', () => {
+		const record = view({
+			...allYes,
+			lit_c: 'nein',
+			lit_c_frist: '2026-12-15',
+			lit_c_notiz: 'Anlage TOM fehlt'
+		});
+		expect(engine.deadlines!(record).map((d) => d.kind)).toContain('luecke-lit_c');
+		expect(engine.assess!(record)!.reasons.map((r) => r.questionId)).toContain('lit_c');
+	});
 });

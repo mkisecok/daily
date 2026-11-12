@@ -1,6 +1,7 @@
+import { checkFields, checkStatus, settled } from '../../records/checks.js';
 import type {
-	FieldDef,
 	FieldSection,
+	RecordData,
 	RecordToolDefinition,
 	RecordView
 } from '../../records/types.js';
@@ -20,8 +21,8 @@ export const SCOPES: { value: Scope; label: Localized }[] = [
 ];
 
 /**
- * one checklist item: a yes/no field. Not answered keeps it open, "no" is a
- * gap. `scope` limits it to moves that include one of the listed parts;
+ * one checklist item: a checklist point with a note and a due date. Not
+ * answered keeps it open, "nein" is a gap, "entfällt" settles it. `scope` limits it to moves that include one of the listed parts;
  * `interstate` to moves into another federal state.
  */
 export type Item = {
@@ -436,16 +437,11 @@ export const RISKS: MoveRisk[] = [
 	}
 ];
 
-const yesNo = (item: Item): FieldDef => ({
-	id: item.id,
-	type: 'boolean',
-	label: item.label,
-	cite: item.cite
-});
-
 const riskSection = (risk: MoveRisk): FieldSection => ({
 	id: risk.id,
 	title: risk.title,
+	when: (data) => applies({ state: null, data }, risk),
+	columns: 2,
 	intro: L(
 		`Gefährdungen nach BSI-Standard 200-3: ${risk.threats}. Bewertung nach der Risikomatrix der DSK (Kurzpapier Nr. 18).`,
 		`Threats under BSI-Standard 200-3: ${risk.threats}. Rated on the DSK risk matrix (Kurzpapier Nr. 18).`
@@ -597,7 +593,8 @@ export const definition: RecordToolDefinition = {
 			id: block.id,
 			title: block.title,
 			intro: block.intro,
-			fields: block.items.map(yesNo)
+			when: block.scope ? (data: RecordData) => applies({ state: null, data }, block) : undefined,
+			fields: block.items.flatMap((item) => checkFields(item))
 		})),
 		...RISKS.map(riskSection),
 		{
@@ -632,7 +629,8 @@ export const definition: RecordToolDefinition = {
 				label: L('Umzug beginnt', 'Move starts'),
 				requires: ['umzugstermin', 'umfang'],
 				check: (record) =>
-					applies(record, { scope: ['serverraum'] }) && record.data.s_sicherung !== true
+					applies(record, { scope: ['serverraum'] }) &&
+					checkStatus(record.data.s_sicherung) !== 'ja'
 						? L(
 								'Erst die Datensicherung vor dem Abbau des Serverraums bestätigen.',
 								'Confirm the backup before the server room is dismantled first.'
@@ -647,7 +645,11 @@ export const definition: RecordToolDefinition = {
 				label: L('Abschließen', 'Close'),
 				requires: ['begehung_am'],
 				check: (record) => {
-					if (ITEMS.some((item) => applies(record, item) && record.data[item.id] !== true)) {
+					if (
+						ITEMS.some(
+							(item) => applies(record, item) && !settled(checkStatus(record.data[item.id]))
+						)
+					) {
 						return L(
 							'Erst alle Punkte der Checkliste erledigen.',
 							'Complete every point of the checklist first.'

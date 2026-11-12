@@ -1,3 +1,4 @@
+import { checkStatus, gapDeadlines } from '../../records/checks.js';
 import { dayAt } from '../../records/deadlines.js';
 import type { DeadlineSpec, RecordEngine, RecordView } from '../../records/types.js';
 import { isEmpty } from '../../records/validate.js';
@@ -25,7 +26,10 @@ function deadlines(record: RecordView): DeadlineSpec[] {
 	const specs: DeadlineSpec[] = [];
 	const moving = str(record, 'umzugstermin');
 	if (moving && record.state === 'planung') {
-		if (applies(record, { scope: ['serverraum'] }) && record.data.s_sicherung !== true) {
+		if (
+			applies(record, { scope: ['serverraum'] }) &&
+			checkStatus(record.data.s_sicherung) !== 'ja'
+		) {
 			specs.push({
 				kind: 'datensicherung',
 				label: L(
@@ -43,6 +47,13 @@ function deadlines(record: RecordView): DeadlineSpec[] {
 			cite: ART32
 		});
 	}
+	// a gap with a due date, while the point still applies
+	specs.push(
+		...gapDeadlines(definition, record, (field) => {
+			const item = ITEMS.find((i) => i.id === field.id);
+			return !!item && applies(record, item);
+		})
+	);
 	const walk = str(record, 'begehung_am');
 	if (walk && record.state !== 'planung') {
 		specs.push({
@@ -85,8 +96,8 @@ function assess(record: RecordView): QuestionnaireResult {
 	}
 
 	const items = ITEMS.filter((item) => applies(record, item));
-	const gaps = items.filter((item) => record.data[item.id] === false);
-	const open = items.filter((item) => typeof record.data[item.id] !== 'boolean');
+	const gaps = items.filter((item) => checkStatus(record.data[item.id]) === 'nein');
+	const open = items.filter((item) => checkStatus(record.data[item.id]) === null);
 	const risks = assessRisks(record);
 	const high = risks.filter((risk) => risk.after === 'hoch');
 	const unrated = risks.filter((risk) => !risk.before);

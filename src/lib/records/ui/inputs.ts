@@ -18,6 +18,14 @@ export function toInput(field: FieldDef, value: FieldValue | undefined): FormVal
 			return Array.isArray(value) ? [...value] : [];
 		case 'boolean':
 			return value === true ? 'true' : value === false ? 'false' : '';
+		case 'check':
+			return value === true
+				? 'ja'
+				: value === false
+					? 'nein'
+					: typeof value === 'string'
+						? value
+						: '';
 		case 'datetime':
 			return typeof value === 'string' ? toBerlinInput(value) : '';
 		case 'number':

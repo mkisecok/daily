@@ -18,6 +18,8 @@ type FieldBase = {
 	required?: boolean;
 	/** shown as a column in the record list */
 	listColumn?: boolean;
+	/** a companion shown inside another field's row, e.g. the note of a checklist point */
+	partOf?: string;
 };
 
 export type FieldDef = FieldBase &
@@ -29,13 +31,27 @@ export type FieldDef = FieldBase &
 		/** `integer` for counts and periods: fractions are rejected */
 		| { type: 'number'; unit?: Localized; min?: number; integer?: boolean }
 		| { type: 'boolean' }
+		/**
+		 * a checklist point: "ja", "nein" or, with `na`, "entfaellt". Stored
+		 * true/false from before the type existed still read as ja/nein.
+		 */
+		| { type: 'check'; na?: boolean }
 		/** a frozen snapshot of a questionnaire result, e.g. the risk classification */
 		| { type: 'assessment'; tool: string }
 		/** the id of a record of another register or workflow tool, e.g. the audit of a finding */
 		| { type: 'reference'; tool: string }
 	);
 
-export type FieldSection = { id: string; title: Localized; intro?: Localized; fields: FieldDef[] };
+export type FieldSection = {
+	id: string;
+	title: Localized;
+	intro?: Localized;
+	fields: FieldDef[];
+	/** whether the section applies to the record as entered so far; when not, the form folds it */
+	when?: (data: RecordData) => boolean;
+	/** short fields side by side in two columns; long ones keep the full width */
+	columns?: 2;
+};
 
 export type StateDef = { id: string; label: Localized; terminal?: boolean };
 

@@ -21,6 +21,9 @@
 	import type { ValidationErrors } from '../validate.js';
 	import ConfirmDialog from '#lib/ui/ConfirmDialog.svelte';
 	import Icon from '#lib/ui/Icon.svelte';
+	import { dueId, noteId } from '../checks.js';
+	import { validateRecord } from '../validate.js';
+	import CheckRow from './CheckRow.svelte';
 	import FieldInput from './FieldInput.svelte';
 	import { fromInputs, toInputs, type FormValue, type FormValues } from './inputs.js';
 
@@ -140,8 +143,9 @@
 			? value.length > 0
 			: value !== null && value !== undefined && `${value}`.trim() !== '';
 
-	type SectionState = 'done' | 'partial' | 'empty' | 'error';
+	type SectionState = 'done' | 'partial' | 'empty' | 'error' | 'skipped';
 	const STATE_LABEL: Record<SectionState, () => string> = {
+		skipped: m.form_section_skipped,
 		done: m.form_section_done,
 		partial: m.form_section_partial,
 		empty: m.form_section_empty,
@@ -149,11 +153,21 @@
 	};
 
 	/** how far each section is filled; a section with an error shows the error */
+	/** the input as stored data, for sections that apply only to some records */
+	const current = $derived(validateRecord(definition, fromInputs(definition, values)).data);
+	const applies = (section: { when?: (data: RecordData) => boolean }) =>
+		!section.when || section.when(current);
+
 	const progress = $derived(
 		sections.map((section) => {
-			const total = section.fields.length;
-			const count = section.fields.filter((field) => filled(values[field.id])).length;
-			const state: SectionState = section.fields.some((field) => errors[field.id])
+			if (!applies(section)) return { section, total: 0, count: 0, state: 'skipped' as const };
+			// a checklist point counts once; its note and due date are extras
+			const own = section.fields.filter((field) => !field.partOf);
+			const total = own.length;
+			const count = own.filter((field) => filled(values[field.id])).length;
+			const state: Exclude<SectionState, 'skipped'> = section.fields.some(
+				(field) => errors[field.id]
+			)
 				? 'error'
 				: count === total
 					? 'done'
@@ -172,6 +186,8 @@
 	});
 
 	const showIndex = $derived(sections.length >= 3);
+	/** field types that keep the full width in a two-column section */
+	const WIDE = new Set(['textarea', 'multiselect', 'reference', 'assessment']);
 	let active = $state<string | null>(null);
 	let menuOpen = $state(false);
 	/** after a jump the chosen section stays current until the scroll settles */
@@ -228,7 +244,7 @@
 				>
 					<span class="mark" data-state={state} aria-hidden="true"></span>
 					<span class="name">{text(section.title)}</span>
-					<span class="count">{count}/{total}</span>
+					<span class="count">{state === 'skipped' ? '–' : `${count}/${total}`}</span>
 					<span class="visually-hidden">{STATE_LABEL[state]()}</span>
 				</button>
 			</li>
@@ -260,17 +276,51 @@
 			{/if}
 
 			{#each sections as section (section.id)}
-				<section class="section card" id="sec-{section.id}" {@attach watch(section.id)}>
+				{@const open = applies(section)}
+				<section
+					class="section card"
+					id="sec-{section.id}"
+					data-applies={open}
+					{@attach watch(section.id)}
+				>
 					<h2>{text(section.title)}</h2>
-					{#if section.intro}<p class="measure intro">{text(section.intro)}</p>{/if}
-					{#each section.fields as field (field.id)}
-						<FieldInput
-							{field}
-							bind:value={values[field.id]}
-							error={errors[field.id]}
-							choices={choices[field.id]}
-						/>
-					{/each}
+					{#if !open}
+						<!-- the fields keep their values; they count again once the section applies -->
+						<p class="skipped">{m.form_skipped()}</p>
+					{:else}
+						{#if section.intro}<p class="measure intro">{text(section.intro)}</p>{/if}
+						<div class="fields" data-columns={section.columns ?? 1}>
+							{#each section.fields as field (field.id)}
+								{#if field.partOf}
+									<!-- shown inside its checklist point -->
+								{:else if field.type === 'check'}
+									<CheckRow
+										{field}
+										bind:value={values[field.id]}
+										bind:note={values[noteId(field.id)]}
+										bind:due={values[dueId(field.id)]}
+										error={errors[field.id]}
+									/>
+								{:else if section.columns === 2}
+									<div class="cell" data-wide={WIDE.has(field.type)}>
+										<FieldInput
+											{field}
+											bind:value={values[field.id]}
+											error={errors[field.id]}
+											choices={choices[field.id]}
+										/>
+									</div>
+								{:else}
+									<FieldInput
+										{field}
+										bind:value={values[field.id]}
+										error={errors[field.id]}
+										choices={choices[field.id]}
+									/>
+								{/if}
+							{/each}
+						</div>
+					{/if}
 				</section>
 			{/each}
 
@@ -424,6 +474,10 @@
 				background: var(--wax);
 				border-color: var(--wax);
 			}
+
+			&[data-state='skipped'] {
+				border-style: dashed;
+			}
 		}
 	}
 
@@ -473,6 +527,40 @@
 				margin-bottom: 0.25rem;
 				font-size: 14px;
 				color: var(--ink2);
+			}
+
+			& .skipped {
+				padding-bottom: 0.75rem;
+				font-size: 14px;
+				color: var(--ink3);
+			}
+
+			&[data-applies='false'] h2 {
+				color: var(--ink3);
+			}
+		}
+
+		/* short fields in two columns, each with its own hairline; wide ones span both */
+		& .fields[data-columns='2'] {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			column-gap: 1.5rem;
+
+			/* the hairline moves from the field to its cell */
+			& .cell {
+				border-bottom: 1px solid var(--rule2);
+
+				&[data-wide='true'] {
+					grid-column: 1 / -1;
+				}
+
+				&:last-child {
+					border-bottom: 0;
+				}
+			}
+
+			@container (max-width: 30rem) {
+				grid-template-columns: minmax(0, 1fr);
 			}
 		}
 	}
