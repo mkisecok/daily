@@ -23,6 +23,10 @@
 						"de": "Speichert die Website oder App Informationen auf dem Endgerät oder liest sie solche aus (Cookies, Local Storage, Pixel, Fingerprinting, SDKs)?",
 						"en": "Does the website or app store information on the device or read it from there (cookies, local storage, pixels, fingerprinting, SDKs)?"
 					},
+					"help": {
+						"de": "Auch ohne Cookies: Local Storage, Tracking-Pixel und SDKs in Apps zählen dazu. Ob die Information personenbezogen ist, spielt für § 25 TDDDG keine Rolle.",
+						"en": "Even without cookies: local storage, tracking pixels and SDKs in apps count. Whether the information is personal data does not matter for § 25 TDDDG."
+					},
 					"cite": { "law": "TDDDG", "ref": "§ 25 Abs. 1" }
 				},
 				{
@@ -31,6 +35,10 @@
 					"text": {
 						"de": "Gibt es dabei Zugriffe, die für den ausdrücklich gewünschten Dienst nicht unbedingt erforderlich sind (Reichweitenmessung, Marketing, A/B-Tests, eingebettete Drittinhalte)?",
 						"en": "Are there accesses that are not strictly necessary for the service explicitly requested (analytics, marketing, A/B testing, embedded third-party content)?"
+					},
+					"help": {
+						"de": "Unbedingt erforderlich ist nur, was der ausdrücklich gewünschte Dienst technisch braucht. Reichweitenmessung oder Werbung gehören nach Auffassung der Aufsichtsbehörden nicht dazu.",
+						"en": "Strictly necessary is only what the requested service technically needs. In the supervisory authorities’ view, analytics or advertising are not."
 					},
 					"cite": { "law": "TDDDG", "ref": "§ 25 Abs. 2 Nr. 2" }
 				}
@@ -47,6 +55,10 @@
 						"de": "Werden alle nicht erforderlichen Zugriffe erst nach der Einwilligung ausgelöst, auch Tags, Pixel und Skripte von Dritten?",
 						"en": "Are all non-essential accesses triggered only after consent, including third-party tags, pixels and scripts?"
 					},
+					"help": {
+						"de": "Prüfen in einem frischen Browserprofil mit den Entwicklerwerkzeugen: Vor dem Klick dürfen keine Anfragen an Analyse- oder Werbedienste und keine optionalen Cookies erscheinen.",
+						"en": "Check in a fresh browser profile with the developer tools: before the click, no requests to analytics or ad services and no optional cookies may appear."
+					},
 					"cite": { "law": "TDDDG", "ref": "§ 25 Abs. 1" },
 					"remedy": {
 						"de": "Alle optionalen Skripte über das Einwilligungswerkzeug steuern und vor der Zustimmung blockieren; Netzwerkverkehr beim ersten Aufruf mit leerem Browser prüfen.",
@@ -59,6 +71,10 @@
 					"text": {
 						"de": "Ist für jeden Zugriff ohne Einwilligung dokumentiert, warum er unbedingt erforderlich ist (z. B. Warenkorb, Login, Sicherheit, Speichern der Einwilligungsentscheidung)?",
 						"en": "Is it documented for every access without consent why it is strictly necessary (e.g. shopping cart, login, security, storing the consent choice)?"
+					},
+					"help": {
+						"de": "Typisch erforderlich: Sitzungs-Cookie für Warenkorb oder Anmeldung, Lastverteilung, Schutz vor Missbrauch und das Speichern der Banner-Entscheidung selbst.",
+						"en": "Typically necessary: a session cookie for the basket or sign-in, load balancing, abuse protection and storing the banner decision itself."
 					},
 					"cite": { "law": "TDDDG", "ref": "§ 25 Abs. 2 Nr. 2" },
 					"remedy": {
@@ -79,6 +95,10 @@
 						"de": "Gibt es auf der ersten Ebene eine gleichwertige Möglichkeit, alle optionalen Zugriffe abzulehnen?",
 						"en": "Is there an equivalent option on the first layer to reject all optional accesses?"
 					},
+					"help": {
+						"de": "Gleichwertig heißt gleich gut sichtbar und mit gleich wenig Aufwand, etwa „Alle ablehnen“ neben „Alle akzeptieren“. Ein Link „Einstellungen“ genügt nach der DSK nicht.",
+						"en": "Equivalent means just as visible and just as little effort, for example “Reject all” next to “Accept all”. A “Settings” link is not enough in the DSK’s view."
+					},
 					"cite": { "law": "DSK", "ref": "Orientierungshilfe digitale Dienste" },
 					"remedy": {
 						"de": "Schaltfläche „Alle ablehnen“ auf der ersten Ebene neben „Alle akzeptieren“ anbieten, gleich groß und gleich gut erreichbar.",
@@ -91,6 +111,10 @@
 					"text": {
 						"de": "Sind alle Auswahlkästchen für optionale Zwecke anfangs leer?",
 						"en": "Are all checkboxes for optional purposes unticked by default?"
+					},
+					"help": {
+						"de": "Vorausgefüllte Kästchen sind keine Einwilligung; das hat der EuGH 2019 in Planet49 entschieden.",
+						"en": "Pre-ticked boxes are not consent; the CJEU decided so in Planet49 in 2019."
 					},
 					"cite": { "law": "EuGH", "ref": "C-673/17 (Planet49)" },
 					"remedy": {
@@ -105,6 +129,10 @@
 						"de": "Wird auf eine Gestaltung verzichtet, die zur Zustimmung drängt (nur die Zustimmung farblich hervorgehoben, Ablehnung versteckt oder umständlich)?",
 						"en": "Is the design free of nudging towards consent (only consent highlighted, rejection hidden or cumbersome)?"
 					},
+					"help": {
+						"de": "Beispiele: Zustimmen als farbiger Button, Ablehnen als grauer Text; Ablehnen erst nach mehreren Klicks; ein Banner, das die Seite bis zur Zustimmung verdeckt.",
+						"en": "Examples: accept as a coloured button, reject as grey text; reject only after several clicks; a banner that hides the page until one accepts."
+					},
 					"cite": { "law": "DSGVO", "ref": "Art. 4 Nr. 11, Art. 7 Abs. 4" },
 					"remedy": {
 						"de": "Zustimmung und Ablehnung gleichwertig gestalten und keine Zusatzklicks nur für die Ablehnung verlangen.",
@@ -117,6 +145,10 @@
 					"text": {
 						"de": "Werden vor der Einwilligung Zwecke, beteiligte Dritte, Speicherdauer und etwaige Drittlandübermittlungen genannt?",
 						"en": "Are purposes, third parties involved, storage period and any third-country transfers named before consent?"
+					},
+					"help": {
+						"de": "Die Namen der Dienste allein reichen nicht; nötig ist, was jeder Dienst wozu tut. Ein Link zur Datenschutzerklärung gehört auf die erste Ebene.",
+						"en": "The names of the services alone are not enough; what each service does and why is needed. A link to the privacy notice belongs on the first layer."
 					},
 					"cite": { "law": "DSGVO", "ref": "Art. 4 Nr. 11, Art. 13" },
 					"remedy": {
@@ -131,6 +163,10 @@
 						"de": "Kann für unterschiedliche Zwecke getrennt eingewilligt werden?",
 						"en": "Can consent be given separately for different purposes?"
 					},
+					"help": {
+						"de": "Etwa getrennt für Statistik, Marketing und externe Medien, möglichst auch je Dienst.",
+						"en": "For example separately for statistics, marketing and external media, ideally per service as well."
+					},
 					"cite": { "law": "DSGVO", "ref": "Art. 7 Abs. 2, ErwG 43" },
 					"remedy": {
 						"de": "Zwecke auf der zweiten Ebene einzeln wählbar machen, statt nur eine Gesamteinwilligung anzubieten.",
@@ -143,6 +179,10 @@
 					"text": {
 						"de": "Falls der Zugang zur Seite von der Einwilligung abhängt (Cookie-Wall, Pur-Abo): Gibt es eine gleichwertige, zumutbare Alternative ohne Tracking?",
 						"en": "If access to the site depends on consent (cookie wall, pay-or-consent): is there an equivalent, reasonable alternative without tracking?"
+					},
+					"help": {
+						"de": "Nach der DSK kann ein gleichwertiges bezahltes Angebot ohne Tracking eine solche Alternative sein. Für die Variante mit Tracking bleibt eine Einwilligung je Zweck nötig.",
+						"en": "In the DSK’s view, an equivalent paid offer without tracking can be such an alternative. The tracking variant still needs consent per purpose."
 					},
 					"cite": { "law": "DSK", "ref": "Beschluss zu Pur-Abo-Modellen (2023)" },
 					"remedy": {
@@ -163,6 +203,10 @@
 						"de": "Kann die Einwilligung jederzeit so einfach widerrufen werden, wie sie erteilt wurde?",
 						"en": "Can consent be withdrawn at any time as easily as it was given?"
 					},
+					"help": {
+						"de": "Etwa ein dauerhaft sichtbarer Link oder ein Symbol, das das Banner wieder öffnet. Ein Hinweis nur in der Datenschutzerklärung reicht nicht.",
+						"en": "For example a link or icon that is always visible and reopens the banner. A note only in the privacy notice is not enough."
+					},
 					"cite": { "law": "DSGVO", "ref": "Art. 7 Abs. 3" },
 					"remedy": {
 						"de": "Dauerhaft sichtbaren Link oder Schaltfläche zum Öffnen der Einstellungen auf jeder Seite einbauen.",
@@ -176,6 +220,10 @@
 						"de": "Werden Einwilligungen nachweisbar protokolliert (Zeitpunkt, Version des Banners, gewählte Zwecke)?",
 						"en": "Are consents logged in a provable way (time, banner version, purposes chosen)?"
 					},
+					"help": {
+						"de": "Sparsam protokollieren: Eine zufällige Kennung, Zeitpunkt, Banner-Version und die gewählten Zwecke genügen.",
+						"en": "Log sparingly: a random identifier, time, banner version and the chosen purposes are enough."
+					},
 					"cite": { "law": "DSGVO", "ref": "Art. 7 Abs. 1" },
 					"remedy": {
 						"de": "Einwilligungen mit Zeitstempel, Banner-Version und Auswahl protokollieren, ohne dafür zusätzliche Identifikatoren zu bilden.",
@@ -188,6 +236,10 @@
 					"text": {
 						"de": "Bei Übermittlungen in Drittländer (z. B. USA): Gibt es eine Grundlage nach Art. 44 ff. DSGVO (Angemessenheitsbeschluss, Zertifizierung nach dem Data Privacy Framework, Standardvertragsklauseln)?",
 						"en": "For transfers to third countries (e.g. the USA): is there a basis under Art. 44 et seq. GDPR (adequacy decision, Data Privacy Framework certification, standard contractual clauses)?"
+					},
+					"help": {
+						"de": "Für US-Empfänger, die nach dem EU-US Data Privacy Framework zertifiziert sind, gilt der Angemessenheitsbeschluss von Juli 2023; die Zertifizierung auf der Liste des Programms prüfen. Sonst Standardvertragsklauseln mit Transfer Impact Assessment (Werkzeug Drittland-Transfer).",
+						"en": "For US recipients certified under the EU-US Data Privacy Framework, the adequacy decision of July 2023 applies; check the certification on the programme’s list. Otherwise standard contractual clauses with a transfer impact assessment (third-country transfer tool)."
 					},
 					"cite": { "law": "DSGVO", "ref": "Art. 44–49" },
 					"remedy": {

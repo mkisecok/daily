@@ -55,13 +55,21 @@ export const definition: RecordToolDefinition = {
 				{
 					id: 'gegenstand',
 					type: 'textarea',
-					label: L('Gegenstand und Umfang', 'Subject and scope')
+					label: L('Gegenstand und Umfang', 'Subject and scope'),
+					help: L(
+						'Was genau geprüft wird: Bereiche, Standorte, Verfahren, Zeitraum. Ein enger Umfang lässt sich besser prüfen als „der ganze Datenschutz“.',
+						'What exactly is audited: departments, sites, procedures, period. A narrow scope is easier to audit than “all of data protection”.'
+					)
 				},
 				{
 					id: 'kriterien',
 					type: 'multiselect',
 					label: L('Auditkriterien', 'Audit criteria'),
-					options: CRITERIA
+					options: CRITERIA,
+					help: L(
+						'Woran gemessen wird: Gesetze, Normen, eigene Richtlinien. Ohne Kriterium keine Feststellung.',
+						'What is measured against: laws, standards, own policies. No criterion, no finding.'
+					)
 				},
 				{
 					id: 'kriterien_details',
@@ -71,7 +79,11 @@ export const definition: RecordToolDefinition = {
 				{
 					id: 'risiko',
 					type: 'textarea',
-					label: L('Begründung der Auswahl nach Risiko', 'Risk-based reason for the selection')
+					label: L('Begründung der Auswahl nach Risiko', 'Risk-based reason for the selection'),
+					help: L(
+						'Warum dieses Audit jetzt: neue Verfahren, frühere Abweichungen, Vorfälle, Beschwerden oder hohe Risiken für Betroffene. ISO 19011 empfiehlt ein risikobasiertes Programm.',
+						'Why this audit now: new procedures, earlier nonconformities, incidents, complaints or high risks to data subjects. ISO 19011 recommends a risk-based programme.'
+					)
 				}
 			]
 		},
@@ -87,7 +99,11 @@ export const definition: RecordToolDefinition = {
 						'Auditoren sind vom geprüften Bereich unabhängig',
 						'Auditors are independent of the area audited'
 					),
-					cite: { law: 'ISO 27001', ref: 'Kap. 9.2.2' }
+					cite: { law: 'ISO 27001', ref: 'Kap. 9.2.2' },
+					help: L(
+						'Auditoren prüfen nicht ihre eigene Arbeit; ISO/IEC 27001 und 42001 verlangen in Kap. 9.2 Objektivität und Unparteilichkeit.',
+						'Auditors do not audit their own work; ISO/IEC 27001 and 42001 require objectivity and impartiality in clause 9.2.'
+					)
 				},
 				{ id: 'auditierte', type: 'text', label: L('Geprüfte Bereiche', 'Areas audited') },
 				{ id: 'ansprechpartner', type: 'text', label: L('Ansprechpartner', 'Contact') }
@@ -107,7 +123,11 @@ export const definition: RecordToolDefinition = {
 						{ value: 'stichproben', label: L('Stichproben', 'Sampling') },
 						{ value: 'begehung', label: L('Begehung', 'Site walk') },
 						{ value: 'technisch', label: L('Technische Prüfung', 'Technical testing') }
-					]
+					],
+					help: L(
+						'Methoden kombinieren: Was die Dokumente sagen, mit Interviews und Stichproben gegenprüfen.',
+						'Combine methods: check what the documents say against interviews and samples.'
+					)
 				},
 				{
 					id: 'geplant_am',
@@ -117,8 +137,24 @@ export const definition: RecordToolDefinition = {
 					listColumn: true
 				},
 				{ id: 'durchgefuehrt_am', type: 'date', label: L('Durchgeführt am', 'Conducted on') },
-				{ id: 'ergebnis', type: 'textarea', label: L('Kurzergebnis', 'Summary result') },
-				{ id: 'naechstes_audit', type: 'date', label: L('Nächstes Audit', 'Next audit') }
+				{
+					id: 'ergebnis',
+					type: 'textarea',
+					label: L('Kurzergebnis', 'Summary result'),
+					help: L(
+						'Zwei, drei Sätze. Einzelheiten stehen im Prüfkatalog, Abweichungen in den Feststellungen, der Text im Auditbericht.',
+						'Two or three sentences. Details belong in the audit checklist, nonconformities in the findings, the text in the audit report.'
+					)
+				},
+				{
+					id: 'naechstes_audit',
+					type: 'date',
+					label: L('Nächstes Audit', 'Next audit'),
+					help: L(
+						'Ergibt sich aus dem Risiko. ISO/IEC 27001 und 42001 verlangen Audits in geplanten Abständen, keinen festen Rhythmus.',
+						'Follows from the risk. ISO/IEC 27001 and 42001 require audits at planned intervals, not a fixed rhythm.'
+					)
+				}
 			]
 		}
 	],

@@ -34,6 +34,10 @@
 						"de": "Sind Geltungsbereich des Managementsystems und die eigene Rolle gegenüber KI-Systemen (Anbieter, Betreiber, beides) festgelegt?",
 						"en": "Are the scope of the management system and the organisation's role towards AI systems (provider, deployer, both) defined?"
 					},
+					"help": {
+						"de": "Nachweis: ein Dokument mit Standorten, Bereichen und KI-Systemen im Geltungsbereich. Die Rolle nach der KI-Verordnung klärt das Werkzeug Risikoklassifizierung je System.",
+						"en": "Evidence: a document naming the sites, departments and AI systems in scope. The role under the AI Act is settled per system by the risk classification tool."
+					},
 					"cite": {
 						"law": "ISO 42001",
 						"ref": "Kap. 4.1, 4.3"
@@ -49,6 +53,10 @@
 					"text": {
 						"de": "Sind die Anforderungen interessierter Parteien, darunter rechtliche Pflichten, ermittelt?",
 						"en": "Have the requirements of interested parties, including legal obligations, been identified?"
+					},
+					"help": {
+						"de": "Etwa Kunden, Beschäftigte, Betriebsrat und Aufsichtsbehörden; dazu die Pflichten aus KI-Verordnung, DSGVO und Verträgen.",
+						"en": "For example customers, staff, works council and supervisory authorities; plus the duties from the AI Act, GDPR and contracts."
 					},
 					"cite": {
 						"law": "ISO 42001",
@@ -66,6 +74,10 @@
 						"de": "Hat die Leitung eine KI-Politik festgelegt und bekannt gemacht?",
 						"en": "Has top management set and communicated an AI policy?"
 					},
+					"help": {
+						"de": "Die KI-Politik ist kurz und von der Leitung freigegeben. Die Regeln für Beschäftigte entstehen im Werkzeug KI-Nutzungsrichtlinie.",
+						"en": "The AI policy is short and approved by management. The rules for staff come from the AI usage policy tool."
+					},
 					"cite": {
 						"law": "ISO 42001",
 						"ref": "Kap. 5.2, Anhang A.2"
@@ -81,6 +93,10 @@
 					"text": {
 						"de": "Sind Rollen, Verantwortlichkeiten und Befugnisse für KI zugewiesen, einschließlich der menschlichen Aufsicht?",
 						"en": "Are roles, responsibilities and authorities for AI assigned, including human oversight?"
+					},
+					"help": {
+						"de": "Nachweis: Organigramm oder Rollenbeschreibungen, etwa KI-Beauftragte, Systemverantwortliche und Personen mit Aufsicht.",
+						"en": "Evidence: an org chart or role descriptions, for example AI officer, system owners and people with oversight."
 					},
 					"cite": {
 						"law": "ISO 42001",
@@ -107,6 +123,10 @@
 						"de": "Werden KI-Risiken nach einem festgelegten Verfahren beurteilt und behandelt?",
 						"en": "Are AI risks assessed and treated by a defined process?"
 					},
+					"help": {
+						"de": "Nachweis: eine Methode mit Kriterien für Wahrscheinlichkeit und Auswirkung, eine Risikoliste je System und ein Behandlungsplan.",
+						"en": "Evidence: a method with criteria for likelihood and impact, a risk list per system and a treatment plan."
+					},
 					"cite": {
 						"law": "ISO 42001",
 						"ref": "Kap. 6.1.2, 6.1.3"
@@ -122,6 +142,10 @@
 					"text": {
 						"de": "Werden die Auswirkungen von KI-Systemen auf Personen, Gruppen und die Gesellschaft abgeschätzt?",
 						"en": "Are the impacts of AI systems on individuals, groups and society assessed?"
+					},
+					"help": {
+						"de": "Für Hochrisiko-Systeme überschneidet sich das mit der Grundrechte-Folgenabschätzung nach Art. 27 KI-VO (Werkzeug Grundrechte-Folgenabschätzung).",
+						"en": "For high-risk systems this overlaps with the fundamental rights impact assessment under Art. 27 AI Act (fundamental rights impact assessment tool)."
 					},
 					"cite": {
 						"law": "ISO 42001",
@@ -139,6 +163,10 @@
 						"de": "Gibt es messbare Ziele für den verantwortungsvollen Einsatz von KI?",
 						"en": "Are there measurable objectives for the responsible use of AI?"
 					},
+					"help": {
+						"de": "Etwa „alle KI-Systeme im Register erfasst“ oder „alle Nutzenden geschult“, jeweils mit Verantwortlichen und Termin.",
+						"en": "For example “all AI systems in the register” or “all users trained”, each with an owner and a date."
+					},
 					"cite": {
 						"law": "ISO 42001",
 						"ref": "Kap. 6.2"
@@ -155,6 +183,10 @@
 						"de": "Ist die Kompetenz der an KI Beteiligten bestimmt und belegt?",
 						"en": "Is the competence of the people involved in AI determined and evidenced?"
 					},
+					"help": {
+						"de": "Nachweis: Anforderungen je Rolle und Schulungsnachweise. Das Werkzeug KI-Kompetenz hilft bei Art. 4 KI-VO.",
+						"en": "Evidence: requirements per role and training records. The AI literacy tool helps with Art. 4 AI Act."
+					},
 					"cite": {
 						"law": "ISO 42001",
 						"ref": "Kap. 7.2, Anhang A.4"
@@ -170,6 +202,10 @@
 					"text": {
 						"de": "Wird die erforderliche Dokumentation gelenkt (Version, Freigabe, Aufbewahrung)?",
 						"en": "Is the required documentation controlled (version, approval, retention)?"
+					},
+					"help": {
+						"de": "Gelenkt heißt: Jedes Dokument hat Version, Datum, Freigabe und einen festen Ablageort; alte Fassungen sind gekennzeichnet.",
+						"en": "Controlled means: every document has a version, date, approval and a fixed location; old versions are marked."
 					},
 					"cite": {
 						"law": "ISO 42001",
@@ -196,6 +232,10 @@
 						"de": "Sind die Ressourcen je KI-System dokumentiert: Daten, Werkzeuge, Rechenleistung, Personal?",
 						"en": "Are the resources per AI system documented: data, tools, computing, people?"
 					},
+					"help": {
+						"de": "Ein Eintrag im KI-Register je System kann diese Angaben sammeln.",
+						"en": "An entry in the AI system register per system can hold these details."
+					},
 					"cite": {
 						"law": "ISO 42001",
 						"ref": "Anhang A.4"
@@ -211,6 +251,10 @@
 					"text": {
 						"de": "Gibt es einen festgelegten Lebenszyklus mit Anforderungen, Verifikation und Validierung vor der Freigabe?",
 						"en": "Is there a defined life cycle with requirements, verification and validation before release?"
+					},
+					"help": {
+						"de": "Etwa Freigabekriterien vor dem Einsatz: Testergebnisse, Abnahme durch den Fachbereich, eine dokumentierte Entscheidung. Für eingekaufte Werkzeuge übernimmt das Werkzeug KI-Tool einführen diesen Schritt.",
+						"en": "For example release criteria before use: test results, sign-off by the business, a documented decision. For bought-in tools, the AI tool introduction covers this step."
 					},
 					"cite": {
 						"law": "ISO 42001",
@@ -228,6 +272,10 @@
 						"de": "Wird der Betrieb überwacht, werden Ereignisse protokolliert und Abweichungen ausgewertet?",
 						"en": "Is operation monitored, are events logged and deviations analysed?"
 					},
+					"help": {
+						"de": "Nachweis: Protokolle, Kennzahlen und datierte Auswertungen von Fehlern oder Beschwerden.",
+						"en": "Evidence: logs, metrics and dated reviews of errors or complaints."
+					},
 					"cite": {
 						"law": "ISO 42001",
 						"ref": "Anhang A.6"
@@ -243,6 +291,10 @@
 					"text": {
 						"de": "Sind Herkunft, Qualität und Aufbereitung der Daten für KI-Systeme dokumentiert?",
 						"en": "Are the provenance, quality and preparation of data for AI systems documented?"
+					},
+					"help": {
+						"de": "Bei eingekauften Systemen die Angaben des Anbieters einholen und ablegen.",
+						"en": "For bought-in systems, obtain the provider’s details and file them."
 					},
 					"cite": {
 						"law": "ISO 42001",
@@ -260,6 +312,10 @@
 						"de": "Erhalten Nutzer und Betroffene die nötigen Informationen, und können Vorfälle gemeldet werden?",
 						"en": "Do users and affected persons receive the necessary information, and can incidents be reported?"
 					},
+					"help": {
+						"de": "Etwa Hinweise für Nutzende, Transparenzhinweise nach Art. 50 KI-VO und ein Meldeweg für Fehler und Beschwerden.",
+						"en": "For example notes for users, transparency notices under Art. 50 AI Act and a channel for reporting errors and complaints."
+					},
 					"cite": {
 						"law": "ISO 42001",
 						"ref": "Anhang A.8"
@@ -276,6 +332,10 @@
 						"de": "Ist festgelegt, wofür KI-Systeme verwendet werden dürfen, und wird die Einhaltung geprüft?",
 						"en": "Is it defined what AI systems may be used for, and is compliance checked?"
 					},
+					"help": {
+						"de": "Die zulässigen Zwecke stehen in der KI-Nutzungsrichtlinie; geprüft wird etwa mit Stichproben oder Abfragen in den Bereichen.",
+						"en": "The permitted purposes are in the AI usage policy; compliance is checked for example by sampling or asking the departments."
+					},
 					"cite": {
 						"law": "ISO 42001",
 						"ref": "Anhang A.9"
@@ -291,6 +351,10 @@
 					"text": {
 						"de": "Sind Verantwortlichkeiten mit Lieferanten, Partnern und Kunden über den Lebenszyklus geregelt?",
 						"en": "Are responsibilities with suppliers, partners and customers allocated across the life cycle?"
+					},
+					"help": {
+						"de": "Nachweis: Verträge oder Vereinbarungen, die Pflichten, Informationsfluss und Meldewege mit Anbietern und Kunden regeln.",
+						"en": "Evidence: contracts or agreements setting out duties, information flow and reporting channels with providers and customers."
 					},
 					"cite": {
 						"law": "ISO 42001",
@@ -317,6 +381,10 @@
 						"de": "Werden interne Audits des Managementsystems geplant und durchgeführt?",
 						"en": "Are internal audits of the management system planned and carried out?"
 					},
+					"help": {
+						"de": "Das Werkzeug Auditprogramm plant die Audits; im Werkzeug Feststellungen wird festgehalten, was gefunden wurde.",
+						"en": "The audit programme tool plans the audits; the findings tool records what was found."
+					},
 					"cite": {
 						"law": "ISO 42001",
 						"ref": "Kap. 9.2"
@@ -333,6 +401,10 @@
 						"de": "Bewertet die Leitung das Managementsystem in festgelegten Abständen?",
 						"en": "Does top management review the management system at planned intervals?"
 					},
+					"help": {
+						"de": "Nachweis: ein Protokoll der Managementbewertung mit Eingaben wie Auditergebnissen, Zielen und Vorfällen und mit den getroffenen Entscheidungen.",
+						"en": "Evidence: minutes of the management review with inputs such as audit results, objectives and incidents, and the decisions taken."
+					},
 					"cite": {
 						"law": "ISO 42001",
 						"ref": "Kap. 9.3"
@@ -348,6 +420,10 @@
 					"text": {
 						"de": "Werden Abweichungen mit Ursachenanalyse und Korrekturmaßnahmen behandelt?",
 						"en": "Are nonconformities handled with root cause analysis and corrective action?"
+					},
+					"help": {
+						"de": "Das Werkzeug Feststellungen verfolgt Abweichungen bis zur Prüfung, ob die Maßnahme gewirkt hat.",
+						"en": "The findings tool tracks nonconformities until it is checked whether the action worked."
 					},
 					"cite": {
 						"law": "ISO 42001",
