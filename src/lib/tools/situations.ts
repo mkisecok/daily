@@ -115,6 +115,12 @@ export const SITUATIONS: Situation[] = [
 		tool: 'unternehmenskauf'
 	},
 	{
+		id: 'schliessung',
+		label: L('Ein Standort schließt oder der Betrieb endet', 'A site closes or the business ends'),
+		icon: 'door-exit',
+		tool: 'schliessung'
+	},
+	{
 		id: 'drittland',
 		label: L('Daten gehen in ein Drittland', 'Data goes to a third country'),
 		icon: 'world',

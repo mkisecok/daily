@@ -28,6 +28,7 @@ export type Law =
 	| 'AGG'
 	| 'ArbGG'
 	| 'BGB'
+	| 'GmbHG'
 	| 'KI-MIG'
 	| 'EU-Kommission'
 	| 'BSI';
