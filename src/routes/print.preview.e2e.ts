@@ -127,13 +127,13 @@ test('print: the pending list holds only tools that exist', () => {
 
 test('print: a register prints as a Registerauszug with one sheet per entry', async ({ page }) => {
 	await page.setViewportSize({ width: A4_TEXT, height: 1000 });
-	for (const name of ['Erste Verarbeitung', 'Zweite Verarbeitung']) {
-		await page.goto('werkzeuge/vvt/eintraege/?neu=1&beispiel=1', { waitUntil: 'networkidle' });
-		await page.locator('#field-bezeichnung').fill(name);
+	for (const name of ['Zugriffsrechte', 'Zutrittskontrolle']) {
+		await page.goto('werkzeuge/pruefkatalog/eintraege/?neu=1', { waitUntil: 'networkidle' });
+		await page.locator('#field-titel').fill(name);
 		await page.getByRole('button', { name: 'Speichern' }).click();
 		await expect(page).toHaveURL(/eintrag=/);
 	}
-	await page.goto('werkzeuge/vvt/eintraege/', { waitUntil: 'networkidle' });
+	await page.goto('werkzeuge/pruefkatalog/eintraege/', { waitUntil: 'networkidle' });
 	await page.emulateMedia({ media: 'print' });
 
 	const register = page.locator('.print-register');
@@ -145,6 +145,24 @@ test('print: a register prints as a Registerauszug with one sheet per entry', as
 		'button:visible, input:visible, select:visible, textarea:visible, nav:visible, .page-header:visible'
 	);
 	expect(await interactive.count(), 'controls on paper').toBe(0);
+});
+
+test('print: the VVT prints as the record under Art. 30 DSGVO', async ({ page }) => {
+	await page.setViewportSize({ width: A4_TEXT, height: 1000 });
+	await page.goto('werkzeuge/vvt/eintraege/?neu=1&beispiel=1', { waitUntil: 'networkidle' });
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+	await page.goto('werkzeuge/vvt/eintraege/', { waitUntil: 'networkidle' });
+	await page.emulateMedia({ media: 'print' });
+
+	const record = page.locator('.vvt-print');
+	await expect(record.locator('[data-print-frame]')).toContainText(
+		'Verzeichnis nach Art. 30 DSGVO'
+	);
+	await expect(record).toContainText('Name und Kontaktdaten des Verantwortlichen');
+	const letters = await record.locator('.processing .letter').allTextContents();
+	expect(letters.filter(Boolean)).toEqual(['b)', 'c)', 'c)', 'd)', 'e)', 'f)', 'g)']);
+	await expect(page.locator('.print-register')).toHaveCount(0);
 });
 
 /** the frame is there and nothing to click is visible */

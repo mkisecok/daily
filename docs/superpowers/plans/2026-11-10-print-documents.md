@@ -167,3 +167,8 @@ State on 13 Nov 2026: step 1 is built.
   folded lists print open without their triangle. On screen nothing moved (38 measurements, 0 px).
   Other pages lose their controls on paper through the primitives; the catalogue and tool start
   pages wait for the Werkzeugsteckbrief (step 6). Next is step 5, the tool-specific documents.
+- Step 5, VVT: the register prints as the record under Art. 30 DSGVO (`vvt/VvtPrint.svelte`): the
+  controller's details (lit. a) with lines to fill in, then per processing the letters of
+  Art. 30(1), or of Art. 30(2) for a processor, with "fehlt" where the entry is empty. Tools with a
+  document of their own are listed in `src/lib/tools/prints.ts`; the rest print a
+  Registerauszug.
