@@ -1,9 +1,11 @@
 name: Rechtsstand
 
 # Weekly check whether the committed law texts are still the versions in
-# force (pnpm normen:check). On a finding it opens one issue, or comments on
-# the open one, with the report and the tools that cite the law. It never
-# imports or changes the data: legal content always gets a human review.
+# force (pnpm normen:check). On a new or announced version it opens one
+# issue, or comments on the open one, with the report and the tools that
+# cite the law. A source that cannot be read fails the run without an issue.
+# It never imports or changes the data: legal content always gets a human
+# review.
 
 on:
   schedule:
@@ -51,17 +53,13 @@ jobs:
           echo "status=$?" >> "$GITHUB_OUTPUT"
           exit 0
 
-      - name: Fail when a source could not be read
-        if: steps.check.outputs.status == '2'
-        run: exit 1
-
       - name: Open or update the issue
-        if: steps.check.outputs.status != '2'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if grep -q '^Alle Gesetzestexte sind aktuell' report.md; then
-            echo "Nothing to report."
+          # an issue only for a new or announced version, not for a source that was down
+          if [ ! -f report.md ] || ! grep -qE 'Neu in Kraft:|Angekündigt:' report.md; then
+            echo "No new law version to report."
             exit 0
           fi
           title='Rechtsstand: neue Fassung prüfen'
@@ -71,3 +69,10 @@ jobs:
           else
             gh issue create --title "$title" --body-file report.md
           fi
+
+      # a source that could not be read fails the run after the report is out
+      - name: Fail when a source could not be read
+        if: steps.check.outputs.status == '2'
+        run: |
+          echo "A source could not be read; see the report above."
+          exit 1

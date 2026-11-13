@@ -102,7 +102,7 @@
 				<li><Citation {basis} wrap /></li>
 			{/each}
 		</ul>
-		{#if tool}<div class="dated"><Rechtsstand {tool} /></div>{/if}
+		{#if tool}<div class="dated"><Rechtsstand {tool} stored={result.lawAsOf} /></div>{/if}
 	</section>
 </section>
 

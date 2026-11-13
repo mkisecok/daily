@@ -537,5 +537,6 @@
 	"rechtsstand_consolidated": "{law} in der Fassung vom {date}",
 	"rechtsstand_amended": "{law}, zuletzt geändert am {date}",
 	"rechtsstand_reviewed": "juristisch geprüft am {date}",
-	"rechtsstand_unreviewed": "noch nicht juristisch geprüft"
+	"rechtsstand_unreviewed": "noch nicht juristisch geprüft",
+	"rechtsstand_newer": "seither neue Fassung vom {date} eingepflegt"
 }

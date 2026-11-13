@@ -3,7 +3,7 @@ import type { LawId } from '../normen/types.js';
 import { LAW_VERSIONS, type LawVersion } from '../normen/versions.js';
 import { allFields } from '../records/validate.js';
 import { getQuestionnaire, getRecordTool } from './registry.js';
-import type { LegalBasis, ToolManifest } from './types.js';
+import type { LawAsOf, LegalBasis, ToolManifest } from './types.js';
 
 /** every citation of a tool: manifest, questionnaire catalog and record definition */
 export function toolCites(tool: ToolManifest): LegalBasis[] {
@@ -19,7 +19,7 @@ export function toolCites(tool: ToolManifest): LegalBasis[] {
 	];
 }
 
-export type LawInUse = { id: LawId; law: string } & LawVersion;
+export type LawInUse = { id: LawId; law: LawAsOf['law'] } & LawVersion;
 
 /** the imported laws a tool cites, in the order of the Navigator, with their versions */
 export function lawsInUse(tool: ToolManifest): LawInUse[] {
@@ -30,3 +30,24 @@ export function lawsInUse(tool: ToolManifest): LawInUse[] {
 		...LAW_VERSIONS[meta.id]
 	}));
 }
+
+/** a law as the Rechtsstand line shows it; `newer` when a later version was imported since */
+export type RechtsstandEntry = LawAsOf & { newer?: string };
+
+/**
+ * the laws behind a result: the versions stored with a saved run, each
+ * marked when Daily has imported a later version since, or today's
+ * versions for a live result
+ */
+export function rechtsstand(tool: ToolManifest, stored?: LawAsOf[]): RechtsstandEntry[] {
+	const current = lawsInUse(tool);
+	if (!stored) return current.map(({ law, kind, asOf }) => ({ law, kind, asOf }));
+	return stored.map((entry) => {
+		const now = current.find((law) => law.law === entry.law);
+		return now && now.asOf > entry.asOf ? { ...entry, newer: now.asOf } : entry;
+	});
+}
+
+/** the versions to store with a saved run */
+export const lawAsOf = (tool: ToolManifest): LawAsOf[] =>
+	lawsInUse(tool).map(({ law, kind, asOf }) => ({ law, kind, asOf }));

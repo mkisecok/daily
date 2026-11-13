@@ -77,6 +77,16 @@ definition, engine and spec.
 Done when: every tool shows its Rechtsstand, the review table has no open finding of severity
 "wrong result", and CI runs lint, unit and E2E tests.
 
+State on 13 Nov 2026:
+
+| Item            | State                                                                                                                                                                                                                                                                        |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Legal review | Table `docs/legal-review.md` with all 50 tools, all open. Needs a reviewer. The 10 tools that were `stable` are `beta` until reviewed; `review.spec.ts` enforces it.                                                                                                         |
+| 2. Rechtsstand  | Done (#58, #61): tool page and every result show the law versions and the review state; saved runs keep the versions they were based on and mark a newer one.                                                                                                                |
+| 3. 2026 gaps    | Done before this plan: Bundesnetzagentur in Vorfallmeldung and KI-Register, Code of Practice in Transparenzpflichten, EDPB 02/2026 and 03/2026 cited. Still open: the EU icons for labelling are not in Daily; check whether the Commission has published them.              |
+| 4. Law watch    | Done (#59, #60): `since()` and `dates.spec.ts` for the AI Act dates, `pnpm normen:check` and the weekly `rechtsstand.yml` issue. No banner for data older than 60 days: the routine never commits a date-only import, so the age of `retrieved` says nothing about the text. |
+| 5. Deploy       | Open: needs the server. CI runs lint, unit and preview E2E tests on every PR (#50); the server E2E suite needs a database in CI.                                                                                                                                             |
+
 ### Phase 1: make it usable every day
 
 | Feature                          | Why                                                                                 |

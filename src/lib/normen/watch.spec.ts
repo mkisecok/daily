@@ -69,4 +69,10 @@ describe('law watch', () => {
 		expect(text).toContain('BDSG: Verzeichnis von Verarbeitungstätigkeiten (`vvt`)');
 		expect(report([], () => [])).toBe('Alle Gesetzestexte sind aktuell.\n');
 	});
+
+	it('names a source that could not be read', () => {
+		const text = report([], () => [], [{ id: 'bdsg', reason: 'Connect Timeout Error' }]);
+		expect(text).toContain('**Nicht geprüft:** BDSG, die Quelle war nicht erreichbar');
+		expect(text).not.toContain('Alle Gesetzestexte sind aktuell');
+	});
 });

@@ -119,7 +119,12 @@ export type QuestionnaireResult = {
 	/** heading for `notes` when "Obligations and notes" does not fit, e.g. generated clauses */
 	notesTitle?: Localized;
 	citations: LegalBasis[];
+	/** the law versions a saved result was based on; a live result uses today's */
+	lawAsOf?: LawAsOf[];
 };
+
+/** the version of an imported law a tool cites, e.g. the KI-VO as consolidated on 27 July 2026 */
+export type LawAsOf = { law: Law; kind: 'consolidated' | 'amended'; asOf: string };
 
 export type QuestionnaireEngine = (
 	catalog: QuestionnaireCatalog,
