@@ -72,3 +72,5 @@ Phase 0 is done when no row has an open finding of severity "wrong result".
 | Auditbericht                                | `auditbericht`                   | Audit       |          |      |          |          | open   |
 | Repo-Check                                  | `repo-check`                     | Entwickler  |          |      |          |          | open   |
 | Guardrail-Test                              | `guardrail-test`                 | Entwickler  |          |      |          |          | open   |
+| Vorgänge                                    | `vorgang`                        | Datenschutz |          |      |          |          | open   |
+| Beratungsvermerke                           | `beratungsvermerk`               | Datenschutz |          |      |          |          | open   |

@@ -590,7 +590,7 @@
 	"today_due_none": "Nothing is overdue, nothing is due this week.",
 	"today_due_later": "Due later: {count}",
 	"today_cases": "Open cases",
-	"today_cases_none": "No open request, breach or finding.",
+	"today_cases_none": "No open matter, request, breach or finding.",
 	"today_cases_more": "and {count} more",
 	"today_quick": "Start new",
 	"today_loading": "Loading …"

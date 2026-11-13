@@ -1,3 +1,4 @@
+import { nextNumber } from '#lib/records/numbering.js';
 import { error } from '@sveltejs/kit';
 import { browser } from '$app/env';
 import type { Titles } from '#lib/records/format.js';
@@ -105,6 +106,17 @@ export const load: PageLoad = async ({ params, data, url, depends }) => {
 		} else if (url.searchParams.get('beispiel') === '1' && definition.example) {
 			prefill = definition.example;
 			start = { kind: 'example' };
+		}
+		if (definition.numbering) {
+			// a new entry never takes over a number, also not from a copy or the example
+			const [live, archived] = await Promise.all([
+				store.list(tool.slug),
+				store.list(tool.slug, { archived: true })
+			]);
+			prefill = {
+				...prefill,
+				[definition.numbering]: nextNumber([...live, ...archived], definition.numbering, new Date())
+			};
 		}
 		return { ...base, view: 'new' as const, choices, prefill, start };
 	}

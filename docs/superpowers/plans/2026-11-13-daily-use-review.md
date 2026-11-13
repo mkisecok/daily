@@ -137,3 +137,13 @@ number of tools.
    DSK Kurzpapier Nr. 5, the KI-Nutzungsrichtlinie as a policy to sign, the Auditbericht.
 7. Later: a policy set for the DSMS, export and import of all entries, a vendor overview with
    review dates, a privacy notice generator.
+
+## 5. Progress
+
+- Step 1 is built (#74): "Heute" on the start page.
+- Step 2 is built: **Vorgänge** (running number such as 2026-11-007, for whom, next step and by
+  when, states Offen, Wartet, Erledigt) and **Beratungsvermerke** (question, recommendation, to
+  whom, whether it was followed, a reminder to ask again), filed under a Vorgang. The next step is
+  the task list: it shows under Fristen and on Heute. Two tools instead of three; a separate task
+  tool was not needed. Not yet possible: filing entries of other tools (a breach, a DSFA) under a
+  Vorgang; today only memos link to it.
