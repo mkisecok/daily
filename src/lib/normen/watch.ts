@@ -73,12 +73,21 @@ export type Unreadable = { id: LawId; reason: string };
 export function report(
 	findings: Finding[],
 	citing: (id: LawId) => CitingTool[],
-	unreadable: Unreadable[] = []
+	unreadable: Unreadable[] = [],
+	/** laws this run leaves to a local check, e.g. statutes GitHub cannot reach */
+	skipped: LawId[] = []
 ): string {
-	const missing = unreadable.map(
-		({ id, reason }) =>
-			`- **Nicht geprüft:** ${lawName(id)}, die Quelle war nicht erreichbar (${reason}).`
-	);
+	const missing = [
+		...unreadable.map(
+			({ id, reason }) =>
+				`- **Nicht geprüft:** ${lawName(id)}, die Quelle war nicht erreichbar (${reason}).`
+		),
+		...(skipped.length > 0
+			? [
+					`- ${skipped.map(lawName).join(', ')}: hier nicht geprüft; gesetze-im-internet.de ist von GitHub aus nicht erreichbar. Lokal: \`pnpm normen:check\`.`
+				]
+			: [])
+	];
 	if (findings.length === 0) {
 		return missing.length === 0
 			? 'Alle Gesetzestexte sind aktuell.\n'

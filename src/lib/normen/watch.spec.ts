@@ -75,4 +75,10 @@ describe('law watch', () => {
 		expect(text).toContain('**Nicht geprüft:** BDSG, die Quelle war nicht erreichbar');
 		expect(text).not.toContain('Alle Gesetzestexte sind aktuell');
 	});
+
+	it('says which laws a run left to a local check', () => {
+		const text = report([], () => [], [], ['bdsg', 'tdddg']);
+		expect(text).toContain('BDSG, TDDDG: hier nicht geprüft');
+		expect(text).not.toContain('Alle Gesetzestexte sind aktuell');
+	});
 });

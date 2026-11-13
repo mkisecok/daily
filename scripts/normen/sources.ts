@@ -78,23 +78,9 @@ export function standOf($: cheerio.CheerioAPI): string {
 	return stand.join('; ') || 'Fassung nach gesetze-im-internet.de';
 }
 
-/** fetch with a timeout, tried three times with a growing pause: the sources are slow at times */
-async function patientFetch(url: string): Promise<Response> {
-	let last: unknown;
-	for (let attempt = 1; attempt <= 3; attempt++) {
-		try {
-			return await fetch(url, { signal: AbortSignal.timeout(30_000) });
-		} catch (error) {
-			last = error;
-			await new Promise((resolve) => setTimeout(resolve, attempt * 5_000));
-		}
-	}
-	throw last;
-}
-
 /** the parsed XML of a statute on gesetze-im-internet.de, e.g. `bdsg_2018` */
 export async function statuteXml(path: string): Promise<cheerio.CheerioAPI> {
-	const response = await patientFetch(`https://www.gesetze-im-internet.de/${path}/xml.zip`);
+	const response = await fetch(`https://www.gesetze-im-internet.de/${path}/xml.zip`);
 	if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
 	const xml = unzipFirst(Buffer.from(await response.arrayBuffer()));
 	return cheerio.load(xml, { xml: true });
