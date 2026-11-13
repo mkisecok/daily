@@ -7,7 +7,7 @@ const catalog = catalogJson as QuestionnaireCatalog;
 const manifest: ToolManifest = {
 	slug: 'interessenabwaegung',
 	category: 'datenschutz',
-	status: 'stable',
+	status: 'beta',
 	shape: 'questionnaire',
 	version: catalog.version,
 	name: { de: 'Interessenabwägung', en: 'Legitimate interests assessment' },

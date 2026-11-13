@@ -7,7 +7,7 @@ const catalog = catalogJson as QuestionnaireCatalog;
 const manifest: ToolManifest = {
 	slug: 'drittland-transfer',
 	category: 'datenschutz',
-	status: 'stable',
+	status: 'beta',
 	shape: 'questionnaire',
 	version: catalog.version,
 	name: { de: 'Drittland-Transfer', en: 'Third-country transfer' },

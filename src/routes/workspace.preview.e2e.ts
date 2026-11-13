@@ -584,3 +584,18 @@ test('preview: the risk classification marks the AI Act tier', async ({ page }) 
 	await expect(page.getByRole('img', { name: 'Risikoklasse: Hochrisiko' })).toBeVisible();
 	await expect(page.locator('.tier[data-active]')).toHaveAttribute('data-tier', 'hoch');
 });
+
+test('preview: a tool and its result show the law they are based on', async ({ page }) => {
+	await page.goto('werkzeuge/risikoklassifizierung/', { waitUntil: 'networkidle' });
+	const header = page.locator('.rechtsstand').first();
+	await expect(header).toContainText('KI-VO in der Fassung vom 27.07.2026');
+	await expect(header).toContainText('noch nicht juristisch geprüft');
+
+	await page.goto('werkzeuge/hinweisgebersystem/eintraege/?neu=1&beispiel=1', {
+		waitUntil: 'networkidle'
+	});
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page.locator('.verdict .rechtsstand')).toContainText(
+		'DSGVO in der Fassung vom 04.05.2016'
+	);
+});

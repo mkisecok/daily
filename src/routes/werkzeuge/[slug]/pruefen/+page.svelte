@@ -132,10 +132,10 @@
 	{#if Dashboard}
 		<div class="result-pair">
 			<Dashboard {result} />
-			<Verdict {result} tool={text(data.tool.name)} />
+			<Verdict {result} tool={data.tool} />
 		</div>
 	{:else}
-		<Verdict {result} tool={text(data.tool.name)} />
+		<Verdict {result} tool={data.tool} />
 	{/if}
 
 	<NextSteps tool={data.tool.slug} {result} />

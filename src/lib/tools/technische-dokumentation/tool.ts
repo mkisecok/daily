@@ -7,7 +7,7 @@ const catalog = catalogJson as QuestionnaireCatalog;
 const manifest: ToolManifest = {
 	slug: 'technische-dokumentation',
 	category: 'ki',
-	status: 'stable',
+	status: 'beta',
 	shape: 'questionnaire',
 	version: catalog.version,
 	name: { de: 'Technische Dokumentation', en: 'Technical documentation' },

@@ -7,7 +7,7 @@ const catalog = catalogJson as QuestionnaireCatalog;
 const manifest: ToolManifest = {
 	slug: 'dsfa-schwellwert',
 	category: 'datenschutz',
-	status: 'stable',
+	status: 'beta',
 	shape: 'questionnaire',
 	version: catalog.version,
 	name: { de: 'DSFA-Schwellwertanalyse', en: 'DPIA screening' },

@@ -6,8 +6,8 @@ import { KIND_ORDER, provisionLabel } from '../normen/laws.js';
 import { crossReferences } from '../normen/crossref.js';
 import type { Block, Lang, LawId, LawText, Provision, RenderedBlock } from '../normen/types.js';
 import { citationIndex, type CitingTool, type ToolCitations } from '../normen/usage.js';
-import { allFields } from '../records/validate.js';
-import { getQuestionnaire, getRecordTool, tools } from '../tools/registry.js';
+import { toolCites } from '../tools/rechtsstand.js';
+import { tools } from '../tools/registry.js';
 
 const RAW: Record<LawId, string> = {
 	dsgvo: dsgvoRaw,
@@ -140,23 +140,7 @@ let index: Map<string, CitingTool[]> | undefined;
 
 /** every citation in manifests, questionnaire catalogs and record definitions */
 function toolCitations(): ToolCitations[] {
-	return tools.map((tool) => {
-		const catalog = getQuestionnaire(tool.slug)?.catalog;
-		const definition = getRecordTool(tool.slug)?.definition;
-		return {
-			slug: tool.slug,
-			name: tool.name,
-			cites: [
-				...tool.legalBasis,
-				...(catalog?.sources ?? []),
-				...(catalog?.sections.flatMap((s) =>
-					s.questions.flatMap((q) => (q.cite ? [q.cite] : []))
-				) ?? []),
-				...(definition?.sources ?? []),
-				...(definition ? allFields(definition).flatMap((f) => (f.cite ? [f.cite] : [])) : [])
-			]
-		};
-	});
+	return tools.map((tool) => ({ slug: tool.slug, name: tool.name, cites: toolCites(tool) }));
 }
 
 export function citingTools(law: LawId, id: string): CitingTool[] {

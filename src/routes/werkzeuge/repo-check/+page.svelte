@@ -144,7 +144,7 @@
 </section>
 
 {#if result && findings}
-	<Verdict {result} tool={text(data.tool.name)} />
+	<Verdict {result} tool={data.tool} />
 
 	{#if findings.length > 0}
 		<div class="toolbar actions no-print">

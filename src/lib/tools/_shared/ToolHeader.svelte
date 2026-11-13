@@ -12,6 +12,7 @@
 	import { rememberVisit } from '../shelf.js';
 	import type { ToolManifest } from '../types.js';
 	import Citation from './Citation.svelte';
+	import Rechtsstand from './Rechtsstand.svelte';
 	import StatusBadge from './StatusBadge.svelte';
 
 	let { tool }: { tool: ToolManifest } = $props();
@@ -44,6 +45,7 @@
 				{/each}
 			</ul>
 		{/if}
+		<Rechtsstand {tool} />
 	{/snippet}
 </PageHeader>
 
