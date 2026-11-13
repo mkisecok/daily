@@ -172,3 +172,8 @@ State on 13 Nov 2026: step 1 is built.
   Art. 30(1), or of Art. 30(2) for a processor, with "fehlt" where the entry is empty. Tools with a
   document of their own are listed in `src/lib/tools/prints.ts`; the rest print a
   Registerauszug.
+- Step 5, Datenpanne: an entry prints as a notification under Art. 33 DSGVO
+  (`datenpanne/BreachPrint.svelte`): the timing with the end of the 72 hours and whether the notice
+  made it, the letters a to d of Art. 33(3) with a line to fill in for the data protection officer,
+  the communication under Art. 34 and further details, then lines to sign. Entries with a document
+  of their own are listed in `entryPrints`.

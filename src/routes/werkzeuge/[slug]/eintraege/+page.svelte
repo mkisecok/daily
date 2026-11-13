@@ -33,7 +33,7 @@
 	import StatusBadge from '#lib/tools/_shared/StatusBadge.svelte';
 	import Verdict from '#lib/tools/_shared/Verdict.svelte';
 	import { recordDashboards } from '#lib/tools/dashboards.js';
-	import { registerPrints } from '#lib/tools/prints.js';
+	import { entryPrints, registerPrints } from '#lib/tools/prints.js';
 	import ConfirmDialog from '#lib/ui/ConfirmDialog.svelte';
 	import Icon from '#lib/ui/Icon.svelte';
 	import Select from '#lib/ui/form/Select.svelte';
@@ -61,6 +61,8 @@
 	const Dashboard = $derived(recordDashboards[data.definition.slug]);
 	// a register with a document of its own prints that instead of the Registerauszug
 	const RegisterPrint = $derived(registerPrints[data.definition.slug] ?? PrintRegister);
+	// an entry with a document of its own prints that instead of the Vorgangsblatt
+	const EntryPrint = $derived(entryPrints[data.definition.slug]);
 	const assessment = $derived(detail ? (engine?.assess?.(detail.record) ?? null) : null);
 
 	const listPath = $derived(localized(`/werkzeuge/${slug}/eintraege`));
@@ -352,7 +354,7 @@
 	{:else}
 		{@const record = detail.record}
 		<PrintDocument
-			kind={m.print_kind_entry()}
+			kind={EntryPrint ? EntryPrint.kind() : m.print_kind_entry()}
 			title={record.title}
 			rows={printMeta(data.tool, {
 				version: data.definition.version,
@@ -455,15 +457,19 @@
 				/>
 			{/key}
 		{:else}
-			<PrintEntry
-				definition={data.definition}
-				{record}
-				{assessment}
-				deadlines={detail.deadlines}
-				events={detail.events}
-				backlinks={data.backlinks}
-				titles={data.titles}
-			/>
+			{#if EntryPrint}
+				<EntryPrint.component definition={data.definition} {record} titles={data.titles} />
+			{:else}
+				<PrintEntry
+					definition={data.definition}
+					{record}
+					{assessment}
+					deadlines={detail.deadlines}
+					events={detail.events}
+					backlinks={data.backlinks}
+					titles={data.titles}
+				/>
+			{/if}
 
 			<!-- on paper the Vorgangsblatt above takes the place of these screen parts -->
 			{#if data.definition.workflow}

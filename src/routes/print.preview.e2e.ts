@@ -230,3 +230,22 @@ test('print: a note, a law article and a report print in the frame', async ({ pa
 	await printsAsDocument(page, 'Bericht');
 	await expect(page.locator('.cover')).toBeHidden();
 });
+
+test('print: a data breach prints as a notification under Art. 33 DSGVO', async ({ page }) => {
+	await page.setViewportSize({ width: A4_TEXT, height: 1000 });
+	await page.goto('werkzeuge/datenpanne/eintraege/?neu=1', { waitUntil: 'networkidle' });
+	await page.locator('#field-bezeichnung').fill('Fehlversand Gehaltsabrechnung');
+	await pickDate(page, 'Kenntnis am', '2026-11-10T08:00');
+	await page.locator('#field-beschreibung').fill('Abrechnung an falsche E-Mail-Adresse geschickt.');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+	await page.emulateMedia({ media: 'print' });
+
+	const notice = page.locator('.breach-print');
+	await expect(page.locator('[data-print-frame]')).toContainText('Meldung nach Art. 33 DSGVO');
+	await expect(notice).toContainText('72 Stunden enden');
+	await expect(notice).toContainText('13.11.2026 08:00');
+	const letters = (await notice.locator('.letter').allTextContents()).filter((l) => l.trim());
+	expect(letters).toEqual(['a)', 'a)', 'a)', 'b)', 'c)', 'c)', 'd)']);
+	await expect(notice).toContainText('fehlt');
+});
