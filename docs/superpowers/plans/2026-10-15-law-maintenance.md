@@ -127,9 +127,12 @@ Re-check each item against the Official Journal when it happens. Do not rely on 
     C‑203/22 (explanation of automated decisions).
   - These belong in engine notes and citations, not in the import.
 
-## 5. Routine (until the feature below exists)
+## 5. Routine
 
-Monthly, and whenever the news feed shows a new act:
+`pnpm normen:check` compares the committed texts with the versions in force and lists the tools
+that cite a changed law. The workflow `rechtsstand.yml` runs it every Monday and opens or comments
+on the issue "Rechtsstand: neue Fassung prüfen". When it reports a change, and whenever the news
+feed shows a new act:
 
 1. `pnpm normen:import`, then `git diff --stat src/lib/normen/data`.
    - Only `retrieved` changed: nothing to do. Do not commit a date-only change.
@@ -204,6 +207,11 @@ review.
   priority.
 
 ### Slices
+
+State on 13 Nov 2026: slices 1, 2 and 4 are built. `normen:check` compares versions without new
+keys in the JSON (EU: newest consolidated CELEX; statutes: the Stand note), the weekly workflow
+opens the issue, and the date watch is `since()` plus `dates.spec.ts`. The impact list names the
+tools per law, not yet per provision. The tool pages show the Rechtsstand (`versions.ts`).
 
 1. Store version keys in the JSON + `normen:check` with tests.
 2. Weekly workflow opening an issue.

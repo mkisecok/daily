@@ -11,7 +11,6 @@
  * Run: pnpm normen:import
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { inflateRawSync } from 'node:zlib';
 import * as cheerio from 'cheerio';
 import type { AnyNode, Element } from 'domhandler';
 import type {
@@ -23,6 +22,14 @@ import type {
 	Provision
 } from '../../src/lib/normen/types.js';
 import { applyCorrections, recitalCorrections } from '../../src/lib/normen/corrigenda.js';
+import {
+	clean,
+	consolidatedVersions,
+	sparql,
+	standOf,
+	statuteXml,
+	versionDate
+} from './sources.js';
 
 const OUT = 'src/lib/normen/data';
 const CELLAR = 'https://publications.europa.eu/resource/celex/';
@@ -64,24 +71,6 @@ async function cellar(celex: string, lang: Lang): Promise<string> {
 	return html;
 }
 
-async function sparql(query: string): Promise<Record<string, string>[]> {
-	const response = await fetch('https://publications.europa.eu/webapi/rdf/sparql', {
-		method: 'POST',
-		headers: {
-			accept: 'application/sparql-results+json',
-			'content-type': 'application/x-www-form-urlencoded'
-		},
-		body: new URLSearchParams({ query })
-	});
-	if (!response.ok) throw new Error(`SPARQL: HTTP ${response.status}`);
-	const json = (await response.json()) as {
-		results: { bindings: Record<string, { value: string }>[] };
-	};
-	return json.results.bindings.map((row) =>
-		Object.fromEntries(Object.entries(row).map(([key, cell]) => [key, cell.value]))
-	);
-}
-
 /** acts that amend or correct `original`, with their date as YYYYMMDD */
 async function related(
 	original: string,
@@ -97,17 +86,6 @@ SELECT DISTINCT ?celex ?date WHERE {
 		.map((r) => ({ celex: r.celex, date: r.date.replace(/-/g, '') }))
 		.sort((a, b) => a.date.localeCompare(b.date));
 }
-
-async function consolidatedVersions(original: string): Promise<string[]> {
-	const prefix = `0${original.slice(1)}-`;
-	const rows = await sparql(`PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
-SELECT DISTINCT ?celex WHERE {
-  ?w cdm:resource_legal_id_celex ?celex . FILTER(STRSTARTS(STR(?celex), "${prefix}"))
-}`);
-	return rows.map((r) => r.celex).sort();
-}
-
-const versionDate = (celex: string) => celex.slice(-8);
 
 /** "32026R1744" → "(EU) 2026/1744" with the kind of act per language */
 function actName(celex: string, lang: Lang): string {
@@ -127,14 +105,6 @@ function longDate(yyyymmdd: string, lang: Lang): string {
 		timeZone: 'UTC'
 	});
 }
-
-const clean = (text: string) =>
-	text
-		.replace(/[\u00a0\u2002-\u200b]/g, ' ')
-		.replace(/[▼►]\s*[A-Z]\d*/g, '')
-		.replace(/◄/g, '')
-		.replace(/\s+/g, ' ')
-		.trim();
 
 /** text lines of a corrigendum, one per paragraph or table cell */
 function corrigendumLines(html: string): string[] {
@@ -387,18 +357,6 @@ async function importEu(source: EuSource): Promise<LawText> {
 	};
 }
 
-/** the single XML file inside a gesetze-im-internet zip (local file header, deflate) */
-function unzipFirst(zip: Buffer): string {
-	if (zip.readUInt32LE(0) !== 0x04034b50) throw new Error('not a zip');
-	const method = zip.readUInt16LE(8);
-	const size = zip.readUInt32LE(18);
-	const nameLength = zip.readUInt16LE(26);
-	const extraLength = zip.readUInt16LE(28);
-	const start = 30 + nameLength + extraLength;
-	const data = zip.subarray(start, start + size);
-	return (method === 8 ? inflateRawSync(data) : data).toString('utf8');
-}
-
 /** block structure of gii-norm XML: P paragraphs with "(1)" labels, DL lists */
 function giiBlocks($: cheerio.CheerioAPI, parent: AnyNode): Block[] {
 	const out: Block[] = [];
@@ -450,27 +408,14 @@ function giiList($: cheerio.CheerioAPI, dl: AnyNode): Block[] {
 }
 
 async function importDe(law: { id: LawId; path: string }): Promise<LawText> {
-	const response = await fetch(`https://www.gesetze-im-internet.de/${law.path}/xml.zip`);
-	if (!response.ok) throw new Error(`${law.id}: HTTP ${response.status}`);
-	const xml = unzipFirst(Buffer.from(await response.arrayBuffer()));
-	const $ = cheerio.load(xml, { xml: true });
+	const $ = await statuteXml(law.path);
 	const chapters: Chapter[] = [];
 	const provisions: Provision[] = [];
-	const stand: string[] = [];
 
 	$('norm').each((_, norm) => {
 		const meta = $(norm).children('metadaten');
 		const unit = meta.children('gliederungseinheit');
 		const enbez = clean(meta.children('enbez').text());
-		// "Stand" names the last amendment, "Hinweis" newer ones already in the text
-		if (stand.length === 0) {
-			meta.find('standangabe').each((__, entry) => {
-				const kind = clean($(entry).children('standtyp').text());
-				if (kind === 'Stand' || kind === 'Hinweis') {
-					stand.push(clean($(entry).children('standkommentar').text()));
-				}
-			});
-		}
 		if (unit.length > 0) {
 			chapters.push({
 				title: {
@@ -495,7 +440,7 @@ async function importDe(law: { id: LawId; path: string }): Promise<LawText> {
 		source: {
 			de: {
 				url: `https://www.gesetze-im-internet.de/${law.path}/`,
-				version: stand.join('; ') || 'Fassung nach gesetze-im-internet.de'
+				version: standOf($)
 			}
 		},
 		retrieved,
