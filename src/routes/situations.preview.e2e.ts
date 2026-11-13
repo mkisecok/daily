@@ -11,7 +11,7 @@ test('preview: the catalogue opens a tool by situation and shows first steps to 
 	const more = situations.getByRole('button', { name: 'Weitere Anlässe' });
 	await expect(more).toHaveAttribute('aria-expanded', 'false');
 	await more.click();
-	await expect(situations.locator('a.situation')).toHaveCount(23);
+	await expect(situations.locator('a.situation')).toHaveCount(24);
 	await expect(situations.getByRole('button', { name: 'Weniger Anlässe' })).toHaveAttribute(
 		'aria-expanded',
 		'true'

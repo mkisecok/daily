@@ -433,3 +433,19 @@ test('preview: training a model on tickets shows the purpose and memorising gaps
 	await expect(page.locator('.verdict')).toContainText('Trainingsdaten: Zweckänderung geprüft');
 	await expect(page.locator('.verdict')).toContainText('Interessenabwägung');
 });
+
+test('preview: a surveillance audit shows the open findings and the missing review', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/auditvorbereitung/eintraege/?neu=1&beispiel=1', {
+		waitUntil: 'networkidle'
+	});
+	await expect(page.locator('#sec-kunde')).toContainText('Entfällt für den gewählten Umfang.');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await expect(page.locator('.verdict .headline')).toHaveText('Handlungsbedarf vor dem Audit.');
+	await expect(page.locator('.verdict')).toContainText('Rahmen und Nachweise: Feststellungen');
+	await expect(page.locator('.verdict')).toContainText('Managementsystem: Managementbewertung');
+});
