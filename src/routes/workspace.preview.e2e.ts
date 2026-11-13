@@ -315,7 +315,7 @@ test('preview: the privacy notice describes the preview, not the signed-in app',
 
 test('preview: the tool catalogue narrows by search and area', async ({ page }) => {
 	await page.goto('werkzeuge/', { waitUntil: 'networkidle' });
-	await expect(page.locator('li.tile')).toHaveCount(50);
+	await expect(page.locator('li.tile')).toHaveCount(52);
 
 	await page.getByRole('searchbox', { name: 'Werkzeuge durchsuchen' }).fill('Art. 35');
 	await expect(page.locator('.bento')).toBeHidden();

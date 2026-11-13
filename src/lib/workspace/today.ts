@@ -8,6 +8,7 @@ import { isTerminal } from '../records/workflow.js';
 
 /** tools whose entries are cases to work off: each one open until its last state */
 export const CASE_TOOLS = [
+	'vorgang',
 	'betroffenenanfrage',
 	'datenpanne',
 	'aufsichtsanfrage',
@@ -17,6 +18,8 @@ export const CASE_TOOLS = [
 
 /** the tasks that come up most; each starts a new entry in its tool */
 export const QUICK_START = [
+	'vorgang',
+	'beratungsvermerk',
 	'betroffenenanfrage',
 	'datenpanne',
 	'avv-pruefung',

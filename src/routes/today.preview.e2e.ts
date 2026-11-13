@@ -6,10 +6,10 @@ test('preview: the start page shows what is due and which cases are open', async
 	await page.goto('', { waitUntil: 'networkidle' });
 	const today = page.getByRole('region', { name: 'Heute' });
 	await expect(today).toContainText('Nichts ist überfällig');
-	await expect(today).toContainText('Keine offene Anfrage, Datenpanne oder Feststellung.');
+	await expect(today).toContainText('Kein offener Vorgang');
 	await expect(
 		today.getByRole('navigation', { name: 'Neu anlegen' }).getByRole('link')
-	).toHaveCount(6);
+	).toHaveCount(8);
 
 	// a breach known since yesterday: its 72 hours run out this week
 	await today.getByRole('link', { name: 'Datenpanne' }).click();

@@ -89,6 +89,8 @@ export type RecordToolDefinition = {
 	 * its audit and the audit's findings.
 	 */
 	composes?: string[];
+	/** a text field a new entry gets the next running number in, e.g. "2026-11-007" */
+	numbering?: string;
 	/** a filled-in fictional entry the new form can start from ("Beispiel laden") */
 	example?: RecordData;
 };
