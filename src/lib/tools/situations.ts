@@ -136,6 +136,12 @@ export const SITUATIONS: Situation[] = [
 		tool: 'hinweisgebersystem'
 	},
 	{
+		id: 'modelltraining',
+		label: L('Wir trainieren ein eigenes KI-Modell', 'We train our own AI model'),
+		icon: 'brain',
+		tool: 'modelltraining'
+	},
+	{
 		id: 'drittland',
 		label: L('Daten gehen in ein Drittland', 'Data goes to a third country'),
 		icon: 'world',
