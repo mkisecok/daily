@@ -3,6 +3,7 @@ import type { Titles } from '../records/format.js';
 import type { RecordEngine, RecordToolDefinition, StoredRecord } from '../records/types.js';
 import { m } from '../paraglide/messages.js';
 import BreachPrint from './datenpanne/BreachPrint.svelte';
+import IncidentPrint from './vorfallmeldung/IncidentPrint.svelte';
 import type { ToolManifest } from './types.js';
 import VvtPrint from './vvt/VvtPrint.svelte';
 
@@ -39,5 +40,6 @@ export type EntryPrintProps = {
 export const entryPrints: Partial<
 	Record<string, { kind: () => string; component: Component<EntryPrintProps> }>
 > = {
-	datenpanne: { kind: m.print_kind_breach, component: BreachPrint }
+	datenpanne: { kind: m.print_kind_breach, component: BreachPrint },
+	vorfallmeldung: { kind: m.print_kind_incident, component: IncidentPrint }
 };

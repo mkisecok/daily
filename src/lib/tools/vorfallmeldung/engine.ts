@@ -23,7 +23,8 @@ export function reportingDays(record: RecordView): 2 | 10 | 15 {
 	return 15;
 }
 
-const PARAGRAPH: Record<2 | 10 | 15, string> = {
+/** the paragraph of Art. 73 behind each period */
+export const PARAGRAPH: Record<2 | 10 | 15, string> = {
 	2: 'Art. 73 Abs. 3',
 	10: 'Art. 73 Abs. 4',
 	15: 'Art. 73 Abs. 2'
