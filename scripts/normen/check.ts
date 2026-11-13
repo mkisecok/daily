@@ -6,7 +6,11 @@
  * force changed, 2 when nothing changed but a source could not be read,
  * 0 otherwise (also when a version is only announced).
  *
- * Run: pnpm normen:check [--out report.md]
+ * `--eu-only` checks the EU acts alone: gesetze-im-internet.de refuses
+ * GitHub-hosted runners, so the weekly workflow leaves BDSG and TDDDG to a
+ * local run.
+ *
+ * Run: pnpm normen:check [--eu-only] [--out report.md]
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { LAWS } from '../../src/lib/normen/laws.js';
@@ -32,11 +36,14 @@ async function published(id: LawId) {
 
 async function main(): Promise<number> {
 	const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+	const euOnly = process.argv.includes('--eu-only');
+	const checked = LAWS.filter((law) => !euOnly || law.id in EU);
+	const skipped = LAWS.filter((law) => !checked.includes(law)).map((law) => law.id);
 	const findings: Finding[] = [];
 	const unreadable: Unreadable[] = [];
 	// one source that cannot be read does not hide what the others say
 	await Promise.all(
-		LAWS.map(async (law) => {
+		checked.map(async (law) => {
 			try {
 				findings.push(...compareLaw(committed(law.id), await published(law.id), today));
 			} catch (error) {
@@ -57,7 +64,7 @@ async function main(): Promise<number> {
 			.filter((tool) => tool.status !== 'planned' && lawsInUse(tool).some((law) => law.id === id))
 			.map((tool) => ({ slug: tool.slug, name: tool.name.de }));
 
-	const text = report(findings, citing, unreadable);
+	const text = report(findings, citing, unreadable, skipped);
 	const out = process.argv.indexOf('--out');
 	if (out > 0) writeFileSync(process.argv[out + 1], text);
 	console.log(text);

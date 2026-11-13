@@ -130,9 +130,10 @@ Re-check each item against the Official Journal when it happens. Do not rely on 
 ## 5. Routine
 
 `pnpm normen:check` compares the committed texts with the versions in force and lists the tools
-that cite a changed law. The workflow `rechtsstand.yml` runs it every Monday and opens or comments
-on the issue "Rechtsstand: neue Fassung prüfen". When it reports a change, and whenever the news
-feed shows a new act:
+that cite a changed law. The workflow `rechtsstand.yml` runs it with `--eu-only` every Monday and
+opens or comments on the issue "Rechtsstand: neue Fassung prüfen". gesetze-im-internet.de refuses
+GitHub-hosted runners, so BDSG and TDDDG need a local `pnpm normen:check` once a month. When a check
+reports a change, and whenever the news feed shows a new act:
 
 1. `pnpm normen:import`, then `git diff --stat src/lib/normen/data`.
    - Only `retrieved` changed: nothing to do. Do not commit a date-only change.
