@@ -35,7 +35,7 @@ test('preview: search and sort live in the URL and survive a reload', async ({ p
 		await createTopic(page, title);
 	}
 	await page.goto('werkzeuge/pruefkatalog/eintraege/');
-	const rows = page.locator('tbody th');
+	const rows = page.locator('section.list tbody th');
 	await expect(rows).toHaveText(['Zutrittskontrolle', 'Auftragsverarbeitung', 'Zugriffsrechte']);
 
 	await page.getByRole('button', { name: 'Nach Prüfthema sortieren' }).click();

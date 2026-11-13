@@ -603,8 +603,9 @@
 	{#if shown.length > 0}
 		<PrintRegister
 			definition={data.definition}
+			tool={data.tool}
 			records={shown}
-			title={data.tool.name}
+			{engine}
 			titles={data.titles}
 			organisation={data.organisation?.name}
 		/>
