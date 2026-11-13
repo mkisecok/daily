@@ -582,5 +582,6 @@
 	"print_vvt_dpo": "Datenschutzbeauftragter, Kontaktdaten",
 	"print_vvt_controller": "Verantwortlicher (Art. 30 Abs. 1)",
 	"print_vvt_processor": "Auftragsverarbeiter (Art. 30 Abs. 2)",
-	"print_missing": "fehlt"
+	"print_missing": "fehlt",
+	"print_kind_breach": "Meldung nach Art. 33 DSGVO"
 }

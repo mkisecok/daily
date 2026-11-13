@@ -1,6 +1,8 @@
 import type { Component } from 'svelte';
 import type { Titles } from '../records/format.js';
 import type { RecordEngine, RecordToolDefinition, StoredRecord } from '../records/types.js';
+import { m } from '../paraglide/messages.js';
+import BreachPrint from './datenpanne/BreachPrint.svelte';
 import type { ToolManifest } from './types.js';
 import VvtPrint from './vvt/VvtPrint.svelte';
 
@@ -20,4 +22,22 @@ export type RegisterPrintProps = {
  */
 export const registerPrints: Partial<Record<string, Component<RegisterPrintProps>>> = {
 	vvt: VvtPrint
+};
+
+/** what a printed entry of its own kind gets */
+export type EntryPrintProps = {
+	definition: RecordToolDefinition;
+	record: StoredRecord;
+	titles?: Titles;
+};
+
+/**
+ * an entry printed as the document its recipient expects, with the kind of
+ * document for its head; every other entry prints as a Vorgangsblatt
+ * (PrintEntry.svelte)
+ */
+export const entryPrints: Partial<
+	Record<string, { kind: () => string; component: Component<EntryPrintProps> }>
+> = {
+	datenpanne: { kind: m.print_kind_breach, component: BreachPrint }
 };
