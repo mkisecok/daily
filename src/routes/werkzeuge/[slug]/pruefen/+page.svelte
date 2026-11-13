@@ -16,6 +16,8 @@
 	import QuestionRow from '#lib/tools/_shared/QuestionRow.svelte';
 	import ToolHeader from '#lib/tools/_shared/ToolHeader.svelte';
 	import Verdict from '#lib/tools/_shared/Verdict.svelte';
+	import { printMeta } from '#lib/print/meta.js';
+	import PrintDocument from '#lib/ui/PrintDocument.svelte';
 	import NextSteps from '#lib/tools/_shared/NextSteps.svelte';
 	import { resultDashboards } from '#lib/tools/dashboards.js';
 	import AssessmentHandoff from '#lib/records/ui/AssessmentHandoff.svelte';
@@ -129,6 +131,14 @@
 <AssessmentHandoff questionnaire={data.tool.slug} {answers} {result} />
 
 {#if result}
+	<PrintDocument
+		kind={m.print_kind_report()}
+		title={text(data.tool.name)}
+		rows={printMeta(data.tool, {
+			version: data.catalog.version,
+			organisation: data.organisation?.name
+		})}
+	/>
 	{#if Dashboard}
 		<div class="result-pair">
 			<Dashboard {result} />

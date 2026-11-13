@@ -538,5 +538,13 @@
 	"rechtsstand_amended": "{law}, zuletzt geändert am {date}",
 	"rechtsstand_reviewed": "juristisch geprüft am {date}",
 	"rechtsstand_unreviewed": "noch nicht juristisch geprüft",
-	"rechtsstand_newer": "seither neue Fassung vom {date} eingepflegt"
+	"rechtsstand_newer": "seither neue Fassung vom {date} eingepflegt",
+	"print_kind_report": "Prüfbericht",
+	"print_kind_entry": "Vorgangsblatt",
+	"print_organisation": "Organisation",
+	"print_tool": "Werkzeug",
+	"print_version": "Version {version}",
+	"print_review": "Juristische Prüfung",
+	"print_entry": "Eintrag",
+	"print_created": "Erstellt am"
 }

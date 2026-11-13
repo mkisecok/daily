@@ -15,6 +15,8 @@
 	import DeadlineList from '#lib/records/ui/DeadlineList.svelte';
 	import { downloadText } from '#lib/records/ui/download.js';
 	import PrintRegister from '#lib/records/ui/PrintRegister.svelte';
+	import { printMeta } from '#lib/print/meta.js';
+	import PrintDocument from '#lib/ui/PrintDocument.svelte';
 	import RecordForm from '#lib/records/ui/RecordForm.svelte';
 	import RecordHistory from '#lib/records/ui/RecordHistory.svelte';
 	import RecordLinks from '#lib/records/ui/RecordLinks.svelte';
@@ -345,7 +347,23 @@
 		<p class="toolbar"><a class="button quiet" href={resolve(listPath)}>{m.records_back()}</a></p>
 	{:else}
 		{@const record = detail.record}
-		<header class="record-head">
+		<PrintDocument
+			kind={m.print_kind_entry()}
+			title={record.title}
+			rows={printMeta(data.tool, {
+				version: data.definition.version,
+				at: record.updatedAt,
+				organisation: data.organisation?.name,
+				entry: {
+					id: record.id.slice(0, 8),
+					state: data.definition.workflow
+						? stateLabel(data.definition, record.state, locale)
+						: undefined
+				}
+			})}
+		/>
+		<!-- on paper the document head above carries title and state -->
+		<header class="record-head no-print">
 			<div class="heading">
 				<h2>{record.title}</h2>
 				{#if data.definition.workflow}

@@ -538,5 +538,13 @@
 	"rechtsstand_amended": "{law}, last amended on {date}",
 	"rechtsstand_reviewed": "legally reviewed on {date}",
 	"rechtsstand_unreviewed": "not yet legally reviewed",
-	"rechtsstand_newer": "a newer version of {date} has been imported since"
+	"rechtsstand_newer": "a newer version of {date} has been imported since",
+	"print_kind_report": "Assessment report",
+	"print_kind_entry": "Case sheet",
+	"print_organisation": "Organisation",
+	"print_tool": "Tool",
+	"print_version": "version {version}",
+	"print_review": "Legal review",
+	"print_entry": "Entry",
+	"print_created": "Created on"
 }

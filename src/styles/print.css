@@ -1,6 +1,7 @@
 /**
- * A verdict or register should print like a memo: no chrome, black on white,
- * URL and date in the footer.
+ * Print primitives: black on white, no chrome, cards as plain paper, no
+ * controls, page numbers in the margin. Printed documents add their head
+ * with PrintDocument.svelte.
  */
 @media print {
 	body {
@@ -19,7 +20,51 @@
 		}
 	}
 
+	/* page numbers in the bottom margin; the document head carries the rest */
 	@page {
-		margin: 20mm;
+		margin: 18mm 18mm 20mm;
+
+		@bottom-left {
+			content: 'Daily';
+			font: 8pt sans-serif;
+		}
+
+		@bottom-right {
+			content: counter(page) ' / ' counter(pages);
+			font: 8pt sans-serif;
+		}
+	}
+
+	/* a printed document brings its own head; the web page header steps aside */
+	body:has([data-print-frame]) .page-header {
+		display: none;
+	}
+
+	/* screen surfaces become plain paper */
+	.card {
+		padding: 0;
+		background: none;
+		border: 0;
+		border-radius: 0;
+		box-shadow: none;
+	}
+
+	/* nothing to click or type on paper */
+	button,
+	input,
+	select,
+	textarea {
+		display: none !important;
+	}
+
+	/* a heading never ends a page, a table row never splits */
+	h1,
+	h2,
+	h3 {
+		break-after: avoid;
+	}
+
+	tr {
+		break-inside: avoid;
 	}
 }
