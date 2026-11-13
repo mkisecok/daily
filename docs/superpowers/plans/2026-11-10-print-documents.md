@@ -159,4 +159,11 @@ State on 13 Nov 2026: step 1 is built.
 - Step 3, second half: a whole register prints as a Registerauszug (`PrintRegister.svelte`): the
   document head with the number of entries, an overview table (no., name, the list columns, state,
   last change), then one Vorgangsblatt per entry on its own page, with its result. Two VVT entries
-  make 5 pages. Step 3 is done; next is step 4 (Bericht, Fristenliste, Notiz, Norm).
+  make 5 pages. Step 3 is done.
+- Step 4: the deadlines page, notes, law articles and reports print in the frame ("Fristenliste",
+  "Notiz", "Normtext", "Bericht"). Deadlines print as a table with dates and "überfällig" written
+  out (`PrintDeadlines.svelte`, also in the report); the deadlines page and law articles got a
+  print button; the notes intro, the report cover and the preview-only sentence are `no-print`;
+  folded lists print open without their triangle. On screen nothing moved (38 measurements, 0 px).
+  Other pages lose their controls on paper through the primitives; the catalogue and tool start
+  pages wait for the Werkzeugsteckbrief (step 6). Next is step 5, the tool-specific documents.

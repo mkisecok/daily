@@ -7,8 +7,10 @@
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import type { ReportKind } from '#lib/reports/compose.js';
 	import DeadlineList from '#lib/records/ui/DeadlineList.svelte';
+	import PrintDeadlines from '#lib/records/ui/PrintDeadlines.svelte';
 	import { text } from '#lib/tools/i18n.js';
 	import PageHeader from '#lib/ui/PageHeader.svelte';
+	import PrintDocument from '#lib/ui/PrintDocument.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -85,7 +87,22 @@
 </form>
 
 <article class="report">
-	<header class="cover">
+	<PrintDocument
+		kind={m.print_kind_report_period()}
+		title={KIND_LABEL[data.kind]()}
+		rows={[
+			...(data.organisation
+				? [{ label: m.print_organisation(), value: data.organisation.name }]
+				: []),
+			{
+				label: m.print_period(),
+				value: `${day(data.period.from)} – ${day(data.period.to)}`
+			},
+			{ label: m.print_created(), value: formatShortDate(new Date().toISOString(), locale) }
+		]}
+	/>
+	<!-- on paper the document head above takes the place of the cover -->
+	<header class="cover no-print">
 		<p class="eyebrow">Daily</p>
 		<h2>{KIND_LABEL[data.kind]()}</h2>
 		<p>{m.reports_period({ from: day(data.period.from), to: day(data.period.to) })}</p>
@@ -157,7 +174,7 @@
 		<section>
 			<h3>{m.reports_runs()}</h3>
 			{#if data.preview}
-				<p class="quiet-text">{m.reports_runs_preview()}</p>
+				<p class="quiet-text no-print">{m.reports_runs_preview()}</p>
 			{:else if report.runs.length === 0}
 				<p class="quiet-text">{m.reports_empty()}</p>
 			{:else}
@@ -182,19 +199,25 @@
 		{#if report.deadlines.overdue.length > 0}
 			<section>
 				<h3>{m.reports_deadlines_overdue()}</h3>
-				<DeadlineList
-					deadlines={report.deadlines.overdue}
-					hrefFor={(d) => recordPath(d.toolSlug, d.recordId)}
-				/>
+				<div class="no-print">
+					<DeadlineList
+						deadlines={report.deadlines.overdue}
+						hrefFor={(d) => recordPath(d.toolSlug, d.recordId)}
+					/>
+				</div>
+				<PrintDeadlines deadlines={report.deadlines.overdue} />
 			</section>
 		{/if}
 		{#if report.deadlines.upcoming.length > 0}
 			<section>
 				<h3>{m.reports_deadlines_upcoming()}</h3>
-				<DeadlineList
-					deadlines={report.deadlines.upcoming}
-					hrefFor={(d) => recordPath(d.toolSlug, d.recordId)}
-				/>
+				<div class="no-print">
+					<DeadlineList
+						deadlines={report.deadlines.upcoming}
+						hrefFor={(d) => recordPath(d.toolSlug, d.recordId)}
+					/>
+				</div>
+				<PrintDeadlines deadlines={report.deadlines.upcoming} />
 			</section>
 		{/if}
 	{/if}

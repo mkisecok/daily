@@ -146,3 +146,69 @@ test('print: a register prints as a Registerauszug with one sheet per entry', as
 	);
 	expect(await interactive.count(), 'controls on paper').toBe(0);
 });
+
+/** the frame is there and nothing to click is visible */
+async function printsAsDocument(page: Page, kind: string) {
+	await page.emulateMedia({ media: 'print' });
+	await expect(page.locator('[data-print-frame]')).toContainText(kind);
+	const interactive = page.locator(
+		'button:visible, input:visible, select:visible, textarea:visible, nav:visible, .page-header:visible, summary:visible'
+	);
+	expect(await interactive.count(), 'controls on paper').toBe(0);
+}
+
+test('print: deadlines print as a list with dates', async ({ page }) => {
+	await page.setViewportSize({ width: A4_TEXT, height: 1000 });
+	await page.goto('werkzeuge/hinweisgebersystem/eintraege/?neu=1&beispiel=1', {
+		waitUntil: 'networkidle'
+	});
+	await pickDate(page, 'Start geplant am', '2027-02-01');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+	await page.goto('fristen', { waitUntil: 'networkidle' });
+	await expect(page.getByRole('button', { name: 'Drucken' })).toBeVisible();
+	await printsAsDocument(page, 'Fristenliste');
+	const table = page.locator('.print-body table');
+	await expect(table).toContainText('01.02.2027');
+	await expect(table).toContainText('Hinweisgebersystem einrichten');
+	await expect(page.locator('.print-body')).not.toContainText(/\b(in|vor) \d+ (Tag|Woche|Monat)/);
+
+	// the report lists the same deadline, also with its date only
+	await page.emulateMedia({ media: 'screen' });
+	await page.goto('berichte', { waitUntil: 'networkidle' });
+	await page.emulateMedia({ media: 'print' });
+	const report = page.locator('.report');
+	await expect(report.locator('.print-table')).toContainText('01.02.2027');
+	expect(
+		await report
+			.locator(':visible')
+			.evaluateAll((els) =>
+				els.some(
+					(el) =>
+						/\b(in|vor) \d+ (Tag|Woche|Monat)/.test(el.textContent ?? '') &&
+						el.children.length === 0
+				)
+			)
+	).toBe(false);
+});
+
+test('print: a note, a law article and a report print in the frame', async ({ page }) => {
+	await page.setViewportSize({ width: A4_TEXT, height: 1000 });
+	await page.goto('notizen?neu=1', { waitUntil: 'networkidle' });
+	await page.getByLabel('Titel').fill('Druck-Notiz');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page.locator('.note')).toBeVisible();
+	await printsAsDocument(page, 'Notiz');
+	await expect(page.locator('[data-print-frame] h1')).toHaveText('Druck-Notiz');
+
+	await page.emulateMedia({ media: 'screen' });
+	await page.goto('normen/dsgvo/art-33', { waitUntil: 'networkidle' });
+	await expect(page.getByRole('button', { name: 'Drucken' })).toBeVisible();
+	await printsAsDocument(page, 'Normtext');
+	await expect(page.locator('[data-print-frame]')).toContainText('Abgerufen am');
+
+	await page.emulateMedia({ media: 'screen' });
+	await page.goto('berichte', { waitUntil: 'networkidle' });
+	await printsAsDocument(page, 'Bericht');
+	await expect(page.locator('.cover')).toBeHidden();
+});

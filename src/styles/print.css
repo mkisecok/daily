@@ -57,6 +57,19 @@
 		display: none !important;
 	}
 
+	/* a folded part prints open, without its disclosure triangle */
+	details::details-content {
+		content-visibility: visible;
+	}
+
+	summary {
+		list-style: none;
+
+		&::-webkit-details-marker {
+			display: none;
+		}
+	}
+
 	/* a heading never ends a page, a table row never splits */
 	h1,
 	h2,
