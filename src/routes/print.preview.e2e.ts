@@ -6,11 +6,18 @@ import { choose, pickDate } from './e2e-helpers.js';
 
 /**
  * every tool prints as a document: the frame is there, nothing to click is
- * visible and nothing is wider than the A4 text area. Utilities get their
+ * visible, nothing is wider than the A4 text area, and a questionnaire's
+ * Prüfbericht stays short. Utilities get their
  * documents in a later step of the print plan; until then they are listed
  * here, and the list is the progress bar.
  */
 const PENDING = new Set(['repo-check', 'guardrail-test', 'pseudonymisierer']);
+
+/**
+ * at most this many pages for a Prüfbericht answered "no" throughout; an
+ * AIMS gap analysis answered so lists 19 gaps with 20 remedies
+ */
+const REPORT_PAGES: Record<string, number> = { 'aims-gap': 4 };
 
 /** the text width of A4 with 18 mm margins, in CSS pixels */
 const A4_TEXT = Math.floor(((210 - 36) / 25.4) * 96);
@@ -95,6 +102,12 @@ for (const tool of tools.filter((t) => t.status !== 'planned' && !PENDING.has(t.
 				.slice(0, 5);
 		}, A4_TEXT);
 		expect(tooWide, 'wider than the A4 text area').toEqual([]);
+
+		const pdf = await page.pdf({ format: 'A4', preferCSSPageSize: true });
+		const pages = pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g)?.length ?? 0;
+		if (tool.shape === 'questionnaire') {
+			expect(pages, 'pages of the Prüfbericht').toBeLessThanOrEqual(REPORT_PAGES[tool.slug] ?? 2);
+		}
 	});
 }
 

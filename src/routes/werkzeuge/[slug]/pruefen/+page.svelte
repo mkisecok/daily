@@ -18,6 +18,7 @@
 	import Verdict from '#lib/tools/_shared/Verdict.svelte';
 	import { printMeta } from '#lib/print/meta.js';
 	import PrintDocument from '#lib/ui/PrintDocument.svelte';
+	import PrintReport from '#lib/tools/_shared/PrintReport.svelte';
 	import NextSteps from '#lib/tools/_shared/NextSteps.svelte';
 	import { resultDashboards } from '#lib/tools/dashboards.js';
 	import AssessmentHandoff from '#lib/records/ui/AssessmentHandoff.svelte';
@@ -139,34 +140,45 @@
 			organisation: data.organisation?.name
 		})}
 	/>
-	{#if Dashboard}
-		<div class="result-pair">
-			<Dashboard {result} />
+	<PrintReport
+		{result}
+		tool={data.tool}
+		answers={rows
+			.filter(({ question }) => answers[question.id] !== undefined)
+			.map(({ question, number }) => ({ question, number, answer: answers[question.id] }))}
+	/>
+
+	<!-- on paper the Prüfbericht above takes the place of the screen result -->
+	<div class="no-print">
+		{#if Dashboard}
+			<div class="result-pair">
+				<Dashboard {result} />
+				<Verdict {result} tool={data.tool} />
+			</div>
+		{:else}
 			<Verdict {result} tool={data.tool} />
-		</div>
-	{:else}
-		<Verdict {result} tool={data.tool} />
-	{/if}
+		{/if}
 
-	<NextSteps tool={data.tool.slug} {result} />
+		<NextSteps tool={data.tool.slug} {result} />
 
-	<section class="answers card">
-		<h2>{m.run_answers()}</h2>
-		<ol>
-			{#each rows.filter(({ question }) => answers[question.id] !== undefined) as { question, number } (question.id)}
-				<li>
-					<span class="number">{number}.</span>
-					<span class="question">{text(question.text)}</span>
-					<span class="answer badge" data-answer={answers[question.id]}>
-						{answerLabel[answers[question.id]]?.() ?? '—'}
-					</span>
-					{#if question.cite}<span class="chip"><Citation basis={question.cite} /></span>{/if}
-				</li>
-			{/each}
-		</ol>
-	</section>
+		<section class="answers card">
+			<h2>{m.run_answers()}</h2>
+			<ol>
+				{#each rows.filter(({ question }) => answers[question.id] !== undefined) as { question, number } (question.id)}
+					<li>
+						<span class="number">{number}.</span>
+						<span class="question">{text(question.text)}</span>
+						<span class="answer badge" data-answer={answers[question.id]}>
+							{answerLabel[answers[question.id]]?.() ?? '—'}
+						</span>
+						{#if question.cite}<span class="chip"><Citation basis={question.cite} /></span>{/if}
+					</li>
+				{/each}
+			</ol>
+		</section>
 
-	<p class="note">{m.footer_disclaimer()} {m.run_disclaimer()} {m.check_not_saved()}</p>
+		<p class="note">{m.footer_disclaimer()} {m.run_disclaimer()} {m.check_not_saved()}</p>
+	</div>
 
 	<div class="toolbar actions no-print">
 		<button type="button" onclick={() => window.print()}>{m.run_print()}</button>

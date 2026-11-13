@@ -8,6 +8,9 @@
 	import ToolHeader from '#lib/tools/_shared/ToolHeader.svelte';
 	import Verdict from '#lib/tools/_shared/Verdict.svelte';
 	import NextSteps from '#lib/tools/_shared/NextSteps.svelte';
+	import PrintReport from '#lib/tools/_shared/PrintReport.svelte';
+	import { printMeta } from '#lib/print/meta.js';
+	import PrintDocument from '#lib/ui/PrintDocument.svelte';
 	import { resultDashboards } from '#lib/tools/dashboards.js';
 	import type { PageProps } from './$types';
 
@@ -43,42 +46,58 @@
 
 <ToolHeader tool={data.tool} />
 
-<p class="meta">
-	<span>{formatLongDate(data.run.createdAt, data.locale)}</span>
-	<span class="sep">·</span>
-	<span>{data.user.displayName}</span>
-	<span class="sep">·</span>
-	<span>{m.run_catalog_version()} {data.run.catalogVersion}</span>
-</p>
+<PrintDocument
+	kind={m.print_kind_report()}
+	title={text(data.tool.name)}
+	rows={printMeta(data.tool, {
+		version: data.run.catalogVersion,
+		at: data.run.createdAt,
+		organisation: data.organisation?.name,
+		lawAsOf: data.run.result.lawAsOf,
+		by: data.user.displayName
+	})}
+/>
+<PrintReport result={data.run.result} tool={data.tool} answers={rows} />
 
-{#if Dashboard}
-	<div class="result-pair">
-		<Dashboard result={data.run.result} />
+<!-- on paper the Prüfbericht above takes the place of the screen result -->
+<div class="no-print">
+	<p class="meta">
+		<span>{formatLongDate(data.run.createdAt, data.locale)}</span>
+		<span class="sep">·</span>
+		<span>{data.user.displayName}</span>
+		<span class="sep">·</span>
+		<span>{m.run_catalog_version()} {data.run.catalogVersion}</span>
+	</p>
+
+	{#if Dashboard}
+		<div class="result-pair">
+			<Dashboard result={data.run.result} />
+			<Verdict result={data.run.result} tool={data.tool} at={data.run.createdAt} />
+		</div>
+	{:else}
 		<Verdict result={data.run.result} tool={data.tool} at={data.run.createdAt} />
-	</div>
-{:else}
-	<Verdict result={data.run.result} tool={data.tool} at={data.run.createdAt} />
-{/if}
+	{/if}
 
-<NextSteps tool={data.tool.slug} result={data.run.result} />
+	<NextSteps tool={data.tool.slug} result={data.run.result} />
 
-<section class="answers card">
-	<h2>{m.run_answers()}</h2>
-	<ol>
-		{#each rows as { question, number, answer } (question.id)}
-			<li>
-				<span class="number">{number}.</span>
-				<span class="question">{text(question.text)}</span>
-				<span class="answer badge" data-answer={answer}>
-					{answerLabel[answer]?.() ?? '—'}
-				</span>
-				{#if question.cite}<span class="chip"><Citation basis={question.cite} /></span>{/if}
-			</li>
-		{/each}
-	</ol>
-</section>
+	<section class="answers card">
+		<h2>{m.run_answers()}</h2>
+		<ol>
+			{#each rows as { question, number, answer } (question.id)}
+				<li>
+					<span class="number">{number}.</span>
+					<span class="question">{text(question.text)}</span>
+					<span class="answer badge" data-answer={answer}>
+						{answerLabel[answer]?.() ?? '—'}
+					</span>
+					{#if question.cite}<span class="chip"><Citation basis={question.cite} /></span>{/if}
+				</li>
+			{/each}
+		</ol>
+	</section>
 
-<p class="disclaimer">{m.footer_disclaimer()} {m.run_disclaimer()}</p>
+	<p class="disclaimer">{m.footer_disclaimer()} {m.run_disclaimer()}</p>
+</div>
 
 <div class="toolbar actions no-print">
 	<button type="button" onclick={() => window.print()}>{m.run_print()}</button>
