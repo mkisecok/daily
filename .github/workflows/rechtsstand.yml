@@ -3,7 +3,7 @@ name: Rechtsstand
 # Weekly check whether the committed law texts are still the versions in
 # force (pnpm normen:check). On a new or announced version it opens one
 # issue, or comments on the open one, with the report and the tools that
-# cite the law. A source that cannot be read fails the run without an issue.
+# cite the law. A source that cannot be read gives a warning, no issue.
 # It never imports or changes the data: legal content always gets a human
 # review.
 
@@ -70,9 +70,11 @@ jobs:
             gh issue create --title "$title" --body-file report.md
           fi
 
-      # a source that could not be read fails the run after the report is out
-      - name: Fail when a source could not be read
+      # gesetze-im-internet.de refuses GitHub-hosted runners at times; a
+      # warning on the run, not a failure every week
+      - name: Warn when a source could not be read
         if: steps.check.outputs.status == '2'
         run: |
-          echo "A source could not be read; see the report above."
-          exit 1
+          grep 'Nicht geprüft' report.md | sed 's/^- //; s/\*\*//g' | while read -r line; do
+            echo "::warning title=Rechtsstand::$line"
+          done
