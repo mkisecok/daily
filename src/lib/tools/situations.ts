@@ -109,6 +109,12 @@ export const SITUATIONS: Situation[] = [
 		tool: 'chatbot'
 	},
 	{
+		id: 'kauf',
+		label: L('Ein Unternehmen wird gekauft oder verkauft', 'A company is bought or sold'),
+		icon: 'briefcase',
+		tool: 'unternehmenskauf'
+	},
+	{
 		id: 'drittland',
 		label: L('Daten gehen in ein Drittland', 'Data goes to a third country'),
 		icon: 'world',

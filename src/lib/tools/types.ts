@@ -27,6 +27,7 @@ export type Law =
 	| 'Data Act'
 	| 'AGG'
 	| 'ArbGG'
+	| 'BGB'
 	| 'KI-MIG'
 	| 'EU-Kommission'
 	| 'BSI';
