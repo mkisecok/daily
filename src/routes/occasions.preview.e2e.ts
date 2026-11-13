@@ -417,3 +417,19 @@ test('preview: a whistleblowing office shows the deadline and anonymity gaps', a
 	await expect(page.locator('.verdict')).toContainText('Eingang spätestens nach sieben Tagen');
 	await expect(page.locator('.verdict')).toContainText('DSFA-Schwellwertanalyse');
 });
+
+test('preview: training a model on tickets shows the purpose and memorising gaps', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/modelltraining/eintraege/?neu=1&beispiel=1', {
+		waitUntil: 'networkidle'
+	});
+	await expect(page.locator('#sec-gpai')).toContainText('Entfällt für den gewählten Umfang.');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await expect(page.locator('.verdict .headline')).toHaveText('Handlungsbedarf vor der Freigabe.');
+	await expect(page.locator('.verdict')).toContainText('Trainingsdaten: Zweckänderung geprüft');
+	await expect(page.locator('.verdict')).toContainText('Interessenabwägung');
+});
