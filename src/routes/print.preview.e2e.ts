@@ -124,3 +124,25 @@ test('print: the pending list holds only tools that exist', () => {
 	const slugs = new Set(tools.map((t) => t.slug));
 	expect([...PENDING].filter((slug) => !slugs.has(slug))).toEqual([]);
 });
+
+test('print: a register prints as a Registerauszug with one sheet per entry', async ({ page }) => {
+	await page.setViewportSize({ width: A4_TEXT, height: 1000 });
+	for (const name of ['Erste Verarbeitung', 'Zweite Verarbeitung']) {
+		await page.goto('werkzeuge/vvt/eintraege/?neu=1&beispiel=1', { waitUntil: 'networkidle' });
+		await page.locator('#field-bezeichnung').fill(name);
+		await page.getByRole('button', { name: 'Speichern' }).click();
+		await expect(page).toHaveURL(/eintrag=/);
+	}
+	await page.goto('werkzeuge/vvt/eintraege/', { waitUntil: 'networkidle' });
+	await page.emulateMedia({ media: 'print' });
+
+	const register = page.locator('.print-register');
+	await expect(register.locator('[data-print-frame]')).toContainText('Registerauszug');
+	await expect(register.locator('.overview tbody tr')).toHaveCount(2);
+	await expect(register.locator('.sheet')).toHaveCount(2);
+	await expect(register.locator('.sheet h2.heading').first()).toContainText('1.');
+	const interactive = page.locator(
+		'button:visible, input:visible, select:visible, textarea:visible, nav:visible, .page-header:visible'
+	);
+	expect(await interactive.count(), 'controls on paper').toBe(0);
+});

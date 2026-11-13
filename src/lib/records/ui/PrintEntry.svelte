@@ -25,7 +25,8 @@
 		deadlines = [],
 		events = [],
 		backlinks = [],
-		titles = {}
+		titles = {},
+		heading = undefined
 	}: {
 		definition: RecordToolDefinition;
 		record: StoredRecord;
@@ -34,6 +35,8 @@
 		events?: RecordEvent[];
 		backlinks?: Backlinks;
 		titles?: Titles;
+		/** the entry's own title, when several entries share one document head */
+		heading?: string;
 	} = $props();
 
 	const locale = getLocale();
@@ -72,6 +75,7 @@
 </script>
 
 <section class="print-body print-only">
+	{#if heading}<h2 class="heading">{heading}</h2>{/if}
 	{#if definition.workflow}
 		<p class="state">
 			<strong>{m.records_state()}:</strong>
@@ -166,6 +170,11 @@
 </section>
 
 <style>
+	.heading {
+		margin-top: 0;
+		font-size: 15pt;
+	}
+
 	.state {
 		margin: 0;
 	}

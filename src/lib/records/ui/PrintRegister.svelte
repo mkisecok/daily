@@ -1,122 +1,108 @@
 <!--
 	@component
-	The whole register on paper: one block per record with every field, so
-	the printout can serve as documentation (e.g. towards the authority).
-	Hidden on screen.
+	The whole register on paper, as a Registerauszug: the document head, an
+	overview table of every entry (number, name, the list columns, state,
+	last change), then one Vorgangsblatt per entry on its own page. Hidden on
+	screen.
 -->
 <script lang="ts">
-	import { formatLongDate } from '#lib/i18n/date.js';
-	import { getLocale } from '#lib/paraglide/runtime.js';
+	import { formatShortDate } from '#lib/i18n/date.js';
 	import { m } from '#lib/paraglide/messages.js';
-	import { cite, text } from '#lib/tools/i18n.js';
-	import type { Localized } from '#lib/tools/types.js';
-	import { formatCheck } from '../checks.js';
+	import { getLocale } from '#lib/paraglide/runtime.js';
+	import { printMeta } from '#lib/print/meta.js';
+	import { text } from '#lib/tools/i18n.js';
+	import type { ToolManifest } from '#lib/tools/types.js';
+	import PrintDocument from '#lib/ui/PrintDocument.svelte';
 	import { formatValue, stateLabel, type Titles } from '../format.js';
+	import type { RecordEngine, RecordToolDefinition, StoredRecord } from '../types.js';
 	import { allFields } from '../validate.js';
-	import type { RecordToolDefinition, StoredRecord } from '../types.js';
+	import PrintEntry from './PrintEntry.svelte';
 
 	let {
 		definition,
+		tool,
 		records,
-		title,
+		engine = undefined,
 		organisation = null,
-		titles = {},
-		now = new Date()
+		titles = {}
 	}: {
 		definition: RecordToolDefinition;
+		tool: ToolManifest;
 		records: StoredRecord[];
-		title: Localized;
+		/** to show each entry's result on its sheet */
+		engine?: RecordEngine;
 		/** whose register this is (Art. 30(1)(a)); unknown in the preview */
 		organisation?: string | null;
 		/** titles of referenced records by id */
 		titles?: Titles;
-		now?: Date;
 	} = $props();
 
 	const locale = getLocale();
-	const fields = $derived(allFields(definition));
+	const columns = $derived(
+		allFields(definition).filter((f) => f.listColumn && f.id !== definition.titleField)
+	);
 </script>
 
 <div class="print-only print-register">
-	<h1>{text(title)}</h1>
-	{#if organisation}<p class="organisation">
-			{m.records_print_organisation({ name: organisation })}
-		</p>{/if}
-	<p class="meta">
-		{formatLongDate(now.toISOString(), locale)} · {m.records_count({ count: records.length })}
-	</p>
+	<PrintDocument
+		kind={m.print_kind_register()}
+		title={text(tool.name)}
+		rows={[
+			...printMeta(tool, { version: definition.version, organisation }),
+			{ label: m.print_count(), value: String(records.length) }
+		]}
+	/>
+
+	<table class="print-table overview">
+		<thead>
+			<tr>
+				<th class="number">{m.print_number()}</th>
+				<th>{m.print_name()}</th>
+				{#each columns as column (column.id)}<th>{text(column.label)}</th>{/each}
+				{#if definition.workflow}<th>{m.records_state()}</th>{/if}
+				<th class="changed">{m.print_changed()}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{#each records as record, index (record.id)}
+				<tr>
+					<td class="number">{index + 1}</td>
+					<td>{record.title}</td>
+					{#each columns as column (column.id)}
+						<td>{formatValue(column, record.data[column.id], locale, titles) || '—'}</td>
+					{/each}
+					{#if definition.workflow}<td>{stateLabel(definition, record.state, locale)}</td>{/if}
+					<td class="changed">{formatShortDate(record.updatedAt, locale)}</td>
+				</tr>
+			{/each}
+		</tbody>
+	</table>
 
 	{#each records as record, index (record.id)}
-		<section class="record">
-			<h2>{index + 1}. {record.title}</h2>
-			<dl>
-				{#if definition.workflow}
-					<dt>{m.records_state()}</dt>
-					<dd>{stateLabel(definition, record.state, locale)}</dd>
-				{/if}
-				{#each definition.sections as section (section.id)}
-					{#each section.fields.filter((f) => !f.partOf && (!f.when || f.when(record.data))) as field (field.id)}
-						<dt>
-							{text(field.label)}{#if field.cite}<span class="cite">
-									({cite(field.cite)})</span
-								>{/if}
-						</dt>
-						<dd>
-							{(field.type === 'check'
-								? formatCheck(field, record.data, locale, fields)
-								: formatValue(field, record.data[field.id], locale, titles)) || '—'}
-						</dd>
-					{/each}
-				{/each}
-			</dl>
-		</section>
+		<div class="sheet">
+			<PrintEntry
+				{definition}
+				{record}
+				assessment={engine?.assess?.(record) ?? null}
+				{titles}
+				heading={`${index + 1}. ${record.title}`}
+			/>
+		</div>
 	{/each}
 </div>
 
 <style>
-	.print-register {
-		& h1 {
-			font-size: 18pt;
+	.overview {
+		font-size: 9pt;
+
+		& .changed {
+			width: 22mm;
+			white-space: nowrap;
 		}
+	}
 
-		& .organisation {
-			margin-top: 2mm;
-			font-size: 11pt;
-		}
-
-		& .meta {
-			margin-bottom: 8mm;
-			font-size: 9pt;
-		}
-
-		& .record {
-			break-inside: avoid;
-			padding: 4mm 0;
-			border-top: 1px solid #000;
-
-			& h2 {
-				font-size: 12pt;
-				margin-bottom: 2mm;
-			}
-
-			& dl {
-				display: grid;
-				grid-template-columns: 55mm 1fr;
-				gap: 1mm 5mm;
-				font-size: 9.5pt;
-
-				& dt {
-					color: #444;
-
-					& .cite {
-						font-size: 8pt;
-					}
-				}
-
-				& dd {
-					white-space: pre-line;
-				}
-			}
-		}
+	/* one Vorgangsblatt per entry, each on its own page */
+	.sheet {
+		break-before: page;
 	}
 </style>

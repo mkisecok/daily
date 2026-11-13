@@ -560,5 +560,9 @@
 	"print_due": "Fällig am",
 	"print_deadline": "Frist",
 	"print_state_step": "{state} (Schritt {step} von {total})",
-	"print_open": "Offen:"
+	"print_open": "Offen:",
+	"print_kind_register": "Registerauszug",
+	"print_count": "Einträge",
+	"print_name": "Bezeichnung",
+	"print_changed": "Geändert am"
 }

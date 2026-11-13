@@ -156,4 +156,7 @@ State on 13 Nov 2026: step 1 is built.
   nothing moved (measured, 0 px). Tool dashboards keep their own print. The test caps an entry at
   3 pages (DSFA 7, SDM cube 5, both for step 5); Standortwechsel went from 7 pages to 3, the DSFA
   from 12 to 7.
-- Still to do in step 3: the Registerauszug (overview table, then one Vorgangsblatt per entry).
+- Step 3, second half: a whole register prints as a Registerauszug (`PrintRegister.svelte`): the
+  document head with the number of entries, an overview table (no., name, the list columns, state,
+  last change), then one Vorgangsblatt per entry on its own page, with its result. Two VVT entries
+  make 5 pages. Step 3 is done; next is step 4 (Bericht, Fristenliste, Notiz, Norm).

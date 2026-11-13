@@ -560,5 +560,9 @@
 	"print_due": "Due on",
 	"print_deadline": "Deadline",
 	"print_state_step": "{state} (step {step} of {total})",
-	"print_open": "Open:"
+	"print_open": "Open:",
+	"print_kind_register": "Register extract",
+	"print_count": "Entries",
+	"print_name": "Name",
+	"print_changed": "Changed on"
 }
