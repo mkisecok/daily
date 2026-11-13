@@ -1,0 +1,73 @@
+name: Rechtsstand
+
+# Weekly check whether the committed law texts are still the versions in
+# force (pnpm normen:check). On a finding it opens one issue, or comments on
+# the open one, with the report and the tools that cite the law. It never
+# imports or changes the data: legal content always gets a human review.
+
+on:
+  schedule:
+    # Mondays 06:00 UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: rechtsstand
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Law versions
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Compile messages
+        run: pnpm i18n:compile
+
+      # exit 1: a version in force changed, 2: a source could not be read
+      - name: Check law versions
+        id: check
+        run: |
+          set +e
+          pnpm --silent normen:check --out report.md
+          echo "status=$?" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Fail when a source could not be read
+        if: steps.check.outputs.status == '2'
+        run: exit 1
+
+      - name: Open or update the issue
+        if: steps.check.outputs.status != '2'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if grep -q '^Alle Gesetzestexte sind aktuell' report.md; then
+            echo "Nothing to report."
+            exit 0
+          fi
+          title='Rechtsstand: neue Fassung prüfen'
+          number=$(gh issue list --state open --search "\"$title\" in:title" --json number --jq '.[0].number')
+          if [ -n "$number" ]; then
+            gh issue comment "$number" --body-file report.md
+          else
+            gh issue create --title "$title" --body-file report.md
+          fi

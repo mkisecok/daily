@@ -24,7 +24,8 @@ describe('law versions', () => {
 		expect(
 			versionOfSource({
 				url: 'https://www.gesetze-im-internet.de/bdsg_2018/',
-				version: 'Zuletzt geändert durch Art. 3 G v. 3.7.2026 I Nr. 199'
+				version:
+					'Zuletzt geändert durch Art. 3 G v. 12.5.2026 I Nr. 139; Änderung durch Art. 3 G v. 3.7.2026 I Nr. 199 textlich nachgewiesen'
 			})
 		).toEqual({ kind: 'amended', asOf: '2026-07-03' });
 		expect(versionOfSource({ url: 'https://example.org', version: 'Fassung' })).toBeNull();
