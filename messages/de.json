@@ -546,5 +546,13 @@
 	"print_version": "Version {version}",
 	"print_review": "Juristische Prüfung",
 	"print_entry": "Eintrag",
-	"print_created": "Erstellt am"
+	"print_created": "Erstellt am",
+	"print_number": "Nr.",
+	"print_finding": "Feststellung",
+	"print_basis": "Rechtsgrundlage",
+	"print_question": "Frage",
+	"print_answer": "Antwort",
+	"print_sign_place": "Ort, Datum",
+	"print_sign_name": "Name, Funktion, Unterschrift",
+	"print_by": "Erstellt von"
 }

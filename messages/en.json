@@ -546,5 +546,13 @@
 	"print_version": "version {version}",
 	"print_review": "Legal review",
 	"print_entry": "Entry",
-	"print_created": "Created on"
+	"print_created": "Created on",
+	"print_number": "No.",
+	"print_finding": "Finding",
+	"print_basis": "Legal basis",
+	"print_question": "Question",
+	"print_answer": "Answer",
+	"print_sign_place": "Place, date",
+	"print_sign_name": "Name, role, signature",
+	"print_by": "Created by"
 }

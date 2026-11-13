@@ -23,6 +23,8 @@ export function printMeta(
 		/** the law versions stored with a saved result */
 		lawAsOf?: LawAsOf[];
 		entry?: { id: string; state?: string };
+		/** who made the result or entry, where known */
+		by?: string;
 	}
 ): PrintRow[] {
 	const locale = getLocale();
@@ -51,5 +53,6 @@ export function printMeta(
 		});
 	}
 	rows.push({ label: m.print_created(), value: date(options.at ?? new Date().toISOString()) });
+	if (options.by) rows.push({ label: m.print_by(), value: options.by });
 	return rows;
 }

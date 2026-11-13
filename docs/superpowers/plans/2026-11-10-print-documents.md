@@ -141,5 +141,12 @@ State on 13 Nov 2026: step 1 is built.
   navigation is visible, nothing is wider than the A4 text area (a part on its own named page, like
   the landscape DSFA dashboard, is measured there). Pending: Repo-Check, Guardrail-Test and
   Pseudonymisierer.
-- Still the web look on paper, for steps 2 and 3: the coloured scale and the risk pyramid, the
-  workflow stepper, and the length (a questionnaire result is 8 pages).
+- Step 2 is built too. On paper a questionnaire result (live, and a saved run on the server) is a
+  Prüfbericht (`PrintReport.svelte`): the result in words with its level written out, reasons as a
+  table (no., finding, legal basis), duties and notes as a checklist, answers as a table, sources
+  with the Rechtsstand, and lines for place, date, name and signature. The screen result, its
+  dashboard and the next steps are `no-print`. The saved run's meta table adds who made it. The
+  test caps a Prüfbericht answered "no" throughout at 2 pages (the AIMS gap analysis at 4: 19 gaps
+  with 20 remedies); the Risikoklassifizierung went from 8 pages to 2.
+- Still the web look on paper, for step 3: an entry's result with its coloured scale, the workflow
+  stepper, and the length of entries (up to 12 pages for a DSFA).
