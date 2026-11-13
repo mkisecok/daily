@@ -33,6 +33,7 @@
 	import StatusBadge from '#lib/tools/_shared/StatusBadge.svelte';
 	import Verdict from '#lib/tools/_shared/Verdict.svelte';
 	import { recordDashboards } from '#lib/tools/dashboards.js';
+	import { registerPrints } from '#lib/tools/prints.js';
 	import ConfirmDialog from '#lib/ui/ConfirmDialog.svelte';
 	import Icon from '#lib/ui/Icon.svelte';
 	import Select from '#lib/ui/form/Select.svelte';
@@ -58,6 +59,8 @@
 		}))
 	);
 	const Dashboard = $derived(recordDashboards[data.definition.slug]);
+	// a register with a document of its own prints that instead of the Registerauszug
+	const RegisterPrint = $derived(registerPrints[data.definition.slug] ?? PrintRegister);
 	const assessment = $derived(detail ? (engine?.assess?.(detail.record) ?? null) : null);
 
 	const listPath = $derived(localized(`/werkzeuge/${slug}/eintraege`));
@@ -601,7 +604,7 @@
 		{/if}
 	</section>
 	{#if shown.length > 0}
-		<PrintRegister
+		<RegisterPrint
 			definition={data.definition}
 			tool={data.tool}
 			records={shown}

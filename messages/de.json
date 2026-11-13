@@ -574,5 +574,13 @@
 	"print_retrieved": "Abgerufen am",
 	"print_source": "Quelle",
 	"print_kind_report_period": "Bericht",
-	"print_period": "Zeitraum"
+	"print_period": "Zeitraum",
+	"print_kind_vvt": "Verzeichnis nach Art. 30 DSGVO",
+	"print_vvt_controller_details": "Angaben zum Verantwortlichen (Art. 30 Abs. 1 lit. a)",
+	"print_vvt_controller_name": "Name und Kontaktdaten des Verantwortlichen",
+	"print_vvt_representative": "Vertreter (Art. 27), falls benannt",
+	"print_vvt_dpo": "Datenschutzbeauftragter, Kontaktdaten",
+	"print_vvt_controller": "Verantwortlicher (Art. 30 Abs. 1)",
+	"print_vvt_processor": "Auftragsverarbeiter (Art. 30 Abs. 2)",
+	"print_missing": "fehlt"
 }

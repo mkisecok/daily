@@ -574,5 +574,13 @@
 	"print_retrieved": "Retrieved on",
 	"print_source": "Source",
 	"print_kind_report_period": "Report",
-	"print_period": "Period"
+	"print_period": "Period",
+	"print_kind_vvt": "Record under Art. 30 GDPR",
+	"print_vvt_controller_details": "Controller details (Art. 30(1)(a))",
+	"print_vvt_controller_name": "Name and contact details of the controller",
+	"print_vvt_representative": "Representative (Art. 27), if designated",
+	"print_vvt_dpo": "Data protection officer, contact details",
+	"print_vvt_controller": "Controller (Art. 30(1))",
+	"print_vvt_processor": "Processor (Art. 30(2))",
+	"print_missing": "missing"
 }
