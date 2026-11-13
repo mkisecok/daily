@@ -40,6 +40,7 @@ import { schliessung } from './schliessung/tool.js';
 import { veranstaltung } from './veranstaltung/tool.js';
 import { hinweisgebersystem } from './hinweisgebersystem/tool.js';
 import { modelltraining } from './modelltraining/tool.js';
+import { auditvorbereitung } from './auditvorbereitung/tool.js';
 import { loeschkonzept } from './loeschkonzept/tool.js';
 import { schulungsnachweis } from './schulungsnachweis/tool.js';
 import { kiKompetenz } from './ki-kompetenz/tool.js';
@@ -92,6 +93,7 @@ export const tools: readonly ToolManifest[] = [
 	veranstaltung.manifest,
 	hinweisgebersystem.manifest,
 	modelltraining.manifest,
+	auditvorbereitung.manifest,
 	loeschkonzept.manifest,
 	schulungsnachweis.manifest,
 	kiDsgvoSchnittstelle.manifest,
@@ -213,6 +215,7 @@ const recordTools: Record<string, RecordTool> = {
 	[veranstaltung.manifest.slug]: veranstaltung,
 	[hinweisgebersystem.manifest.slug]: hinweisgebersystem,
 	[modelltraining.manifest.slug]: modelltraining,
+	[auditvorbereitung.manifest.slug]: auditvorbereitung,
 	[avvPruefung.manifest.slug]: avvPruefung,
 	[vvt.manifest.slug]: vvt,
 	[datenpanne.manifest.slug]: datenpanne,

@@ -142,6 +142,12 @@ export const SITUATIONS: Situation[] = [
 		tool: 'modelltraining'
 	},
 	{
+		id: 'auditvorbereitung',
+		label: L('Wir werden geprüft oder zertifiziert', 'We are being audited or certified'),
+		icon: 'zoom-check',
+		tool: 'auditvorbereitung'
+	},
+	{
 		id: 'drittland',
 		label: L('Daten gehen in ein Drittland', 'Data goes to a third country'),
 		icon: 'world',

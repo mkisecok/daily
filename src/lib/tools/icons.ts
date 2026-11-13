@@ -36,6 +36,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	veranstaltung: 'camera',
 	hinweisgebersystem: 'message-report',
 	modelltraining: 'brain',
+	auditvorbereitung: 'zoom-check',
 	loeschkonzept: 'trash-x',
 	schulungsnachweis: 'school',
 	'ki-dsgvo-schnittstelle': 'arrows-exchange',
