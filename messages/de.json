@@ -584,5 +584,14 @@
 	"print_vvt_processor": "Auftragsverarbeiter (Art. 30 Abs. 2)",
 	"print_missing": "fehlt",
 	"print_kind_breach": "Meldung nach Art. 33 DSGVO",
-	"print_kind_incident": "Meldung nach Art. 73 KI-VO"
+	"print_kind_incident": "Meldung nach Art. 73 KI-VO",
+	"today_title": "Heute",
+	"today_due": "Überfällig und diese Woche fällig",
+	"today_due_none": "Nichts ist überfällig, nichts wird diese Woche fällig.",
+	"today_due_later": "Später fällig: {count}",
+	"today_cases": "Offene Vorgänge",
+	"today_cases_none": "Keine offene Anfrage, Datenpanne oder Feststellung.",
+	"today_cases_more": "und {count} weitere",
+	"today_quick": "Neu anlegen",
+	"today_loading": "Wird geladen …"
 }

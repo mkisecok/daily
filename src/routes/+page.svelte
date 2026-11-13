@@ -7,6 +7,7 @@
 	import Icon from '#lib/ui/Icon.svelte';
 	import type { IconName } from '#lib/ui/icons.js';
 	import PageHeader from '#lib/ui/PageHeader.svelte';
+	import Today from '#lib/workspace/Today.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -86,6 +87,8 @@
 		</p>
 	{/snippet}
 </PageHeader>
+
+{#if withRecords}<Today />{/if}
 
 <section class="areas" aria-labelledby="areas-title">
 	<h2 id="areas-title" class="section-title">{m.command_areas()}</h2>

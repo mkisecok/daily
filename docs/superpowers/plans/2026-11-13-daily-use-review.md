@@ -30,8 +30,7 @@ next; removals and merges wait for the owner's decision.
 1. **The workspace is not a workspace.** The start page says "Der tägliche Arbeitsplatz", but shows
    a claim, an intro and links to areas. Whoever opens Daily in the morning does not see what is due
    today, which Auskunft is open, which breach is running or which finding is overdue. Deadlines
-   exist, but on a page of their own; open entries per tool only on that tool's page. It also says
-   "Nr. 32" while there are 50 tools.
+   exist, but on a page of their own; open entries per tool only on that tool's page.
 2. **Effort is inverted.** The tools used every week have no example (Betroffenenanfrage,
    Datenpanne, AVV-Prüfung, KI-Register, Schulungsnachweis, Feststellungen, Löschkonzept,
    TOM-Katalog, DSFA, Auditprogramm). The rare occasions all have one (Unternehmenskauf,
@@ -108,6 +107,18 @@ TOM-Katalog's seven goals); KI und DSGVO (its questions live in KI-Tool einführ
 trainieren; the attached checks keep working).
 
 Result: from 50 tools to 42 (merges save 6, removals 2), each with a task behind it.
+
+## 3a. Owner's decisions (13 Nov 2026)
+
+- All five merges are approved, and "KI und DSGVO" leaves the catalogue.
+- The SDM-Würfel is not removed. It moves to a new area **Schulung** (learning), which gets its own
+  plan after the other improvements: learning content for employees, so that they too protect
+  personal data, for example training presentations.
+- Order: improve the rest first, then plan Schulung.
+
+Correction: an earlier version of this review said the start page shows "Nr. 32" while there are
+50 tools. That number is the issue of the day, counted from the first day of publication, not the
+number of tools.
 
 ## 4. Order of work
 
