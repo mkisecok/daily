@@ -365,3 +365,25 @@ test('preview: an asset deal shows the DSK case groups and flags a personal data
 	await expect(page.locator('.verdict')).toContainText('Due Diligence: Angaben zu Kunden');
 	await expect(page.locator('.verdict')).toContainText('Datum der Unterrichtung');
 });
+
+test('preview: winding up a business adds custody after liquidation', async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/schliessung/eintraege/?neu=1&beispiel=1', {
+		waitUntil: 'networkidle'
+	});
+	await expect(page.locator('#sec-liquidation')).toContainText(
+		'Entfällt für den gewählten Umfang.'
+	);
+	await page.getByLabel('Was schließt', { exact: true }).click();
+	await page
+		.getByRole('option', { name: 'Das Unternehmen wird aufgegeben oder liquidiert' })
+		.click();
+	await expect(
+		page.locator('.check', { hasText: 'zehn Jahre einem Gesellschafter' })
+	).toBeVisible();
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await expect(page.locator('.verdict .headline')).toHaveText('Noch nicht abschließbar.');
+	await expect(page.locator('.verdict')).toContainText('§ 74 Abs. 2 GmbHG');
+});

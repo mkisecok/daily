@@ -32,6 +32,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	'ki-personal': 'users',
 	chatbot: 'message-chatbot',
 	unternehmenskauf: 'briefcase',
+	schliessung: 'door-exit',
 	loeschkonzept: 'trash-x',
 	schulungsnachweis: 'school',
 	'ki-dsgvo-schnittstelle': 'arrows-exchange',
