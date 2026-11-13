@@ -34,6 +34,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	unternehmenskauf: 'briefcase',
 	schliessung: 'door-exit',
 	veranstaltung: 'camera',
+	hinweisgebersystem: 'message-report',
 	loeschkonzept: 'trash-x',
 	schulungsnachweis: 'school',
 	'ki-dsgvo-schnittstelle': 'arrows-exchange',

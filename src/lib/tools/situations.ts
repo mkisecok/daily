@@ -127,6 +127,15 @@ export const SITUATIONS: Situation[] = [
 		tool: 'veranstaltung'
 	},
 	{
+		id: 'hinweisgeber',
+		label: L(
+			'Wir brauchen eine Meldestelle für Hinweise',
+			'We need a reporting office for whistleblowers'
+		),
+		icon: 'message-report',
+		tool: 'hinweisgebersystem'
+	},
+	{
 		id: 'drittland',
 		label: L('Daten gehen in ein Drittland', 'Data goes to a third country'),
 		icon: 'world',

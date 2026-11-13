@@ -38,6 +38,7 @@ import { chatbot } from './chatbot/tool.js';
 import { unternehmenskauf } from './unternehmenskauf/tool.js';
 import { schliessung } from './schliessung/tool.js';
 import { veranstaltung } from './veranstaltung/tool.js';
+import { hinweisgebersystem } from './hinweisgebersystem/tool.js';
 import { loeschkonzept } from './loeschkonzept/tool.js';
 import { schulungsnachweis } from './schulungsnachweis/tool.js';
 import { kiKompetenz } from './ki-kompetenz/tool.js';
@@ -88,6 +89,7 @@ export const tools: readonly ToolManifest[] = [
 	unternehmenskauf.manifest,
 	schliessung.manifest,
 	veranstaltung.manifest,
+	hinweisgebersystem.manifest,
 	loeschkonzept.manifest,
 	schulungsnachweis.manifest,
 	kiDsgvoSchnittstelle.manifest,
@@ -207,6 +209,7 @@ const recordTools: Record<string, RecordTool> = {
 	[unternehmenskauf.manifest.slug]: unternehmenskauf,
 	[schliessung.manifest.slug]: schliessung,
 	[veranstaltung.manifest.slug]: veranstaltung,
+	[hinweisgebersystem.manifest.slug]: hinweisgebersystem,
 	[avvPruefung.manifest.slug]: avvPruefung,
 	[vvt.manifest.slug]: vvt,
 	[datenpanne.manifest.slug]: datenpanne,
