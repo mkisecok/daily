@@ -1,7 +1,7 @@
 import { dayAt } from '../../records/deadlines.js';
 import type { DeadlineSpec, RecordEngine, RecordView } from '../../records/types.js';
 import { fieldById, isEmpty } from '../../records/validate.js';
-import { DATES } from '../risikoklassifizierung/engine.js';
+import { since } from '../risikoklassifizierung/engine.js';
 import type { LegalBasis, Localized, QuestionnaireResult, Reason } from '../types.js';
 import { definition, ELEMENTS, required } from './definition.js';
 
@@ -37,8 +37,8 @@ function assess(record: RecordView): QuestionnaireResult {
 	const citations: LegalBasis[] = [{ law: 'KI-VO', ref: 'Art. 27' }];
 	const notes: Localized[] = [
 		L(
-			`Art. 27 gilt mit den Pflichten für Hochrisiko-Systeme nach Anhang III, nach der Omnibus-Verordnung ab dem ${DATES.annexIII.de}.`,
-			`Art. 27 applies together with the obligations for Annex III high-risk systems, after the Omnibus Regulation from ${DATES.annexIII.en}.`
+			`Art. 27 gilt mit den Pflichten für Hochrisiko-Systeme nach Anhang III, nach der Omnibus-Verordnung ${since('annexIII').de}.`,
+			`Art. 27 applies together with the obligations for Annex III high-risk systems, after the Omnibus Regulation ${since('annexIII').en}.`
 		)
 	];
 

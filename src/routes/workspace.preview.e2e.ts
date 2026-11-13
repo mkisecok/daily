@@ -599,3 +599,15 @@ test('preview: a tool and its result show the law they are based on', async ({ p
 		'DSGVO in der Fassung vom 04.05.2016'
 	);
 });
+
+test('preview: a transparency result speaks of a passed date in the past tense', async ({
+	page
+}) => {
+	await page.clock.setFixedTime(new Date('2026-11-13T09:00:00Z'));
+	await page.goto('werkzeuge/risikoklassifizierung/pruefen/', { waitUntil: 'networkidle' });
+	await answerAll(page, (name) =>
+		['answer.s_ai', 'answer.t_interaction'].includes(name) ? 'yes' : 'no'
+	);
+	await page.getByRole('button', { name: 'Auswerten' }).click();
+	await expect(page.locator('.verdict')).toContainText('Diese gelten seit dem 2. August 2026');
+});

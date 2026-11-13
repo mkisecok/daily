@@ -1,6 +1,6 @@
 import { fromBerlinInput } from '../../i18n/date.js';
 import type { DeadlineSpec, RecordData, RecordEngine, RecordView } from '../../records/types.js';
-import { DATES, type RiskOutcome } from '../risikoklassifizierung/engine.js';
+import { DATES, since, type RiskOutcome } from '../risikoklassifizierung/engine.js';
 import type { LegalBasis, Localized, QuestionnaireResult, VerdictLevel } from '../types.js';
 import { definition, type RiskClass } from './definition.js';
 
@@ -38,21 +38,22 @@ function deadlines(record: RecordView): DeadlineSpec[] {
 
 type Summary = { verdict: VerdictLevel; headline: Localized; explanation: Localized };
 
-const SUMMARY: Record<RiskClass, Summary> = {
+/** the summary per risk class, worded for today's date */
+const summary = (): Record<RiskClass, Summary> => ({
 	verboten: {
 		verdict: 'positive',
 		headline: L('Verbotene Praxis: Einsatz einstellen.', 'Prohibited practice: stop the use.'),
 		explanation: L(
-			`Praktiken nach Art. 5 KI-VO sind seit dem ${DATES.prohibited.de} untersagt. Der Einsatz ist einzustellen oder so zu ändern, dass kein Tatbestand mehr erfüllt ist.`,
-			`Practices under Art. 5 AI Act have been prohibited since ${DATES.prohibited.en}. Stop the use or change it so that no element is met any longer.`
+			`Praktiken nach Art. 5 KI-VO sind ${since('prohibited').de} untersagt. Der Einsatz ist einzustellen oder so zu ändern, dass kein Tatbestand mehr erfüllt ist.`,
+			`Practices under Art. 5 AI Act have been prohibited ${since('prohibited').en}. Stop the use or change it so that no element is met any longer.`
 		)
 	},
 	hochriskant: {
 		verdict: 'positive',
 		headline: L('Hochrisiko-KI-System.', 'High-risk AI system.'),
 		explanation: L(
-			`Die Pflichten für Hochrisiko-Systeme gelten ab dem ${DATES.annexIII.de} (Anhang III) bzw. ${DATES.annexI.de} (Anhang I) (${DATES.source}).`,
-			`High-risk obligations apply from ${DATES.annexIII.en} (Annex III) or ${DATES.annexI.en} (Annex I) (${DATES.source}).`
+			`Die Pflichten für Hochrisiko-Systeme gelten ${since('annexIII').de} (Anhang III) bzw. ${since('annexI').de} (Anhang I) (${DATES.source}).`,
+			`High-risk obligations apply ${since('annexIII').en} (Annex III) or ${since('annexI').en} (Annex I) (${DATES.source}).`
 		)
 	},
 	art6_3: {
@@ -67,8 +68,8 @@ const SUMMARY: Record<RiskClass, Summary> = {
 		verdict: 'conditional',
 		headline: L('Transparenzpflichten nach Art. 50.', 'Transparency obligations under Art. 50.'),
 		explanation: L(
-			`Personen sind über die Interaktion mit KI bzw. über künstlich erzeugte Inhalte zu informieren; die Pflichten gelten ab dem ${DATES.transparency.de}.`,
-			`Persons must be told that they interact with AI or that content is artificially generated; the duties apply from ${DATES.transparency.en}.`
+			`Personen sind über die Interaktion mit KI bzw. über künstlich erzeugte Inhalte zu informieren; die Pflichten gelten ${since('transparency').de}.`,
+			`Persons must be told that they interact with AI or that content is artificially generated; the duties apply ${since('transparency').en}.`
 		)
 	},
 	minimal: {
@@ -95,7 +96,7 @@ const SUMMARY: Record<RiskClass, Summary> = {
 			'Without a classification the obligations cannot be determined. Run the risk classification and attach the result.'
 		)
 	}
-};
+});
 
 const has = (record: RecordView, field: string, value: string) => {
 	const list = record.data[field];
@@ -214,7 +215,7 @@ function assess(record: RecordView): QuestionnaireResult {
 	}
 
 	return {
-		...SUMMARY[riskClass],
+		...summary()[riskClass],
 		outcome: riskClass,
 		reasons: [],
 		notes,

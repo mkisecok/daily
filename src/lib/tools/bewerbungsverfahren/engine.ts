@@ -5,6 +5,7 @@ import { isEmpty } from '../../records/validate.js';
 import { checklist, gapReasons, inScope, openNote, snapshot } from '../_shared/occasion.js';
 import type { LegalBasis, Localized, QuestionnaireResult, Reason } from '../types.js';
 import { BLOCKS, definition } from './definition.js';
+import { since } from '../risikoklassifizierung/engine.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
 
@@ -69,8 +70,8 @@ function assess(record: RecordView): QuestionnaireResult {
 		} else if (classification.outcome === 'hochrisiko') {
 			notes.push(
 				L(
-					'Hochrisiko-KI: ab dem 2. Dezember 2027 gelten die Betreiberpflichten des Art. 26 (Werkzeug Betreiberpflichten).',
-					'High-risk AI: the deployer duties of Art. 26 apply from 2 December 2027 (deployer duties tool).'
+					`Hochrisiko-KI: Die Betreiberpflichten des Art. 26 gelten ${since('annexIII').de} (Werkzeug Betreiberpflichten).`,
+					`High-risk AI: the deployer duties of Art. 26 apply ${since('annexIII').en} (deployer duties tool).`
 				)
 			);
 		}

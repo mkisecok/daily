@@ -252,8 +252,8 @@ export const BLOCKS: Block[] = [
 		id: 'hochrisiko',
 		title: L('Hochrisiko-KI', 'High-risk AI'),
 		intro: L(
-			'Nur wenn die Risikoklassifizierung ein Hochrisiko-System ergibt; die Pflichten gelten ab dem 2. Dezember 2027.',
-			'Only when the risk classification finds a high-risk system; the duties apply from 2 December 2027.'
+			'Nur wenn die Risikoklassifizierung ein Hochrisiko-System ergibt; Geltungsbeginn der Pflichten: 2. Dezember 2027.',
+			'Only when the risk classification finds a high-risk system; the duties apply as of 2 December 2027.'
 		),
 		when: (data) => riskOutcome(data) === 'hochrisiko',
 		items: [

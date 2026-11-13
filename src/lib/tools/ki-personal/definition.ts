@@ -127,8 +127,8 @@ export const BLOCKS: Block[] = [
 				),
 				cite: KIVO('Art. 26 Abs. 7'),
 				help: L(
-					'Für Hochrisiko-Systeme ist das ab dem 2. Dezember 2027 Pflicht nach der KI-Verordnung; die Information über die Verarbeitung verlangt Art. 13 DSGVO schon heute.',
-					'For high-risk systems this is required under the AI Act from 2 December 2027; information about the processing is already required by Art. 13 GDPR.'
+					'Für Hochrisiko-Systeme ist das Pflicht nach der KI-Verordnung, Geltungsbeginn 2. Dezember 2027; die Information über die Verarbeitung verlangt Art. 13 DSGVO schon heute.',
+					'For high-risk systems this is required under the AI Act as of 2 December 2027; information about the processing is already required by Art. 13 GDPR.'
 				),
 				na: false
 			},
@@ -197,8 +197,8 @@ export const BLOCKS: Block[] = [
 		id: 'hochrisiko',
 		title: L('Pflichten bei Hochrisiko', 'High-risk duties'),
 		intro: L(
-			'Gelten, weil die Risikoklassifizierung ein Hochrisiko-System ergibt; für Anhang III ab dem 2. Dezember 2027.',
-			'Apply because the risk classification finds a high-risk system; for Annex III from 2 December 2027.'
+			'Gelten, weil die Risikoklassifizierung ein Hochrisiko-System ergibt; Geltungsbeginn für Anhang III: 2. Dezember 2027.',
+			'Apply because the risk classification finds a high-risk system; for Annex III as of 2 December 2027.'
 		),
 		when: (data) => classOf(data) === 'hochrisiko',
 		items: [

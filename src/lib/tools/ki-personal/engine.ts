@@ -5,6 +5,7 @@ import { isEmpty } from '../../records/validate.js';
 import { checklist, gapReasons, openNote, snapshot } from '../_shared/occasion.js';
 import type { LegalBasis, Localized, QuestionnaireResult, Reason } from '../types.js';
 import { BLOCKS, classOf, definition, dpiaNeeded } from './definition.js';
+import { since } from '../risikoklassifizierung/engine.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
 
@@ -82,8 +83,8 @@ function assess(record: RecordView): QuestionnaireResult {
 		citations.push({ law: 'KI-VO', ref: 'Art. 26' });
 		notes.push(
 			L(
-				'Hochrisiko-KI: Die Betreiberpflichten des Art. 26 gelten für Anhang III ab dem 2. Dezember 2027; das Werkzeug Betreiberpflichten prüft sie im Einzelnen.',
-				'High-risk AI: the deployer duties of Art. 26 apply for Annex III from 2 December 2027; the deployer duties tool checks them in detail.'
+				`Hochrisiko-KI: Die Betreiberpflichten des Art. 26 gelten für Anhang III ${since('annexIII').de}; das Werkzeug Betreiberpflichten prüft sie im Einzelnen.`,
+				`High-risk AI: the deployer duties of Art. 26 apply for Annex III ${since('annexIII').en}; the deployer duties tool checks them in detail.`
 			)
 		);
 	} else if (outcome === 'kein-ki' || outcome === 'ausserhalb') {

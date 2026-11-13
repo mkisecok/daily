@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { visibleQuestions } from '../answers.js';
 import type { Answers, QuestionnaireCatalog } from '../types.js';
 import catalogJson from './catalog.json' with { type: 'json' };
@@ -139,5 +139,13 @@ describe('Risikoklassifizierung: questions asked', () => {
 	it('asks the Art. 6(3) exception only after an Annex III area', () => {
 		expect(asked({ s_ai: 'yes', h_annex1: 'yes' })).not.toContain('x_procedural');
 		expect(asked({ s_ai: 'yes', h_employment: 'yes' })).toContain('x_procedural');
+	});
+
+	it('words the application dates for the day it runs', () => {
+		vi.useFakeTimers({ now: new Date('2026-11-13T09:00:00Z'), toFake: ['Date'] });
+		const result = evaluate(catalog, answers(['t_interaction']));
+		vi.useRealTimers();
+		expect(result.explanation.de).toContain('Diese gelten seit dem 2. August 2026');
+		expect(result.explanation.de).toContain('ab dem 2. Dezember 2026');
 	});
 });

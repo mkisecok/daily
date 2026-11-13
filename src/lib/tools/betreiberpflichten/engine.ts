@@ -8,7 +8,7 @@ const REQUIREMENTS = ['operation', 'people', 'records'] as const;
 // Art. 4 sits in Chapter I, which applies from the same day as the prohibitions
 const DATES = L(
 	`Geltungsbeginn der Betreiberpflichten: ${AI_ACT.annexIII.de} für Hochrisiko-Systeme nach Anhang III, ${AI_ACT.annexI.de} für Systeme nach Anhang I (Verordnung (EU) 2026/1744). KI-Kompetenz nach Art. 4 gilt bereits seit dem ${AI_ACT.prohibited.de}.`,
-	`Deployer obligations apply from ${AI_ACT.annexIII.en} for Annex III high-risk systems and from ${AI_ACT.annexI.en} for Annex I systems (Regulation (EU) 2026/1744). AI literacy under Art. 4 already applies since ${AI_ACT.prohibited.en}.`
+	`Deployer obligations: application dates ${AI_ACT.annexIII.en} for Annex III high-risk systems and ${AI_ACT.annexI.en} for Annex I systems (Regulation (EU) 2026/1744). AI literacy under Art. 4 has applied since ${AI_ACT.prohibited.en}.`
 );
 
 /**

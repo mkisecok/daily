@@ -303,8 +303,8 @@ export const BLOCKS: Block[] = [
 		id: 'hochrisiko',
 		title: L('Hochrisiko-KI', 'High-risk AI'),
 		intro: L(
-			'Für Systeme nach Anhang III ab dem 2. Dezember 2027.',
-			'For Annex III systems from 2 December 2027.'
+			'Für Systeme nach Anhang III; Geltungsbeginn 2. Dezember 2027.',
+			'For Annex III systems, as of 2 December 2027.'
 		),
 		scope: ['hochrisiko'],
 		items: [
