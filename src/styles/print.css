@@ -68,3 +68,77 @@
 		break-inside: avoid;
 	}
 }
+
+/*
+ * the parts of a printed document body (PrintReport, PrintEntry): only ever
+ * shown on paper, so they need no print media query
+ */
+.print-body {
+	font-size: 10pt;
+	line-height: 1.4;
+
+	& h2 {
+		margin: 6mm 0 2mm;
+		font-family: var(--serif);
+		font-size: 12pt;
+	}
+
+	& h3 {
+		margin: 4mm 0 1.5mm;
+		font-family: var(--serif);
+		font-size: 10.5pt;
+	}
+}
+
+/* a table on paper: hairlines, a bold rule under the head, cells aligned to the top */
+.print-table {
+	width: 100%;
+	border-collapse: collapse;
+
+	& th,
+	& td {
+		padding: 1.2mm 2mm;
+		text-align: left;
+		vertical-align: top;
+		border-bottom: 0.3pt solid #999;
+	}
+
+	& thead th {
+		font-size: 8.5pt;
+		border-bottom: 0.6pt solid #000;
+	}
+
+	& .number {
+		width: 8mm;
+	}
+
+	& .basis {
+		width: 42mm;
+		font-family: var(--mono);
+		font-size: 8.5pt;
+	}
+}
+
+/* a printed checklist: a box to tick in front of each item */
+.print-checklist {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	& li {
+		position: relative;
+		margin-bottom: 1.5mm;
+		padding-left: 6mm;
+		break-inside: avoid;
+
+		&::before {
+			position: absolute;
+			top: 0.2em;
+			left: 0;
+			width: 3mm;
+			height: 3mm;
+			border: 0.5pt solid #000;
+			content: '';
+		}
+	}
+}

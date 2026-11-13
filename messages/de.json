@@ -554,5 +554,11 @@
 	"print_answer": "Antwort",
 	"print_sign_place": "Ort, Datum",
 	"print_sign_name": "Name, Funktion, Unterschrift",
-	"print_by": "Erstellt von"
+	"print_by": "Erstellt von",
+	"print_fields": "Angaben",
+	"print_empty": "Nicht ausgefüllt: {fields}.",
+	"print_due": "Fällig am",
+	"print_deadline": "Frist",
+	"print_state_step": "{state} (Schritt {step} von {total})",
+	"print_open": "Offen:"
 }

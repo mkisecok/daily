@@ -17,6 +17,7 @@
 	import PrintRegister from '#lib/records/ui/PrintRegister.svelte';
 	import { printMeta } from '#lib/print/meta.js';
 	import PrintDocument from '#lib/ui/PrintDocument.svelte';
+	import PrintEntry from '#lib/records/ui/PrintEntry.svelte';
 	import RecordForm from '#lib/records/ui/RecordForm.svelte';
 	import RecordHistory from '#lib/records/ui/RecordHistory.svelte';
 	import RecordLinks from '#lib/records/ui/RecordLinks.svelte';
@@ -451,18 +452,31 @@
 				/>
 			{/key}
 		{:else}
+			<PrintEntry
+				definition={data.definition}
+				{record}
+				{assessment}
+				deadlines={detail.deadlines}
+				events={detail.events}
+				backlinks={data.backlinks}
+				titles={data.titles}
+			/>
+
+			<!-- on paper the Vorgangsblatt above takes the place of these screen parts -->
 			{#if data.definition.workflow}
-				<StateBar
-					events={detail.events}
-					definition={data.definition}
-					{record}
-					{busy}
-					ontransition={(to) => transition(record, to)}
-				/>
+				<div class="no-print">
+					<StateBar
+						events={detail.events}
+						definition={data.definition}
+						{record}
+						{busy}
+						ontransition={(to) => transition(record, to)}
+					/>
+				</div>
 			{/if}
 
 			{#if detail.deadlines.length > 0}
-				<section class="deadlines">
+				<section class="deadlines no-print">
 					<h2 class="eyebrow">{m.deadlines_title()}</h2>
 					<DeadlineList
 						deadlines={detail.deadlines}
@@ -473,7 +487,9 @@
 			{/if}
 
 			{#if assessment}
-				<Verdict result={assessment} tool={data.tool} at={detail.record.updatedAt} />
+				<div class="no-print">
+					<Verdict result={assessment} tool={data.tool} at={detail.record.updatedAt} />
+				</div>
 			{/if}
 
 			{#if Dashboard}
@@ -483,14 +499,16 @@
 				{/key}
 			{/if}
 
-			<RecordView
-				definition={data.definition}
-				{record}
-				titles={data.titles}
-				{referenceHref}
-				assessHref={(field) =>
-					localized(`/werkzeuge/${field.tool}/pruefen?fuer=${slug}:${record.id}:${field.id}`)}
-			/>
+			<div class="no-print">
+				<RecordView
+					definition={data.definition}
+					{record}
+					titles={data.titles}
+					{referenceHref}
+					assessHref={(field) =>
+						localized(`/werkzeuge/${field.tool}/pruefen?fuer=${slug}:${record.id}:${field.id}`)}
+				/>
+			</div>
 
 			{#each data.composed as part (part.record.id)}
 				<section class="composed">
@@ -523,11 +541,13 @@
 				</section>
 			{/each}
 
-			{#if data.backlinks.length > 0}
-				<RecordLinks backlinks={data.backlinks} hrefFor={referenceHref} />
-			{/if}
+			<div class="no-print">
+				{#if data.backlinks.length > 0}
+					<RecordLinks backlinks={data.backlinks} hrefFor={referenceHref} />
+				{/if}
 
-			<RecordHistory definition={data.definition} events={detail.events} titles={data.titles} />
+				<RecordHistory definition={data.definition} events={detail.events} titles={data.titles} />
+			</div>
 		{/if}
 	{/if}
 {:else}

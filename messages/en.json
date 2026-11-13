@@ -554,5 +554,11 @@
 	"print_answer": "Answer",
 	"print_sign_place": "Place, date",
 	"print_sign_name": "Name, role, signature",
-	"print_by": "Created by"
+	"print_by": "Created by",
+	"print_fields": "Details",
+	"print_empty": "Not filled in: {fields}.",
+	"print_due": "Due on",
+	"print_deadline": "Deadline",
+	"print_state_step": "{state} (step {step} of {total})",
+	"print_open": "Open:"
 }
