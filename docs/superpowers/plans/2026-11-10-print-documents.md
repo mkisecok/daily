@@ -148,5 +148,12 @@ State on 13 Nov 2026: step 1 is built.
   dashboard and the next steps are `no-print`. The saved run's meta table adds who made it. The
   test caps a Prüfbericht answered "no" throughout at 2 pages (the AIMS gap analysis at 4: 19 gaps
   with 20 remedies); the Risikoklassifizierung went from 8 pages to 2.
-- Still the web look on paper, for step 3: an entry's result with its coloured scale, the workflow
-  stepper, and the length of entries (up to 12 pages for a DSFA).
+- Step 3, first half: an entry prints as a Vorgangsblatt (`PrintEntry.svelte`): the state in
+  words with its step, the entry's result (`PrintResult.svelte`, shared with the Prüfbericht), the
+  fields per section as a table with their legal basis, open checklist points with a box to tick,
+  other empty fields named in one line, deadlines with their dates, linked entries and the
+  history. The stepper, the coloured result, the cards and the timeline are `no-print`; on screen
+  nothing moved (measured, 0 px). Tool dashboards keep their own print. The test caps an entry at
+  3 pages (DSFA 7, SDM cube 5, both for step 5); Standortwechsel went from 7 pages to 3, the DSFA
+  from 12 to 7.
+- Still to do in step 3: the Registerauszug (overview table, then one Vorgangsblatt per entry).

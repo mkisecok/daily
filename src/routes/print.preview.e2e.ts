@@ -6,8 +6,8 @@ import { choose, pickDate } from './e2e-helpers.js';
 
 /**
  * every tool prints as a document: the frame is there, nothing to click is
- * visible, nothing is wider than the A4 text area, and a questionnaire's
- * Prüfbericht stays short. Utilities get their
+ * visible, nothing is wider than the A4 text area, and a Prüfbericht or
+ * Vorgangsblatt stays short. Utilities get their
  * documents in a later step of the print plan; until then they are listed
  * here, and the list is the progress bar.
  */
@@ -18,6 +18,13 @@ const PENDING = new Set(['repo-check', 'guardrail-test', 'pseudonymisierer']);
  * AIMS gap analysis answered so lists 19 gaps with 20 remedies
  */
 const REPORT_PAGES: Record<string, number> = { 'aims-gap': 4 };
+
+/**
+ * at most this many pages for a Vorgangsblatt of the example or of the
+ * required fields; the DSFA and the SDM cube add their own pages of
+ * matrices and views until their own documents (print plan step 5)
+ */
+const ENTRY_PAGES: Record<string, number> = { dsfa: 7, 'sdm-wuerfel': 5 };
 
 /** the text width of A4 with 18 mm margins, in CSS pixels */
 const A4_TEXT = Math.floor(((210 - 36) / 25.4) * 96);
@@ -107,6 +114,8 @@ for (const tool of tools.filter((t) => t.status !== 'planned' && !PENDING.has(t.
 		const pages = pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g)?.length ?? 0;
 		if (tool.shape === 'questionnaire') {
 			expect(pages, 'pages of the Prüfbericht').toBeLessThanOrEqual(REPORT_PAGES[tool.slug] ?? 2);
+		} else {
+			expect(pages, 'pages of the Vorgangsblatt').toBeLessThanOrEqual(ENTRY_PAGES[tool.slug] ?? 3);
 		}
 	});
 }
