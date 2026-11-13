@@ -121,6 +121,12 @@ export const SITUATIONS: Situation[] = [
 		tool: 'schliessung'
 	},
 	{
+		id: 'veranstaltung',
+		label: L('Eine Veranstaltung mit Fotos steht an', 'An event with photos is coming up'),
+		icon: 'camera',
+		tool: 'veranstaltung'
+	},
+	{
 		id: 'drittland',
 		label: L('Daten gehen in ein Drittland', 'Data goes to a third country'),
 		icon: 'world',
