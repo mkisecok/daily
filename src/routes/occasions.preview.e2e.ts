@@ -387,3 +387,17 @@ test('preview: winding up a business adds custody after liquidation', async ({ p
 	await expect(page.locator('.verdict .headline')).toHaveText('Noch nicht abschließbar.');
 	await expect(page.locator('.verdict')).toContainText('§ 74 Abs. 2 GmbHG');
 });
+
+test('preview: an event with photos and children shows the consent gaps', async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/veranstaltung/eintraege/?neu=1&beispiel=1', {
+		waitUntil: 'networkidle'
+	});
+	await expect(page.locator('#sec-stream')).toContainText('Entfällt für den gewählten Umfang.');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await expect(page.locator('.verdict .headline')).toHaveText('Handlungsbedarf vor dem Termin.');
+	await expect(page.locator('.verdict')).toContainText('Kinder: Fotos von Kindern');
+	await expect(page.locator('.verdict')).toContainText('Interessenabwägung für die Fotos');
+});

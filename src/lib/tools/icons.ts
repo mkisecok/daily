@@ -33,6 +33,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	chatbot: 'message-chatbot',
 	unternehmenskauf: 'briefcase',
 	schliessung: 'door-exit',
+	veranstaltung: 'camera',
 	loeschkonzept: 'trash-x',
 	schulungsnachweis: 'school',
 	'ki-dsgvo-schnittstelle': 'arrows-exchange',
