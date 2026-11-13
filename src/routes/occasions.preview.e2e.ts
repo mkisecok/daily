@@ -344,3 +344,24 @@ test('preview: a self-built chatbot without the AI notice shows the gap and the 
 		'Noch durchzuführen: Risikoklassifizierung, Prüfung der Transparenzpflichten, Drittlandprüfung.'
 	);
 });
+
+test('preview: an asset deal shows the DSK case groups and flags a personal data room', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/unternehmenskauf/eintraege/?neu=1&beispiel=1', {
+		waitUntil: 'networkidle'
+	});
+	await expect(page.locator('.check', { hasText: 'Offene Forderungen' })).toBeVisible();
+	await expect(page.locator('#sec-gesellschaft')).toContainText(
+		'Entfällt für den gewählten Umfang.'
+	);
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await expect(page.locator('.verdict .headline')).toHaveText(
+		'Handlungsbedarf in der Transaktion.'
+	);
+	await expect(page.locator('.verdict')).toContainText('Due Diligence: Angaben zu Kunden');
+	await expect(page.locator('.verdict')).toContainText('Datum der Unterrichtung');
+});

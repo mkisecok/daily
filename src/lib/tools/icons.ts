@@ -31,6 +31,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	werbekampagne: 'speakerphone',
 	'ki-personal': 'users',
 	chatbot: 'message-chatbot',
+	unternehmenskauf: 'briefcase',
 	loeschkonzept: 'trash-x',
 	schulungsnachweis: 'school',
 	'ki-dsgvo-schnittstelle': 'arrows-exchange',

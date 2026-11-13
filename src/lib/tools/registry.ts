@@ -35,6 +35,7 @@ import { bewerbungsverfahren } from './bewerbungsverfahren/tool.js';
 import { werbekampagne } from './werbekampagne/tool.js';
 import { kiPersonal } from './ki-personal/tool.js';
 import { chatbot } from './chatbot/tool.js';
+import { unternehmenskauf } from './unternehmenskauf/tool.js';
 import { loeschkonzept } from './loeschkonzept/tool.js';
 import { schulungsnachweis } from './schulungsnachweis/tool.js';
 import { kiKompetenz } from './ki-kompetenz/tool.js';
@@ -82,6 +83,7 @@ export const tools: readonly ToolManifest[] = [
 	dienstleisterwechsel.manifest,
 	bewerbungsverfahren.manifest,
 	werbekampagne.manifest,
+	unternehmenskauf.manifest,
 	loeschkonzept.manifest,
 	schulungsnachweis.manifest,
 	kiDsgvoSchnittstelle.manifest,
@@ -198,6 +200,7 @@ const recordTools: Record<string, RecordTool> = {
 	[werbekampagne.manifest.slug]: werbekampagne,
 	[kiPersonal.manifest.slug]: kiPersonal,
 	[chatbot.manifest.slug]: chatbot,
+	[unternehmenskauf.manifest.slug]: unternehmenskauf,
 	[avvPruefung.manifest.slug]: avvPruefung,
 	[vvt.manifest.slug]: vvt,
 	[datenpanne.manifest.slug]: datenpanne,
