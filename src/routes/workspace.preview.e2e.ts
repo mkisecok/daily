@@ -81,14 +81,15 @@ test('preview: on a phone the menu opens as a sheet, navigates and closes', asyn
 		'page'
 	);
 	const box = await sheet.getByRole('link', { name: /Normen/ }).boundingBox();
-	expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
+	// whole pixels: layout can land a hair under, e.g. 43.99998 for 2.75rem
+	expect(Math.round(box?.height ?? 0)).toBeGreaterThanOrEqual(44);
 	for (const control of [
 		sheet.getByRole('link', { name: 'DE', exact: true }),
 		sheet.getByRole('link', { name: 'EN', exact: true }),
 		sheet.locator('.switch')
 	]) {
 		const size = await control.boundingBox();
-		expect(Math.min(size?.width ?? 0, size?.height ?? 0)).toBeGreaterThanOrEqual(44);
+		expect(Math.round(Math.min(size?.width ?? 0, size?.height ?? 0))).toBeGreaterThanOrEqual(44);
 	}
 
 	await sheet.getByRole('link', { name: /Normen/ }).click();
