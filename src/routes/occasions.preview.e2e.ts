@@ -401,3 +401,19 @@ test('preview: an event with photos and children shows the consent gaps', async 
 	await expect(page.locator('.verdict')).toContainText('Kinder: Fotos von Kindern');
 	await expect(page.locator('.verdict')).toContainText('Interessenabwägung für die Fotos');
 });
+
+test('preview: a whistleblowing office shows the deadline and anonymity gaps', async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/hinweisgebersystem/eintraege/?neu=1&beispiel=1', {
+		waitUntil: 'networkidle'
+	});
+	await expect(page.locator('#sec-dritte')).not.toContainText('Entfällt für den gewählten Umfang.');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await expect(page.locator('.verdict .headline')).toHaveText(
+		'Handlungsbedarf bei der Meldestelle.'
+	);
+	await expect(page.locator('.verdict')).toContainText('Eingang spätestens nach sieben Tagen');
+	await expect(page.locator('.verdict')).toContainText('DSFA-Schwellwertanalyse');
+});
