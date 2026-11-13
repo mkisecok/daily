@@ -1,3 +1,4 @@
+import { dayAt } from '../../records/deadlines.js';
 import type {
 	Answers,
 	Localized,
@@ -20,6 +21,21 @@ export const DATES = {
 	annexI: { de: '2. August 2028', en: '2 August 2028', iso: '2028-08-02' },
 	source: 'Verordnung (EU) 2026/1744, Art. 113 KI-VO n. F.'
 } as const;
+
+export type DateKey = Exclude<keyof typeof DATES, 'source'>;
+
+/**
+ * a date of the table as tool text: "ab dem <Datum>" before the day and
+ * "seit dem <Datum>" from midnight in Berlin on, so a result never speaks
+ * of a past date as future. Fixed texts in catalogs and
+ * definitions use wording that holds either way; dates.spec.ts checks both.
+ */
+export function since(key: DateKey, now = new Date()): Localized {
+	const date = DATES[key];
+	return now.getTime() >= Date.parse(dayAt(date.iso, '00:00'))
+		? { de: `seit dem ${date.de}`, en: `since ${date.en}` }
+		: { de: `ab dem ${date.de}`, en: `from ${date.en}` };
+}
 
 const PROHIBITED = [
 	'p_subliminal',
@@ -124,8 +140,8 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 			outcome: 'verboten',
 			headline: L('Verbotene Praxis.', 'Prohibited practice.'),
 			explanation: L(
-				`Mindestens eine Praktik des Art. 5 Abs. 1 KI-VO trifft zu. Das Inverkehrbringen, die Inbetriebnahme und die Verwendung sind seit dem ${DATES.prohibited.de} untersagt (das durch die Omnibus-Verordnung eingefügte Verbot nach lit. i ab dem ${DATES.prohibitedNcii.de}). Verstöße werden mit Geldbußen bis zu 35 Mio. € oder 7 % des weltweiten Jahresumsatzes geahndet (Art. 99 Abs. 3).`,
-				`At least one practice under Art. 5(1) AI Act applies. Placing on the market, putting into service and use have been prohibited since ${DATES.prohibited.en} (the prohibition inserted by the Omnibus Regulation under point (i) from ${DATES.prohibitedNcii.en}). Infringements carry fines of up to EUR 35 million or 7 % of worldwide annual turnover (Art. 99(3)).`
+				`Mindestens eine Praktik des Art. 5 Abs. 1 KI-VO trifft zu. Das Inverkehrbringen, die Inbetriebnahme und die Verwendung sind ${since('prohibited').de} untersagt (das durch die Omnibus-Verordnung eingefügte Verbot nach lit. i ${since('prohibitedNcii').de}). Verstöße werden mit Geldbußen bis zu 35 Mio. € oder 7 % des weltweiten Jahresumsatzes geahndet (Art. 99 Abs. 3).`,
+				`At least one practice under Art. 5(1) AI Act applies. Placing on the market, putting into service and use have been prohibited ${since('prohibited').en} (the prohibition inserted by the Omnibus Regulation under point (i) ${since('prohibitedNcii').en}). Infringements carry fines of up to EUR 35 million or 7 % of worldwide annual turnover (Art. 99(3)).`
 			),
 			reasons: prohibited,
 			notes: [
@@ -150,7 +166,7 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 	const profiling = yes('x_profiling');
 
 	if (annexI || (annexIII.length > 0 && (exceptions.length === 0 || profiling))) {
-		const date = annexI ? DATES.annexI : DATES.annexIII;
+		const date = since(annexI ? 'annexI' : 'annexIII');
 		const reasons = [...(annexI ? [reasonFor('h_annex1')] : []), ...annexIII];
 		const escapeBlocked = annexIII.length > 0 && exceptions.length > 0 && profiling;
 		return {
@@ -164,14 +180,14 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 					(escapeBlocked
 						? ' Die Ausnahme nach Art. 6 Abs. 3 scheidet aus, weil das System Profiling natürlicher Personen vornimmt.'
 						: '') +
-					` Die Pflichten für Hochrisiko-Systeme gelten ab dem ${date.de} (${DATES.source}).`,
+					` Die Pflichten für Hochrisiko-Systeme gelten ${date.de} (${DATES.source}).`,
 				(annexI
 					? 'The system is a safety component or product under Annex I (Art. 6(1)).'
 					: 'The system falls within an Annex III area (Art. 6(2)).') +
 					(escapeBlocked
 						? ' The Art. 6(3) exception is unavailable because the system profiles natural persons.'
 						: '') +
-					` High-risk obligations apply from ${date.en} (${DATES.source}).`
+					` High-risk obligations apply ${date.en} (${DATES.source}).`
 			),
 			reasons,
 			notes: [
@@ -234,8 +250,8 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 			outcome: 'art50',
 			headline: L('Transparenzpflichten nach Art. 50.', 'Transparency obligations under Art. 50.'),
 			explanation: L(
-				`Das System ist weder verboten noch hochriskant, unterliegt aber den Transparenzpflichten des Art. 50 KI-VO. Diese gelten ab dem ${DATES.transparency.de}; für Systeme, die vor diesem Datum in Verkehr gebracht wurden, gilt die Kennzeichnungspflicht für synthetische Inhalte ab dem ${DATES.transparencyExisting.de} (${DATES.source}).`,
-				`The system is neither prohibited nor high-risk but is subject to the transparency obligations of Art. 50 AI Act. They apply from ${DATES.transparency.en}; for systems placed on the market before that date, the marking duty for synthetic content applies from ${DATES.transparencyExisting.en} (${DATES.source}).`
+				`Das System ist weder verboten noch hochriskant, unterliegt aber den Transparenzpflichten des Art. 50 KI-VO. Diese gelten ${since('transparency').de}; für Systeme, die vor diesem Datum in Verkehr gebracht wurden, gilt die Kennzeichnungspflicht für synthetische Inhalte ${since('transparencyExisting').de} (${DATES.source}).`,
+				`The system is neither prohibited nor high-risk but is subject to the transparency obligations of Art. 50 AI Act. They apply ${since('transparency').en}; for systems placed on the market before that date, the marking duty for synthetic content applies ${since('transparencyExisting').en} (${DATES.source}).`
 			),
 			reasons: transparency,
 			notes: [

@@ -180,8 +180,8 @@ export const BLOCKS: Block[] = [
 				),
 				cite: { law: 'KI-VO', ref: 'Art. 26 Abs. 11' },
 				help: L(
-					'Die Pflichten für Hochrisiko-Systeme des Anhangs III gelten ab dem 2. Dezember 2027; der Hinweis in den Datenschutzhinweisen ist schon nach Art. 13 DSGVO nötig.',
-					'The duties for Annex III high-risk systems apply from 2 December 2027; the notice in the privacy information is already required under Art. 13 GDPR.'
+					'Geltungsbeginn der Pflichten für Hochrisiko-Systeme des Anhangs III: 2. Dezember 2027; der Hinweis in den Datenschutzhinweisen ist schon nach Art. 13 DSGVO nötig.',
+					'The duties for Annex III high-risk systems apply as of 2 December 2027; the notice in the privacy information is already required under Art. 13 GDPR.'
 				)
 			}
 		]

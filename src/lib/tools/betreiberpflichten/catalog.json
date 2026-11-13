@@ -2,8 +2,8 @@
 	"slug": "betreiberpflichten",
 	"version": 1,
 	"intro": {
-		"de": "Wer ein Hochrisiko-KI-System in eigener Verantwortung einsetzt, ist Betreiber und trägt die Pflichten aus Art. 26 KI-VO, ergänzt um KI-Kompetenz (Art. 4), Grundrechte-Folgenabschätzung (Art. 27) und das Recht auf Erläuterung (Art. 86). Diese Prüfliste zeigt, welche Pflichten erfüllt sind und wo Lücken bestehen. Für Hochrisiko-Systeme nach Anhang III gelten die Pflichten ab dem 2. Dezember 2027, für Systeme nach Anhang I ab dem 2. August 2028.",
-		"en": "Whoever uses a high-risk AI system under their own authority is a deployer and bears the obligations of Art. 26 AI Act, complemented by AI literacy (Art. 4), the fundamental rights impact assessment (Art. 27) and the right to explanation (Art. 86). This checklist shows which obligations are met and where gaps remain. For Annex III high-risk systems the obligations apply from 2 December 2027, for Annex I systems from 2 August 2028."
+		"de": "Wer ein Hochrisiko-KI-System in eigener Verantwortung einsetzt, ist Betreiber und trägt die Pflichten aus Art. 26 KI-VO, ergänzt um KI-Kompetenz (Art. 4), Grundrechte-Folgenabschätzung (Art. 27) und das Recht auf Erläuterung (Art. 86). Diese Prüfliste zeigt, welche Pflichten erfüllt sind und wo Lücken bestehen. Geltungsbeginn der Pflichten: 2. Dezember 2027 für Hochrisiko-Systeme nach Anhang III, 2. August 2028 für Systeme nach Anhang I.",
+		"en": "Whoever uses a high-risk AI system under their own authority is a deployer and bears the obligations of Art. 26 AI Act, complemented by AI literacy (Art. 4), the fundamental rights impact assessment (Art. 27) and the right to explanation (Art. 86). This checklist shows which obligations are met and where gaps remain. The obligations apply as of 2 December 2027 for Annex III high-risk systems and as of 2 August 2028 for Annex I systems."
 	},
 	"sources": [
 		{ "law": "KI-VO", "ref": "Art. 26" },

@@ -5,6 +5,7 @@ import { isEmpty } from '../../records/validate.js';
 import { checklist, gapReasons, inScope, openNote, snapshot } from '../_shared/occasion.js';
 import type { LegalBasis, Localized, QuestionnaireResult, Reason } from '../types.js';
 import { BLOCKS, definition, riskOutcome } from './definition.js';
+import { since } from '../risikoklassifizierung/engine.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
 
@@ -96,8 +97,8 @@ function assess(record: RecordView): QuestionnaireResult {
 	if (outcome === 'hochrisiko') {
 		notes.push(
 			L(
-				'Hochrisiko-KI-System: die Punkte unter „Hochrisiko-KI“ gelten; die Pflichten greifen ab dem 2. Dezember 2027 (Verordnung (EU) 2026/1744).',
-				'High-risk AI system: the points under "High-risk AI" apply; the duties take effect from 2 December 2027 (Regulation (EU) 2026/1744).'
+				`Hochrisiko-KI-System: die Punkte unter „Hochrisiko-KI“ gelten; die Pflichten greifen ${since('annexIII').de} (Verordnung (EU) 2026/1744).`,
+				`High-risk AI system: the points under "High-risk AI" apply; the duties take effect ${since('annexIII').en} (Regulation (EU) 2026/1744).`
 			)
 		);
 		citations.push({ law: 'KI-VO', ref: 'Art. 26, 27' });

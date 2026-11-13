@@ -1,6 +1,6 @@
 import { addHours, daysAfterDay } from '../../records/deadlines.js';
 import type { DeadlineSpec, RecordEngine, RecordView } from '../../records/types.js';
-import { DATES } from '../risikoklassifizierung/engine.js';
+import { since } from '../risikoklassifizierung/engine.js';
 import type { LegalBasis, Localized, QuestionnaireResult } from '../types.js';
 import { definition, reportable } from './definition.js';
 
@@ -101,8 +101,8 @@ function assess(record: RecordView): QuestionnaireResult {
 	}
 	notes.push(
 		L(
-			`Art. 73 gilt mit den Pflichten für Hochrisiko-Systeme, nach der Omnibus-Verordnung ab dem ${DATES.annexIII.de} (Anhang III) bzw. ${DATES.annexI.de} (Anhang I).`,
-			`Art. 73 applies together with the high-risk obligations, after the Omnibus Regulation from ${DATES.annexIII.en} (Annex III) or ${DATES.annexI.en} (Annex I).`
+			`Art. 73 gilt mit den Pflichten für Hochrisiko-Systeme, nach der Omnibus-Verordnung ${since('annexIII').de} (Anhang III) bzw. ${since('annexI').de} (Anhang I).`,
+			`Art. 73 applies together with the high-risk obligations, after the Omnibus Regulation ${since('annexIII').en} (Annex III) or ${since('annexI').en} (Annex I).`
 		)
 	);
 
