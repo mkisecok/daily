@@ -65,6 +65,8 @@ html[data-theme='light'] {
 	--radius: 8px;
 	--radius-card: 12px;
 	--radius-badge: 6px;
+	/* the height of a text input (0.55rem padding, a 24px line, 1px borders); select, combobox and date match it */
+	--control-height: 2.725rem;
 	--shadow-raised: 0 1px 2px rgba(28, 27, 25, 0.06), 0 4px 14px rgba(28, 27, 25, 0.05);
 	--shadow-float: 0 6px 18px rgba(28, 27, 25, 0.1);
 	--shadow-modal: 0 16px 40px rgba(28, 27, 25, 0.2);

@@ -79,7 +79,8 @@
 	{#if open}
 		<div class="details" id="{id}-details">
 			<label class="note">
-				<span class="daily-field-label">{m.check_note()}</span>
+				<!-- the date picker's label row, so both labels sit on one line -->
+				<span class="daily-label-row"><span class="daily-field-label">{m.check_note()}</span></span>
 				<input type="text" bind:value={note} />
 			</label>
 			<div class="due">
@@ -270,11 +271,6 @@
 		@container (max-width: 36rem) {
 			grid-template-columns: minmax(0, 1fr);
 			margin-top: 0;
-		}
-
-		& .note span {
-			display: block;
-			margin-bottom: 0.3rem;
 		}
 
 		& input {
