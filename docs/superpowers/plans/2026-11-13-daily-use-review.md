@@ -52,6 +52,32 @@ next; removals and merges wait for the owner's decision.
    the Standard-Datenschutzmodell. The TOM-Katalog already sorts measures by the same seven goals;
    nobody fills a cube as a daily task.
 
+## 2a. Check against a practice guide
+
+The owner supplied a practice guide for data protection officers (Hansen-Oest, Datenschutz­beauftragte,
+2nd edition 2023). Read against the tools, in our own words:
+
+1. **How a DSB organises the day.** The guide asks for three things: dates and deadlines, a task
+   list (what, for whom, by when) and memos filed per matter under a running number, so that what
+   was recommended on a question can be found in minutes. Documenting one's own advice also
+   protects the DSB later. Daily has deadlines and day notes, but no tasks, no matter ("Vorgang")
+   that groups notes, entries and memos, and no record of advice given.
+2. **A control plan per year.** The DSB should write down how monitoring under Art. 39(1)(b) is
+   done and say at year end which checks were run. The Auditprogramm and the report page can carry
+   this, but neither is framed as the DSB's own control plan and annual account.
+3. **Stocktake at the start**, with every new organisation or client: org chart, the TOM from the
+   outside in, then per department the data and software used. No tool covers this, although it is
+   where the VVT and the TOM-Katalog get their content.
+4. **Right of access in four stages:** whether data is processed, the data itself (not only its
+   categories), the information of Art. 15(1) lit. a to h with origin and third-country safeguards,
+   and the copy under Art. 15(3) with the limits of Art. 15(4), § 34 BDSG and CJEU C-487/21. The
+   Betroffenenanfrage handles deadline, identity, extension and refusal, but not the content of the
+   answer.
+5. **Every breach is documented**, also those not reported, and followed by an internal debrief.
+   The Datenpanne covers the first; it has no field for the debrief.
+6. **A DSMS rests on policies made binding** (for staff, data subject rights, security incidents,
+   suppliers, mobile work). Daily generates only the AI usage policy.
+
 ## 3. Verdict per tool
 
 **Core, improve first (daily or weekly work, 20):** Betroffenenanfrage, Datenpanne, AVV-Prüfung,
@@ -85,13 +111,18 @@ Result: from 50 tools to 42 (merges save 6, removals 2), each with a task behind
 
 ## 4. Order of work
 
-1. **"Heute" as the start page of the workspace.** Due and overdue deadlines; open Auskünfte with
-   days left; running breaches with hours left; open findings; entries waiting for a step; quick
-   start for the six most frequent tasks. Everything from data Daily already has.
-2. **Examples for the core tools** without one, so a visitor sees a real case in one click.
-3. **Merges and removals** above, once decided.
-4. **Print step 5, only documents people send:** the answer to an Auskunft (Art. 15), the DSFA in
-   the structure of DSK Kurzpapier Nr. 5, the KI-Nutzungsrichtlinie as a policy to sign, the
-   Auditbericht. The SDM cube document is dropped.
-5. Later, from the roadmap: export and import of all entries (preview data lives in one browser),
-   a vendor overview with review dates, a privacy notice generator.
+1. **"Heute" as the start page of the workspace**: due and overdue deadlines, open Auskünfte with
+   days left, running breaches with hours left, open findings, entries waiting for a step, a short
+   task list (what, for whom, by when) and a quick start for the six most frequent tasks.
+2. **Vorgang and Beratungsvermerk**: a matter with a running number ("2026-11-007 Videoüberwachung
+   Lager") that groups its entries, notes and memos, and a memo of advice given (question,
+   recommendation, to whom, when), searchable later.
+3. **Examples for the core tools** without one.
+4. **Close the gaps the guide shows in core tools**: the answer to an Auskunft in its four stages as
+   a printable document; a debrief field for every breach; a stocktake occasion for a new
+   organisation or client.
+5. **Merges and removals** above, once decided.
+6. **Print step 5, only documents people send**: the Auskunft answer, the DSFA in the structure of
+   DSK Kurzpapier Nr. 5, the KI-Nutzungsrichtlinie as a policy to sign, the Auditbericht.
+7. Later: a policy set for the DSMS, export and import of all entries, a vendor overview with
+   review dates, a privacy notice generator.
