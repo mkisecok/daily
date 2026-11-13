@@ -126,3 +126,20 @@ black and white.
 
 Steps 1 to 4 make every tool print as a document; step 5 makes the important ones print as the
 document their recipient expects.
+
+State on 13 Nov 2026: step 1 is built.
+
+- `PrintDocument.svelte` is the head of every printout: "Daily · Prüfbericht" or "Vorgangsblatt",
+  title, and a meta table with organisation (when signed in), tool and version, Rechtsstand, legal
+  review, entry id and state, and the date. It is on the questionnaire result and the entry page,
+  so 47 of 50 tools print with it; on paper it replaces the web page header.
+- `print.css` has the primitives: cards as plain paper, no buttons or inputs, headings that do not
+  end a page, rows that do not split, and "Daily" plus "page / pages" in the bottom margin.
+- The footer cannot carry the document title, organisation or print date: Chrome supports neither
+  `string-set` nor running elements, so they stand in the meta table instead.
+- `print.preview.e2e.ts` runs over every tool in the registry: the frame is there, no control or
+  navigation is visible, nothing is wider than the A4 text area (a part on its own named page, like
+  the landscape DSFA dashboard, is measured there). Pending: Repo-Check, Guardrail-Test and
+  Pseudonymisierer.
+- Still the web look on paper, for steps 2 and 3: the coloured scale and the risk pyramid, the
+  workflow stepper, and the length (a questionnaire result is 8 pages).
