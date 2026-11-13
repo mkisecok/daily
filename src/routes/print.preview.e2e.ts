@@ -215,7 +215,7 @@ test('print: a note, a law article and a report print in the frame', async ({ pa
 	await page.goto('notizen?neu=1', { waitUntil: 'networkidle' });
 	await page.getByLabel('Titel').fill('Druck-Notiz');
 	await page.getByRole('button', { name: 'Speichern' }).click();
-	await expect(page.locator('.note')).toBeVisible();
+	await expect(page.locator('article.note')).toBeVisible();
 	await printsAsDocument(page, 'Notiz');
 	await expect(page.locator('[data-print-frame] h1')).toHaveText('Druck-Notiz');
 
