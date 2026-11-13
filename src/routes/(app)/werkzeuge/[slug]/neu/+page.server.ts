@@ -3,6 +3,7 @@ import { db } from '#lib/server/db/index.js';
 import { toolRuns } from '#lib/server/db/schema.js';
 import { localizeHref } from '#lib/paraglide/runtime.js';
 import { readAnswers } from '#lib/tools/answers.js';
+import { lawAsOf } from '#lib/tools/rechtsstand.js';
 import { getQuestionnaire, getTool } from '#lib/tools/registry.js';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -28,7 +29,11 @@ export const actions: Actions = {
 		const { answers, missing } = readAnswers(questionnaire.catalog, await request.formData());
 		if (missing.length > 0) return fail(400, { missing, answers });
 
-		const result = questionnaire.engine(questionnaire.catalog, answers);
+		// the run keeps the law versions it was based on (Art. 5 Abs. 2 DSGVO)
+		const result = {
+			...questionnaire.engine(questionnaire.catalog, answers),
+			lawAsOf: lawAsOf(tool)
+		};
 		const [run] = await db
 			.insert(toolRuns)
 			.values({

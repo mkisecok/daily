@@ -537,5 +537,6 @@
 	"rechtsstand_consolidated": "{law} as consolidated on {date}",
 	"rechtsstand_amended": "{law}, last amended on {date}",
 	"rechtsstand_reviewed": "legally reviewed on {date}",
-	"rechtsstand_unreviewed": "not yet legally reviewed"
+	"rechtsstand_unreviewed": "not yet legally reviewed",
+	"rechtsstand_newer": "a newer version of {date} has been imported since"
 }

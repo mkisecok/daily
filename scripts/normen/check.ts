@@ -3,15 +3,15 @@
  * the newest consolidated version of each EU act in Cellar and the Stand of
  * each German statute on gesetze-im-internet.de. Read-only; it never
  * imports. Prints a Markdown report and exits with 1 when a version in
- * force changed, 0 otherwise (also when one is only announced), and 2 when
- * a source could not be read.
+ * force changed, 2 when nothing changed but a source could not be read,
+ * 0 otherwise (also when a version is only announced).
  *
  * Run: pnpm normen:check [--out report.md]
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { LAWS } from '../../src/lib/normen/laws.js';
 import type { LawId, LawText } from '../../src/lib/normen/types.js';
-import { compareLaw, report, type Published } from '../../src/lib/normen/watch.js';
+import { compareLaw, report, type Finding, type Unreadable } from '../../src/lib/normen/watch.js';
 import { lawsInUse } from '../../src/lib/tools/rechtsstand.js';
 import { tools } from '../../src/lib/tools/registry.js';
 import { consolidatedVersions, standOf, statuteXml } from './sources.js';
@@ -22,7 +22,7 @@ const DE: Partial<Record<LawId, string>> = { bdsg: 'bdsg_2018', tdddg: 'ttdsg' }
 const committed = (id: LawId) =>
 	JSON.parse(readFileSync(`src/lib/normen/data/${id}.json`, 'utf8')) as LawText;
 
-async function published(id: LawId): Promise<Published> {
+async function published(id: LawId) {
 	const original = EU[id];
 	if (original) return { id, versions: await consolidatedVersions(original) };
 	const path = DE[id];
@@ -32,22 +32,37 @@ async function published(id: LawId): Promise<Published> {
 
 async function main(): Promise<number> {
 	const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-	const findings = (
-		await Promise.all(
-			LAWS.map(async (law) => compareLaw(committed(law.id), await published(law.id), today))
-		)
-	).flat();
+	const findings: Finding[] = [];
+	const unreadable: Unreadable[] = [];
+	// one source that cannot be read does not hide what the others say
+	await Promise.all(
+		LAWS.map(async (law) => {
+			try {
+				findings.push(...compareLaw(committed(law.id), await published(law.id), today));
+			} catch (error) {
+				const cause = error instanceof Error ? (error.cause ?? error) : error;
+				unreadable.push({
+					id: law.id,
+					reason: cause instanceof Error ? cause.message : String(cause)
+				});
+			}
+		})
+	);
+	const order = (id: LawId) => LAWS.findIndex((law) => law.id === id);
+	findings.sort((a, b) => order(a.id) - order(b.id));
+	unreadable.sort((a, b) => order(a.id) - order(b.id));
 
 	const citing = (id: LawId) =>
 		tools
 			.filter((tool) => tool.status !== 'planned' && lawsInUse(tool).some((law) => law.id === id))
 			.map((tool) => ({ slug: tool.slug, name: tool.name.de }));
 
-	const text = report(findings, citing);
+	const text = report(findings, citing, unreadable);
 	const out = process.argv.indexOf('--out');
 	if (out > 0) writeFileSync(process.argv[out + 1], text);
 	console.log(text);
-	return findings.some((f) => f.level === 'changed') ? 1 : 0;
+	if (findings.some((f) => f.level === 'changed')) return 1;
+	return unreadable.length > 0 ? 2 : 0;
 }
 
 try {

@@ -66,10 +66,25 @@ export function compareLaw(law: LawText, published: Published, today: string): F
 
 export type CitingTool = { slug: string; name: string };
 
+/** a source that could not be read, with the reason */
+export type Unreadable = { id: LawId; reason: string };
+
 /** the report as Markdown, for the console and the issue body */
-export function report(findings: Finding[], citing: (id: LawId) => CitingTool[]): string {
-	if (findings.length === 0) return 'Alle Gesetzestexte sind aktuell.\n';
-	const lines = ['## Rechtsstand', ''];
+export function report(
+	findings: Finding[],
+	citing: (id: LawId) => CitingTool[],
+	unreadable: Unreadable[] = []
+): string {
+	const missing = unreadable.map(
+		({ id, reason }) =>
+			`- **Nicht geprüft:** ${lawName(id)}, die Quelle war nicht erreichbar (${reason}).`
+	);
+	if (findings.length === 0) {
+		return missing.length === 0
+			? 'Alle Gesetzestexte sind aktuell.\n'
+			: `## Rechtsstand\n\n${missing.join('\n')}\n`;
+	}
+	const lines = ['## Rechtsstand', '', ...missing];
 	for (const finding of findings) {
 		lines.push(
 			`- ${finding.level === 'changed' ? '**Neu in Kraft:**' : 'Angekündigt:'} ${finding.text}`
