@@ -564,5 +564,15 @@
 	"print_kind_register": "Registerauszug",
 	"print_count": "Einträge",
 	"print_name": "Bezeichnung",
-	"print_changed": "Geändert am"
+	"print_changed": "Geändert am",
+	"print_kind_deadlines": "Fristenliste",
+	"print_overdue": "überfällig",
+	"print_kind_note": "Notiz",
+	"print_kind_norm": "Normtext",
+	"print_chapter": "Abschnitt",
+	"print_version_text": "Fassung",
+	"print_retrieved": "Abgerufen am",
+	"print_source": "Quelle",
+	"print_kind_report_period": "Bericht",
+	"print_period": "Zeitraum"
 }

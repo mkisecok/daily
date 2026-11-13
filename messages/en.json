@@ -564,5 +564,15 @@
 	"print_kind_register": "Register extract",
 	"print_count": "Entries",
 	"print_name": "Name",
-	"print_changed": "Changed on"
+	"print_changed": "Changed on",
+	"print_kind_deadlines": "Deadline list",
+	"print_overdue": "overdue",
+	"print_kind_note": "Note",
+	"print_kind_norm": "Legal text",
+	"print_chapter": "Part",
+	"print_version_text": "Version",
+	"print_retrieved": "Retrieved on",
+	"print_source": "Source",
+	"print_kind_report_period": "Report",
+	"print_period": "Period"
 }

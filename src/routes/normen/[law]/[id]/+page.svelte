@@ -7,6 +7,7 @@
 	import Blocks from '#lib/normen/ui/Blocks.svelte';
 	import { text } from '#lib/tools/i18n.js';
 	import PageHeader from '#lib/ui/PageHeader.svelte';
+	import PrintDocument from '#lib/ui/PrintDocument.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -24,6 +25,21 @@
 </svelte:head>
 
 <article class="provision">
+	<PrintDocument
+		kind={m.print_kind_norm()}
+		{title}
+		rows={[
+			...(data.provision.chapter
+				? [{ label: m.print_chapter(), value: data.provision.chapter }]
+				: []),
+			{ label: m.print_version_text(), value: data.source.version },
+			{
+				label: m.print_retrieved(),
+				value: formatShortDate(data.retrieved, getLocale())
+			},
+			{ label: m.print_source(), value: data.source.url }
+		]}
+	/>
 	<PageHeader
 		{title}
 		trail={[
@@ -54,6 +70,7 @@
 	{/if}
 
 	<p class="toolbar no-print">
+		<button type="button" class="quiet" onclick={() => window.print()}>{m.records_print()}</button>
 		<a
 			class="button quiet"
 			href={resolve(
@@ -80,7 +97,7 @@
 		{:else}<span></span>{/if}
 	</nav>
 
-	<p class="source">
+	<p class="source no-print">
 		{data.source.version}.
 		{m.normen_retrieved({ date: formatShortDate(data.retrieved, getLocale()) })}
 		<a href={data.source.url} rel="external noopener" target="_blank">{m.normen_source()}</a>

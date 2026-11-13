@@ -15,6 +15,7 @@
 	import DatePicker from '#lib/ui/form/DatePicker.svelte';
 	import Icon from '#lib/ui/Icon.svelte';
 	import PageHeader from '#lib/ui/PageHeader.svelte';
+	import PrintDocument from '#lib/ui/PrintDocument.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -153,11 +154,14 @@
 	<title>{m.nav_notes()} — Daily</title>
 </svelte:head>
 
-<PageHeader
-	title={m.nav_notes()}
-	description={m.notes_intro()}
-	actions={listing ? listActions : undefined}
-/>
+<!-- the intro speaks about this browser; paper does not need it -->
+<div class="no-print">
+	<PageHeader
+		title={m.nav_notes()}
+		description={m.notes_intro()}
+		actions={listing ? listActions : undefined}
+	/>
+</div>
 
 {#snippet listActions()}
 	<button type="button" onclick={today} disabled={busy}>{m.notes_today()}</button>
@@ -238,9 +242,28 @@
 	{:else}
 		{@const record = detail.record}
 		{@const source = sourceHref(record.data.quelle)}
+		<PrintDocument
+			kind={m.print_kind_note()}
+			title={record.title}
+			rows={[
+				...(record.data.tag
+					? [
+							{
+								label: m.notes_day(),
+								value: formatShortDate(`${str(record.data.tag)}T12:00:00.000Z`, locale)
+							}
+						]
+					: []),
+				...(tags(record.data.schlagworte).length > 0
+					? [{ label: m.notes_tags(), value: tags(record.data.schlagworte).join(', ') }]
+					: []),
+				{ label: m.print_changed(), value: formatShortDate(record.updatedAt, locale) }
+			]}
+		/>
 		<article class="note card">
-			<h2>{record.title}</h2>
-			<p class="meta">
+			<!-- on paper the document head carries title, day and tags -->
+			<h2 class="no-print">{record.title}</h2>
+			<p class="meta no-print">
 				{#if record.data.tag}<span class="badge"
 						>{formatShortDate(`${str(record.data.tag)}T12:00:00.000Z`, locale)}</span
 					>{/if}
@@ -458,6 +481,13 @@
 			margin-top: 1.25rem;
 			padding-top: 1.25rem;
 			border-top: 1px solid var(--rule2);
+
+			/* the document head above already closes with a rule */
+			@media print {
+				margin-top: 0;
+				padding-top: 0;
+				border-top: 0;
+			}
 		}
 
 		& .source {
