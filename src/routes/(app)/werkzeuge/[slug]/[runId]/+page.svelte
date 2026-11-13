@@ -54,10 +54,10 @@
 {#if Dashboard}
 	<div class="result-pair">
 		<Dashboard result={data.run.result} />
-		<Verdict result={data.run.result} tool={text(data.tool.name)} at={data.run.createdAt} />
+		<Verdict result={data.run.result} tool={data.tool} at={data.run.createdAt} />
 	</div>
 {:else}
-	<Verdict result={data.run.result} tool={text(data.tool.name)} at={data.run.createdAt} />
+	<Verdict result={data.run.result} tool={data.tool} at={data.run.createdAt} />
 {/if}
 
 <NextSteps tool={data.tool.slug} result={data.run.result} />

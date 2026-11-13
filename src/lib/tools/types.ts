@@ -47,6 +47,8 @@ export type ToolManifest = {
 	name: Localized;
 	summary: Localized;
 	legalBasis: LegalBasis[];
+	/** the day a lawyer or data protection officer reviewed the tool; see docs/legal-review.md */
+	reviewedAt?: string;
 };
 
 /* ---------- questionnaire shape ---------- */

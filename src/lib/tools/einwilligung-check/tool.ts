@@ -7,7 +7,7 @@ const catalog = catalogJson as QuestionnaireCatalog;
 const manifest: ToolManifest = {
 	slug: 'einwilligung-check',
 	category: 'datenschutz',
-	status: 'stable',
+	status: 'beta',
 	shape: 'questionnaire',
 	version: catalog.version,
 	name: { de: 'Cookie- und Einwilligungs-Check', en: 'Cookie and consent check' },

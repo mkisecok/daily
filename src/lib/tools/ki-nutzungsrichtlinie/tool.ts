@@ -7,7 +7,7 @@ const catalog = catalogJson as QuestionnaireCatalog;
 const manifest: ToolManifest = {
 	slug: 'ki-nutzungsrichtlinie',
 	category: 'ki',
-	status: 'stable',
+	status: 'beta',
 	shape: 'questionnaire',
 	version: catalog.version,
 	name: { de: 'KI-Nutzungsrichtlinie', en: 'AI usage policy' },

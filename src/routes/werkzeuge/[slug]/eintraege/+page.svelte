@@ -455,7 +455,7 @@
 			{/if}
 
 			{#if assessment}
-				<Verdict result={assessment} tool={text(data.tool.name)} at={detail.record.updatedAt} />
+				<Verdict result={assessment} tool={data.tool} at={detail.record.updatedAt} />
 			{/if}
 
 			{#if Dashboard}

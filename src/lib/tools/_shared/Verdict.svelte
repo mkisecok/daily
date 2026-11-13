@@ -12,8 +12,9 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { text } from '../i18n.js';
-	import type { QuestionnaireResult } from '../types.js';
+	import type { QuestionnaireResult, ToolManifest } from '../types.js';
 	import Citation from './Citation.svelte';
+	import Rechtsstand from './Rechtsstand.svelte';
 
 	let {
 		result,
@@ -21,8 +22,8 @@
 		at
 	}: {
 		result: QuestionnaireResult;
-		/** the tool's name for the dateline */
-		tool?: string;
+		/** the tool, named in the dateline and dated under the sources */
+		tool?: ToolManifest;
 		/** when the result was produced; today when not given */
 		at?: string;
 	} = $props();
@@ -50,7 +51,7 @@
 <section class="verdict" data-level={result.verdict}>
 	<p class="dateline">
 		<span>{m.verdict_label()}</span>
-		{#if tool}<span aria-hidden="true">·</span><span>{tool}</span>{/if}
+		{#if tool}<span aria-hidden="true">·</span><span>{text(tool.name)}</span>{/if}
 		<span aria-hidden="true">·</span><time datetime={at}>{date}</time>
 	</p>
 	<h2 class="headline">{text(result.headline)}</h2>
@@ -101,6 +102,7 @@
 				<li><Citation {basis} wrap /></li>
 			{/each}
 		</ul>
+		{#if tool}<div class="dated"><Rechtsstand {tool} /></div>{/if}
 	</section>
 </section>
 
@@ -318,7 +320,8 @@
 		@container (min-width: 34rem) {
 			& .part h3,
 			& .notes,
-			& .sources {
+			& .sources,
+			& .dated {
 				margin-left: calc(var(--margin) + 1.25rem);
 			}
 

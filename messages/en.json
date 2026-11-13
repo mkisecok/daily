@@ -532,5 +532,10 @@
 	"sdm_cube_status_teilweise": "Partly",
 	"sdm_cube_status_luecke": "Gap",
 	"sdm_cube_status_offen": "Open",
-	"sdm_cube_status_entfaellt": "Not relevant"
+	"sdm_cube_status_entfaellt": "Not relevant",
+	"rechtsstand_label": "Legal status",
+	"rechtsstand_consolidated": "{law} as consolidated on {date}",
+	"rechtsstand_amended": "{law}, last amended on {date}",
+	"rechtsstand_reviewed": "legally reviewed on {date}",
+	"rechtsstand_unreviewed": "not yet legally reviewed"
 }

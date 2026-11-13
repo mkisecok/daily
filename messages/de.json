@@ -532,5 +532,10 @@
 	"sdm_cube_status_teilweise": "Teilweise",
 	"sdm_cube_status_luecke": "Lücke",
 	"sdm_cube_status_offen": "Offen",
-	"sdm_cube_status_entfaellt": "Nicht relevant"
+	"sdm_cube_status_entfaellt": "Nicht relevant",
+	"rechtsstand_label": "Rechtsstand",
+	"rechtsstand_consolidated": "{law} in der Fassung vom {date}",
+	"rechtsstand_amended": "{law}, zuletzt geändert am {date}",
+	"rechtsstand_reviewed": "juristisch geprüft am {date}",
+	"rechtsstand_unreviewed": "noch nicht juristisch geprüft"
 }
