@@ -241,11 +241,25 @@ test('print: a data breach prints as a notification under Art. 33 DSGVO', async 
 	await expect(page).toHaveURL(/eintrag=/);
 	await page.emulateMedia({ media: 'print' });
 
-	const notice = page.locator('.breach-print');
+	const notice = page.locator('.print-parts');
 	await expect(page.locator('[data-print-frame]')).toContainText('Meldung nach Art. 33 DSGVO');
 	await expect(notice).toContainText('72 Stunden enden');
 	await expect(notice).toContainText('13.11.2026 08:00');
 	const letters = (await notice.locator('.letter').allTextContents()).filter((l) => l.trim());
 	expect(letters).toEqual(['a)', 'a)', 'a)', 'b)', 'c)', 'c)', 'd)']);
 	await expect(notice).toContainText('fehlt');
+});
+
+test('print: an AI incident prints as a report under Art. 73 KI-VO', async ({ page }) => {
+	await page.setViewportSize({ width: A4_TEXT, height: 1000 });
+	await page.goto('werkzeuge/vorfallmeldung/eintraege/?neu=1', { waitUntil: 'networkidle' });
+	await fillRequired(page, 'vorfallmeldung');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+	await page.emulateMedia({ media: 'print' });
+
+	await expect(page.locator('[data-print-frame]')).toContainText('Meldung nach Art. 73 KI-VO');
+	const report = page.locator('.print-parts');
+	await expect(report).toContainText('15 Tage (Art. 73 Abs. 2)');
+	await expect(report).toContainText('Untersuchung und Korrektur (Art. 73 Abs. 6)');
 });

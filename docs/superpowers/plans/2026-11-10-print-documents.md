@@ -177,3 +177,8 @@ State on 13 Nov 2026: step 1 is built.
   made it, the letters a to d of Art. 33(3) with a line to fill in for the data protection officer,
   the communication under Art. 34 and further details, then lines to sign. Entries with a document
   of their own are listed in `entryPrints`.
+- Step 5, Vorfallmeldung: an entry prints as a report under Art. 73 KI-VO
+  (`vorfallmeldung/IncidentPrint.svelte`): the period that applies (2, 10 or 15 days, with its
+  paragraph), when it ends and whether the report made it, for a deployer when the provider was
+  told (Art. 26(5)), then the incident and its classification, investigation and correction. Both
+  notifications use `src/lib/print/PrintParts.svelte`.

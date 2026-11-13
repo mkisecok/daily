@@ -1,3 +1,4 @@
+import type { PrintPart, PrintRow } from '../../print/parts.js';
 import { formatValue, type Titles } from '../../records/format.js';
 import type { RecordData, StoredRecord } from '../../records/types.js';
 import { fieldById } from '../../records/validate.js';
@@ -7,10 +8,6 @@ import { definition } from './definition.js';
 import { notificationDue } from './engine.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
-
-/** one line of the notification: its letter of Art. 33(3), if any, the question and the answer */
-export type NoticeRow = { letter: string; label: string; value: string; fill?: boolean };
-export type NoticePart = { id: string; title: string; rows: NoticeRow[] };
 
 /**
  * a breach as the supervisory authority's form asks for it: the timing of
@@ -24,7 +21,7 @@ export function noticeParts(
 	state: StoredRecord['state'],
 	locale: string,
 	titles: Titles = {}
-): NoticePart[] {
+): PrintPart[] {
 	const value = (...ids: string[]) =>
 		ids
 			.map((id) => {
@@ -33,7 +30,7 @@ export function noticeParts(
 			})
 			.filter(Boolean)
 			.join('\n');
-	const row = (letter: string, label: Localized, answer: string, fill = false): NoticeRow => ({
+	const row = (letter: string, label: Localized, answer: string, fill = false): PrintRow => ({
 		letter,
 		label: text(label, locale),
 		value: answer,

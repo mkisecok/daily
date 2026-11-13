@@ -583,5 +583,6 @@
 	"print_vvt_controller": "Controller (Art. 30(1))",
 	"print_vvt_processor": "Processor (Art. 30(2))",
 	"print_missing": "missing",
-	"print_kind_breach": "Notification under Art. 33 GDPR"
+	"print_kind_breach": "Notification under Art. 33 GDPR",
+	"print_kind_incident": "Report under Art. 73 AI Act"
 }
