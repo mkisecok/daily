@@ -240,5 +240,23 @@ export const definition: RecordToolDefinition = {
 				{ id: 'wiedervorlage', type: 'date', label: L('Wiedervorlage', 'Next review') }
 			]
 		}
-	]
+	],
+	example: {
+		system: 'Kundensystem (CRM) (Beispiel)',
+		beschreibung:
+			'Stammdaten, Verträge und Kontaktverlauf aller Kunden; Zugriff für Vertrieb und Kundenservice.',
+		verantwortlich: 'Leitung IT',
+		schutzbedarf: 'hoch',
+		vertraulichkeit_massnahmen: ['authentisierung', 'mfa', 'rollen', 'transport'],
+		vertraulichkeit_details:
+			'Anmeldung über das zentrale Verzeichnis mit zweitem Faktor; Rollen je Team.',
+		integritaet_massnahmen: ['protokoll'],
+		verfuegbarkeit_massnahmen: ['backup', 'patches'],
+		verfuegbarkeit_details: 'Tägliche Sicherung; die Wiederherstellung wurde noch nie geprobt.',
+		datenminimierung_massnahmen: ['loeschroutinen'],
+		intervenierbarkeit_massnahmen: ['betroffenenprozess', 'korrektur'],
+		geprueft_am: '2026-05-20',
+		status: 'teilweise',
+		wiedervorlage: '2027-05-20'
+	}
 };

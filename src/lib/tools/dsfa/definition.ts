@@ -541,5 +541,52 @@ export const definition: RecordToolDefinition = {
 			},
 			{ from: 'abgeschlossen', to: 'bewertet', label: L('Überarbeiten', 'Revise') }
 		]
+	},
+	example: {
+		bezeichnung: 'Videoüberwachung der Laderampen (Beispiel)',
+		umfang:
+			'Vier Kameras an den Laderampen des Lagers, Aufzeichnung rund um die Uhr, Speicherung 72 Stunden.',
+		verarbeitung:
+			'Die Kameras zeichnen den Bereich vor den Rampen auf. Zugriff auf Aufnahmen nur nach einem Vorfall, durch die Lagerleitung gemeinsam mit dem Betriebsrat.',
+		zwecke:
+			'Aufklärung und Abschreckung von Diebstählen nach zwei Vorfällen im Jahr 2026; Wahrung des Hausrechts.',
+		team: 'Datenschutzbeauftragte, Lagerleitung, IT, Betriebsrat',
+		akteure: 'Beschäftigte im Lager, Fahrer von Speditionen, Besucher.',
+		anlass: 'Systematische Überwachung von Beschäftigten an ihrem Arbeitsplatz.',
+		notwendigkeit:
+			'Mildere Mittel (bessere Beleuchtung, verschlossene Rampen außerhalb der Schichten) wurden geprüft und reichen allein nicht. Pausenbereiche und der Weg zu den Sozialräumen bleiben ausgenommen.',
+		rechtsgrundlagen: ['interesse'],
+		rechtsgrundlagen_details:
+			'Art. 6 Abs. 1 lit. f DSGVO; Betriebsvereinbarung nach § 87 Abs. 1 Nr. 6 BetrVG.',
+		dsb: 'Speicherdauer auf 72 Stunden begrenzen, Zugriff nur im Vier-Augen-Prinzip, Hinweisschilder vor dem erfassten Bereich.',
+		vertraulichkeit_gefaehrdungen: ['G 0.14', 'G 0.19'],
+		vertraulichkeit_beschreibung: 'Unbefugte sehen Aufnahmen ein oder geben sie weiter.',
+		vertraulichkeit_w: '2',
+		vertraulichkeit_s: '3',
+		vertraulichkeit_massnahmen:
+			'Rekorder im verschlossenen Technikraum; Zugriff nur für zwei benannte Personen, protokolliert.',
+		vertraulichkeit_rw: '1',
+		vertraulichkeit_rs: '3',
+		zweck_gefaehrdungen: ['G 0.29', 'DS 5'],
+		zweck_beschreibung: 'Die Aufnahmen werden zur Leistungs- oder Verhaltenskontrolle genutzt.',
+		zweck_w: '3',
+		zweck_s: '3',
+		zweck_massnahmen:
+			'Betriebsvereinbarung schließt Leistungs- und Verhaltenskontrolle aus; Auswertung nur nach einem dokumentierten Vorfall.',
+		zweck_rw: '1',
+		zweck_rs: '3',
+		transparenz_gefaehrdungen: ['DS 1', 'DS 2'],
+		transparenz_beschreibung:
+			'Fahrer und Besucher wissen nicht, dass und wie lange aufgezeichnet wird.',
+		transparenz_w: '3',
+		transparenz_s: '2',
+		transparenz_massnahmen:
+			'Hinweisschilder vor dem erfassten Bereich mit Verantwortlichem, Zweck, Speicherdauer und Kontakt; vollständige Hinweise am Empfang.',
+		transparenz_rw: '1',
+		transparenz_rs: '2',
+		restrisiko:
+			'Nach den Maßnahmen bleibt kein hohes Risiko; eine Konsultation der Aufsichtsbehörde ist nicht nötig.',
+		umgesetzt: false,
+		ueberpruefung: '2027-11-01'
 	}
 };

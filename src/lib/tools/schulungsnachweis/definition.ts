@@ -133,5 +133,17 @@ export const definition: RecordToolDefinition = {
 				{ id: 'notizen', type: 'textarea', label: L('Notizen', 'Notes') }
 			]
 		}
-	]
+	],
+	example: {
+		titel: 'Datenschutz-Grundschulung 2026 (Beispiel)',
+		themen: ['grundlagen', 'phishing', 'pannen', 'betroffenenrechte'],
+		datum: '2026-09-15',
+		form: 'online',
+		referent: 'Datenschutzbeauftragte',
+		zielgruppe: 'Alle Beschäftigten der Verwaltung',
+		anzahl: 42,
+		nachweis: 'liste',
+		vertraulichkeit: true,
+		wiederholung_monate: 12
+	}
 };

@@ -258,5 +258,16 @@ export const definition: RecordToolDefinition = {
 				requires: ['ablehnung', 'ablehnung_grund', 'antwort_am']
 			}
 		]
+	},
+	example: {
+		bezeichnung: 'Auskunft einer früheren Kundin (Beispiel)',
+		eingang: '2026-11-02T09:15:00.000Z',
+		kanal: 'email',
+		rechte: ['auskunft'],
+		anliegen:
+			'Frau Beispiel war bis 2024 Kundin und verlangt Auskunft über alle zu ihr gespeicherten Daten sowie eine Kopie.',
+		identitaet: 'eindeutig',
+		massnahmen:
+			'Kundensystem, Buchhaltung und Newsletter-Tool durchsucht. Rechnungen sind noch wegen der Aufbewahrungspflicht gespeichert; der Newsletter-Eintrag wurde 2024 gelöscht.'
 	}
 };

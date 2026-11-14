@@ -48,6 +48,6 @@ test('preview: the example fills a new entry and the empty form offers it', asyn
 	await expect(page.getByRole('link', { name: 'Beispiel laden' })).toHaveCount(0);
 
 	// a tool without an example offers none
-	await page.goto('werkzeuge/datenpanne/eintraege/?neu=1', { waitUntil: 'networkidle' });
+	await page.goto('werkzeuge/pruefkatalog/eintraege/?neu=1', { waitUntil: 'networkidle' });
 	await expect(page.getByRole('link', { name: 'Beispiel laden' })).toHaveCount(0);
 });

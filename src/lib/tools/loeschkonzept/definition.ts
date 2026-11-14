@@ -210,5 +210,23 @@ export const definition: RecordToolDefinition = {
 				}
 			]
 		}
-	]
+	],
+	example: {
+		datenart: 'Bewerbungsunterlagen abgelehnter Bewerber (Beispiel)',
+		beschreibung: 'Anschreiben, Lebenslauf, Zeugnisse und Notizen aus dem Auswahlverfahren.',
+		verarbeitung: 'Bewerbungsverfahren',
+		systeme: 'Bewerbungspostfach, Bewerbermanagement, Ablage der Personalabteilung',
+		grundlage: 'bewerbung',
+		frist_wert: 6,
+		frist_einheit: 'monate',
+		fristbeginn: 'ereignis',
+		ereignis: 'Zugang der Absage',
+		loeschregel:
+			'Sechs Monate nach der Absage löschen; länger nur mit Einwilligung für den Bewerberpool.',
+		loeschart: 'manuell',
+		verantwortlich: 'Personalabteilung',
+		status: 'umgesetzt',
+		letzter_loeschlauf: '2026-10-01',
+		naechster_loeschlauf: '2027-01-04'
+	}
 };

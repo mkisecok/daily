@@ -5,6 +5,25 @@ import { listRecordTools } from './registry.js';
 const withExample = listRecordTools().filter((tool) => tool.definition.example);
 
 describe('tool examples', () => {
+	it('exist for the tools used every week', () => {
+		expect(withExample.map((tool) => tool.definition.slug)).toEqual(
+			expect.arrayContaining([
+				'betroffenenanfrage',
+				'datenpanne',
+				'avv-pruefung',
+				'ki-register',
+				'schulungsnachweis',
+				'feststellungen',
+				'loeschkonzept',
+				'tom-katalog',
+				'auditprogramm',
+				'dsfa',
+				'vorgang',
+				'beratungsvermerk'
+			])
+		);
+	});
+
 	it('exist for the register of processing and the occasion tools', () => {
 		expect(withExample.map((tool) => tool.definition.slug)).toEqual(
 			expect.arrayContaining([
