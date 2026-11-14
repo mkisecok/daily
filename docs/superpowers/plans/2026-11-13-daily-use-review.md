@@ -161,3 +161,7 @@ number of tools.
   outside in, departments and software, existing documentation, control plan and report to
   management). 20 points always, 5 by scope; every gap becomes a recommendation; it closes once
   every point is answered and the report to management is dated, gaps allowed.
+- Step 5 starts with a safe way to retire a tool: status `retired` with a `successor`. A retired
+  tool leaves the catalogue, search and occasion cards; its page says where it went; its entries,
+  deadlines and attached results stay readable, so no data is lost. "KI und DSGVO" is retired into
+  KI-Tool einführen, which still attaches it as a check. The five merges follow, one PR each.

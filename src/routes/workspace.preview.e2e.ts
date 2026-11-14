@@ -315,7 +315,7 @@ test('preview: the privacy notice describes the preview, not the signed-in app',
 
 test('preview: the tool catalogue narrows by search and area', async ({ page }) => {
 	await page.goto('werkzeuge/', { waitUntil: 'networkidle' });
-	await expect(page.locator('li.tile')).toHaveCount(53);
+	await expect(page.locator('li.tile')).toHaveCount(52);
 
 	await page.getByRole('searchbox', { name: 'Werkzeuge durchsuchen' }).fill('Art. 35');
 	await expect(page.locator('.bento')).toBeHidden();
@@ -611,4 +611,16 @@ test('preview: a transparency result speaks of a passed date in the past tense',
 	);
 	await page.getByRole('button', { name: 'Auswerten' }).click();
 	await expect(page.locator('.verdict')).toContainText('Diese gelten seit dem 2. August 2026');
+});
+
+test('preview: a retired tool leaves the catalogue and points to its successor', async ({
+	page
+}) => {
+	await page.goto('werkzeuge/', { waitUntil: 'networkidle' });
+	await expect(page.locator('li.tile', { hasText: 'KI und DSGVO' })).toHaveCount(0);
+	await page.goto('werkzeuge/ki-dsgvo-schnittstelle/', { waitUntil: 'networkidle' });
+	const note = page.getByRole('note');
+	await expect(note).toContainText('aufgegangen');
+	await note.getByRole('link', { name: /KI-Tool einführen/ }).click();
+	await expect(page).toHaveURL(/werkzeuge\/ki-einfuehrung/);
 });

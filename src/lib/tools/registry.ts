@@ -124,6 +124,11 @@ export const tools: readonly ToolManifest[] = [
 
 export const categories: readonly ToolCategory[] = ['datenschutz', 'ki', 'audit', 'entwickler'];
 
+/** the tools offered in the catalogue and in search: neither planned nor retired */
+export const listedTools: readonly ToolManifest[] = tools.filter(
+	(tool) => tool.status !== 'planned' && tool.status !== 'retired'
+);
+
 export function getTool(slug: string): ToolManifest | undefined {
 	return tools.find((tool) => tool.slug === slug);
 }

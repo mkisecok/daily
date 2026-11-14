@@ -12,7 +12,7 @@
 	import { resolve } from '$app/paths';
 	import { localized } from '#lib/i18n/links.js';
 	import { m } from '#lib/paraglide/messages.js';
-	import { categories, tools } from '#lib/tools/registry.js';
+	import { categories, listedTools as tools } from '#lib/tools/registry.js';
 	import { text } from '#lib/tools/i18n.js';
 	import { AREA_ICONS, toolIcon } from '#lib/tools/icons.js';
 	import { PINNED_KEY, RECENT_KEY, readList, togglePin, writeList } from '#lib/tools/shelf.js';

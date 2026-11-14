@@ -2,7 +2,8 @@
 export type Localized = { de: string; en: string };
 
 export type ToolCategory = 'datenschutz' | 'ki' | 'audit' | 'entwickler';
-export type ToolStatus = 'stable' | 'beta' | 'planned';
+/** `retired`: merged into its `successor`; hidden from the catalogue, its entries stay readable */
+export type ToolStatus = 'stable' | 'beta' | 'planned' | 'retired';
 /** `utility`: an interactive tool with its own page, e.g. the repository scan */
 export type ToolShape = 'questionnaire' | 'register' | 'workflow' | 'utility';
 
@@ -49,6 +50,8 @@ export type ToolManifest = {
 	legalBasis: LegalBasis[];
 	/** the day a lawyer or data protection officer reviewed the tool; see docs/legal-review.md */
 	reviewedAt?: string;
+	/** for a retired tool: the tool it was merged into */
+	successor?: string;
 };
 
 /* ---------- questionnaire shape ---------- */

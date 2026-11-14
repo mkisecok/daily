@@ -594,5 +594,7 @@
 	"today_cases_more": "und {count} weitere",
 	"today_quick": "Neu anlegen",
 	"today_loading": "Wird geladen …",
-	"print_kind_access": "Auskunft nach Art. 15 DSGVO"
+	"print_kind_access": "Auskunft nach Art. 15 DSGVO",
+	"status_retired": "Zusammengelegt",
+	"tool_retired": "Dieses Werkzeug ist in „{name}“ aufgegangen. Bestehende Einträge und Ergebnisse bleiben lesbar; Neues bitte dort."
 }

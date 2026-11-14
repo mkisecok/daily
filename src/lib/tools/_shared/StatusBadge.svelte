@@ -14,7 +14,9 @@
 			? m.status_stable()
 			: status === 'beta'
 				? m.status_beta()
-				: m.status_planned()
+				: status === 'retired'
+					? m.status_retired()
+					: m.status_planned()
 	);
 </script>
 
