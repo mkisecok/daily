@@ -156,4 +156,8 @@ number of tools.
   and what is withheld) and prints it as the reply under Art. 15 once the first stage is answered;
   the Datenpanne has a "Nachbereitung" section and reminds of it once the urgent part is over.
   Open: the reply's head still shows Daily's internal lines (tool version, legal review), which
-  do not belong on a letter to a data subject. Still to do in step 4: the stocktake.
+  do not belong on a letter to a data subject. Step 4 is complete with the **Bestandsaufnahme**: a stocktake per organisation or new client in
+  the order of a first visit (the organisation and the appointment of the DSB, security from the
+  outside in, departments and software, existing documentation, control plan and report to
+  management). 20 points always, 5 by scope; every gap becomes a recommendation; it closes once
+  every point is answered and the report to management is dated, gaps allowed.

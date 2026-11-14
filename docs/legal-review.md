@@ -74,3 +74,4 @@ Phase 0 is done when no row has an open finding of severity "wrong result".
 | Guardrail-Test                              | `guardrail-test`                 | Entwickler  |          |      |          |          | open   |
 | Vorgänge                                    | `vorgang`                        | Datenschutz |          |      |          |          | open   |
 | Beratungsvermerke                           | `beratungsvermerk`               | Datenschutz |          |      |          |          | open   |
+| Bestandsaufnahme                            | `bestandsaufnahme`               | Datenschutz |          |      |          |          | open   |

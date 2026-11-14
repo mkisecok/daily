@@ -148,6 +148,12 @@ export const SITUATIONS: Situation[] = [
 		tool: 'auditvorbereitung'
 	},
 	{
+		id: 'bestandsaufnahme',
+		label: L('Ich beginne bei einer neuen Organisation', 'I am starting with a new organisation'),
+		icon: 'binoculars',
+		tool: 'bestandsaufnahme'
+	},
+	{
 		id: 'drittland',
 		label: L('Daten gehen in ein Drittland', 'Data goes to a third country'),
 		icon: 'world',
