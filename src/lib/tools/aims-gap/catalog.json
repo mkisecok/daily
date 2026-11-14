@@ -184,16 +184,16 @@
 						"en": "Is the competence of the people involved in AI determined and evidenced?"
 					},
 					"help": {
-						"de": "Nachweis: Anforderungen je Rolle und Schulungsnachweise. Das Werkzeug KI-Kompetenz hilft bei Art. 4 KI-VO.",
-						"en": "Evidence: requirements per role and training records. The AI literacy tool helps with Art. 4 AI Act."
+						"de": "Nachweis: Anforderungen je Rolle und Schulungsnachweise. Der Schulungsnachweis hilft bei Art. 4 KI-VO.",
+						"en": "Evidence: requirements per role and training records. The training log helps with Art. 4 AI Act."
 					},
 					"cite": {
 						"law": "ISO 42001",
 						"ref": "Kap. 7.2, Anhang A.4"
 					},
 					"remedy": {
-						"de": "Kompetenzbedarf je Rolle festlegen und Schulungen nachweisen; deckt KI-VO Art. 4 mit ab (Werkzeug KI-Kompetenz).",
-						"en": "Set competence needs per role and evidence training; also covers AI Act Art. 4 (AI literacy tool)."
+						"de": "Kompetenzbedarf je Rolle festlegen und Schulungen nachweisen; deckt KI-VO Art. 4 mit ab (Werkzeug Schulungsnachweis).",
+						"en": "Set competence needs per role and evidence training; also covers AI Act Art. 4 (training log tool)."
 					}
 				},
 				{

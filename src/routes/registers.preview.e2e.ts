@@ -39,15 +39,6 @@ const registers: Register[] = [
 		}
 	},
 	{
-		slug: 'ki-kompetenz',
-		titleLabel: 'Rolle oder Personengruppe',
-		fill: async (page, title) => {
-			await page.getByLabel('Rolle oder Personengruppe').fill(title);
-			await choose(page.locator('#field-nutzung'), 'anwendung');
-			await choose(page.locator('#field-status'), 'geplant');
-		}
-	},
-	{
 		slug: 'pruefkatalog',
 		titleLabel: 'Prüfthema',
 		fill: async (page, title) => {

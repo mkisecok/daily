@@ -132,7 +132,7 @@ const RULES: Record<string, (result: QuestionnaireResult) => NextStep[]> = {
 						)
 					),
 					entry(
-						'ki-kompetenz',
+						'schulungsnachweis',
 						L(
 							'Die Kompetenz der Aufsichtspersonen planen (Art. 26 Abs. 2).',
 							'Plan the competence of the oversight staff (Art. 26(2)).'
@@ -211,7 +211,10 @@ const RULES: Record<string, (result: QuestionnaireResult) => NextStep[]> = {
 					)
 				],
 	'ki-nutzungsrichtlinie': () => [
-		entry('ki-kompetenz', L('Die Schulung der Nutzenden planen.', 'Plan the training of users.'))
+		entry(
+			'schulungsnachweis',
+			L('Die Schulung der Nutzenden planen.', 'Plan the training of users.')
+		)
 	],
 	'aims-gap': (r) =>
 		r.verdict === 'negative'

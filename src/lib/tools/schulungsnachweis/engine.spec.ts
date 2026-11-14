@@ -48,6 +48,36 @@ describe('Schulungsnachweis', () => {
 		expect(notes({ ...session, wiederholung_monate: '' })).toContain('12 bis 24 Monate');
 		expect(notes({ ...session, themen: ['grundlagen'] })).toContain('72-Stunden-Frist');
 		expect(notes({ ...session, vertraulichkeit: 'false' })).toContain('Art. 32 Abs. 4');
-		expect(notes({ ...session, themen: ['pannen', 'ki'] })).toContain('KI-Kompetenz');
+		expect(notes({ ...session, themen: ['pannen', 'ki'] })).toContain('Art der Befassung');
+	});
+
+	it('checks the AI content against the kind of involvement (Art. 4 KI-VO)', () => {
+		const base = {
+			titel: 'KI im Alltag',
+			datum: '2026-09-15',
+			nachweis: 'liste',
+			themen: ['ki'],
+			ki_befassung: 'anwendung',
+			ki_inhalte: ['risiken']
+		};
+		const out = engine.assess!({ state: null, data: base } as never)!;
+		expect(out.verdict).not.toBe('positive');
+		expect((out.notes ?? []).map((n) => n.de).join(' ')).toContain('nicht behandelt');
+	});
+
+	it('treats missing oversight content as a gap (Art. 26 Abs. 2 KI-VO)', () => {
+		const out = engine.assess!({
+			state: null,
+			data: {
+				titel: 'Aufsicht Bewerberauswahl',
+				datum: '2026-09-15',
+				nachweis: 'liste',
+				themen: ['ki'],
+				ki_befassung: 'aufsicht',
+				ki_inhalte: ['risiken']
+			}
+		} as never)!;
+		expect(out.headline.de).toBe('Kompetenz für die Aufsicht nicht belegt.');
+		expect(out.reasons).toHaveLength(2);
 	});
 });
