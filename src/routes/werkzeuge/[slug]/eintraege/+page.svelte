@@ -62,7 +62,11 @@
 	// a register with a document of its own prints that instead of the Registerauszug
 	const RegisterPrint = $derived(registerPrints[data.definition.slug] ?? PrintRegister);
 	// an entry with a document of its own prints that instead of the Vorgangsblatt
-	const EntryPrint = $derived(entryPrints[data.definition.slug]);
+	const EntryPrint = $derived.by(() => {
+		const print = entryPrints[data.definition.slug];
+		if (!print || !detail) return undefined;
+		return !print.when || print.when(detail.record) ? print : undefined;
+	});
 	const assessment = $derived(detail ? (engine?.assess?.(detail.record) ?? null) : null);
 
 	const listPath = $derived(localized(`/werkzeuge/${slug}/eintraege`));

@@ -64,7 +64,8 @@ export function toBerlinInput(iso: string): string {
 			.formatToParts(new Date(iso))
 			.map((part) => [part.type, part.value])
 	);
-	return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+	// years below 1000 come without leading zeros, e.g. while a year is being typed
+	return `${parts.year.padStart(4, '0')}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
 }
 
 /**
@@ -78,5 +79,5 @@ export function fromBerlinInput(value: string): string {
 		Date.parse(`${toBerlinInput(new Date(time).toISOString())}:00Z`) - time;
 	let time = asUtc - offset(asUtc);
 	time = asUtc - offset(time);
-	return new Date(time).toISOString();
+	return Number.isNaN(time) ? '' : new Date(time).toISOString();
 }

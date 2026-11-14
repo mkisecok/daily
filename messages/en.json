@@ -593,5 +593,6 @@
 	"today_cases_none": "No open matter, request, breach or finding.",
 	"today_cases_more": "and {count} more",
 	"today_quick": "Start new",
-	"today_loading": "Loading …"
+	"today_loading": "Loading …",
+	"print_kind_access": "Access reply under Art. 15 GDPR"
 }

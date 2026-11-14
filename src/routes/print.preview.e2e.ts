@@ -265,3 +265,23 @@ test('print: an AI incident prints as a report under Art. 73 KI-VO', async ({ pa
 	await expect(report).toContainText('15 Tage (Art. 73 Abs. 2)');
 	await expect(report).toContainText('Untersuchung und Korrektur (Art. 73 Abs. 6)');
 });
+
+test('print: an answered access request prints as the reply under Art. 15 DSGVO', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: A4_TEXT, height: 1000 });
+	await page.goto('werkzeuge/betroffenenanfrage/eintraege/?neu=1&beispiel=1', {
+		waitUntil: 'networkidle'
+	});
+	await expect(page.locator('#sec-auskunft')).toContainText('Inhalt der Auskunft');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+	await page.emulateMedia({ media: 'print' });
+
+	await expect(page.locator('[data-print-frame]')).toContainText('Auskunft nach Art. 15 DSGVO');
+	const reply = page.locator('.print-parts');
+	const letters = (await reply.locator('.letter').allTextContents()).filter((l) => l.trim());
+	expect(letters).toEqual(['a)', 'b)', 'c)', 'd)', 'e)', 'f)', 'g)', 'h)']);
+	await expect(reply).toContainText('Bei Ihnen selbst erhoben.');
+	await expect(reply).toContainText('Liegt bei');
+});

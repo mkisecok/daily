@@ -221,6 +221,125 @@ export const definition: RecordToolDefinition = {
 					cite: { law: 'DSGVO', ref: 'Art. 12 Abs. 3' }
 				}
 			]
+		},
+		{
+			id: 'auskunft',
+			title: L('Inhalt der Auskunft', 'Content of the access reply'),
+			intro: L(
+				'Die Auskunft in vier Stufen: ob Daten verarbeitet werden, die Daten selbst, die Angaben nach Art. 15 Abs. 1 und die Kopie. Ausgefüllt wird daraus beim Drucken das Auskunftsschreiben.',
+				'Access in four stages: whether data is processed, the data itself, the details of Art. 15(1) and the copy. Once filled in, printing gives the access letter.'
+			),
+			when: (data) => Array.isArray(data.rechte) && data.rechte.includes('auskunft'),
+			fields: [
+				{
+					id: 'a_verarbeitet',
+					type: 'select',
+					label: L('Werden Daten zur Person verarbeitet?', 'Is data about the person processed?'),
+					options: [
+						{ value: 'ja', label: L('Ja', 'Yes') },
+						{ value: 'nein', label: L('Nein (Negativauskunft)', 'No (negative reply)') }
+					],
+					cite: { law: 'DSGVO', ref: 'Art. 15 Abs. 1' }
+				},
+				{
+					id: 'a_daten',
+					type: 'textarea',
+					label: L('Die gespeicherten Daten', 'The data stored'),
+					help: L(
+						'Die Daten selbst, nicht nur ihre Kategorien: z. B. „Anschrift: Musterweg 1“, oder der Verweis auf die beigefügte Aufstellung.',
+						'The data itself, not only its categories: e.g. "Address: 1 Example Road", or a pointer to the attached listing.'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 15 Abs. 1' }
+				},
+				{
+					id: 'a_zwecke',
+					type: 'textarea',
+					label: L('Verarbeitungszwecke', 'Purposes of the processing'),
+					cite: { law: 'DSGVO', ref: 'Art. 15 Abs. 1 lit. a' }
+				},
+				{
+					id: 'a_kategorien',
+					type: 'textarea',
+					label: L('Kategorien der Daten', 'Categories of data'),
+					cite: { law: 'DSGVO', ref: 'Art. 15 Abs. 1 lit. b' }
+				},
+				{
+					id: 'a_empfaenger',
+					type: 'textarea',
+					label: L('Empfänger', 'Recipients'),
+					help: L(
+						'Die konkreten Empfänger, soweit bekannt; Kategorien nur, wenn sie sich nicht benennen lassen (EuGH C-154/21).',
+						'The actual recipients where known; categories only if they cannot be named (CJEU C-154/21).'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 15 Abs. 1 lit. c' }
+				},
+				{
+					id: 'a_dauer',
+					type: 'textarea',
+					label: L('Speicherdauer oder Kriterien dafür', 'Storage period or its criteria'),
+					cite: { law: 'DSGVO', ref: 'Art. 15 Abs. 1 lit. d' }
+				},
+				{
+					id: 'a_herkunft',
+					type: 'textarea',
+					label: L('Herkunft der Daten', 'Source of the data'),
+					help: L(
+						'Nur wenn die Daten nicht bei der Person selbst erhoben wurden.',
+						'Only where the data was not collected from the person.'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 15 Abs. 1 lit. g' }
+				},
+				{
+					id: 'a_automatisiert',
+					type: 'textarea',
+					label: L(
+						'Automatisierte Entscheidungen einschließlich Profiling',
+						'Automated decisions including profiling'
+					),
+					help: L(
+						'Wenn es keine gibt: „Keine“. Sonst Logik, Tragweite und Auswirkungen.',
+						'If there are none: "None". Otherwise the logic, significance and consequences.'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 15 Abs. 1 lit. h' }
+				},
+				{
+					id: 'a_drittland',
+					type: 'textarea',
+					label: L(
+						'Übermittlung in Drittländer und Garantien',
+						'Transfers to third countries and safeguards'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 15 Abs. 2' }
+				},
+				{
+					id: 'a_kopie',
+					type: 'select',
+					label: L('Kopie der Daten', 'Copy of the data'),
+					options: [
+						{ value: 'beigefuegt', label: L('Liegt bei', 'Enclosed') },
+						{
+							value: 'elektronisch',
+							label: L('Elektronisch bereitgestellt', 'Provided electronically')
+						},
+						{ value: 'nicht_verlangt', label: L('Nicht verlangt', 'Not requested') }
+					],
+					help: L(
+						'Eine originalgetreue und vollständige Wiedergabe der Daten (EuGH C-487/21); Daten Dritter schwärzen (Art. 15 Abs. 4).',
+						'A faithful and complete reproduction of the data (CJEU C-487/21); redact data of others (Art. 15(4)).'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 15 Abs. 3' }
+				},
+				{
+					id: 'a_einschraenkung',
+					type: 'textarea',
+					label: L('Was nicht beauskunftet wird, und warum', 'What is withheld, and why'),
+					help: L(
+						'Z. B. Rechte anderer Personen oder Daten, die nur wegen Aufbewahrungspflichten gespeichert sind (§ 34 BDSG).',
+						'E.g. rights of others, or data kept only because of retention duties (§ 34 BDSG).'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 15 Abs. 4' }
+				}
+			]
 		}
 	],
 	workflow: {
@@ -268,6 +387,16 @@ export const definition: RecordToolDefinition = {
 			'Frau Beispiel war bis 2024 Kundin und verlangt Auskunft über alle zu ihr gespeicherten Daten sowie eine Kopie.',
 		identitaet: 'eindeutig',
 		massnahmen:
-			'Kundensystem, Buchhaltung und Newsletter-Tool durchsucht. Rechnungen sind noch wegen der Aufbewahrungspflicht gespeichert; der Newsletter-Eintrag wurde 2024 gelöscht.'
+			'Kundensystem, Buchhaltung und Newsletter-Tool durchsucht. Rechnungen sind noch wegen der Aufbewahrungspflicht gespeichert; der Newsletter-Eintrag wurde 2024 gelöscht.',
+		a_verarbeitet: 'ja',
+		a_daten: 'Siehe beigefügte Aufstellung aus Kundensystem und Buchhaltung (Stand 12.11.2026).',
+		a_zwecke:
+			'Abwicklung der früheren Verträge; Aufbewahrung der Rechnungen nach Handels- und Steuerrecht.',
+		a_kategorien: 'Name, Anschrift, E-Mail-Adresse, Bestellungen, Rechnungen, Zahlungsdaten.',
+		a_empfaenger: 'Steuerberatung Muster & Partner; Rechenzentrum als Auftragsverarbeiter.',
+		a_dauer:
+			'Rechnungen acht Jahre ab Ende des Kalenderjahres; alle übrigen Daten wurden 2024 gelöscht.',
+		a_automatisiert: 'Keine.',
+		a_kopie: 'beigefuegt'
 	}
 };

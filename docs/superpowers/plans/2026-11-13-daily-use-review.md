@@ -151,3 +151,9 @@ number of tools.
   AVV-Prüfung, KI-Register, Schulungsnachweis, Feststellungen, Löschkonzept, TOM-Katalog,
   Auditprogramm, DSFA). Each is a small real case and most show a gap on purpose, so the result
   has something to say.
+- Step 4, first part: the Betroffenenanfrage has a section "Inhalt der Auskunft" for access
+  requests (whether data is processed, the data, Art. 15(1) lit. a to h, third countries, the copy
+  and what is withheld) and prints it as the reply under Art. 15 once the first stage is answered;
+  the Datenpanne has a "Nachbereitung" section and reminds of it once the urgent part is over.
+  Open: the reply's head still shows Daily's internal lines (tool version, legal review), which
+  do not belong on a letter to a data subject. Still to do in step 4: the stocktake.

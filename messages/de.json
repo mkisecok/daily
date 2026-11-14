@@ -593,5 +593,6 @@
 	"today_cases_none": "Kein offener Vorgang, keine offene Anfrage, Datenpanne oder Feststellung.",
 	"today_cases_more": "und {count} weitere",
 	"today_quick": "Neu anlegen",
-	"today_loading": "Wird geladen …"
+	"today_loading": "Wird geladen …",
+	"print_kind_access": "Auskunft nach Art. 15 DSGVO"
 }
