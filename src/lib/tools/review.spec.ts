@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { tools } from './registry.js';
+import { listedTools, tools } from './registry.js';
+import { SITUATIONS } from './situations.js';
 
 /** the rows of docs/legal-review.md, keyed by slug */
 function reviewTable(): Map<string, { date: string; status: string }> {
@@ -33,5 +34,22 @@ describe('legal review', () => {
 		expect(
 			shown.filter((tool) => tool.status === 'stable' && !tool.reviewedAt).map((t) => t.slug)
 		).toEqual([]);
+	});
+});
+
+describe('retired tools', () => {
+	const retired = tools.filter((tool) => tool.status === 'retired');
+
+	it('name a successor that is offered in the catalogue', () => {
+		for (const tool of retired) {
+			const successor = tools.find((t) => t.slug === tool.successor);
+			expect(successor?.status, tool.slug).toMatch(/^(beta|stable)$/);
+		}
+	});
+
+	it('are not offered in the catalogue or as an occasion', () => {
+		const slugs = retired.map((t) => t.slug);
+		expect(listedTools.filter((t) => slugs.includes(t.slug))).toEqual([]);
+		expect(SITUATIONS.filter((s) => slugs.includes(s.tool))).toEqual([]);
 	});
 });

@@ -12,7 +12,7 @@
 	import { localized, type RoutePath } from '#lib/i18n/links.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { cite, text } from '#lib/tools/i18n.js';
-	import { tools } from '#lib/tools/registry.js';
+	import { listedTools } from '#lib/tools/registry.js';
 	import Icon from './Icon.svelte';
 	import type { IconName } from './icons.js';
 	import { score } from './command.js';
@@ -41,7 +41,7 @@
 			icon: item.icon,
 			path: item.path
 		})),
-		...tools.map((tool) => ({
+		...listedTools.map((tool) => ({
 			id: `tool:${tool.slug}`,
 			group: m.nav_tools(),
 			label: text(tool.name),

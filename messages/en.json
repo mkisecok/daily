@@ -594,5 +594,7 @@
 	"today_cases_more": "and {count} more",
 	"today_quick": "Start new",
 	"today_loading": "Loading …",
-	"print_kind_access": "Access reply under Art. 15 GDPR"
+	"print_kind_access": "Access reply under Art. 15 GDPR",
+	"status_retired": "Merged",
+	"tool_retired": "This tool has been merged into \"{name}\". Existing entries and results stay readable; please start new work there."
 }

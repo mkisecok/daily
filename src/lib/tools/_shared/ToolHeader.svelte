@@ -8,7 +8,9 @@
 	import { localized } from '#lib/i18n/links.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import PageHeader from '#lib/ui/PageHeader.svelte';
+	import { resolve } from '$app/paths';
 	import { text } from '../i18n.js';
+	import { getTool } from '../registry.js';
 	import { rememberVisit } from '../shelf.js';
 	import type { ToolManifest } from '../types.js';
 	import Citation from './Citation.svelte';
@@ -29,6 +31,9 @@
 					? m.category_audit()
 					: m.category_entwickler()
 	);
+	const successor = $derived(
+		tool.status === 'retired' && tool.successor ? getTool(tool.successor) : undefined
+	);
 	const trail = $derived([{ label: m.nav_tools(), path: localized('/werkzeuge') }]);
 </script>
 
@@ -46,10 +51,25 @@
 			</ul>
 		{/if}
 		<Rechtsstand {tool} />
+		{#if successor}
+			<p class="retired" role="note">
+				{m.tool_retired({ name: text(successor.name) })}
+				<a href={resolve(localized(`/werkzeuge/${successor.slug}`))}>{text(successor.name)} →</a>
+			</p>
+		{/if}
 	{/snippet}
 </PageHeader>
 
 <style>
+	.retired {
+		max-width: var(--measure);
+		margin-top: 0.75rem;
+		padding: 0.6rem 0.9rem;
+		font-size: 14px;
+		background: var(--navy-soft);
+		border-radius: var(--radius);
+	}
+
 	.tool-meta {
 		--spine: var(--ink3);
 
