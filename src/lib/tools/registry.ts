@@ -43,6 +43,7 @@ import { modelltraining } from './modelltraining/tool.js';
 import { auditvorbereitung } from './auditvorbereitung/tool.js';
 import { vorgang } from './vorgang/tool.js';
 import { beratungsvermerk } from './beratungsvermerk/tool.js';
+import { bestandsaufnahme } from './bestandsaufnahme/tool.js';
 import { loeschkonzept } from './loeschkonzept/tool.js';
 import { schulungsnachweis } from './schulungsnachweis/tool.js';
 import { kiKompetenz } from './ki-kompetenz/tool.js';
@@ -98,6 +99,7 @@ export const tools: readonly ToolManifest[] = [
 	auditvorbereitung.manifest,
 	vorgang.manifest,
 	beratungsvermerk.manifest,
+	bestandsaufnahme.manifest,
 	loeschkonzept.manifest,
 	schulungsnachweis.manifest,
 	kiDsgvoSchnittstelle.manifest,
@@ -222,6 +224,7 @@ const recordTools: Record<string, RecordTool> = {
 	[auditvorbereitung.manifest.slug]: auditvorbereitung,
 	[vorgang.manifest.slug]: vorgang,
 	[beratungsvermerk.manifest.slug]: beratungsvermerk,
+	[bestandsaufnahme.manifest.slug]: bestandsaufnahme,
 	[avvPruefung.manifest.slug]: avvPruefung,
 	[vvt.manifest.slug]: vvt,
 	[datenpanne.manifest.slug]: datenpanne,

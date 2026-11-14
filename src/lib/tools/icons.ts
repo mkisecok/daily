@@ -39,6 +39,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	auditvorbereitung: 'zoom-check',
 	vorgang: 'archive',
 	beratungsvermerk: 'notes',
+	bestandsaufnahme: 'binoculars',
 	loeschkonzept: 'trash-x',
 	schulungsnachweis: 'school',
 	'ki-dsgvo-schnittstelle': 'arrows-exchange',
