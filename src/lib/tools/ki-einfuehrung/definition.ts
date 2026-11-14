@@ -117,7 +117,10 @@ export const BLOCKS: Block[] = [
 			},
 			{
 				id: 'n_kompetenz',
-				label: L('Nutzende geschult (Werkzeug KI-Kompetenz)', 'Users trained (AI literacy tool)'),
+				label: L(
+					'Nutzende geschult (Werkzeug Schulungsnachweis)',
+					'Users trained (training log tool)'
+				),
 				cite: KIVO('Art. 4')
 			}
 		]

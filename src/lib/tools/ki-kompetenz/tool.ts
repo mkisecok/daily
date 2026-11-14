@@ -5,7 +5,8 @@ import { definition, engine } from './engine.js';
 const manifest: ToolManifest = {
 	slug: 'ki-kompetenz',
 	category: 'ki',
-	status: 'beta',
+	status: 'retired',
+	successor: 'schulungsnachweis',
 	shape: 'register',
 	version: definition.version,
 	name: { de: 'KI-Kompetenz', en: 'AI literacy' },

@@ -172,8 +172,8 @@ export const BLOCKS: Block[] = [
 			{
 				id: 'e_ki',
 				label: L(
-					'Maßnahmen zur KI-Kompetenz eingeplant (Werkzeug KI-Kompetenz)',
-					'AI literacy measures planned (AI literacy tool)'
+					'Maßnahmen zur KI-Kompetenz eingeplant (Werkzeug Schulungsnachweis)',
+					'AI literacy measures planned (training log tool)'
 				),
 				cite: { law: 'KI-VO', ref: 'Art. 4 Abs. 1' },
 				scope: ['ki']

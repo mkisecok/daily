@@ -43,7 +43,7 @@ test('preview: on a phone the sections open from the save bar', async ({ page })
 });
 
 test('preview: a form of two sections has the save bar but no index', async ({ page }) => {
-	await page.goto('werkzeuge/ki-kompetenz/eintraege/?neu=1', { waitUntil: 'networkidle' });
+	await page.goto('werkzeuge/auditbericht/eintraege/?neu=1', { waitUntil: 'networkidle' });
 	await expect(page.getByRole('navigation', { name: 'Abschnitte' })).toHaveCount(0);
 	await expect(page.locator('.sections-menu')).toHaveCount(0);
 	await expect(page.getByRole('button', { name: 'Speichern' })).toBeInViewport();

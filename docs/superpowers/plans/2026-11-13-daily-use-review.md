@@ -165,3 +165,8 @@ number of tools.
   tool leaves the catalogue, search and occasion cards; its page says where it went; its entries,
   deadlines and attached results stay readable, so no data is lost. "KI und DSGVO" is retired into
   KI-Tool einführen, which still attaches it as a check. The five merges follow, one PR each.
+- Merge 1 of 5: KI-Kompetenz is in the Schulungsnachweis. A training with the AI topic gets a part
+  "KI-Kompetenz (Art. 4 KI-VO)": kind of involvement, systems used, prior knowledge, AI content,
+  context. The content each kind of involvement needs is checked as before; for human oversight
+  of high-risk systems a missing point is a gap (Art. 26(2)). KI-Kompetenz is retired; its
+  existing entries stay readable, and references in other tools point to the Schulungsnachweis.

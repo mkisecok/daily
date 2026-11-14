@@ -7,13 +7,14 @@ export const definition: RecordToolDefinition = {
 	slug: 'schulungsnachweis',
 	version: 1,
 	intro: L(
-		'Ein Eintrag je Schulung oder E-Learning-Kampagne. Die Wiederholung wird zur Frist. Schulungen gehören zu den Aufgaben des Datenschutzbeauftragten (Art. 39 Abs. 1 lit. b DSGVO) und belegen, dass Beschäftigte nur auf Weisung verarbeiten (Art. 32 Abs. 4).',
-		'One entry per training session or e-learning campaign. The repetition becomes a deadline. Training is among the tasks of the data protection officer (Art. 39(1)(b) GDPR) and evidences that staff process only on instructions (Art. 32(4)).'
+		'Ein Eintrag je Schulung oder E-Learning-Kampagne, auch zur KI-Kompetenz nach Art. 4 KI-VO. Die Wiederholung wird zur Frist. Schulungen gehören zu den Aufgaben des Datenschutzbeauftragten (Art. 39 Abs. 1 lit. b DSGVO) und belegen, dass Beschäftigte nur auf Weisung verarbeiten (Art. 32 Abs. 4).',
+		'One entry per training session or e-learning campaign, also on AI literacy under Art. 4 AI Act. The repetition becomes a deadline. Training is among the tasks of the data protection officer (Art. 39(1)(b) GDPR) and evidences that staff process only on instructions (Art. 32(4)).'
 	),
 	sources: [
 		{ law: 'DSGVO', ref: 'Art. 39 Abs. 1 lit. b' },
 		{ law: 'DSGVO', ref: 'Art. 32 Abs. 4' },
-		{ law: 'DSGVO', ref: 'Art. 5 Abs. 2' }
+		{ law: 'DSGVO', ref: 'Art. 5 Abs. 2' },
+		{ law: 'KI-VO', ref: 'Art. 4, Art. 26 Abs. 2' }
 	],
 	titleField: 'titel',
 	sections: [
@@ -132,11 +133,106 @@ export const definition: RecordToolDefinition = {
 				},
 				{ id: 'notizen', type: 'textarea', label: L('Notizen', 'Notes') }
 			]
+		},
+		{
+			id: 'ki',
+			title: L('KI-Kompetenz (Art. 4 KI-VO)', 'AI literacy (Art. 4 AI Act)'),
+			intro: L(
+				'Wenn die Schulung den Umgang mit KI behandelt: Inhalte und Tiefe richten sich nach der Rolle, den Vorkenntnissen und dem Einsatz. Wer Hochrisiko-Systeme beaufsichtigt, braucht die Kompetenz ausdrücklich (Art. 26 Abs. 2).',
+				'When the training covers AI: content and depth follow the role, prior knowledge and use. Whoever oversees high-risk systems needs the competence expressly (Art. 26(2)).'
+			),
+			when: (data) => Array.isArray(data.themen) && data.themen.includes('ki'),
+			fields: [
+				{
+					id: 'ki_befassung',
+					type: 'select',
+					label: L('Art der Befassung mit KI', 'Kind of involvement with AI'),
+					options: [
+						{ value: 'anwendung', label: L('Nutzung im Arbeitsalltag', 'Everyday use') },
+						{
+							value: 'aufsicht',
+							label: L(
+								'Menschliche Aufsicht über Hochrisiko-Systeme',
+								'Human oversight of high-risk systems'
+							)
+						},
+						{
+							value: 'entwicklung',
+							label: L('Entwicklung oder Anpassung', 'Development or adaptation')
+						},
+						{
+							value: 'leitung',
+							label: L('Leitung, Beschaffung, Freigabe', 'Management, procurement, approval')
+						}
+					],
+					cite: { law: 'KI-VO', ref: 'Art. 4' }
+				},
+				{
+					id: 'ki_systeme',
+					type: 'textarea',
+					label: L('Genutzte KI-Systeme', 'AI systems used'),
+					help: L('Bezeichnungen wie im KI-Register.', 'Names as in the AI system register.')
+				},
+				{
+					id: 'ki_vorkenntnisse',
+					type: 'select',
+					label: L('Vorkenntnisse', 'Prior knowledge'),
+					options: [
+						{ value: 'keine', label: L('Keine', 'None') },
+						{ value: 'grundlagen', label: L('Grundlagen', 'Basic') },
+						{ value: 'fortgeschritten', label: L('Fortgeschritten', 'Advanced') }
+					]
+				},
+				{
+					id: 'ki_inhalte',
+					type: 'multiselect',
+					label: L('KI-Inhalte', 'AI content'),
+					options: [
+						{
+							value: 'funktionsweise',
+							label: L('Funktionsweise und Grenzen', 'How it works and its limits')
+						},
+						{
+							value: 'risiken',
+							label: L(
+								'Fehler, Verzerrungen, erfundene Inhalte',
+								'Errors, bias, fabricated content'
+							)
+						},
+						{
+							value: 'daten',
+							label: L(
+								'Umgang mit vertraulichen und personenbezogenen Daten',
+								'Handling confidential and personal data'
+							)
+						},
+						{
+							value: 'richtlinie',
+							label: L('Interne KI-Nutzungsrichtlinie', 'Internal AI usage policy')
+						},
+						{
+							value: 'aufsicht',
+							label: L('Menschliche Aufsicht und Eingreifen', 'Human oversight and intervention')
+						},
+						{ value: 'recht', label: L('KI-Verordnung und DSGVO', 'AI Act and GDPR') },
+						{
+							value: 'urheberrecht',
+							label: L('Urheberrecht und Kennzeichnung', 'Copyright and labelling')
+						}
+					]
+				},
+				{
+					id: 'ki_kontext',
+					type: 'textarea',
+					label: L('Einsatzkontext und betroffene Personen', 'Context of use and persons affected'),
+					cite: { law: 'KI-VO', ref: 'Art. 4' }
+				}
+			]
 		}
 	],
 	example: {
 		titel: 'Datenschutz-Grundschulung 2026 (Beispiel)',
-		themen: ['grundlagen', 'phishing', 'pannen', 'betroffenenrechte'],
+		themen: ['grundlagen', 'phishing', 'pannen', 'betroffenenrechte', 'ki'],
 		datum: '2026-09-15',
 		form: 'online',
 		referent: 'Datenschutzbeauftragte',
@@ -144,6 +240,8 @@ export const definition: RecordToolDefinition = {
 		anzahl: 42,
 		nachweis: 'liste',
 		vertraulichkeit: true,
-		wiederholung_monate: 12
+		wiederholung_monate: 12,
+		ki_befassung: 'anwendung',
+		ki_inhalte: ['risiken', 'daten']
 	}
 };

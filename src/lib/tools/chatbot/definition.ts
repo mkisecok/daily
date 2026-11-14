@@ -203,8 +203,8 @@ export const BLOCKS: Block[] = [
 			{
 				id: 'f_kompetenz',
 				label: L(
-					'Die Betreuenden kennen Grenzen und Risiken des Chatbots (Werkzeug KI-Kompetenz)',
-					'The people running it know the chatbot’s limits and risks (AI literacy tool)'
+					'Die Betreuenden kennen Grenzen und Risiken des Chatbots (Werkzeug Schulungsnachweis)',
+					'The people running it know the chatbot’s limits and risks (training log tool)'
 				),
 				cite: KIVO('Art. 4')
 			}
