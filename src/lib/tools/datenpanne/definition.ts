@@ -306,6 +306,41 @@ export const definition: RecordToolDefinition = {
 					cite: { law: 'DSGVO', ref: 'Art. 34 Abs. 3' }
 				}
 			]
+		},
+		{
+			id: 'nachbereitung',
+			title: L('Nachbereitung', 'Debrief'),
+			intro: L(
+				'Nach jeder Datenpanne, auch der nicht gemeldeten: Was war die Ursache, was lief gut, was ändert sich?',
+				'After every breach, also one not notified: what was the cause, what went well, what changes?'
+			),
+			fields: [
+				{
+					id: 'ursache',
+					type: 'textarea',
+					label: L('Ursache', 'Root cause'),
+					cite: { law: 'DSGVO', ref: 'Art. 33 Abs. 5' }
+				},
+				{
+					id: 'gut_gelaufen',
+					type: 'textarea',
+					label: L('Was hat bei der Bearbeitung funktioniert?', 'What worked in handling it?')
+				},
+				{
+					id: 'aenderungen',
+					type: 'textarea',
+					label: L(
+						'Was ändern wir, damit es nicht wieder geschieht?',
+						'What do we change so it does not happen again?'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 24 Abs. 1, Art. 32 Abs. 1 lit. d' }
+				},
+				{
+					id: 'nachbereitet_am',
+					type: 'date',
+					label: L('Nachbereitet am', 'Debriefed on')
+				}
+			]
 		}
 	],
 	workflow: {

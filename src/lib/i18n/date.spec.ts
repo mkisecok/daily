@@ -41,4 +41,11 @@ describe('datetime-local inputs in German time', () => {
 		expect(fromBerlinInput('2026-03-29T12:00')).toBe('2026-03-29T10:00:00.000Z');
 		expect(fromBerlinInput('')).toBe('');
 	});
+
+	it('survives a year that is still being typed', () => {
+		// editing a filled field passes through years like 0002 and 0020
+		expect(() => fromBerlinInput('0002-11-13T09:00')).not.toThrow();
+		expect(fromBerlinInput('0002-11-13T09:00')).toMatch(/^0002-11-13T/);
+		expect(toBerlinInput(fromBerlinInput('0202-11-13T09:00'))).toBe('0202-11-13T09:00');
+	});
 });

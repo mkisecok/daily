@@ -98,6 +98,19 @@ function assess(record: RecordView): QuestionnaireResult {
 		);
 	}
 
+	// once the urgent part is over, the debrief is what is left to do
+	if (
+		['gemeldet', 'nicht_meldepflichtig', 'abgeschlossen'].includes(record.state ?? '') &&
+		!str(record, 'nachbereitet_am')
+	) {
+		notes.push(
+			L(
+				'Nachbereitung offen: Ursache, was funktioniert hat und was sich ändert, unter „Nachbereitung“ festhalten.',
+				'Debrief open: record the cause, what worked and what changes under "Debrief".'
+			)
+		);
+	}
+
 	const aware = str(record, 'kenntnis');
 	const reported = str(record, 'gemeldet_am');
 	const late =
