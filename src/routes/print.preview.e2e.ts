@@ -24,7 +24,7 @@ const REPORT_PAGES: Record<string, number> = { 'aims-gap': 4 };
  * required fields; the DSFA and the SDM cube add their own pages of
  * matrices and views until their own documents (print plan step 5)
  */
-const ENTRY_PAGES: Record<string, number> = { dsfa: 7, 'sdm-wuerfel': 5 };
+const ENTRY_PAGES: Record<string, number> = { dsfa: 9, 'sdm-wuerfel': 5 };
 
 /** the text width of A4 with 18 mm margins, in CSS pixels */
 const A4_TEXT = Math.floor(((210 - 36) / 25.4) * 96);
@@ -60,7 +60,9 @@ async function fillRequired(page: Page, slug: string) {
 			const value = field.type === 'date' ? '2026-11-13' : '2026-11-13T09:00';
 			await pickDate(page, text(field.label), value);
 		} else if (field.type === 'reference') {
-			await choose(control, { label: 'Druckprobe' });
+			// the entry saved just before, whatever its example calls it
+			await control.click();
+			await page.getByRole('option').first().click();
 		}
 	}
 }

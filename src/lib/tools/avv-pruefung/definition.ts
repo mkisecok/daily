@@ -284,5 +284,29 @@ export const definition: RecordToolDefinition = {
 				{ id: 'notizen', type: 'textarea', label: L('Notizen', 'Notes') }
 			]
 		}
-	]
+	],
+	example: {
+		dienstleister: 'Lohnbüro Muster GmbH (Beispiel)',
+		leistung:
+			'Lohn- und Gehaltsabrechnung für alle Beschäftigten, Meldungen an Finanzamt und Sozialversicherung.',
+		verarbeitungen: 'Lohn- und Gehaltsabrechnung',
+		vertragsart: 'anbieter',
+		vertragsdatum: '2024-03-01',
+		sitz: 'eu',
+		besondere_kategorien: true,
+		grundlagen: 'ja',
+		lit_a: 'ja',
+		lit_b: 'ja',
+		lit_c: 'ja',
+		lit_d: 'nein',
+		lit_d_notiz:
+			'Der Vertrag erlaubt Unterauftragnehmer pauschal, ohne Information über Änderungen.',
+		lit_g: 'ja',
+		meldung_pannen: true,
+		genehmigung: 'allgemein',
+		einspruch: false,
+		garantien: 'selbstauskunft',
+		status: 'nachbesserung',
+		wiedervorlage: '2026-12-15'
+	}
 };

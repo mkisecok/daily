@@ -147,3 +147,7 @@ number of tools.
   the task list: it shows under Fristen and on Heute. Two tools instead of three; a separate task
   tool was not needed. Not yet possible: filing entries of other tools (a breach, a DSFA) under a
   Vorgang; today only memos link to it.
+- Step 3 is built: the ten core tools without an example have one (Betroffenenanfrage, Datenpanne,
+  AVV-Prüfung, KI-Register, Schulungsnachweis, Feststellungen, Löschkonzept, TOM-Katalog,
+  Auditprogramm, DSFA). Each is a small real case and most show a gap on purpose, so the result
+  has something to say.

@@ -370,5 +370,26 @@ export const definition: RecordToolDefinition = {
 				requires: ['massnahmen']
 			}
 		]
+	},
+	example: {
+		bezeichnung: 'Fehlversand einer Gehaltsabrechnung (Beispiel)',
+		kenntnis: '2026-11-10T07:00:00.000Z',
+		entdeckt_durch: 'Personalabteilung, nach Hinweis des falschen Empfängers',
+		beschreibung:
+			'Die Gehaltsabrechnung Oktober einer Beschäftigten ging per E-Mail an eine externe Adresse mit ähnlichem Namen.',
+		art: ['vertraulichkeit'],
+		auftragsverarbeiter: false,
+		datenkategorien: ['identifikation', 'finanz'],
+		anzahl_betroffene: 1,
+		anzahl_datensaetze: 1,
+		gruppen: ['beschaeftigte'],
+		verschluesselt: false,
+		folgen: 'Ein Unbefugter kennt Gehalt, Steuerklasse und Bankverbindung der Beschäftigten.',
+		risiko: 'risiko',
+		begruendung:
+			'Finanzdaten einer Person gegenüber einem einzelnen, bekannten Empfänger, der die Löschung bestätigt hat: Risiko, aber kein hohes.',
+		massnahmen:
+			'Empfänger um Löschung gebeten und Bestätigung erhalten; Beschäftigte informiert; Adressvervollständigung im Mailprogramm der Personalabteilung abgeschaltet.',
+		behoerde: 'Zuständige Landesdatenschutzbehörde'
 	}
 };

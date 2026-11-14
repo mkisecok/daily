@@ -186,5 +186,21 @@ export const definition: RecordToolDefinition = {
 				requires: ['ergebnis']
 			}
 		]
+	},
+	example: {
+		titel: 'Datenschutzaudit Personalabteilung 2026 (Beispiel)',
+		art: 'datenschutz',
+		gegenstand:
+			'Bewerbungsverfahren, Personalakte, Lohnabrechnung und Austritt; Standort Hauptverwaltung.',
+		kriterien: ['dsgvo', 'bdsg', 'intern'],
+		risiko:
+			'Besondere Kategorien und Finanzdaten aller Beschäftigten; letzte Prüfung vor drei Jahren.',
+		auditoren: 'Datenschutzbeauftragte',
+		unabhaengig: true,
+		auditierte: 'Personalabteilung',
+		ansprechpartner: 'Leitung Personal',
+		methoden: ['dokumente', 'interviews', 'stichproben'],
+		geplant_am: '2026-12-03',
+		naechstes_audit: '2028-12-01'
 	}
 };

@@ -153,5 +153,22 @@ export const definition: RecordToolDefinition = {
 				label: L('Nicht wirksam: neue Maßnahme', 'Not effective: new action')
 			}
 		]
+	},
+	example: {
+		titel: 'Zugriffsrechte ausgeschiedener Beschäftigter (Beispiel)',
+		kategorie: 'wesentlich',
+		anforderung: 'Art. 32 Abs. 1 lit. b DSGVO; interne Richtlinie Berechtigungen',
+		sachverhalt:
+			'Drei Konten von Beschäftigten, die im ersten Halbjahr ausgeschieden sind, waren im Kundensystem noch aktiv.',
+		nachweis:
+			'Stichprobe von zehn Austritten gegen die Benutzerliste des Kundensystems vom Audittag.',
+		ursache:
+			'Die Personalabteilung meldet Austritte an die IT, aber nicht an die Fachanwendungen mit eigener Benutzerverwaltung.',
+		sofort: 'Die drei Konten wurden am Audittag gesperrt.',
+		massnahme:
+			'Austrittsmeldung um alle Systeme mit eigener Benutzerverwaltung erweitern; halbjährlicher Abgleich der Benutzerlisten.',
+		verantwortlich: 'Leitung IT',
+		frist: '2026-12-31',
+		pruefen_am: '2027-03-31'
 	}
 };

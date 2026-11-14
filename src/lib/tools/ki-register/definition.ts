@@ -194,5 +194,22 @@ export const definition: RecordToolDefinition = {
 				{ id: 'notizen', type: 'textarea', label: L('Notizen', 'Notes') }
 			]
 		}
-	]
+	],
+	example: {
+		name: 'Übersetzungsassistent im Kundenservice (Beispiel)',
+		zweck:
+			'Übersetzt eingehende Kundenanfragen und Antwortentwürfe; die Antwort gibt immer ein Mensch frei.',
+		anbieter: 'Externer SaaS-Anbieter',
+		modell: 'Sprachmodell des Anbieters, Version laut Vertrag',
+		gpai: true,
+		rolle: 'betreiber',
+		abteilung: 'Kundenservice',
+		verantwortlich: 'Leitung Kundenservice',
+		personenbezug: true,
+		datenkategorien: ['kunden'],
+		risikoklasse: 'minimal',
+		status: 'aktiv',
+		inbetriebnahme: '2026-06-01',
+		wiedervorlage: '2027-06-01'
+	}
 };
