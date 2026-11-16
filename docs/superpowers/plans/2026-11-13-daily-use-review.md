@@ -170,3 +170,9 @@ number of tools.
   context. The content each kind of involvement needs is checked as before; for human oversight
   of high-risk systems a missing point is a gap (Art. 26(2)). KI-Kompetenz is retired; its
   existing entries stay readable, and references in other tools point to the Schulungsnachweis.
+- Merge 2 of 5: KI im Personalbereich and Chatbot are parts of KI-Tool einführen, chosen by the
+  scopes "Im Personalbereich" and "Chatbot". Points both old tools shared with it stay once; only
+  the new ones moved (emotion recognition, employee legal basis, behaviour recording, notices,
+  correction, selection guidelines and expert for the works council; role, privacy notice, loading
+  only when opened, sensitive data, misuse). The high-risk part gains three Art. 26 duties for every
+  AI tool (instructions, monitoring, logs). Both old tools are retired.

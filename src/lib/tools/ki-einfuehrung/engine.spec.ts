@@ -99,3 +99,23 @@ describe('KI-Tool einführen', () => {
 		).toBe(true);
 	});
 });
+
+describe('KI-Tool einführen: parts merged from KI im Personalbereich and Chatbot', () => {
+	it('adds the HR part and the works council points for HR use', () => {
+		const ids = checklist({ umfang: ['personal', 'beschaeftigte'] }, BLOCKS).points.map(
+			({ item }) => item.id
+		);
+		expect(ids).toEqual(expect.arrayContaining(['m_emotion', 'm_grundlage', 'b_richtlinien']));
+		const without = checklist({ umfang: ['beschaeftigte'] }, BLOCKS).points.map(
+			({ item }) => item.id
+		);
+		expect(without).not.toContain('b_richtlinien');
+	});
+
+	it('adds the chatbot part and the AI notice for chatbots', () => {
+		const ids = checklist({ umfang: ['chatbot'] }, BLOCKS).points.map(({ item }) => item.id);
+		expect(ids).toEqual(
+			expect.arrayContaining(['c_rolle', 'c_laden', 'c_missbrauch', 't_hinweis'])
+		);
+	});
+});

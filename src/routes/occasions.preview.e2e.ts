@@ -89,7 +89,8 @@ test('preview: introducing an AI tool adds the high-risk duties after a high-ris
 	);
 
 	await page.getByRole('button', { name: 'Bearbeiten' }).click();
-	await expect(page.locator('#sec-hochrisiko .check')).toHaveCount(4);
+	// Art. 26: instructions, oversight, staff, FRIA, monitoring, logs
+	await expect(page.locator('#sec-hochrisiko .check')).toHaveCount(7);
 	await expect(page.locator('#sec-transparenz')).toContainText(
 		'Entfällt für den gewählten Umfang.'
 	);

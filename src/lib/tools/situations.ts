@@ -100,13 +100,13 @@ export const SITUATIONS: Situation[] = [
 		id: 'ki-personal',
 		label: L('KI soll Beschäftigte bewerten oder einplanen', 'AI is to rate or schedule staff'),
 		icon: 'users',
-		tool: 'ki-personal'
+		tool: 'ki-einfuehrung'
 	},
 	{
 		id: 'chatbot',
 		label: L('Ein Chatbot kommt auf die Website', 'A chatbot goes on the website'),
 		icon: 'message-chatbot',
-		tool: 'chatbot'
+		tool: 'ki-einfuehrung'
 	},
 	{
 		id: 'kauf',

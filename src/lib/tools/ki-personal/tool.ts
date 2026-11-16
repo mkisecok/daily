@@ -5,7 +5,8 @@ import { definition, engine } from './engine.js';
 const manifest: ToolManifest = {
 	slug: 'ki-personal',
 	category: 'ki',
-	status: 'beta',
+	status: 'retired',
+	successor: 'ki-einfuehrung',
 	shape: 'workflow',
 	version: definition.version,
 	name: { de: 'KI im Personalbereich', en: 'AI for staff' },
