@@ -34,7 +34,7 @@
 	const START = 'vvt';
 	const SUGGESTED = ['dsfa', 'datenpanne', 'risikoklassifizierung', 'dsfa-schwellwert'];
 	/** tiles keep tools of one kind together: checks, registers, cases, browser tools */
-	const SHAPES: ToolShape[] = ['questionnaire', 'register', 'workflow', 'utility'];
+	const SHAPES: ToolShape[] = ['questionnaire', 'register', 'workflow', 'utility', 'lesson'];
 
 	/** the first legal basis without paragraph detail: "Art. 35 DSGVO" */
 	function mainBasis(tool: ToolManifest): string {

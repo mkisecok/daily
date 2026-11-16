@@ -30,6 +30,7 @@ export const ICONS = {
 	],
 	check: ['M5 12l5 5l10 -10'],
 	'chevron-left': ['M15 6l-6 6l6 6'],
+	'chevron-right': ['M9 6l6 6l-6 6'],
 	'chevron-down': ['M6 9l6 6l6 -6'],
 	'chevron-up': ['M6 15l6 -6l6 6'],
 	clock: ['M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0', 'M12 7v5l3 3'],
@@ -63,6 +64,13 @@ export const ICONS = {
 		'M8 11v-4a4 4 0 1 1 8 0v4'
 	],
 	plus: ['M12 5l0 14', 'M5 12l14 0'],
+	'player-play': ['M7 4v16l13 -8z'],
+	maximize: [
+		'M4 8v-2a2 2 0 0 1 2 -2h2',
+		'M4 16v2a2 2 0 0 0 2 2h2',
+		'M16 4h2a2 2 0 0 1 2 2v2',
+		'M16 20h2a2 2 0 0 0 2 -2v-2'
+	],
 	printer: [
 		'M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2',
 		'M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4',
