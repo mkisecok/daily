@@ -25,5 +25,6 @@ describe('organisation details in lessons', () => {
 		]);
 		expect(lessonSlots(getLesson('schulung-grundlagen')!)).toEqual(['meldeweg', 'dsb']);
 		expect(lessonSlots(getLesson('schulung-ki')!)).toEqual(['meldeweg', 'dsb', 'ki']);
+		expect(lessonSlots(getLesson('schulung-anfragen')!)).toEqual(['dsb']);
 	});
 });

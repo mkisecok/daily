@@ -21,6 +21,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	'schulung-grundlagen': 'info-circle',
 	'schulung-datenpanne': 'alert-triangle',
 	'schulung-ki': 'sparkles',
+	'schulung-anfragen': 'user',
 	standortwechsel: 'truck',
 	'software-einfuehrung': 'package',
 	'ki-einfuehrung': 'rocket',
