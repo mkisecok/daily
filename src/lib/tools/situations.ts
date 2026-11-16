@@ -163,7 +163,7 @@ export const SITUATIONS: Situation[] = [
 		id: 'umzug',
 		label: L('Büro oder Serverraum zieht um', 'An office or server room moves'),
 		icon: 'truck',
-		tool: 'standortwechsel'
+		tool: 'schliessung'
 	},
 	{
 		id: 'audit',

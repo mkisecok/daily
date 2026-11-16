@@ -8,13 +8,17 @@ const manifest: ToolManifest = {
 	status: 'beta',
 	shape: 'workflow',
 	version: definition.version,
-	name: { de: 'Standort schließen oder Geschäft aufgeben', en: 'Closing a site or business' },
+	name: {
+		de: 'Standort: Umzug oder Schließung',
+		en: 'Site: move or closure'
+	},
 	summary: {
-		de: 'Einen Standort schließen oder das Unternehmen aufgeben: Bestand, Aufbewahrung gegen Löschung, Verwahrung nach der Liquidation, sicheres Vernichten von Akten und Geräten, Dienstleister, Online-Angebote und wer danach für Auskünfte erreichbar bleibt.',
-		en: 'Closing a site or winding up the business: inventory, retention against deletion, custody after liquidation, secure destruction of files and devices, providers, online services and who stays reachable for access requests afterwards.'
+		de: 'Ein Standort zieht um oder schließt, oder das Unternehmen wird aufgegeben: Bestand und sicheres Vernichten; beim Umzug Transport, Serverraum, Sicherheit am neuen und Rückbau am alten Standort; bei der Schließung Aufbewahrung gegen Löschung, Verwahrung nach der Liquidation, Dienstleister, Online-Angebote und wer für Auskünfte erreichbar bleibt.',
+		en: 'A site moves or closes, or the business is wound up: inventory and secure destruction; for a move transport, the server room, security at the new site and clearing the old one; for a closure retention against deletion, custody after liquidation, providers, online services and who stays reachable for access requests.'
 	},
 	legalBasis: [
 		{ law: 'DSGVO', ref: 'Art. 17' },
+		{ law: 'DSGVO', ref: 'Art. 32' },
 		{ law: 'GmbHG', ref: '§ 74 Abs. 2' }
 	]
 };

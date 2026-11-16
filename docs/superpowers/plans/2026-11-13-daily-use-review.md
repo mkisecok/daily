@@ -182,3 +182,12 @@ number of tools.
   points of the two tools are kept, the legal basis once; "AI in selection" and "staff working with
   AI" are separate scopes. Lost on purpose: reminders per person and per position, including the
   deletion date per rejected applicant; the deletion runs belong in the Löschkonzept.
+- Merge 4 of 5: Standortwechsel is in **Standort: Umzug oder Schließung** (the former Schließung).
+  "Was steht an?" is Umzug, Standort schließt or Unternehmen aufgegeben. Inventory and destruction
+  are shared; a move has its own parts (before the move, transport, server room, the new site,
+  clearing the old site, documentation), a closure keeps retention and after-closure. From the 73
+  fields of Standortwechsel the six risk matrices (30 fields) and the dashboard are gone; of its 37
+  points, 31 remain (inventory and destruction are now shared, break-in and fire protection are
+  building matters). A move with a server room shows 12 fields before the checklist. A transition
+  can now depend on the entry (`when`), so a move is completed rather than closed. Open: the step
+  bar still lists "Aufbewahrung läuft" for a move.

@@ -6,6 +6,7 @@ const L = (de: string, en: string): Localized => ({ de, en });
 const DSGVO = (ref: string): LegalBasis => ({ law: 'DSGVO', ref });
 
 export const KINDS = [
+	{ value: 'umzug', label: L('Ein Standort zieht um', 'A site moves') },
 	{ value: 'standort', label: L('Ein Standort schließt', 'A site closes') },
 	{
 		value: 'aufgabe',
@@ -36,14 +37,22 @@ export const SCOPES = [
 	{
 		value: 'dienstleister',
 		label: L('Auftragsverarbeiter verarbeiten Daten', 'Processors handle data')
+	},
+	{ value: 'serverraum', label: L('Ein Serverraum zieht um', 'A server room moves') },
+	{
+		value: 'bundesland',
+		label: L('Umzug in ein anderes Bundesland', 'Move to another federal state')
 	}
 ];
+
+/** a closure, as opposed to a move */
+const closing = (data: RecordData) => kindOf(data) === 'standort' || kindOf(data) === 'aufgabe';
 
 /** what is closing */
 export const kindOf = (data: RecordData) =>
 	typeof data.art === 'string' && data.art ? data.art : null;
 
-/** the checklist in the order of a closure */
+/** the checklist: inventory and destruction for both, then the parts of a move or a closure */
 export const BLOCKS: Block[] = [
 	{
 		id: 'bestand',
@@ -85,7 +94,7 @@ export const BLOCKS: Block[] = [
 			'Was bleiben muss, bleibt gesperrt und sicher.',
 			'What must stay, stays blocked and secure.'
 		),
-		when: (data) => kindOf(data) !== null,
+		when: closing,
 		items: [
 			{
 				id: 'a_sperre',
@@ -171,6 +180,296 @@ export const BLOCKS: Block[] = [
 		]
 	},
 	{
+		id: 'umzug_vorher',
+		title: L('Vor dem Umzug', 'Before the move'),
+		intro: L('Was vor dem Packen geklärt sein muss.', 'What must be settled before packing.'),
+		when: (data) => kindOf(data) === 'umzug',
+		items: [
+			{
+				id: 'p_aussortieren',
+				label: L(
+					'Nicht mehr benötigte Akten und Datenträger vorab gelöscht oder vernichtet, nach dem Löschkonzept',
+					'Files and media no longer needed deleted or destroyed beforehand, following the deletion concept'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 5 Abs. 1 lit. e' }
+			},
+			{
+				id: 'p_dienstleister',
+				label: L(
+					'Umzugs- und IT-Dienstleister schriftlich zur Vertraulichkeit verpflichtet; wer auf Daten zugreift, mit Auftragsverarbeitungsvertrag',
+					'Moving and IT contractors bound to confidentiality in writing; those who access data under a processing agreement'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 28 Abs. 3, Art. 32 Abs. 4' }
+			},
+			{
+				id: 'p_beschaeftigte',
+				label: L(
+					'Beschäftigte kennen Ablauf, Zuständige und den Meldeweg, wenn etwas fehlt',
+					'Staff know the schedule, who is in charge and how to report anything missing'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 32 Abs. 4' }
+			}
+		]
+	},
+	{
+		id: 'transport',
+		title: L('Transport', 'Transport'),
+		intro: L(
+			'Akten und Geräte sind unterwegs am leichtesten verloren.',
+			'Files and devices are easiest lost on the way.'
+		),
+		when: (data) => kindOf(data) === 'umzug',
+		items: [
+			{
+				id: 't_verschluesselt',
+				label: L(
+					'Laptops, Festplatten und Datenträger sind verschlüsselt',
+					'Laptops, disks and storage media are encrypted'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 32 Abs. 1 lit. a' },
+				scope: ['it']
+			},
+			{
+				id: 't_behaelter',
+				label: L(
+					'Akten in verschlossenen, nummerierten Behältern mit Packliste',
+					'Files in locked, numbered containers with a packing list'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 32 Abs. 1 lit. b' },
+				scope: ['papier']
+			},
+			{
+				id: 't_begleitung',
+				label: L(
+					'Transport begleitet oder nachverfolgt; keine unbeaufsichtigte Zwischenlagerung',
+					'Transport accompanied or tracked; no unattended interim storage'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 32 Abs. 1 lit. b' }
+			},
+			{
+				id: 't_uebergabe',
+				label: L(
+					'Ankunft gegen die Liste geprüft: vollständig und unbeschädigt',
+					'Arrival checked against the list: complete and undamaged'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 32 Abs. 1 lit. b' }
+			}
+		]
+	},
+	{
+		id: 'serverraum',
+		title: L('Serverraum', 'Server room'),
+		intro: L('Wenn Server oder Netztechnik umziehen.', 'When servers or network equipment move.'),
+		when: (data) => kindOf(data) === 'umzug',
+		scope: ['serverraum'],
+		items: [
+			{
+				id: 's_sicherung',
+				label: L(
+					'Vollständige Datensicherung vor dem Abbau, Wiederherstellung getestet, eine Kopie bleibt getrennt vom Transport',
+					'Full backup before dismantling, restore tested, one copy kept apart from the transport'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 32 Abs. 1 lit. c' }
+			},
+			{
+				id: 's_wiederanlauf',
+				label: L(
+					'Wiederanlaufplan: Reihenfolge, Zuständige, Rückfallebene, geplante Ausfallzeit',
+					'Restart plan: order, people in charge, fallback, planned downtime'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 32 Abs. 1 lit. c' }
+			},
+			{
+				id: 's_zutritt',
+				label: L(
+					'Neuer Serverraum: eigener, abschließbarer Raum, Zutritt nur für Berechtigte und protokolliert',
+					'New server room: a room of its own, lockable, access only for authorised staff and logged'
+				),
+				cite: { law: 'BSI', ref: 'INF.2 Rechenzentrum sowie Serverraum' }
+			},
+			{
+				id: 's_umwelt',
+				label: L(
+					'Brandmelder und geeignete Löschmittel, keine wasserführenden Leitungen über den Geräten, Klimatisierung',
+					'Fire detection and suitable extinguishers, no water pipes above the equipment, air conditioning'
+				),
+				cite: { law: 'BSI', ref: 'INF.2 Rechenzentrum sowie Serverraum' }
+			},
+			{
+				id: 's_strom',
+				label: L(
+					'Unterbrechungsfreie Stromversorgung und Überspannungsschutz',
+					'Uninterruptible power supply and surge protection'
+				),
+				cite: { law: 'BSI', ref: 'INF.2 Rechenzentrum sowie Serverraum' }
+			},
+			{
+				id: 's_test',
+				label: L(
+					'Nach dem Aufbau geprüft: Zugriffsrechte, Firewall, Protokollierung, Datensicherung läuft wieder',
+					'Checked after set-up: access rights, firewall, logging, backups running again'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 32 Abs. 1 lit. d' }
+			}
+		]
+	},
+	{
+		id: 'neu',
+		title: L('Sicherheit am neuen Standort', 'Security at the new site'),
+		intro: L('Vor dem Einzug prüfen, nicht danach.', 'Check before moving in, not after.'),
+		when: (data) => kindOf(data) === 'umzug',
+		items: [
+			{
+				id: 'n_zutritt',
+				label: L(
+					'Zutrittskontrolle: Schließanlage oder Karten, Ausgabe dokumentiert, Schließungen der Vormieter getauscht',
+					'Access control: locks or cards, issue recorded, the previous tenant’s locks replaced'
+				),
+				cite: { law: 'BSI', ref: 'INF.1 Allgemeines Gebäude' }
+			},
+			{
+				id: 'n_besucher',
+				label: L(
+					'Besucher werden empfangen und begleitet; keine freien Wege zu Büros oder Technik',
+					'Visitors are received and accompanied; no free way to offices or technology'
+				),
+				cite: { law: 'BSI', ref: 'INF.1 Allgemeines Gebäude' }
+			},
+			{
+				id: 'n_arbeitsplatz',
+				label: L(
+					'Arbeitsplätze: abschließbare Schränke, Bildschirme nicht von Fenstern oder Fluren einsehbar, Clean Desk',
+					'Workstations: lockable cabinets, screens not visible from windows or corridors, clean desk'
+				),
+				cite: { law: 'BSI', ref: 'INF.7 Büroarbeitsplatz' }
+			},
+			{
+				id: 'n_drucker',
+				label: L(
+					'Drucker und Kopierer nicht frei zugänglich; Ausdrucke erst nach Anmeldung',
+					'Printers and copiers not freely accessible; prints released only after sign-in'
+				),
+				cite: { law: 'BSI', ref: 'INF.7 Büroarbeitsplatz' }
+			},
+			{
+				id: 'n_archiv',
+				label: L(
+					'Archivraum für Akten: abschließbar, trocken, brandgeschützt',
+					'Archive room for files: lockable, dry, fire-protected'
+				),
+				cite: { law: 'BSI', ref: 'INF.1 Allgemeines Gebäude' },
+				scope: ['papier']
+			},
+			{
+				id: 'n_netz',
+				label: L(
+					'Netzwerk: Gäste-WLAN getrennt, Netzdosen in öffentlichen Bereichen deaktiviert, Technikschrank verschlossen',
+					'Network: guest Wi-Fi separate, network sockets in public areas disabled, technical cabinet locked'
+				),
+				cite: { law: 'BSI', ref: 'INF.5 Raum sowie Schrank für technische Infrastruktur' },
+				scope: ['it']
+			},
+			{
+				id: 'n_gemeinsam',
+				label: L(
+					'Mit anderen Mietern Geteiltes geklärt: Hausnetz, Technikräume, Poststelle, Briefkästen',
+					'What is shared with other tenants settled: building network, technical rooms, mail room, letterboxes'
+				),
+				cite: { law: 'BSI', ref: 'INF.1 Allgemeines Gebäude' }
+			}
+		]
+	},
+	{
+		id: 'rueckbau',
+		title: L('Rückbau am alten Standort', 'Clearing the old site'),
+		intro: L('Nichts bleibt zurück.', 'Nothing is left behind.'),
+		when: (data) => kindOf(data) === 'umzug',
+		items: [
+			{
+				id: 'a_begehung',
+				label: L(
+					'Begehung nach dem Auszug: keine Akten, Datenträger oder Geräte zurückgeblieben',
+					'Walk-through after moving out: no files, media or devices left behind'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 32 Abs. 1' }
+			},
+			{
+				id: 'a_zugaenge',
+				label: L(
+					'Schlüssel und Karten zurückgegeben, Tür- und Alarmcodes gelöscht',
+					'Keys and cards returned, door and alarm codes deleted'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 32 Abs. 1 lit. b' }
+			},
+			{
+				id: 'a_anschluesse',
+				label: L(
+					'Router, Telefonanlage und Netzgeräte abgebaut oder auf Werkseinstellung zurückgesetzt',
+					'Routers, phone system and network devices removed or reset to factory settings'
+				),
+				cite: { law: 'BSI', ref: 'CON.6 Löschen und Vernichten' },
+				scope: ['it']
+			},
+			{
+				id: 'a_post',
+				label: L('Nachsendeauftrag für Post eingerichtet', 'Mail forwarding set up'),
+				cite: { law: 'DSGVO', ref: 'Art. 32 Abs. 1 lit. b' }
+			}
+		]
+	},
+	{
+		id: 'umzug_doku',
+		title: L('Dokumentation', 'Documentation'),
+		intro: L(
+			'Die neue Anschrift und die neuen Maßnahmen gehören in die Unterlagen.',
+			'The new address and the new measures belong in the records.'
+		),
+		when: (data) => kindOf(data) === 'umzug',
+		items: [
+			{
+				id: 'd_vvt',
+				label: L(
+					'Verzeichnis von Verarbeitungstätigkeiten angepasst (TOM, Empfänger, Ort der Verarbeitung)',
+					'Record of processing activities updated (measures, recipients, place of processing)'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 30 Abs. 1' }
+			},
+			{
+				id: 'd_tom',
+				label: L(
+					'Technische und organisatorische Maßnahmen für den neuen Standort beschrieben',
+					'Technical and organisational measures described for the new site'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 32 Abs. 1' }
+			},
+			{
+				id: 'd_hinweise',
+				label: L(
+					'Neue Anschrift in Datenschutzhinweisen, Impressum und Verträgen',
+					'New address in privacy notices, imprint and contracts'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 13 Abs. 1 lit. a' }
+			},
+			{
+				id: 'd_dsb',
+				label: L(
+					'Datenschutzbeauftragter in die Planung eingebunden',
+					'Data protection officer involved in planning'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 38 Abs. 1' }
+			},
+			{
+				id: 'd_aufsicht',
+				label: L(
+					'Zuständige Aufsichtsbehörde des neuen Bundeslands festgestellt und ihr die Kontaktdaten des Datenschutzbeauftragten mitgeteilt',
+					'Competent supervisory authority of the new federal state established and given the data protection officer’s contact details'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 37 Abs. 7' },
+				scope: ['bundesland']
+			}
+		]
+	},
+	{
 		id: 'dienstleister',
 		title: L('Auftragsverarbeiter', 'Processors'),
 		intro: L('Wenn Dienstleister Daten verarbeiten.', 'When providers process data.'),
@@ -241,7 +540,7 @@ export const BLOCKS: Block[] = [
 			'Rechte der Betroffenen bestehen weiter, solange Daten gespeichert sind.',
 			'Data subjects keep their rights as long as data is stored.'
 		),
-		when: (data) => kindOf(data) !== null,
+		when: closing,
 		items: [
 			{
 				id: 's_kontakt',
@@ -272,7 +571,7 @@ export const BLOCKS: Block[] = [
 	}
 ];
 
-/** what still stands in the way of marking the site closed, or null */
+/** what still stands in the way of marking the site closed or the move done, or null */
 export function closingBlocked(data: RecordData): Localized | null {
 	const state = checklist(data, BLOCKS);
 	if (state.gaps.length > 0 || state.open.length > 0) {
@@ -289,13 +588,15 @@ export const definition: RecordToolDefinition = {
 	slug: 'schliessung',
 	version: 1,
 	intro: L(
-		'Ein Eintrag je Schließung eines Standorts oder Aufgabe des Unternehmens. Daten verschwinden nicht mit dem Betrieb: Was aufbewahrt werden muss, bleibt gesperrt und sicher; alles andere wird gelöscht, und Betroffene behalten ihre Rechte, solange Daten gespeichert sind. Für einen Umzug gibt es das Werkzeug Standortwechsel.',
-		'One entry per site closure or business wind-up. Data does not disappear with the business: what must be kept stays blocked and secure; everything else is deleted, and data subjects keep their rights as long as data is stored. Moves have the office move tool.'
+		'Ein Eintrag je Umzug, Schließung eines Standorts oder Aufgabe des Unternehmens. Bei einem Umzug geht es um Transport, Serverraum, Sicherheit am neuen und Rückbau am alten Standort. Bei einer Schließung verschwinden Daten nicht mit dem Betrieb: Was aufbewahrt werden muss, bleibt gesperrt und sicher; alles andere wird gelöscht, und Betroffene behalten ihre Rechte, solange Daten gespeichert sind.',
+		'One entry per move, site closure or business wind-up. A move is about transport, the server room, security at the new site and clearing the old one. With a closure, data does not disappear with the business: what must be kept stays blocked and secure; everything else is deleted, and data subjects keep their rights as long as data is stored.'
 	),
 	sources: [
 		DSGVO('Art. 5, 12, 15, 17, 28, 30, 37'),
 		{ law: 'GmbHG', ref: '§ 74 Abs. 2' },
-		{ law: 'BSI', ref: 'CON.6 Löschen und Vernichten' }
+		{ law: 'BSI', ref: 'CON.6 Löschen und Vernichten' },
+		{ law: 'BSI', ref: 'INF.1, INF.2, INF.7' },
+		{ law: 'BDSG', ref: '§ 40 Abs. 2' }
 	],
 	titleField: 'bezeichnung',
 	sections: [
@@ -315,7 +616,7 @@ export const definition: RecordToolDefinition = {
 				{
 					id: 'art',
 					type: 'select',
-					label: L('Was schließt', 'What closes'),
+					label: L('Was steht an?', 'What is happening?'),
 					required: true,
 					options: KINDS,
 					listColumn: true
@@ -323,7 +624,7 @@ export const definition: RecordToolDefinition = {
 				{
 					id: 'schliessung_am',
 					type: 'date',
-					label: L('Geplante Schließung', 'Planned closure'),
+					label: L('Termin des Umzugs oder der Schließung', 'Date of the move or closure'),
 					listColumn: true
 				},
 				{
@@ -375,6 +676,15 @@ export const definition: RecordToolDefinition = {
 			fields: [
 				{ id: 'geschlossen_am', type: 'date', label: L('Geschlossen am', 'Closed on') },
 				{
+					id: 'begehung_am',
+					type: 'date',
+					label: L('Umzug abgeschlossen am', 'Move completed on'),
+					help: L(
+						'Nach der Begehung des neuen und des alten Standorts.',
+						'After walking through the new and the old site.'
+					)
+				},
+				{
 					id: 'geloescht_am',
 					type: 'date',
 					label: L('Endgültig gelöscht am', 'Finally deleted on')
@@ -386,7 +696,7 @@ export const definition: RecordToolDefinition = {
 		states: [
 			{ id: 'planung', label: L('Planung', 'Planning') },
 			{ id: 'aufbewahrung', label: L('Aufbewahrung läuft', 'Retention running') },
-			{ id: 'abgeschlossen', label: L('Endgültig gelöscht', 'Finally deleted'), terminal: true }
+			{ id: 'abgeschlossen', label: L('Abgeschlossen', 'Done'), terminal: true }
 		],
 		initialState: 'planung',
 		transitions: [
@@ -395,6 +705,15 @@ export const definition: RecordToolDefinition = {
 				to: 'aufbewahrung',
 				label: L('Geschlossen', 'Closed'),
 				requires: ['geschlossen_am'],
+				when: (record) => kindOf(record.data) !== 'umzug',
+				check: (record) => closingBlocked(record.data)
+			},
+			{
+				from: 'planung',
+				to: 'abgeschlossen',
+				label: L('Umzug abgeschlossen', 'Move completed'),
+				requires: ['begehung_am'],
+				when: (record) => kindOf(record.data) === 'umzug',
 				check: (record) => closingBlocked(record.data)
 			},
 			{ from: 'aufbewahrung', to: 'planung', label: L('Wieder öffnen', 'Reopen') },

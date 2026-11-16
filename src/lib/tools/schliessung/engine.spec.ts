@@ -40,10 +40,9 @@ describe('Standort schließen oder Geschäft aufgeben', () => {
 		expect(ids({ art: 'standort', umfang: ['online'] })).toContain('w_konten');
 	});
 
-	it('names gaps with their part and points a site closure to the office move tool', () => {
+	it('names gaps with their part', () => {
 		const out = assess({ ...allDone({ art: 'standort', umfang: ['it'] }), v_geraete: 'nein' });
 		expect(out.reasons[0].text.de).toContain('Löschen und Vernichten: Datenträger und Geräte');
-		expect(out.notes!.some((n) => n.de.includes('Standortwechsel'))).toBe(true);
 	});
 
 	it('closes only with the checklist done, then waits for final deletion', () => {
@@ -71,5 +70,49 @@ describe('Standort schließen oder Geschäft aufgeben', () => {
 			'aufbewahrung'
 		]);
 		expect(engine.deadlines!(view(data, 'abgeschlossen'))).toEqual([]);
+	});
+
+	it('takes over a move: its parts instead of retention, and its own end', () => {
+		const ids = (data: RecordData) =>
+			checklist(validateRecord(definition, { bezeichnung: 'x', ...data }).data, BLOCKS).points.map(
+				({ item }) => item.id
+			);
+		const move = ids({ art: 'umzug', umfang: ['papier', 'it', 'serverraum', 'bundesland'] });
+		expect(move).toEqual(
+			expect.arrayContaining([
+				't_verschluesselt',
+				's_sicherung',
+				'n_zutritt',
+				'a_begehung',
+				'd_aufsicht'
+			])
+		);
+		expect(move).not.toContain('a_sperre');
+		expect(move).not.toContain('s_kontakt');
+		expect(move).toContain('i_inventar');
+		const closure = ids({ art: 'standort' });
+		expect(closure).not.toContain('t_uebergabe');
+
+		const done = Object.fromEntries(ids({ art: 'umzug' }).map((id) => [id, 'ja']));
+		const record = {
+			state: 'planung',
+			data: validateRecord(definition, {
+				bezeichnung: 'x',
+				art: 'umzug',
+				...done,
+				begehung_am: '2026-12-01'
+			}).data
+		};
+		expect(applyTransition(definition, record, 'abgeschlossen')).toEqual({
+			ok: true,
+			state: 'abgeschlossen'
+		});
+		expect(
+			applyTransition(
+				definition,
+				{ ...record, data: { ...record.data, geschlossen_am: '2026-12-01' } },
+				'aufbewahrung'
+			)
+		).toMatchObject({ error: 'not-allowed' });
 	});
 });
