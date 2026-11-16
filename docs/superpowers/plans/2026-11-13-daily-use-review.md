@@ -229,3 +229,7 @@ number of tools.
   to sign. The composed audit no longer prints a second time as screen views. **Step 6 is done**:
   Auskunft, DSFA, KI-Nutzungsrichtlinie and Auditbericht print as the documents people send. Left
   for later: the breach (Art. 33) and incident (Art. 73) reports still carry the Daily head.
+- Schulung is planned in `2026-11-16-schulung.md`, with the owner's decisions of 16 Nov 2026:
+  slides in Daily with a printable handout, fixed modules written by Daily with slots for the
+  organisation's own details, a short quiz per module that pre-fills a Schulungsnachweis entry. The
+  SDM-Würfel moves to the new area. First step: the area itself.
