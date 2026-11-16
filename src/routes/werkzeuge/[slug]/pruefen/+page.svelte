@@ -19,6 +19,7 @@
 	import { printMeta } from '#lib/print/meta.js';
 	import PrintDocument from '#lib/ui/PrintDocument.svelte';
 	import PrintReport from '#lib/tools/_shared/PrintReport.svelte';
+	import { reportPrints } from '#lib/tools/prints.js';
 	import NextSteps from '#lib/tools/_shared/NextSteps.svelte';
 	import { resultDashboards } from '#lib/tools/dashboards.js';
 	import AssessmentHandoff from '#lib/records/ui/AssessmentHandoff.svelte';
@@ -28,6 +29,8 @@
 	let { data }: PageProps = $props();
 
 	const Dashboard = $derived(resultDashboards[data.tool.slug]);
+	// a result that drafts a document prints that document instead of the Prüfbericht
+	const ReportPrint = $derived(reportPrints[data.tool.slug]);
 
 	const engine = $derived(getQuestionnaire(data.tool.slug)?.engine);
 	const toolHref = $derived(resolve(localized(`/werkzeuge/${data.tool.slug}`)));
@@ -132,21 +135,31 @@
 <AssessmentHandoff questionnaire={data.tool.slug} {answers} {result} />
 
 {#if result}
-	<PrintDocument
-		kind={m.print_kind_report()}
-		title={text(data.tool.name)}
-		rows={printMeta(data.tool, {
-			version: data.catalog.version,
-			organisation: data.organisation?.name
-		})}
-	/>
-	<PrintReport
-		{result}
-		tool={data.tool}
-		answers={rows
-			.filter(({ question }) => answers[question.id] !== undefined)
-			.map(({ question, number }) => ({ question, number, answer: answers[question.id] }))}
-	/>
+	{#if ReportPrint}
+		<PrintDocument
+			letter
+			kind={ReportPrint.kind()}
+			title={ReportPrint.kind()}
+			rows={ReportPrint.letter(answers, data.organisation?.name, new Date().toISOString())}
+		/>
+		<ReportPrint.component {answers} />
+	{:else}
+		<PrintDocument
+			kind={m.print_kind_report()}
+			title={text(data.tool.name)}
+			rows={printMeta(data.tool, {
+				version: data.catalog.version,
+				organisation: data.organisation?.name
+			})}
+		/>
+		<PrintReport
+			{result}
+			tool={data.tool}
+			answers={rows
+				.filter(({ question }) => answers[question.id] !== undefined)
+				.map(({ question, number }) => ({ question, number, answer: answers[question.id] }))}
+		/>
+	{/if}
 
 	<!-- on paper the Prüfbericht above takes the place of the screen result -->
 	<div class="no-print">

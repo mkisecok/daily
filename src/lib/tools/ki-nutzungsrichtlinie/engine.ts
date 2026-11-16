@@ -9,7 +9,8 @@ import type {
 
 const L = (de: string, en: string): Localized => ({ de, en });
 
-type Clause = { title: Localized; sentences: Localized[] };
+/** one numbered clause of the policy: its heading and its sentences, one paragraph each */
+export type Clause = { title: Localized; sentences: Localized[] };
 
 const OFFICE = L('[zuständige Stelle]', '[responsible function]');
 
@@ -25,12 +26,8 @@ function choose(answer: string | undefined, ifYes: Localized, ifNo: Localized, t
 	return open(topic);
 }
 
-/**
- * generates a numbered draft policy from organisational choices. Choices
- * that conflict with the GDPR or the AI Act are returned as reasons; the
- * clauses themselves are the notes.
- */
-export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): QuestionnaireResult {
+/** the numbered clauses of the draft policy from the organisation's choices */
+export function policyClauses(answers: Answers): Clause[] {
 	const a = (id: string) => answers[id];
 	const clauses: Clause[] = [];
 
@@ -214,6 +211,16 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 		]
 	});
 
+	return clauses;
+}
+
+/**
+ * the draft as notes, one per clause; choices that conflict with the GDPR or
+ * the AI Act are returned as reasons
+ */
+export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): QuestionnaireResult {
+	const a = (id: string) => answers[id];
+	const clauses = policyClauses(answers);
 	const notes = clauses.map((clause, index) => ({
 		de: `§ ${index + 1} ${clause.title.de}. ${clause.sentences.map((s) => s.de).join(' ')}`,
 		en: `§ ${index + 1} ${clause.title.en}. ${clause.sentences.map((s) => s.en).join(' ')}`

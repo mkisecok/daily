@@ -8,9 +8,11 @@ import AccessPrint from './betroffenenanfrage/AccessPrint.svelte';
 import { accessHead, accessReady } from './betroffenenanfrage/print.js';
 import BreachPrint from './datenpanne/BreachPrint.svelte';
 import DsfaPrint from './dsfa/DsfaPrint.svelte';
+import PolicyPrint from './ki-nutzungsrichtlinie/PolicyPrint.svelte';
+import { policyHead } from './ki-nutzungsrichtlinie/print.js';
 import { dsfaHead } from './dsfa/print.js';
 import IncidentPrint from './vorfallmeldung/IncidentPrint.svelte';
-import type { ToolManifest } from './types.js';
+import type { Answers, ToolManifest } from './types.js';
 import VvtPrint from './vvt/VvtPrint.svelte';
 
 /** what a printed register gets: the tool, its entries and who they belong to */
@@ -72,4 +74,29 @@ export const entryPrints: Partial<
 		letter: (record, organisation) => dsfaHead(record, organisation, getLocale())
 	},
 	vorfallmeldung: { kind: m.print_kind_incident, component: IncidentPrint }
+};
+
+/** what a questionnaire result printed as a document of its own gets */
+export type ReportPrintProps = { answers: Answers };
+
+/**
+ * a questionnaire result printed as the document it drafts, under a letter
+ * head, instead of the Prüfbericht (PrintReport.svelte)
+ */
+export const reportPrints: Partial<
+	Record<
+		string,
+		{
+			kind: () => string;
+			component: Component<ReportPrintProps>;
+			/** the rows of the letter head, for the day the result was made */
+			letter: (answers: Answers, organisation: string | null | undefined, at: string) => PrintRow[];
+		}
+	>
+> = {
+	'ki-nutzungsrichtlinie': {
+		kind: m.print_kind_policy,
+		component: PolicyPrint,
+		letter: policyHead
+	}
 };
