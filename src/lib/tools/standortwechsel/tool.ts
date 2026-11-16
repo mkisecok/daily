@@ -5,7 +5,8 @@ import { definition, engine } from './engine.js';
 const manifest: ToolManifest = {
 	slug: 'standortwechsel',
 	category: 'datenschutz',
-	status: 'beta',
+	status: 'retired',
+	successor: 'schliessung',
 	shape: 'workflow',
 	version: definition.version,
 	name: { de: 'Standortwechsel', en: 'Office move' },

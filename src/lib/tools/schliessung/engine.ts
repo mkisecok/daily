@@ -18,12 +18,18 @@ function deadlines(record: RecordView): DeadlineSpec[] {
 	const specs: DeadlineSpec[] = [];
 	const closure = str(record, 'schliessung_am');
 	if (closure && record.state === 'planung') {
+		const move = kindOf(record.data) === 'umzug';
 		specs.push({
 			kind: 'schliessung',
-			label: L(
-				'Schließung: Bestand gesichtet, Löschung erledigt',
-				'Closure: inventory taken, deletion done'
-			),
+			label: move
+				? L(
+						'Umzug: Transport und neuer Standort vorbereitet',
+						'Move: transport and new site prepared'
+					)
+				: L(
+						'Schließung: Bestand gesichtet, Löschung erledigt',
+						'Closure: inventory taken, deletion done'
+					),
 			dueAt: dayAt(closure),
 			cite: { law: 'DSGVO', ref: 'Art. 17 Abs. 1 lit. a' }
 		});
@@ -53,10 +59,10 @@ function assess(record: RecordView): QuestionnaireResult {
 		return {
 			verdict: 'conditional',
 			outcome: 'unvollstaendig',
-			headline: L('Angabe fehlt, was schließt.', 'What closes is missing.'),
+			headline: L('Angabe fehlt, was ansteht.', 'What is happening is missing.'),
 			explanation: L(
-				'Erst angeben, ob ein Standort schließt oder das Unternehmen aufgegeben wird.',
-				'First say whether a site closes or the business is wound up.'
+				'Erst angeben, ob ein Standort umzieht, schließt oder das Unternehmen aufgegeben wird.',
+				'First say whether a site moves, closes or the business is wound up.'
 			),
 			reasons: [],
 			notes,
@@ -69,15 +75,10 @@ function assess(record: RecordView): QuestionnaireResult {
 	const reasons = gapReasons(state.gaps);
 	const open = openNote(state.open);
 	if (open) notes.push(open);
-	if (kind === 'standort') {
-		notes.push(
-			L(
-				'Werden Akten oder Geräte an einen anderen Standort gebracht, begleitet das Werkzeug Standortwechsel den Umzug.',
-				'If files or devices go to another site, the office move tool covers the move.'
-			)
-		);
+	if (kind === 'umzug') {
+		citations.push({ law: 'DSGVO', ref: 'Art. 32 Abs. 1' });
 	}
-	if (isEmpty(data.aufbewahrung_bis)) {
+	if (kind !== 'umzug' && isEmpty(data.aufbewahrung_bis)) {
 		notes.push(
 			L(
 				'Das Ende der längsten Aufbewahrungsfrist eintragen; Daily erinnert dann an die endgültige Löschung.',
@@ -109,7 +110,10 @@ function assess(record: RecordView): QuestionnaireResult {
 		return {
 			verdict: 'conditional',
 			outcome: 'offen',
-			headline: L('Schließung läuft.', 'Closure in progress.'),
+			headline:
+				kind === 'umzug'
+					? L('Umzug in Vorbereitung.', 'Move being prepared.')
+					: L('Schließung läuft.', 'Closure in progress.'),
 			explanation: L(
 				`Keine Lücke bisher, aber nicht alles ist erledigt. ${figures.de}`,
 				`No gap so far, but not everything is done. ${figures.en}`

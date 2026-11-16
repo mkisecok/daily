@@ -31,7 +31,10 @@ export function allowedTransitions(
 ): AvailableTransition[] {
 	if (!definition.workflow) return [];
 	return definition.workflow.transitions
-		.filter((transition) => transition.from === record.state)
+		.filter(
+			(transition) =>
+				transition.from === record.state && (!transition.when || transition.when(record))
+		)
 		.map((transition) => ({
 			transition,
 			missing: (transition.requires ?? []).filter((id) => isEmpty(record.data[id])),

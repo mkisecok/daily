@@ -65,6 +65,8 @@ export type TransitionDef = {
 	requires?: string[];
 	/** further condition on the values; returns why the step is blocked, or null */
 	check?: (record: RecordView) => Localized | null;
+	/** whether the step exists for this record at all, e.g. only for a move; offered always when absent */
+	when?: (record: RecordView) => boolean;
 };
 
 export type WorkflowDef = {

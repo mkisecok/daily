@@ -375,7 +375,7 @@ test('preview: winding up a business adds custody after liquidation', async ({ p
 	await expect(page.locator('#sec-liquidation')).toContainText(
 		'Entfällt für den gewählten Umfang.'
 	);
-	await page.getByLabel('Was schließt', { exact: true }).click();
+	await page.getByLabel('Was steht an?', { exact: true }).click();
 	await page
 		.getByRole('option', { name: 'Das Unternehmen wird aufgegeben oder liquidiert' })
 		.click();

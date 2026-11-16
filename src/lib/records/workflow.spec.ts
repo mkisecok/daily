@@ -209,4 +209,27 @@ describe('export', () => {
 		expect(ics).not.toMatch(/^DESCRIPTION:.*Art\./m);
 		expect(ics.endsWith('END:VCALENDAR\r\n')).toBe(true);
 	});
+
+	it('offers a step only to records it fits', () => {
+		const definition = {
+			...def,
+			workflow: {
+				states: [
+					{ id: 'a', label: { de: 'A', en: 'A' } },
+					{ id: 'b', label: { de: 'B', en: 'B' } }
+				],
+				initialState: 'a',
+				transitions: [
+					{
+						from: 'a',
+						to: 'b',
+						label: { de: '', en: '' },
+						when: (r: { data: Record<string, unknown> }) => r.data.k === 'yes'
+					}
+				]
+			}
+		} as never;
+		expect(allowedTransitions(definition, { state: 'a', data: { k: 'no' } })).toEqual([]);
+		expect(allowedTransitions(definition, { state: 'a', data: { k: 'yes' } })).toHaveLength(1);
+	});
 });
