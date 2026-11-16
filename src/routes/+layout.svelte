@@ -119,6 +119,11 @@
 			@media (max-width: 56rem) {
 				display: block;
 			}
+
+			/* on paper even an empty footer would open a page of its own after a landscape annex */
+			@media print {
+				display: none;
+			}
 		}
 	}
 </style>

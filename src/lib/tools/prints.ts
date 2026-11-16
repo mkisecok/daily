@@ -3,9 +3,12 @@ import type { PrintRow } from '../print/meta.js';
 import type { Titles } from '../records/format.js';
 import type { RecordEngine, RecordToolDefinition, StoredRecord } from '../records/types.js';
 import { m } from '../paraglide/messages.js';
+import { getLocale } from '../paraglide/runtime.js';
 import AccessPrint from './betroffenenanfrage/AccessPrint.svelte';
 import { accessHead, accessReady } from './betroffenenanfrage/print.js';
 import BreachPrint from './datenpanne/BreachPrint.svelte';
+import DsfaPrint from './dsfa/DsfaPrint.svelte';
+import { dsfaHead } from './dsfa/print.js';
 import IncidentPrint from './vorfallmeldung/IncidentPrint.svelte';
 import type { ToolManifest } from './types.js';
 import VvtPrint from './vvt/VvtPrint.svelte';
@@ -63,5 +66,10 @@ export const entryPrints: Partial<
 		letter: (record, organisation) => accessHead(record.data, organisation)
 	},
 	datenpanne: { kind: m.print_kind_breach, component: BreachPrint },
+	dsfa: {
+		kind: m.print_kind_dsfa,
+		component: DsfaPrint,
+		letter: (record, organisation) => dsfaHead(record, organisation, getLocale())
+	},
 	vorfallmeldung: { kind: m.print_kind_incident, component: IncidentPrint }
 };
