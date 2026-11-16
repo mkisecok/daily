@@ -177,4 +177,6 @@ export type Lesson = {
 	slides: Slide[];
 	/** three to five questions, asked after the slides and printed on the handout */
 	quiz: QuizQuestion[];
+	/** further Schulungsnachweis fields a session fills in, e.g. the AI literacy part */
+	entry?: Record<string, string | string[]>;
 };

@@ -39,6 +39,7 @@ Phase 0 is done when no row has an open finding of severity "wrong result".
 | SDM-Würfel                                  | `sdm-wuerfel`                    | Schulung    |          |      |          |          | open   |
 | Datenschutz-Grundlagen                      | `schulung-grundlagen`            | Schulung    |          |      |          |          | open   |
 | Datenpannen erkennen und melden             | `schulung-datenpanne`            | Schulung    |          |      |          |          | open   |
+| KI im Arbeitsalltag                         | `schulung-ki`                    | Schulung    |          |      |          |          | open   |
 | Standortwechsel                             | `standortwechsel`                | Datenschutz |          |      |          |          | open   |
 | Neue Software einführen                     | `software-einfuehrung`           | Datenschutz |          |      |          |          | open   |
 | Eintritt und Austritt von Beschäftigten     | `personalwechsel`                | Datenschutz |          |      |          |          | open   |

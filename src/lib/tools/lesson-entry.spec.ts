@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getRecordTool } from './registry.js';
+import { getRecordTool, tools } from './registry.js';
 import { validateRecord } from '../records/validate.js';
 import { lessonEntry, LESSON_REGISTER } from './lesson-entry.js';
 
@@ -20,5 +20,19 @@ describe('a session of a lesson', () => {
 
 	it('is nothing for a slug that is not a lesson', () => {
 		expect(lessonEntry('vvt', 'de')).toBeNull();
+	});
+
+	it('fills the AI literacy part for the AI module, and every lesson gives a valid entry', () => {
+		expect(lessonEntry('schulung-ki', 'de')).toMatchObject({
+			themen: ['ki'],
+			ki_befassung: 'anwendung',
+			ki_inhalte: expect.arrayContaining(['risiken', 'daten', 'richtlinie'])
+		});
+		const { definition } = getRecordTool(LESSON_REGISTER)!;
+		for (const tool of tools.filter((t) => t.shape === 'lesson')) {
+			expect(validateRecord(definition, lessonEntry(tool.slug, 'de')!).errors, tool.slug).toEqual(
+				{}
+			);
+		}
 	});
 });

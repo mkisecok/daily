@@ -13,7 +13,8 @@ const today = (now: Date) =>
 
 /**
  * a new Schulungsnachweis entry for a session of a lesson: title, topic,
- * date, format, audience and, in the notes, the module and its version.
+ * date, format, audience, the lesson's own further fields (such as the AI
+ * literacy part) and, in the notes, the module and its version.
  * Participants and evidence stay for the person recording it. Null when the
  * slug names no lesson.
  */
@@ -23,6 +24,7 @@ export function lessonEntry(slug: string, locale: string, now = new Date()): Rec
 	if (!lesson || !tool) return null;
 	const name = text(tool.name, locale);
 	return {
+		...lesson.entry,
 		titel: name,
 		themen: [lesson.topic],
 		datum: today(now),

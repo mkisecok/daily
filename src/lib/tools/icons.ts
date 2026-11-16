@@ -20,6 +20,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	'sdm-wuerfel': 'box',
 	'schulung-grundlagen': 'info-circle',
 	'schulung-datenpanne': 'alert-triangle',
+	'schulung-ki': 'sparkles',
 	standortwechsel: 'truck',
 	'software-einfuehrung': 'package',
 	'ki-einfuehrung': 'rocket',
