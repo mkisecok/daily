@@ -471,7 +471,12 @@
 			{/key}
 		{:else}
 			{#if EntryPrint}
-				<EntryPrint.component definition={data.definition} {record} titles={data.titles} />
+				<EntryPrint.component
+					definition={data.definition}
+					{record}
+					titles={data.titles}
+					composed={data.composed}
+				/>
 			{:else}
 				<PrintEntry
 					definition={data.definition}
@@ -532,8 +537,9 @@
 				/>
 			</div>
 
+			<!-- a document of its own, such as the audit report, already carries the composed parts -->
 			{#each data.composed as part (part.record.id)}
-				<section class="composed">
+				<section class="composed" class:no-print={EntryPrint}>
 					<h2 class="eyebrow">{m.records_composed()}</h2>
 					<h3>
 						{text(part.tool.manifest.name)}:

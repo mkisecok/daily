@@ -3,9 +3,9 @@ import { error } from '@sveltejs/kit';
 import { browser } from '$app/env';
 import type { Titles } from '#lib/records/format.js';
 import { copyData } from '#lib/records/copy.js';
-import { createLinks, type Backlinks } from '#lib/records/links.js';
+import { createLinks, type Backlinks, type Composed } from '#lib/records/links.js';
 import { getStore } from '#lib/records/store/index.js';
-import type { Option, RecordData, RecordTool, StoredRecord } from '#lib/records/types.js';
+import type { Option, RecordData } from '#lib/records/types.js';
 import { fieldById } from '#lib/records/validate.js';
 import { getLocale } from '#lib/paraglide/runtime.js';
 import { getRecordTool, getTool, listRecordTools, tools } from '#lib/tools/registry.js';
@@ -22,9 +22,6 @@ export const entries: EntryGenerator = () =>
 	tools
 		.filter((tool) => tool.status !== 'planned' && getRecordTool(tool.slug))
 		.map((tool) => ({ slug: tool.slug }));
-
-/** a referenced record shown in full, with the records pointing to it */
-export type Composed = { tool: RecordTool; record: StoredRecord; backlinks: Backlinks };
 
 /** where a new entry starts from: nothing, a copy of another entry, or the tool's example */
 export type Start = { kind: 'empty' } | { kind: 'copy'; of: string } | { kind: 'example' };

@@ -13,6 +13,9 @@ export function referenceFields(definition: RecordToolDefinition): ReferenceFiel
 /** records that point to `id` of `toolSlug`, grouped by the tool they belong to */
 export type Backlinks = { tool: RecordTool; records: StoredRecord[] }[];
 
+/** a referenced record shown in full, with the records pointing to it */
+export type Composed = { tool: RecordTool; record: StoredRecord; backlinks: Backlinks };
+
 /**
  * cross-record lookups for the records page. Everything goes through the
  * store, so it is scoped to the organisation (or the browser) like any
