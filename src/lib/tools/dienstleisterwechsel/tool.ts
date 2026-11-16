@@ -5,7 +5,8 @@ import { definition, engine } from './engine.js';
 const manifest: ToolManifest = {
 	slug: 'dienstleisterwechsel',
 	category: 'datenschutz',
-	status: 'beta',
+	status: 'retired',
+	successor: 'software-einfuehrung',
 	shape: 'workflow',
 	version: definition.version,
 	name: { de: 'Dienstleister wechseln oder Vertrag beenden', en: 'Changing or leaving a provider' },

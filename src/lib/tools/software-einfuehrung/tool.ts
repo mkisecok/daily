@@ -10,8 +10,8 @@ const manifest: ToolManifest = {
 	version: definition.version,
 	name: { de: 'Neue Software einführen', en: 'Introducing software' },
 	summary: {
-		de: 'Software oder Cloud-Dienst einführen: eine Checkliste für Datenschutz, Sicherheit, Drittland, Beschäftigte und Freigabe, die die vorhandenen Prüfungen verknüpft statt sie zu wiederholen, bis zur dokumentierten Freigabe.',
-		en: 'Introducing a software or cloud service: a checklist for data protection, security, third countries, staff and approval that links the existing checks instead of repeating them, up to a documented approval.'
+		de: 'Software oder Cloud-Dienst einführen: eine Checkliste für Datenschutz, Sicherheit, Drittland, Beschäftigte und Freigabe, die die vorhandenen Prüfungen verknüpft statt sie zu wiederholen, bis zur dokumentierten Freigabe. Löst sie einen Dienstleister ab: Kündigung, Rückgabe oder Löschung nach Art. 28 Abs. 3 lit. g, Löschbestätigung auch für Unterauftragnehmer und die Wechselrechte des Data Act.',
+		en: 'Introducing a software or cloud service: a checklist for data protection, security, third countries, staff and approval that links the existing checks instead of repeating them, up to a documented approval. When it replaces a provider: notice, return or deletion under Art. 28(3)(g), deletion confirmed for sub-processors too and the Data Act’s switching rights.'
 	},
 	legalBasis: [
 		{ law: 'DSGVO', ref: 'Art. 24, 25, 28, 32' },

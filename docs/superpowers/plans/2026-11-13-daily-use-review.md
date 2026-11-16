@@ -191,3 +191,14 @@ number of tools.
   building matters). A move with a server room shows 12 fields before the checklist. A transition
   can now depend on the entry (`when`), so a move is completed rather than closed. Open: the step
   bar still lists "Aufbewahrung läuft" for a move.
+- Merge 5 of 5: Dienstleister wechseln is a scope **Ablösung eines Dienstleisters** of Neue Software
+  einführen, with three follow-up scopes (bisher ein Cloud-Dienst nach dem Data Act, Zugänge des
+  bisherigen Dienstleisters, Akten oder Datenträger beim bisherigen Dienstleister). Of its 19 points,
+  13 move over with wording and citations unchanged: before giving notice, the Data Act switch, the
+  handover and the deletion at the previous provider (with the filing of the record). Six were
+  already in Neue Software (processing agreement, measures, third country, DSFA, VVT, privacy
+  notices). Four fields come along (previous provider, notice date, contract end, previous AVV),
+  each shown only for a replacement. Handover and deletion are done after approval: they do not
+  block "Freigeben", show as "Nach der Freigabe offen", and the contract end stays a deadline until
+  they are done. Lost on purpose: ending a contract without a successor has no tool of its own.
+  All five merges are done; catalogue 46 tools.

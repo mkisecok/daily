@@ -4,7 +4,7 @@ import type { DeadlineSpec, RecordEngine, RecordView } from '../../records/types
 import { isEmpty } from '../../records/validate.js';
 import { checklist, gapReasons, inScope, openNote, snapshot } from '../_shared/occasion.js';
 import type { LegalBasis, Localized, QuestionnaireResult, Reason } from '../types.js';
-import { BLOCKS, definition, dpiaNeeded } from './definition.js';
+import { AFTER_APPROVAL, BLOCKS, definition, dpiaNeeded } from './definition.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
 
@@ -13,9 +13,37 @@ const str = (record: RecordView, id: string) => {
 	return typeof value === 'string' && value ? value : null;
 };
 
-/** the planned start while under review, the review once approved, gaps with a due date */
+/**
+ * the planned start while under review, the review once approved, gaps with a
+ * due date; when replacing a provider, the notice date under review and the
+ * contract end until the deletion there is done
+ */
 function deadlines(record: RecordView): DeadlineSpec[] {
 	const specs: DeadlineSpec[] = [];
+	const replacing = inScope(record.data, ['abloesung']);
+	const notice = str(record, 'kuendigung_bis');
+	if (replacing && notice && record.state === 'pruefung') {
+		specs.push({
+			kind: 'kuendigung',
+			label: L('Kündigung beim bisherigen Dienstleister', 'Notice to the previous provider'),
+			dueAt: dayAt(notice),
+			cite: { law: 'DSGVO', ref: 'Art. 28 Abs. 3 lit. g' }
+		});
+	}
+	const end = str(record, 'vertragsende');
+	const state = checklist(record.data, BLOCKS);
+	const left = [...state.open, ...state.gaps].some(({ block }) => AFTER_APPROVAL.has(block.id));
+	if (replacing && end && record.state !== 'abgelehnt' && left) {
+		specs.push({
+			kind: 'vertragsende',
+			label: L(
+				'Vertragsende: Daten zurück, Löschung bestätigen lassen',
+				'Contract ends: data back, deletion confirmed'
+			),
+			dueAt: dayAt(end),
+			cite: { law: 'DSGVO', ref: 'Art. 28 Abs. 3 lit. g' }
+		});
+	}
 	const start = str(record, 'einsatz_ab');
 	if (start && record.state === 'pruefung') {
 		specs.push({
@@ -34,7 +62,7 @@ function deadlines(record: RecordView): DeadlineSpec[] {
 			cite: { law: 'DSGVO', ref: 'Art. 24 Abs. 1' }
 		});
 	}
-	const applies = new Set(checklist(record.data, BLOCKS).points.map(({ item }) => item.id));
+	const applies = new Set(state.points.map(({ item }) => item.id));
 	specs.push(...gapDeadlines(definition, record, (field) => applies.has(field.id)));
 	return specs;
 }
@@ -69,6 +97,13 @@ function assess(record: RecordView): QuestionnaireResult {
 	const state = checklist(data, BLOCKS);
 	const reasons: Reason[] = gapReasons(state.gaps);
 	const pending: Localized[] = [];
+	const later = state.open.filter(({ block }) => AFTER_APPROVAL.has(block.id));
+	const before = state.open.filter(({ block }) => !AFTER_APPROVAL.has(block.id));
+
+	if (inScope(data, ['abloesung'])) {
+		citations.push({ law: 'DSGVO', ref: 'Art. 28 Abs. 3 lit. g' });
+		if (inScope(data, ['abloesung_cloud'])) citations.push({ law: 'Data Act', ref: 'Art. 25, 29' });
+	}
 
 	const personal = inScope(data, ['personenbezug']);
 	if (personal && !snapshot(data, 'dsfa_check')) {
@@ -102,8 +137,10 @@ function assess(record: RecordView): QuestionnaireResult {
 		}
 	}
 
-	const open = openNote(state.open);
+	const open = openNote(before);
 	if (open) notes.push(open);
+	const afterwards = openNote(later, L('Nach der Freigabe offen', 'Open after approval'));
+	if (afterwards) notes.push(afterwards);
 	if (pending.length > 0) {
 		notes.push(
 			L(
@@ -146,7 +183,7 @@ function assess(record: RecordView): QuestionnaireResult {
 			citations
 		};
 	}
-	if (state.open.length > 0 || pending.length > 0) {
+	if (before.length > 0 || pending.length > 0) {
 		return {
 			verdict: 'conditional',
 			outcome: 'offen',
@@ -164,10 +201,16 @@ function assess(record: RecordView): QuestionnaireResult {
 		verdict: 'negative',
 		outcome: 'freigabefaehig',
 		headline: L('Freigabefähig.', 'Ready for approval.'),
-		explanation: L(
-			`Alle Punkte sind erledigt und die nötigen Prüfungen liegen vor. Bei größeren Updates oder einem Anbieterwechsel erneut prüfen. ${figures.de}`,
-			`Every point is done and the checks needed are on file. Check again after major updates or a change of provider. ${figures.en}`
-		),
+		explanation:
+			later.length > 0
+				? L(
+						`Alles für die Freigabe ist erledigt und die nötigen Prüfungen liegen vor. Übergang und Löschung beim bisherigen Dienstleister folgen nach der Freigabe. ${figures.de}`,
+						`Everything for approval is done and the checks needed are on file. The handover and deletion at the previous provider follow after approval. ${figures.en}`
+					)
+				: L(
+						`Alle Punkte sind erledigt und die nötigen Prüfungen liegen vor. Bei größeren Updates oder einem Anbieterwechsel erneut prüfen. ${figures.de}`,
+						`Every point is done and the checks needed are on file. Check again after major updates or a change of provider. ${figures.en}`
+					),
 		reasons,
 		notes,
 		citations
