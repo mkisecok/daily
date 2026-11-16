@@ -35,6 +35,17 @@ export const SCOPES = [
 	{
 		value: 'entscheidungen',
 		label: L('Bereitet Entscheidungen über Personen vor', 'Prepares decisions about people')
+	},
+	{
+		value: 'personal',
+		label: L(
+			'Im Personalbereich: Bewerbung, Leistung, Einsatzplanung',
+			'In HR: applications, performance, scheduling'
+		)
+	},
+	{
+		value: 'chatbot',
+		label: L('Chatbot für Kunden oder Besucher', 'Chatbot for customers or visitors')
 	}
 ];
 
@@ -192,6 +203,24 @@ export const BLOCKS: Block[] = [
 					'Co-determination settled where the tool can record performance or behaviour'
 				),
 				cite: { law: 'BetrVG', ref: '§ 87 Abs. 1 Nr. 6' }
+			},
+			{
+				id: 'b_richtlinien',
+				label: L(
+					'Auswahlrichtlinien, an denen KI mitwirkt, nur mit Zustimmung des Betriebsrats',
+					'Selection guidelines drawn up with AI only with the works council’s consent'
+				),
+				cite: { law: 'BetrVG', ref: '§ 95 Abs. 2a' },
+				scope: ['personal']
+			},
+			{
+				id: 'b_sachverstand',
+				label: L(
+					'Sachverständigen für den Betriebsrat ermöglicht, wenn er die KI beurteilen muss',
+					'An expert made available to the works council when it has to assess the AI'
+				),
+				cite: { law: 'BetrVG', ref: '§ 80 Abs. 3 Satz 2' },
+				scope: ['personal']
 			}
 		]
 	},
@@ -202,7 +231,7 @@ export const BLOCKS: Block[] = [
 			'Wenn das Tool mit Menschen spricht oder Inhalte erzeugt, die veröffentlicht werden.',
 			'When the tool talks to people or generates content that is published.'
 		),
-		scope: ['kontakt', 'inhalte'],
+		scope: ['kontakt', 'inhalte', 'chatbot'],
 		items: [
 			{
 				id: 't_hinweis',
@@ -211,7 +240,7 @@ export const BLOCKS: Block[] = [
 					'Notice that people are talking to an AI (transparency tool)'
 				),
 				cite: KIVO('Art. 50 Abs. 1'),
-				scope: ['kontakt']
+				scope: ['kontakt', 'chatbot']
 			},
 			{
 				id: 't_kennzeichnung',
@@ -248,6 +277,115 @@ export const BLOCKS: Block[] = [
 					'The decision can be explained to the person concerned'
 				),
 				cite: DSGVO('Art. 13 Abs. 2 lit. f, Art. 15 Abs. 1 lit. h')
+			}
+		]
+	},
+	{
+		id: 'personal',
+		title: L('Im Personalbereich', 'In HR'),
+		intro: L(
+			'Wenn die KI Bewerbungen, Leistung oder den Einsatz von Beschäftigten betrifft; dann ist sie oft hochriskant (Anhang III Nr. 4 KI-VO).',
+			'When the AI concerns applications, performance or the deployment of staff; it is then often high-risk (Annex III point 4 AI Act).'
+		),
+		scope: ['personal'],
+		items: [
+			{
+				id: 'm_emotion',
+				label: L(
+					'Keine Ableitung von Emotionen am Arbeitsplatz, außer aus medizinischen oder Sicherheitsgründen',
+					'No inference of emotions at the workplace, except for medical or safety reasons'
+				),
+				cite: { law: 'KI-VO', ref: 'Art. 5 Abs. 1 lit. f' },
+				na: false
+			},
+			{
+				id: 'm_grundlage',
+				label: L(
+					'Rechtsgrundlage geprüft (§ 26 Abs. 1 BDSG ist seit EuGH C-34/21 umstritten)',
+					'Legal basis checked (§ 26(1) BDSG is disputed since CJEU C-34/21)'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 6, Art. 88' }
+			},
+			{
+				id: 'm_umfang',
+				label: L(
+					'Nur nötige Daten; keine dauerhafte Aufzeichnung des Verhaltens',
+					'Only the data needed; no permanent recording of behaviour'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 5 Abs. 1 lit. c' }
+			},
+			{
+				id: 'm_hinweise',
+				label: L(
+					'Datenschutzhinweise für Beschäftigte um Zweck und Funktionsweise ergänzt',
+					'Staff privacy notice extended with purpose and how it works'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 13' }
+			},
+			{
+				id: 'm_berichtigung',
+				label: L(
+					'Beschäftigte können falsche Daten und Bewertungen berichtigen lassen',
+					'Staff can have wrong data and ratings corrected'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 16' }
+			}
+		]
+	},
+	{
+		id: 'chatbot',
+		title: L('Chatbot', 'Chatbot'),
+		intro: L(
+			'Wenn Kunden oder Besucher mit dem Tool schreiben, etwa auf der Website.',
+			'When customers or visitors chat with the tool, for example on the website.'
+		),
+		scope: ['chatbot'],
+		items: [
+			{
+				id: 'c_rolle',
+				label: L(
+					'Rolle geklärt: Anbieter des Chatbots oder Betreiber eines fremden Systems',
+					'Role settled: provider of the chatbot or deployer of someone else’s system'
+				),
+				cite: { law: 'KI-VO', ref: 'Art. 3 Nr. 3, 4' },
+				help: L(
+					'Wer einen Chatbot entwickeln lässt oder selbst auf ein Sprachmodell aufsetzt und ihn unter eigenem Namen in Betrieb nimmt, ist in der Regel Anbieter dieses Systems.',
+					'Whoever has a chatbot developed, or builds one on a language model, and puts it into service under their own name is usually the provider of that system.'
+				),
+				na: false
+			},
+			{
+				id: 'c_hinweise',
+				label: L(
+					'Datenschutzhinweise nennen den Chatbot, den Anbieter, den Zweck und die Speicherdauer',
+					'Privacy notice names the chatbot, the provider, the purpose and the storage period'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 13' },
+				na: false
+			},
+			{
+				id: 'c_laden',
+				label: L(
+					'Das Chatfenster lädt Dienste Dritter erst, wenn jemand den Chat öffnet',
+					'The chat window loads third-party services only once someone opens the chat'
+				),
+				cite: { law: 'TDDDG', ref: '§ 25 Abs. 1' }
+			},
+			{
+				id: 'c_sensibel',
+				label: L(
+					'Hinweis, keine Gesundheits- oder anderen sensiblen Daten einzugeben',
+					'Notice not to enter health or other sensitive data'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 9 Abs. 1' }
+			},
+			{
+				id: 'c_missbrauch',
+				label: L(
+					'Gegen Missbrauch geprüft: eingeschleuste Anweisungen, Abfluss interner Daten',
+					'Checked against misuse: injected instructions, leaking internal data'
+				),
+				cite: { law: 'DSGVO', ref: 'Art. 32 Abs. 1' }
 			}
 		]
 	},
@@ -291,6 +429,31 @@ export const BLOCKS: Block[] = [
 					'Fundamental rights impact assessment where Art. 27 requires it (FRIA tool)'
 				),
 				cite: KIVO('Art. 27')
+			},
+			{
+				id: 'h_anleitung',
+				label: L(
+					'Einsatz nach der Betriebsanleitung des Anbieters',
+					'Used according to the provider’s instructions for use'
+				),
+				cite: { law: 'KI-VO', ref: 'Art. 26 Abs. 1' },
+				na: false
+			},
+			{
+				id: 'h_ueberwachung',
+				label: L(
+					'Betrieb überwacht; Risiken und schwerwiegende Vorfälle an den Anbieter gemeldet',
+					'Operation monitored; risks and serious incidents reported to the provider'
+				),
+				cite: { law: 'KI-VO', ref: 'Art. 26 Abs. 5' }
+			},
+			{
+				id: 'h_protokolle',
+				label: L(
+					'Automatisch erzeugte Protokolle mindestens sechs Monate aufbewahrt',
+					'Automatically generated logs kept for at least six months'
+				),
+				cite: { law: 'KI-VO', ref: 'Art. 26 Abs. 6' }
 			}
 		]
 	},
@@ -438,6 +601,14 @@ export const definition: RecordToolDefinition = {
 					type: 'assessment',
 					tool: 'ki-dsgvo-schnittstelle',
 					label: L('KI und DSGVO (bei personenbezogenen Daten)', 'AI and GDPR (with personal data)')
+				},
+				{
+					id: 'transparenz_check',
+					type: 'assessment',
+					tool: 'transparenzpflichten',
+					label: L('Transparenzpflichten', 'Transparency obligations'),
+					cite: KIVO('Art. 50'),
+					when: (data) => inScope(data, ['kontakt', 'chatbot', 'inhalte'])
 				},
 				{
 					id: 'ki_register',
