@@ -2,7 +2,8 @@
 	@component
 	The page of a training module on screen: what it covers, for whom, how
 	long, the slides it has and a note on the places the organisation fills
-	in, with the actions Vortragen and Handout drucken. The handout itself is
+	in, with the actions Vortragen, Handout drucken and Schulung erfassen,
+	which opens a pre-filled Schulungsnachweis entry. The handout itself is
 	LessonHandout, shown on paper only.
 -->
 <script lang="ts">
@@ -12,11 +13,15 @@
 	import Blanks from '#lib/ui/Blanks.svelte';
 	import Icon from '#lib/ui/Icon.svelte';
 	import { text } from '../i18n.js';
+	import { LESSON_REGISTER } from '../lesson-entry.js';
 	import type { Lesson, ToolManifest } from '../types.js';
 
 	let { tool, lesson }: { tool: ToolManifest; lesson: Lesson } = $props();
 
 	const presentHref = $derived(resolve(localized(`/werkzeuge/${tool.slug}/vortrag`)));
+	const recordHref = $derived(
+		resolve(localized(`/werkzeuge/${LESSON_REGISTER}/eintraege?neu=1&schulung=${tool.slug}`))
+	);
 	const hasBlanks = $derived(
 		lesson.slides.some((slide) => slide.points.some((point) => text(point).includes('[')))
 	);
@@ -36,7 +41,7 @@
 			<dd>
 				{m.lesson_minutes({ minutes: String(lesson.minutes) })} · {m.lesson_slides({
 					count: String(lesson.slides.length)
-				})}
+				})} · {m.lesson_questions({ count: String(lesson.quiz.length) })}
 			</dd>
 		</div>
 	</dl>
@@ -48,6 +53,7 @@
 		<button type="button" class="quiet" onclick={() => window.print()}>
 			<Icon name="printer" size={16} />{m.lesson_handout()}
 		</button>
+		<a class="button quiet" href={recordHref}>{m.lesson_record()}</a>
 	</div>
 
 	<h2>{m.lesson_outline()}</h2>
