@@ -23,5 +23,6 @@ describe('organisation details in lessons', () => {
 			'dsb',
 			'ausserhalb'
 		]);
+		expect(lessonSlots(getLesson('schulung-grundlagen')!)).toEqual(['meldeweg', 'dsb']);
 	});
 });

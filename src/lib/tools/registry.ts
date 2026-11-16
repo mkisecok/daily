@@ -24,6 +24,7 @@ import { avvPruefung } from './avv-pruefung/tool.js';
 import { tomKatalog } from './tom-katalog/tool.js';
 import { sdmWuerfel } from './sdm-wuerfel/tool.js';
 import { schulungDatenpanne } from './schulung-datenpanne/tool.js';
+import { schulungGrundlagen } from './schulung-grundlagen/tool.js';
 import { standortwechsel } from './standortwechsel/tool.js';
 import { softwareEinfuehrung } from './software-einfuehrung/tool.js';
 import { kiEinfuehrung } from './ki-einfuehrung/tool.js';
@@ -85,6 +86,7 @@ export const tools: readonly ToolManifest[] = [
 	avvPruefung.manifest,
 	tomKatalog.manifest,
 	sdmWuerfel.manifest,
+	schulungGrundlagen.manifest,
 	schulungDatenpanne.manifest,
 	standortwechsel.manifest,
 	softwareEinfuehrung.manifest,
@@ -263,6 +265,7 @@ export function listRecordTools(): RecordTool[] {
 
 /** training modules of the area Schulung, keyed by slug */
 const lessons: Record<string, Lesson> = {
+	[schulungGrundlagen.manifest.slug]: schulungGrundlagen.lesson,
 	[schulungDatenpanne.manifest.slug]: schulungDatenpanne.lesson
 };
 
