@@ -176,3 +176,9 @@ number of tools.
   correction, selection guidelines and expert for the works council; role, privacy notice, loading
   only when opened, sensitive data, misuse). The high-risk part gains three Art. 26 duties for every
   AI tool (instructions, monitoring, logs). Both old tools are retired.
+- Merge 3 of 5: **Personalprozesse** replaces Eintritt und Austritt (an entry per person) and
+  Bewerbungsverfahren (an entry per position): one entry per organisation or site describes the
+  process from application to exit, and each point asks whether the step is part of it. All 45
+  points of the two tools are kept, the legal basis once; "AI in selection" and "staff working with
+  AI" are separate scopes. Lost on purpose: reminders per person and per position, including the
+  deletion date per rejected applicant; the deletion runs belong in the Löschkonzept.

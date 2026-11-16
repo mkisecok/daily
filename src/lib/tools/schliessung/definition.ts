@@ -195,8 +195,8 @@ export const BLOCKS: Block[] = [
 			{
 				id: 'p_akten',
 				label: L(
-					'Personalakten nach den Fristen aufbewahrt, der Rest gelöscht (Werkzeug Eintritt und Austritt)',
-					'Personnel files kept by the periods, the rest deleted (staff joining and leaving tool)'
+					'Personalakten nach den Fristen aufbewahrt, der Rest gelöscht (Werkzeug Personalprozesse)',
+					'Personnel files kept by the periods, the rest deleted (HR processes tool)'
 				),
 				cite: DSGVO('Art. 17 Abs. 3 lit. b')
 			},

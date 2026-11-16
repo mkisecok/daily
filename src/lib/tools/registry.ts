@@ -44,6 +44,7 @@ import { auditvorbereitung } from './auditvorbereitung/tool.js';
 import { vorgang } from './vorgang/tool.js';
 import { beratungsvermerk } from './beratungsvermerk/tool.js';
 import { bestandsaufnahme } from './bestandsaufnahme/tool.js';
+import { personalprozesse } from './personalprozesse/tool.js';
 import { loeschkonzept } from './loeschkonzept/tool.js';
 import { schulungsnachweis } from './schulungsnachweis/tool.js';
 import { kiKompetenz } from './ki-kompetenz/tool.js';
@@ -100,6 +101,7 @@ export const tools: readonly ToolManifest[] = [
 	vorgang.manifest,
 	beratungsvermerk.manifest,
 	bestandsaufnahme.manifest,
+	personalprozesse.manifest,
 	loeschkonzept.manifest,
 	schulungsnachweis.manifest,
 	kiDsgvoSchnittstelle.manifest,
@@ -230,6 +232,7 @@ const recordTools: Record<string, RecordTool> = {
 	[vorgang.manifest.slug]: vorgang,
 	[beratungsvermerk.manifest.slug]: beratungsvermerk,
 	[bestandsaufnahme.manifest.slug]: bestandsaufnahme,
+	[personalprozesse.manifest.slug]: personalprozesse,
 	[avvPruefung.manifest.slug]: avvPruefung,
 	[vvt.manifest.slug]: vvt,
 	[datenpanne.manifest.slug]: datenpanne,

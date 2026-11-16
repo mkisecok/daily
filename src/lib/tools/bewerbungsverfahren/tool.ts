@@ -5,7 +5,8 @@ import { definition, engine } from './engine.js';
 const manifest: ToolManifest = {
 	slug: 'bewerbungsverfahren',
 	category: 'datenschutz',
-	status: 'beta',
+	status: 'retired',
+	successor: 'personalprozesse',
 	shape: 'workflow',
 	version: definition.version,
 	name: { de: 'Bewerbungsverfahren', en: 'Hiring procedure' },

@@ -34,7 +34,7 @@ export const SITUATIONS: Situation[] = [
 		id: 'personal',
 		label: L('Jemand fängt an oder hört auf', 'Someone joins or leaves'),
 		icon: 'id-badge',
-		tool: 'personalwechsel'
+		tool: 'personalprozesse'
 	},
 	{
 		id: 'software',
@@ -88,7 +88,7 @@ export const SITUATIONS: Situation[] = [
 		id: 'bewerbung',
 		label: L('Eine Stelle wird besetzt', 'A job is being filled'),
 		icon: 'user-search',
-		tool: 'bewerbungsverfahren'
+		tool: 'personalprozesse'
 	},
 	{
 		id: 'werbung',

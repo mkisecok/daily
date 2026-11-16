@@ -40,6 +40,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	vorgang: 'archive',
 	beratungsvermerk: 'notes',
 	bestandsaufnahme: 'binoculars',
+	personalprozesse: 'id-badge',
 	loeschkonzept: 'trash-x',
 	schulungsnachweis: 'school',
 	'ki-dsgvo-schnittstelle': 'arrows-exchange',
