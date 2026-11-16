@@ -62,6 +62,7 @@ import { repoCheck } from './repo-check/tool.js';
 import { pseudonymisierer } from './pseudonymisierer/tool.js';
 import { guardrailTest } from './guardrail-test/tool.js';
 import { notes } from '../notes/tool.js';
+import { organisation } from '../organisation/tool.js';
 import { planned } from './planned.js';
 
 /**
@@ -207,6 +208,8 @@ export function getQuestionnaire(slug: string) {
 const recordTools: Record<string, RecordTool> = {
 	// not in the catalogue: the notebook runs on the records framework
 	[notes.manifest.slug]: notes,
+	// not in the catalogue either: the details training modules show
+	[organisation.manifest.slug]: organisation,
 	[auditbericht.manifest.slug]: auditbericht,
 	[feststellungen.manifest.slug]: feststellungen,
 	[pruefkatalog.manifest.slug]: pruefkatalog,

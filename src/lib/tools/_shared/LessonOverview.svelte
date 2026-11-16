@@ -2,7 +2,8 @@
 	@component
 	The page of a training module on screen: what it covers, for whom, how
 	long, the slides it has and a note on the places the organisation fills
-	in, with the actions Vortragen, Handout drucken and Schulung erfassen,
+	in (which of the organisation's details it shows are still missing),
+	with the actions Vortragen, Handout drucken and Schulung erfassen,
 	which opens a pre-filled Schulungsnachweis entry. The handout itself is
 	LessonHandout, shown on paper only.
 -->
@@ -12,19 +13,26 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import Blanks from '#lib/ui/Blanks.svelte';
 	import Icon from '#lib/ui/Icon.svelte';
+	import { getLocale } from '#lib/paraglide/runtime.js';
+	import { fill, lessonSlots, SLOTS, type Details } from '#lib/organisation/slots.js';
 	import { text } from '../i18n.js';
 	import { LESSON_REGISTER } from '../lesson-entry.js';
 	import type { Lesson, ToolManifest } from '../types.js';
 
-	let { tool, lesson }: { tool: ToolManifest; lesson: Lesson } = $props();
+	let {
+		tool,
+		lesson,
+		details = {}
+	}: { tool: ToolManifest; lesson: Lesson; details?: Details } = $props();
 
 	const presentHref = $derived(resolve(localized(`/werkzeuge/${tool.slug}/vortrag`)));
 	const recordHref = $derived(
 		resolve(localized(`/werkzeuge/${LESSON_REGISTER}/eintraege?neu=1&schulung=${tool.slug}`))
 	);
-	const hasBlanks = $derived(
-		lesson.slides.some((slide) => slide.points.some((point) => text(point).includes('[')))
-	);
+	// only the details this lesson shows, and which of them the organisation has not given yet
+	const needed = $derived(lessonSlots(lesson));
+	const missing = $derived(needed.filter((key) => !details[key]));
+	const detailsHref = $derived(resolve(localized(`/organisation?fuer=${tool.slug}`)));
 </script>
 
 <section class="lesson no-print">
@@ -46,6 +54,26 @@
 		</div>
 	</dl>
 
+	{#if needed.length > 0}
+		<aside class="details" data-complete={missing.length === 0} aria-labelledby="lesson-details">
+			<h2 id="lesson-details">{m.lesson_details()}</h2>
+			<p>
+				{m.lesson_details_count({
+					done: String(needed.length - missing.length),
+					total: String(needed.length)
+				})}
+				{#if missing.length > 0}
+					· {m.lesson_details_missing({
+						list: missing.map((key) => text(SLOTS[key].label)).join(', ')
+					})}
+				{/if}
+			</p>
+			<a class="button quiet" href={detailsHref}>
+				{missing.length > 0 ? m.lesson_details_edit() : m.lesson_details_change()}
+			</a>
+		</aside>
+	{/if}
+
 	<div class="toolbar action">
 		<a class="button" href={presentHref}
 			><Icon name="player-play" size={16} />{m.lesson_present()}</a
@@ -59,12 +87,9 @@
 	<h2>{m.lesson_outline()}</h2>
 	<ol class="outline">
 		{#each lesson.slides as slide, index (index)}
-			<li><Blanks value={text(slide.title)} /></li>
+			<li><Blanks value={fill(text(slide.title), details, getLocale())} /></li>
 		{/each}
 	</ol>
-	{#if hasBlanks}
-		<p class="blanks measure" role="note">{m.lesson_blanks()}</p>
-	{/if}
 </section>
 
 <style>
@@ -118,9 +143,32 @@
 		}
 	}
 
-	.blanks {
-		margin-top: 1rem;
+	/* which of the organisation's details the lesson shows are still missing */
+	.details {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1rem;
+		align-items: center;
+		max-width: 44rem;
+		margin-top: 1.5rem;
+		padding: 0.9rem 1rem;
 		font-size: 14px;
-		color: var(--ink3);
+		background: var(--wax-soft);
+		border-radius: var(--radius);
+
+		&[data-complete='true'] {
+			background: var(--area-schulung-soft);
+		}
+
+		& h2 {
+			flex-basis: 100%;
+			margin: 0;
+			font-size: 15px;
+		}
+
+		& p {
+			flex: 1;
+			margin: 0;
+		}
 	}
 </style>

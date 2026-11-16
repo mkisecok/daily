@@ -1,15 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { fieldById } from '../records/validate.js';
 import { getLesson, getRecordTool, tools } from './registry.js';
-import type { Localized } from './types.js';
+import { SLOTS, slotsIn } from '../organisation/slots.js';
 
 const lessons = tools.filter((tool) => tool.shape === 'lesson');
 const topics = (() => {
 	const field = fieldById(getRecordTool('schulungsnachweis')!.definition, 'themen');
 	return field && 'options' in field ? field.options.map((option) => option.value) : [];
 })();
-/** the places in square brackets the organisation fills in */
-const blanks = (value: Localized, lang: 'de' | 'en') => value[lang].match(/\[[^\]]+\]/g) ?? [];
 
 describe('lessons', () => {
 	it('exist, sit in the area Schulung and count as a Schulungsnachweis topic', () => {
@@ -43,7 +41,7 @@ describe('lessons', () => {
 		}
 	});
 
-	it('leave the same places open in German and English', () => {
+	it('mark the organisation details by key, the same in German and English, and nothing else', () => {
 		for (const tool of lessons) {
 			for (const slide of getLesson(tool.slug)!.slides) {
 				for (const value of [
@@ -51,8 +49,10 @@ describe('lessons', () => {
 					...slide.points,
 					...(slide.example ? [slide.example] : [])
 				]) {
-					expect(blanks(value, 'en').length, value.de).toBe(blanks(value, 'de').length);
-					expect(value.de.split('[').length, value.de).toBe(value.de.split(']').length);
+					expect(slotsIn(value.en), value.de).toEqual(slotsIn(value.de));
+					for (const key of slotsIn(value.de)) expect(Object.keys(SLOTS), value.de).toContain(key);
+					// a place to fill in is a detail of the organisation, never free square brackets
+					expect(value.de + value.en, value.de).not.toMatch(/[[\]]/);
 				}
 			}
 		}
