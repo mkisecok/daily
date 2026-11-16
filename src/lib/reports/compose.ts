@@ -6,8 +6,9 @@ import type { Localized, ToolCategory, VerdictLevel } from '../tools/types.js';
 export type ReportKind = 'gesamt' | 'datenschutz' | 'ki' | 'audit';
 
 export const KIND_CATEGORIES: Record<ReportKind, ToolCategory[]> = {
-	gesamt: ['datenschutz', 'ki', 'audit', 'entwickler'],
-	datenschutz: ['datenschutz'],
+	gesamt: ['datenschutz', 'ki', 'audit', 'schulung', 'entwickler'],
+	// training and the SDM method belong to the DSB's activity report
+	datenschutz: ['datenschutz', 'schulung'],
 	ki: ['ki'],
 	audit: ['audit']
 };

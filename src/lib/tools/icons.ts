@@ -63,6 +63,7 @@ export const AREA_ICONS: Record<ToolCategory, IconName> = {
 	datenschutz: 'shield-lock',
 	ki: 'sparkles',
 	audit: 'clipboard-list',
+	schulung: 'school',
 	entwickler: 'code'
 };
 

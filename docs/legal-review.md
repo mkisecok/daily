@@ -36,7 +36,7 @@ Phase 0 is done when no row has an open finding of severity "wrong result".
 | Pseudonymisierer                            | `pseudonymisierer`               | Datenschutz |          |      |          |          | open   |
 | AVV-Prüfung                                 | `avv-pruefung`                   | Datenschutz |          |      |          |          | open   |
 | TOM-Katalog                                 | `tom-katalog`                    | Datenschutz |          |      |          |          | open   |
-| SDM-Würfel                                  | `sdm-wuerfel`                    | Datenschutz |          |      |          |          | open   |
+| SDM-Würfel                                  | `sdm-wuerfel`                    | Schulung    |          |      |          |          | open   |
 | Standortwechsel                             | `standortwechsel`                | Datenschutz |          |      |          |          | open   |
 | Neue Software einführen                     | `software-einfuehrung`           | Datenschutz |          |      |          |          | open   |
 | Eintritt und Austritt von Beschäftigten     | `personalwechsel`                | Datenschutz |          |      |          |          | open   |

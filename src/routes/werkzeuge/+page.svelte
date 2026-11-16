@@ -26,6 +26,7 @@
 		datenschutz: m.category_datenschutz,
 		ki: m.category_ki,
 		audit: m.category_audit,
+		schulung: m.category_schulung,
 		entwickler: m.category_entwickler
 	};
 
@@ -280,6 +281,11 @@
 		&[data-area='audit'] {
 			--area: var(--area-audit);
 			--area-soft: var(--area-audit-soft);
+		}
+
+		&[data-area='schulung'] {
+			--area: var(--area-schulung);
+			--area-soft: var(--area-schulung-soft);
 		}
 
 		&[data-area='entwickler'] {

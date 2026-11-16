@@ -44,6 +44,8 @@ html[data-theme='light'] {
 	--area-ki-soft: #f2ecff;
 	--area-audit: #c2410c;
 	--area-audit-soft: #fff0e6;
+	--area-schulung: #15803d;
+	--area-schulung-soft: #e6f6ec;
 	--area-entwickler: #0e7490;
 	--area-entwickler-soft: #e3f5f9;
 
@@ -108,6 +110,8 @@ html[data-theme='dark'] {
 	--area-ki-soft: rgba(181, 155, 255, 0.14);
 	--area-audit: #ff9f66;
 	--area-audit-soft: rgba(255, 159, 102, 0.14);
+	--area-schulung: #5ccf86;
+	--area-schulung-soft: rgba(92, 207, 134, 0.13);
 	--area-entwickler: #4dd4ec;
 	--area-entwickler-soft: rgba(77, 212, 236, 0.13);
 
