@@ -1,10 +1,13 @@
 import type { Component } from 'svelte';
 import type { PrintRow } from '../print/meta.js';
 import type { Titles } from '../records/format.js';
+import type { Composed } from '../records/links.js';
 import type { RecordEngine, RecordToolDefinition, StoredRecord } from '../records/types.js';
 import { m } from '../paraglide/messages.js';
 import { getLocale } from '../paraglide/runtime.js';
 import AccessPrint from './betroffenenanfrage/AccessPrint.svelte';
+import AuditPrint from './auditbericht/AuditPrint.svelte';
+import { auditHead } from './auditbericht/print.js';
 import { accessHead, accessReady } from './betroffenenanfrage/print.js';
 import BreachPrint from './datenpanne/BreachPrint.svelte';
 import DsfaPrint from './dsfa/DsfaPrint.svelte';
@@ -38,6 +41,8 @@ export type EntryPrintProps = {
 	definition: RecordToolDefinition;
 	record: StoredRecord;
 	titles?: Titles;
+	/** the referenced records the entry composes, such as the audit of a report */
+	composed?: Composed[];
 };
 
 /**
@@ -61,6 +66,11 @@ export const entryPrints: Partial<
 		}
 	>
 > = {
+	auditbericht: {
+		kind: m.print_kind_audit,
+		component: AuditPrint,
+		letter: (record, organisation) => auditHead(record, organisation, getLocale())
+	},
 	betroffenenanfrage: {
 		kind: m.print_kind_access,
 		component: AccessPrint,

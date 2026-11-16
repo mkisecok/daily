@@ -222,3 +222,10 @@ number of tools.
   management and, when the works council is involved, the works council. The warnings for the
   drafter stay on screen. Any questionnaire can print the document it drafts (`reportPrints` in
   `prints.ts`). Next: the Auditbericht.
+- Step 6, fourth document: the Auditbericht prints as a report in the order of ISO 19011, 6.5.1:
+  a letter head with report, status (draft or approved, by whom) and distribution; audit objective,
+  scope and criteria; team and auditees; conclusion; findings with an overview by class, the most
+  serious first; checklists with their result; strengths, recommendations and the next audit; lines
+  to sign. The composed audit no longer prints a second time as screen views. **Step 6 is done**:
+  Auskunft, DSFA, KI-Nutzungsrichtlinie and Auditbericht print as the documents people send. Left
+  for later: the breach (Art. 33) and incident (Art. 73) reports still carry the Daily head.

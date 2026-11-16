@@ -368,3 +368,63 @@ test('print: the AI usage policy prints as a policy to sign, not as a Prüfberic
 	const pdf = await page.pdf({ format: 'A4', preferCSSPageSize: true });
 	expect(pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g)?.length).toBeLessThanOrEqual(2);
 });
+
+test('print: an audit report prints in the order of ISO 19011 with its audit, findings and checklist', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: A4_TEXT, height: 1000 });
+	const audit = 'Datenschutzaudit Personalabteilung 2026 (Beispiel)';
+	await page.goto('werkzeuge/auditprogramm/eintraege/?neu=1&beispiel=1', {
+		waitUntil: 'networkidle'
+	});
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await page.goto('werkzeuge/feststellungen/eintraege/?neu=1&beispiel=1', {
+		waitUntil: 'networkidle'
+	});
+	await choose(page.locator('#field-audit'), { label: audit });
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await page.goto('werkzeuge/pruefkatalog/eintraege/?neu=1', { waitUntil: 'networkidle' });
+	await page.locator('#field-titel').fill('Löschung in der Personalakte');
+	await choose(page.locator('#field-audit'), { label: audit });
+	await choose(page.locator('#field-ergebnis'), 'teilweise');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+
+	await page.goto('werkzeuge/auditbericht/eintraege/?neu=1', { waitUntil: 'networkidle' });
+	await page.locator('#field-titel').fill('Auditbericht Personal 2026');
+	await choose(page.locator('#field-audit'), { label: audit });
+	await page.locator('#field-zusammenfassung').fill('Wirksam mit einer wesentlichen Abweichung.');
+	await choose(page.locator('#field-gesamturteil'), 'abweichungen');
+	await page.locator('#field-verteiler').fill('Geschäftsführung, Leitung Personal');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+	await page.emulateMedia({ media: 'print' });
+
+	const head = page.locator('[data-print-frame]');
+	await expect(head.locator('h1')).toHaveText('Auditbericht');
+	await expect(head).toContainText('Geschäftsführung, Leitung Personal');
+	for (const internal of ['Daily', 'Werkzeug', 'Juristische Prüfung', 'Keine Rechtsberatung']) {
+		await expect(head).not.toContainText(internal);
+	}
+	const report = page.locator('.print-parts');
+	await expect(report.locator('h2')).toHaveText([
+		/^1\. Auditziel/,
+		/^2\. Auditteam/,
+		'3. Gesamturteil',
+		'4. Feststellungen',
+		'5. Prüfkataloge',
+		/^6\. Stärken/
+	]);
+	await expect(report).toContainText('1 × Wesentliche Abweichung');
+	await expect(report).toContainText('Zugriffsrechte ausgeschiedener Beschäftigter');
+	await expect(report).toContainText('Ergebnis: Teilweise erfüllt');
+	// the screen view of the composed audit does not print a second time
+	await expect(page.locator('.composed').first()).toBeHidden();
+	const pdf = await page.pdf({ format: 'A4', preferCSSPageSize: true });
+	expect(pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g)?.length).toBeLessThanOrEqual(3);
+	if (process.env.AUDIT_PDF) await page.pdf({ path: process.env.AUDIT_PDF, format: 'A4' });
+});
