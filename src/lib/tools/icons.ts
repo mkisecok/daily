@@ -18,6 +18,7 @@ export const TOOL_ICONS: Record<string, IconName> = {
 	'avv-pruefung': 'file-certificate',
 	'tom-katalog': 'lock',
 	'sdm-wuerfel': 'box',
+	'schulung-grundlagen': 'info-circle',
 	'schulung-datenpanne': 'alert-triangle',
 	standortwechsel: 'truck',
 	'software-einfuehrung': 'package',
