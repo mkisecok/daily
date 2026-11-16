@@ -5,14 +5,18 @@
 	import { formatShortDate } from '#lib/i18n/date.js';
 	import { localized } from '#lib/i18n/links.js';
 	import { text } from '#lib/tools/i18n.js';
-	import { getQuestionnaire, getRecordTool } from '#lib/tools/registry.js';
+	import { getLesson, getQuestionnaire, getRecordTool } from '#lib/tools/registry.js';
+	import LessonHandout from '#lib/tools/_shared/LessonHandout.svelte';
+	import LessonOverview from '#lib/tools/_shared/LessonOverview.svelte';
 	import ToolHeader from '#lib/tools/_shared/ToolHeader.svelte';
+	import PrintDocument from '#lib/ui/PrintDocument.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 
 	const questionnaire = $derived(getQuestionnaire(data.tool.slug));
 	const recordTool = $derived(getRecordTool(data.tool.slug));
+	const lesson = $derived(getLesson(data.tool.slug));
 	const recordsHref = $derived(resolve(localized(`/werkzeuge/${data.tool.slug}/eintraege`)));
 	const checkHref = $derived(resolve(localized(`/werkzeuge/${data.tool.slug}/pruefen`)));
 	const saveHref = $derived(resolve(localized(`/werkzeuge/${data.tool.slug}/neu`)));
@@ -28,31 +32,46 @@
 
 <ToolHeader tool={data.tool} />
 
-<section class="intro">
-	<p class="measure lead">{text(data.tool.summary)}</p>
-	{#if questionnaire}
-		<p class="measure">{text(questionnaire.catalog.intro)}</p>
-	{:else if recordTool}
-		<p class="measure">{text(recordTool.definition.intro)}</p>
-	{/if}
-	<div class="toolbar action">
-		{#if recordTool}
-			<!-- records live on their own page; saving is built in -->
-			<a class="button" href={recordsHref}>{m.records_open()} →</a>
-		{:else}
-			<a class="button" href={checkHref}>{m.tool_start()} →</a>
+{#if lesson}
+	<PrintDocument
+		letter
+		kind={m.print_kind_handout()}
+		title={text(data.tool.name)}
+		rows={[
+			{ label: m.lesson_audience(), value: text(lesson.audience) },
+			{ label: m.lesson_length(), value: m.lesson_minutes({ minutes: String(lesson.minutes) }) },
+			{ label: m.lesson_version(), value: String(lesson.version) }
+		]}
+	/>
+	<LessonOverview tool={data.tool} {lesson} />
+	<LessonHandout {lesson} />
+{:else}
+	<section class="intro">
+		<p class="measure lead">{text(data.tool.summary)}</p>
+		{#if questionnaire}
+			<p class="measure">{text(questionnaire.catalog.intro)}</p>
+		{:else if recordTool}
+			<p class="measure">{text(recordTool.definition.intro)}</p>
 		{/if}
-		{#if PUBLIC_PREVIEW || recordTool}
-			<!-- no accounts in the static preview; record tools save on their own page -->
-		{:else if data.user}
-			<a class="button quiet" href={saveHref}>{m.tool_save()}</a>
-		{:else}
-			<a class="button quiet" href={loginHref} data-sveltekit-reload>{m.tool_save_login()}</a>
-		{/if}
-	</div>
-</section>
+		<div class="toolbar action">
+			{#if recordTool}
+				<!-- records live on their own page; saving is built in -->
+				<a class="button" href={recordsHref}>{m.records_open()} →</a>
+			{:else}
+				<a class="button" href={checkHref}>{m.tool_start()} →</a>
+			{/if}
+			{#if PUBLIC_PREVIEW || recordTool}
+				<!-- no accounts in the static preview; record tools save on their own page -->
+			{:else if data.user}
+				<a class="button quiet" href={saveHref}>{m.tool_save()}</a>
+			{:else}
+				<a class="button quiet" href={loginHref} data-sveltekit-reload>{m.tool_save_login()}</a>
+			{/if}
+		</div>
+	</section>
+{/if}
 
-{#if data.user && !recordTool}
+{#if data.user && !recordTool && !lesson}
 	<section class="runs card">
 		<h2>{m.tool_runs()}</h2>
 		{#if data.runs.length === 0}

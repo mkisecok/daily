@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { allFields } from '../lib/records/validate.js';
 import { text } from '../lib/tools/i18n.js';
-import { getRecordTool, tools } from '../lib/tools/registry.js';
+import { getLesson, getRecordTool, tools } from '../lib/tools/registry.js';
 import { choose, pickDate } from './e2e-helpers.js';
 
 /**
@@ -68,6 +68,11 @@ async function fillRequired(page: Page, slug: string) {
 }
 
 async function produce(page: Page, slug: string) {
+	// a lesson prints its handout from its own page
+	if (getLesson(slug)) {
+		await page.goto(`werkzeuge/${slug}/`, { waitUntil: 'networkidle' });
+		return;
+	}
 	const record = getRecordTool(slug);
 	if (!record) {
 		await page.goto(`werkzeuge/${slug}/pruefen/`, { waitUntil: 'networkidle' });

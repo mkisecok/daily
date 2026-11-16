@@ -1,4 +1,5 @@
 import type {
+	Lesson,
 	QuestionnaireCatalog,
 	QuestionnaireEngine,
 	ToolCategory,
@@ -22,6 +23,7 @@ import type { RecordTool } from '../records/types.js';
 import { avvPruefung } from './avv-pruefung/tool.js';
 import { tomKatalog } from './tom-katalog/tool.js';
 import { sdmWuerfel } from './sdm-wuerfel/tool.js';
+import { schulungDatenpanne } from './schulung-datenpanne/tool.js';
 import { standortwechsel } from './standortwechsel/tool.js';
 import { softwareEinfuehrung } from './software-einfuehrung/tool.js';
 import { kiEinfuehrung } from './ki-einfuehrung/tool.js';
@@ -82,6 +84,7 @@ export const tools: readonly ToolManifest[] = [
 	avvPruefung.manifest,
 	tomKatalog.manifest,
 	sdmWuerfel.manifest,
+	schulungDatenpanne.manifest,
 	standortwechsel.manifest,
 	softwareEinfuehrung.manifest,
 	personalwechsel.manifest,
@@ -253,4 +256,13 @@ export function getRecordTool(slug: string): RecordTool | undefined {
 /** every register and workflow tool */
 export function listRecordTools(): RecordTool[] {
 	return Object.values(recordTools);
+}
+
+/** training modules of the area Schulung, keyed by slug */
+const lessons: Record<string, Lesson> = {
+	[schulungDatenpanne.manifest.slug]: schulungDatenpanne.lesson
+};
+
+export function getLesson(slug: string): Lesson | undefined {
+	return lessons[slug];
 }

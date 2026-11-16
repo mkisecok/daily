@@ -10,20 +10,12 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { text } from '#lib/tools/i18n.js';
 	import type { ReportPrintProps } from '#lib/tools/prints.js';
+	import Blanks from '#lib/ui/Blanks.svelte';
 	import { policyClauses } from './engine.js';
 
 	let { answers }: ReportPrintProps = $props();
 
 	const clauses = $derived(policyClauses(answers));
-	/** a sentence split into plain text and the placeholders in square brackets */
-	const pieces = (sentence: string) =>
-		sentence
-			.split(/(\[[^\]]+\])/)
-			.filter(Boolean)
-			.map((piece) => ({
-				piece,
-				open: piece.startsWith('[')
-			}));
 </script>
 
 <section class="print-body print-only policy">
@@ -32,9 +24,7 @@
 		<ol class:single={clause.sentences.length === 1}>
 			{#each clause.sentences as sentence, n (n)}
 				<li>
-					{#each pieces(text(sentence)) as { piece, open }, k (k)}
-						{#if open}<mark>{piece}</mark>{:else}{piece}{/if}
-					{/each}
+					<Blanks value={text(sentence)} />
 				</li>
 			{/each}
 		</ol>
@@ -87,14 +77,6 @@
 					content: none;
 				}
 			}
-		}
-
-		& mark {
-			padding: 0 0.5mm;
-			font-style: italic;
-			color: inherit;
-			background: none;
-			border-bottom: 0.5pt dashed #000;
 		}
 
 		& .in-force {

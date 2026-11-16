@@ -5,7 +5,7 @@ export type ToolCategory = 'datenschutz' | 'ki' | 'audit' | 'schulung' | 'entwic
 /** `retired`: merged into its `successor`; hidden from the catalogue, its entries stay readable */
 export type ToolStatus = 'stable' | 'beta' | 'planned' | 'retired';
 /** `utility`: an interactive tool with its own page, e.g. the repository scan */
-export type ToolShape = 'questionnaire' | 'register' | 'workflow' | 'utility';
+export type ToolShape = 'questionnaire' | 'register' | 'workflow' | 'utility' | 'lesson';
 
 export type Law =
 	| 'DSGVO'
@@ -133,3 +133,36 @@ export type QuestionnaireEngine = (
 	catalog: QuestionnaireCatalog,
 	answers: Answers
 ) => QuestionnaireResult;
+
+/* ---------- lesson shape ---------- */
+
+/**
+ * one slide of a lesson: a title, at most five short points, an optional
+ * case from daily work, speaker notes for the presenter, and the provisions
+ * its statements rest on. Text in square brackets is a place the
+ * organisation fills in, such as its reporting channel.
+ */
+export type Slide = {
+	title: Localized;
+	points: Localized[];
+	example?: Localized;
+	notes?: Localized;
+	cite?: LegalBasis[];
+};
+
+/**
+ * a training module for staff (area Schulung): fixed, cited content that
+ * the data protection officer presents and hands out
+ */
+export type Lesson = {
+	version: number;
+	/** who it is for, e.g. "alle Beschäftigten" */
+	audience: Localized;
+	/** planned length in minutes */
+	minutes: number;
+	/** the Schulungsnachweis topic a session of it counts as, e.g. 'pannen' */
+	topic: string;
+	intro: Localized;
+	sources: LegalBasis[];
+	slides: Slide[];
+};
