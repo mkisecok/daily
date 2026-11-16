@@ -7,8 +7,8 @@ const DSGVO = (ref: string): LegalBasis => ({ law: 'DSGVO', ref });
  * "Datenpannen erkennen und melden": for all staff, about 20 minutes. Staff
  * learn what a breach is, that a suspicion is enough, and how it reaches the
  * data protection officer in time for the 72 hours of Art. 33 DSGVO. The
- * organisation's own reporting channel stays in square brackets until it is
- * filled in.
+ * organisation's reporting channel, DSB contact and deputy come from its
+ * details ({meldeweg}, {dsb}, {ausserhalb}); missing ones show marked.
  */
 export const lesson: Lesson = {
 	version: 1,
@@ -138,26 +138,17 @@ export const lesson: Lesson = {
 		{
 			title: L('Sofort melden: an wen', 'Report at once: to whom'),
 			points: [
-				L(
-					'Meldeweg: [E-Mail, Telefon oder Formular]',
-					'Reporting channel: [e-mail, phone or form]'
-				),
-				L(
-					'Datenschutzbeauftragte: [Name, Telefon, E-Mail]',
-					'Data protection officer: [name, phone, e-mail]'
-				),
-				L(
-					'Außerhalb der Arbeitszeit: [Vertretung oder IT-Bereitschaft]',
-					'Outside working hours: [deputy or IT on-call]'
-				),
+				L('Meldeweg: {meldeweg}', 'Reporting channel: {meldeweg}'),
+				L('Datenschutzbeauftragte: {dsb}', 'Data protection officer: {dsb}'),
+				L('Außerhalb der Arbeitszeit: {ausserhalb}', 'Outside working hours: {ausserhalb}'),
 				L(
 					'Lieber einmal zu viel melden als einmal zu wenig',
 					'Better to report once too often than once too rarely'
 				)
 			],
 			notes: L(
-				'Die Stellen in eckigen Klammern trägt die Organisation vor der Schulung ein. Ohne festen Meldeweg geht die Frist im Postfach verloren.',
-				'The organisation fills in the places in square brackets before the session. Without a fixed reporting channel the deadline is lost in an inbox.'
+				'Meldeweg, Kontakt und Vertretung kommen aus den Angaben der Organisation. Fehlt eine Angabe, steht hier ein markierter Platzhalter. Ohne festen Meldeweg geht die Frist im Postfach verloren.',
+				'Reporting channel, contact and deputy come from the organisation details. Where one is missing, a marked placeholder shows here. Without a fixed reporting channel the deadline is lost in an inbox.'
 			),
 			cite: [DSGVO('Art. 33 Abs. 1')]
 		},
@@ -264,8 +255,8 @@ export const lesson: Lesson = {
 					'Spot it: data gone, altered or with the wrong people'
 				),
 				L(
-					'Sofort melden, schon beim Verdacht: [Meldeweg]',
-					'Report at once, even on suspicion: [reporting channel]'
+					'Sofort melden, schon beim Verdacht: {meldeweg}',
+					'Report at once, even on suspicion: {meldeweg}'
 				),
 				L('Nichts vertuschen, nichts selbst aufräumen', 'Hide nothing, clean up nothing yourself'),
 				L(

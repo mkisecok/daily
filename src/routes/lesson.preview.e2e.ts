@@ -25,7 +25,7 @@ test('preview: a training module is presented slide by slide and prints as a han
 
 	// the place the organisation fills in is marked, not passed off as text
 	await page.goto(page.url().replace(/folie=\d+/, 'folie=10'), { waitUntil: 'networkidle' });
-	await expect(presenter.locator('mark')).toHaveText(['[Meldeweg]']);
+	await expect(presenter.locator('mark')).toHaveText(['[E-Mail, Telefon oder Formular]']);
 
 	// the questions follow the slides; the room picks, the right answer shows with its reason
 	await page.keyboard.press('ArrowRight');
@@ -85,4 +85,40 @@ test('preview: the presenter fits a phone without sideways scrolling', async ({ 
 	await expect(page.locator('.presenter h1')).toHaveText('So sieht das im Alltag aus');
 	const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
 	expect(overflow).toBe(0);
+});
+
+test('preview: the organisation details fill the module once entered', async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/schulung-datenpanne/', { waitUntil: 'networkidle' });
+	const details = page.locator('.details');
+	await expect(details).toContainText('0 von 3 eingetragen');
+	await expect(details).toContainText('Fehlt: Meldeweg für Datenpannen');
+
+	await details.getByRole('link', { name: 'Angaben eintragen' }).click();
+	await expect(page).toHaveURL(/organisation\/?\?fuer=schulung-datenpanne/);
+	await page.locator('#field-meldeweg').fill('datenpanne@beispiel.de oder Telefon 0711 123-99');
+	await page.locator('#field-dsb').fill('Dr. Petra Schmidt, dsb@beispiel.de');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page.locator('.notice')).toContainText('Gespeichert.');
+	await page.getByRole('link', { name: 'Zurück zur Schulung →' }).click();
+
+	await expect(details).toContainText('2 von 3 eingetragen');
+	await expect(details).toContainText('Fehlt: Außerhalb der Arbeitszeit');
+
+	await page.goto('werkzeuge/schulung-datenpanne/vortrag/?folie=5', { waitUntil: 'networkidle' });
+	const slide = page.locator('.presenter .points');
+	await expect(slide).toContainText('Meldeweg: datenpanne@beispiel.de oder Telefon 0711 123-99');
+	await expect(slide).toContainText('Datenschutzbeauftragte: Dr. Petra Schmidt, dsb@beispiel.de');
+	await expect(slide.locator('mark')).toHaveText(['[Vertretung oder IT-Bereitschaft]']);
+
+	await page.goto('werkzeuge/schulung-datenpanne/', { waitUntil: 'networkidle' });
+	await page.emulateMedia({ media: 'print' });
+	await expect(page.locator('.handout')).toContainText('Meldeweg: datenpanne@beispiel.de');
+
+	// a second visit edits the same entry
+	await page.emulateMedia({ media: 'screen' });
+	await page.goto('organisation/', { waitUntil: 'networkidle' });
+	await expect(page.locator('#field-meldeweg')).toHaveValue(
+		'datenpanne@beispiel.de oder Telefon 0711 123-99'
+	);
 });

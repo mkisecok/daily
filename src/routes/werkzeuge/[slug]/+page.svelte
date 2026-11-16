@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { PUBLIC_PREVIEW } from '$app/env/public';
+	import { onMount } from 'svelte';
+	import { loadDetails } from '#lib/organisation/load.js';
+	import type { Details } from '#lib/organisation/slots.js';
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
 	import { formatShortDate } from '#lib/i18n/date.js';
@@ -17,6 +20,15 @@
 	const questionnaire = $derived(getQuestionnaire(data.tool.slug));
 	const recordTool = $derived(getRecordTool(data.tool.slug));
 	const lesson = $derived(getLesson(data.tool.slug));
+
+	/** the organisation's details a lesson shows; they live in the store, so only the browser has them */
+	let details = $state<Details>({});
+	onMount(() => {
+		if (!getLesson(data.tool.slug)) return;
+		(async () => {
+			details = (await loadDetails()).details;
+		})();
+	});
 	const recordsHref = $derived(resolve(localized(`/werkzeuge/${data.tool.slug}/eintraege`)));
 	const checkHref = $derived(resolve(localized(`/werkzeuge/${data.tool.slug}/pruefen`)));
 	const saveHref = $derived(resolve(localized(`/werkzeuge/${data.tool.slug}/neu`)));
@@ -43,8 +55,8 @@
 			{ label: m.lesson_version(), value: String(lesson.version) }
 		]}
 	/>
-	<LessonOverview tool={data.tool} {lesson} />
-	<LessonHandout {lesson} />
+	<LessonOverview tool={data.tool} {lesson} {details} />
+	<LessonHandout {lesson} {details} />
 {:else}
 	<section class="intro">
 		<p class="measure lead">{text(data.tool.summary)}</p>

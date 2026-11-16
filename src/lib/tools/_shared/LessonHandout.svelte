@@ -1,26 +1,32 @@
 <!--
 	@component
 	The handout of a training module, on paper only below a letter head:
-	each slide with its points, the example and the provisions it cites, in
+	each slide with its points, the example and the provisions it cites, the
+	organisation's details filled in where it has them, in
 	the order presented, then the review questions with boxes to tick and
 	the answers with their reasons. Speaker notes stay with the presenter.
 -->
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
 	import Blanks from '#lib/ui/Blanks.svelte';
+	import { getLocale } from '#lib/paraglide/runtime.js';
+	import { fill, type Details } from '#lib/organisation/slots.js';
 	import { cite, text } from '../i18n.js';
-	import type { Lesson } from '../types.js';
+	import type { Lesson, Localized } from '../types.js';
 
-	let { lesson }: { lesson: Lesson } = $props();
+	let { lesson, details = {} }: { lesson: Lesson; details?: Details } = $props();
+
+	/** the text with the organisation's details, or marked placeholders */
+	const say = (value: Localized) => fill(text(value), details, getLocale());
 </script>
 
 <section class="print-body print-only handout">
 	{#each lesson.slides as slide, index (index)}
 		<article class="slide">
-			<h2>{index + 1}. <Blanks value={text(slide.title)} /></h2>
+			<h2>{index + 1}. <Blanks value={say(slide.title)} /></h2>
 			<ul>
 				{#each slide.points as point, n (n)}
-					<li><Blanks value={text(point)} /></li>
+					<li><Blanks value={say(point)} /></li>
 				{/each}
 			</ul>
 			{#if slide.example}

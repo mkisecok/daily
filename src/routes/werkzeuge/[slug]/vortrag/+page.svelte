@@ -4,13 +4,19 @@
 	import { page } from '$app/state';
 	import { localized } from '#lib/i18n/links.js';
 	import { m } from '#lib/paraglide/messages.js';
+	import { fill } from '#lib/organisation/slots.js';
+	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { cite, text } from '#lib/tools/i18n.js';
+	import type { Localized } from '#lib/tools/types.js';
 	import { LESSON_REGISTER } from '#lib/tools/lesson-entry.js';
 	import Blanks from '#lib/ui/Blanks.svelte';
 	import Icon from '#lib/ui/Icon.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
+
+	/** the text with the organisation's details, or marked placeholders */
+	const say = (value: Localized) => fill(text(value), data.details, getLocale());
 
 	// step 0 is the title, then the slides, the questions and an end step
 	const slides = $derived(data.lesson.slides.length);
@@ -103,10 +109,10 @@
 >
 	<article class="slide" aria-live="polite">
 		{#if slide}
-			<h1><Blanks value={text(slide.title)} /></h1>
+			<h1><Blanks value={say(slide.title)} /></h1>
 			<ul class="points">
 				{#each slide.points as point, index (index)}
-					<li><Blanks value={text(point)} /></li>
+					<li><Blanks value={say(point)} /></li>
 				{/each}
 			</ul>
 			{#if slide.example}
