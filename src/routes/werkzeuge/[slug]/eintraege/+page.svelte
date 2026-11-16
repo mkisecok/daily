@@ -357,21 +357,30 @@
 		<p class="toolbar"><a class="button quiet" href={resolve(listPath)}>{m.records_back()}</a></p>
 	{:else}
 		{@const record = detail.record}
-		<PrintDocument
-			kind={EntryPrint ? EntryPrint.kind() : m.print_kind_entry()}
-			title={record.title}
-			rows={printMeta(data.tool, {
-				version: data.definition.version,
-				at: record.updatedAt,
-				organisation: data.organisation?.name,
-				entry: {
-					id: record.id.slice(0, 8),
-					state: data.definition.workflow
-						? stateLabel(data.definition, record.state, locale)
-						: undefined
-				}
-			})}
-		/>
+		{#if EntryPrint?.letter}
+			<PrintDocument
+				letter
+				kind={EntryPrint.kind()}
+				title={EntryPrint.kind()}
+				rows={EntryPrint.letter(record, data.organisation?.name)}
+			/>
+		{:else}
+			<PrintDocument
+				kind={EntryPrint ? EntryPrint.kind() : m.print_kind_entry()}
+				title={record.title}
+				rows={printMeta(data.tool, {
+					version: data.definition.version,
+					at: record.updatedAt,
+					organisation: data.organisation?.name,
+					entry: {
+						id: record.id.slice(0, 8),
+						state: data.definition.workflow
+							? stateLabel(data.definition, record.state, locale)
+							: undefined
+					}
+				})}
+			/>
+		{/if}
 		<!-- on paper the document head above carries title and state -->
 		<header class="record-head no-print">
 			<div class="heading">

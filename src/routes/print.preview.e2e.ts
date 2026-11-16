@@ -278,7 +278,13 @@ test('print: an answered access request prints as the reply under Art. 15 DSGVO'
 	await expect(page).toHaveURL(/eintrag=/);
 	await page.emulateMedia({ media: 'print' });
 
-	await expect(page.locator('[data-print-frame]')).toContainText('Auskunft nach Art. 15 DSGVO');
+	const head = page.locator('[data-print-frame]');
+	await expect(head.locator('h1')).toHaveText('Auskunft nach Art. 15 DSGVO');
+	await expect(head).toContainText('Ihr Antrag vom');
+	// a letter to the data subject carries none of Daily's internal lines
+	for (const internal of ['Daily', 'Werkzeug', 'Juristische Prüfung', 'Keine Rechtsberatung']) {
+		await expect(head).not.toContainText(internal);
+	}
 	const reply = page.locator('.print-parts');
 	const letters = (await reply.locator('.letter').allTextContents()).filter((l) => l.trim());
 	expect(letters).toEqual(['a)', 'b)', 'c)', 'd)', 'e)', 'f)', 'g)', 'h)']);

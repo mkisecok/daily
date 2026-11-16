@@ -35,6 +35,17 @@
 		}
 	}
 
+	/* a letter to someone outside carries no Daily footer, only the page number */
+	@page letter {
+		@bottom-left {
+			content: none;
+		}
+	}
+
+	body:has([data-print-letter]) {
+		page: letter;
+	}
+
 	/* a printed document brings its own head; the web page header steps aside */
 	body:has([data-print-frame]) .page-header {
 		display: none;

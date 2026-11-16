@@ -202,3 +202,9 @@ number of tools.
   block "Freigeben", show as "Nach der Freigabe offen", and the contract end stays a deadline until
   they are done. Lost on purpose: ending a contract without a successor has no tool of its own.
   All five merges are done; catalogue 46 tools.
+- Step 6, first document: the Auskunft prints as a letter. Its head shows the subject "Auskunft
+  nach Art. 15 DSGVO", the sender (the organisation, where known), the date (the day of the answer,
+  else today) and "Ihr Antrag vom"; Daily's name, tool, version, Rechtsstand, legal review, the
+  disclaimer and the "Daily" footer stay off. Any entry print can become a letter (`letter` in
+  `prints.ts`). Next: the DSFA after DSK Kurzpapier Nr. 5, the KI-Nutzungsrichtlinie to sign, the
+  Auditbericht.

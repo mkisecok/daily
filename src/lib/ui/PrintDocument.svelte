@@ -5,16 +5,27 @@
 	table with tool, version, Rechtsstand, date and organisation. Its
 	presence also hides the web page header on paper (see print.css). Page
 	numbers come from the `@page` rules in print.css.
+
+	A letter (`letter`) goes to someone outside, such as the reply to a data
+	subject: it drops the Daily name, the disclaimer and the footer and
+	shows only the rows it is given, such as sender, date and reference.
 -->
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
 	import type { PrintRow } from '#lib/print/meta.js';
 
-	let { kind, title, rows }: { kind: string; title: string; rows: PrintRow[] } = $props();
+	let {
+		kind,
+		title,
+		rows,
+		letter = false
+	}: { kind: string; title: string; rows: PrintRow[]; letter?: boolean } = $props();
 </script>
 
-<header class="print-document print-only" data-print-frame>
-	<p class="brand">Daily <span class="kind">· {kind}</span></p>
+<header class="print-document print-only" data-print-frame data-print-letter={letter || undefined}>
+	{#if !letter}
+		<p class="brand">Daily <span class="kind">· {kind}</span></p>
+	{/if}
 	<h1>{title}</h1>
 	<dl class="meta">
 		{#each rows as row (row.label)}
@@ -24,7 +35,9 @@
 			</div>
 		{/each}
 	</dl>
-	<p class="disclaimer">{m.footer_disclaimer()}</p>
+	{#if !letter}
+		<p class="disclaimer">{m.footer_disclaimer()}</p>
+	{/if}
 </header>
 
 <style>
