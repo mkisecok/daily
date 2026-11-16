@@ -82,7 +82,7 @@ export const SITUATIONS: Situation[] = [
 		id: 'wechsel',
 		label: L('Ein Dienstleister wird gewechselt', 'A provider is being changed'),
 		icon: 'replace',
-		tool: 'dienstleisterwechsel'
+		tool: 'software-einfuehrung'
 	},
 	{
 		id: 'bewerbung',

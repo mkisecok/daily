@@ -111,4 +111,62 @@ describe('Neue Software einführen', () => {
 			'luecke-b_betriebsrat'
 		]);
 	});
+
+	it('takes over the replacement of a provider: notice before approval, deletion after', () => {
+		const ids = (umfang: string[]) =>
+			checklist(view({ umfang }).data, BLOCKS).points.map(({ item }) => item.id);
+		expect(ids(['personenbezug'])).not.toContain('k_wahl');
+		expect(ids(['abloesung_cloud'])).not.toContain('c_frist');
+		const replacing = ids(['abloesung', 'abloesung_cloud', 'zugang', 'papier']);
+		expect(replacing).toEqual(
+			expect.arrayContaining([
+				'k_bestand',
+				'c_frist',
+				'u_zugaenge',
+				'u_datentraeger',
+				'l_bestaetigung',
+				'd_ablage'
+			])
+		);
+		expect(ids(['abloesung'])).not.toContain('u_zugaenge');
+
+		const before = Object.fromEntries(
+			checklist(view({ umfang: ['abloesung'] }).data, BLOCKS)
+				.points.filter(({ block }) => !['uebergang', 'loeschung'].includes(block.id))
+				.map(({ item }) => [item.id, 'ja'])
+		);
+		const ready = {
+			umfang: ['abloesung'],
+			...before,
+			freigabe_am: '2026-11-20',
+			kuendigung_bis: '2026-11-30',
+			vertragsende: '2027-01-31'
+		};
+		const result = assess(ready);
+		expect(result.outcome).toBe('freigabefaehig');
+		expect(result.notes).toContainEqual({
+			de: 'Nach der Freigabe offen: Übergang 2, Löschung beim bisherigen Dienstleister 3.',
+			en: 'Open after approval: Handover 2, Deletion at the previous provider 3.'
+		});
+		expect(result.citations).toContainEqual({ law: 'DSGVO', ref: 'Art. 28 Abs. 3 lit. g' });
+		expect(applyTransition(definition, view(ready), 'freigegeben')).toEqual({
+			ok: true,
+			state: 'freigegeben'
+		});
+		expect(
+			applyTransition(definition, view({ ...ready, k_wahl: null }), 'freigegeben')
+		).toMatchObject({ error: 'blocked' });
+
+		expect(engine.deadlines!(view(ready)).map((d) => d.kind)).toEqual([
+			'kuendigung',
+			'vertragsende'
+		]);
+		expect(engine.deadlines!(view(ready, 'freigegeben')).map((d) => d.kind)).toEqual([
+			'vertragsende'
+		]);
+		const deleted = allDone({ umfang: ['abloesung'] });
+		expect(
+			engine.deadlines!(view({ ...deleted, vertragsende: '2027-01-31' }, 'freigegeben'))
+		).toEqual([]);
+	});
 });

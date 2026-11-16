@@ -478,8 +478,8 @@ export const BLOCKS: Block[] = [
 			{
 				id: 'd_ende',
 				label: L(
-					'Verträge beendet; Rückgabe oder Löschung bestätigt (Werkzeug Dienstleister wechseln)',
-					'Contracts ended; return or deletion confirmed (provider change tool)'
+					'Verträge beendet; Rückgabe oder Löschung bestätigt',
+					'Contracts ended; return or deletion confirmed'
 				),
 				cite: DSGVO('Art. 28 Abs. 3 lit. g')
 			}

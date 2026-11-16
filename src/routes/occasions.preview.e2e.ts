@@ -242,15 +242,19 @@ test('preview: remote work adds the private-device part when own devices are all
 	await expect(page.locator('.verdict')).toContainText('Den TOM-Katalog verknüpfen.');
 });
 
-test('preview: changing a cloud provider adds the Data Act switching points', async ({ page }) => {
+test('preview: replacing a cloud provider adds the Data Act switching points', async ({ page }) => {
 	await page.setViewportSize({ width: 1280, height: 900 });
-	await page.goto('werkzeuge/dienstleisterwechsel/eintraege/?neu=1', { waitUntil: 'networkidle' });
-	await page.getByLabel('Bezeichnung', { exact: true }).fill('Ticketsystem');
-	await expect(page.locator('#sec-cloud')).toContainText('Entfällt für den gewählten Umfang.');
-	await page
-		.locator('#sec-vorhaben')
-		.getByRole('button', { name: 'Cloud- oder anderer Datenverarbeitungsdienst (Data Act)' })
+	await page.goto('werkzeuge/software-einfuehrung/eintraege/?neu=1', { waitUntil: 'networkidle' });
+	await page.getByLabel('Software oder Dienst', { exact: true }).fill('Ticketsystem');
+	await expect(page.locator('#sec-dataact')).toContainText('Entfällt für den gewählten Umfang.');
+	const scope = page.locator('#sec-vorhaben');
+	await scope.getByRole('button', { name: 'Ablösung eines Dienstleisters', exact: true }).click();
+	await scope
+		.getByRole('button', {
+			name: 'Ablösung: bisher ein Cloud- oder anderer Datenverarbeitungsdienst (Data Act)'
+		})
 		.click();
+	await expect(page.getByLabel('Bisheriger Dienstleister', { exact: true })).toBeVisible();
 	await expect(page.locator('.check', { hasText: 'höchstens zwei Monate' })).toBeVisible();
 	await page
 		.locator('.check', { hasText: 'Schriftliche Bestätigung der Löschung' })
@@ -259,7 +263,7 @@ test('preview: changing a cloud provider adds the Data Act switching points', as
 	await page.getByRole('button', { name: 'Speichern' }).click();
 	await expect(page).toHaveURL(/eintrag=/);
 
-	await expect(page.locator('.verdict .headline')).toHaveText('Noch nicht abschließbar.');
+	await expect(page.locator('.verdict .headline')).toHaveText('Noch nicht freigabefähig.');
 	await expect(page.locator('.verdict')).toContainText('Art. 25, 29 Data Act');
 });
 

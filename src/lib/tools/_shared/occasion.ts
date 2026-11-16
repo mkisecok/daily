@@ -89,14 +89,17 @@ export function gapReasons(gaps: { item: OccasionItem; block: Block }[]): Reason
 	}));
 }
 
-/** "Still open: Part 2, Part 3" */
-export function openNote(open: { block: Block }[]): Localized | null {
+/** "Still open: Part 2, Part 3", or another lead such as "Open after approval" */
+export function openNote(
+	open: { block: Block }[],
+	lead: Localized = { de: 'Noch offen', en: 'Still open' }
+): Localized | null {
 	if (open.length === 0) return null;
 	const counts = new Map<Block, number>();
 	for (const { block } of open) counts.set(block, (counts.get(block) ?? 0) + 1);
 	const list = (lang: 'de' | 'en') =>
 		[...counts].map(([block, n]) => `${block.title[lang]} ${n}`).join(', ');
-	return { de: `Noch offen: ${list('de')}.`, en: `Still open: ${list('en')}.` };
+	return { de: `${lead.de}: ${list('de')}.`, en: `${lead.en}: ${list('en')}.` };
 }
 
 /** an attached questionnaire result, or null */
