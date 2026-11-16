@@ -4,7 +4,8 @@
 	measures side by side, and every risk in a table with its threats,
 	ratings and measures, then what Kurzpapier Nr. 5 still asks before sign-off.
 	Unrated risks are left out of the matrices. The whole picture
-	downloads as an Excel workbook or prints on its own landscape page.
+	downloads as an Excel workbook or prints on its own landscape page, after
+	the report, with the figures, the two matrices and the TOM comparison.
 -->
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
@@ -208,7 +209,8 @@
 		</section>
 	</div>
 
-	<section class="card table-card">
+	<!-- on paper the report (DsfaPrint) lists the risks and the checks before sign-off -->
+	<section class="card table-card no-print">
 		<h2><Icon name="list-details" size={18} />{m.dsfa_dash_table()}</h2>
 		<div class="scroll">
 			<table>
@@ -252,7 +254,7 @@
 		</div>
 	</section>
 
-	<section class="card signoff-card" aria-labelledby="dsfa-signoff-title">
+	<section class="card signoff-card no-print" aria-labelledby="dsfa-signoff-title">
 		<h2 id="dsfa-signoff-title"><Icon name="checklist" size={18} />{m.dsfa_signoff_title()}</h2>
 		<p class="signoff-intro">
 			{m.dsfa_signoff_intro()} ·
@@ -702,13 +704,19 @@
 	}
 
 	/*
-	 * on paper the picture fills one landscape page: four figures in a row,
-	 * both matrices side by side, the full table; band colours kept
+	 * on paper the picture fills one landscape page after the report: four
+	 * figures in a row, both matrices side by side, then the TOM comparison;
+	 * band colours kept
 	 */
 	@media print {
+		/* an annex to the report, which goes out without the Daily footer */
 		@page dashboard {
 			size: A4 landscape;
 			margin: 12mm;
+
+			@bottom-left {
+				content: none;
+			}
 		}
 
 		.dashboard {
@@ -716,7 +724,6 @@
 			gap: 4mm;
 			margin-top: 0;
 			print-color-adjust: exact;
-			break-after: page;
 
 			& :global(.card) {
 				padding: 3mm 4mm;
@@ -761,8 +768,6 @@
 		}
 
 		.table-card {
-			break-before: page;
-
 			& .scroll {
 				overflow: visible;
 			}

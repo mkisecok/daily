@@ -208,3 +208,10 @@ number of tools.
   disclaimer and the "Daily" footer stay off. Any entry print can become a letter (`letter` in
   `prints.ts`). Next: the DSFA after DSK Kurzpapier Nr. 5, the KI-Nutzungsrichtlinie to sign, the
   Auditbericht.
+- Step 6, second document: the DSFA prints as a report in the order of Art. 35 Abs. 7 and DSK
+  Kurzpapier Nr. 5: subject and preparation, description (lit. a), necessity (lit. b), risks with
+  rating, threats and reasons (lit. c), measures with the rating after them (lit. d), DSB and data
+  subjects, outcome with the checks before sign-off and whether Art. 36 applies; then lines to sign.
+  Risks not rated are named in one line. The landscape risk picture and the TOM comparison follow as
+  an annex; the risk table and the sign-off card no longer print twice. The example went from 9 to
+  5 pages. Next: the KI-Nutzungsrichtlinie to sign, the Auditbericht.

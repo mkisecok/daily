@@ -21,10 +21,10 @@ const REPORT_PAGES: Record<string, number> = { 'aims-gap': 4 };
 
 /**
  * at most this many pages for a Vorgangsblatt of the example or of the
- * required fields; the DSFA and the SDM cube add their own pages of
- * matrices and views until their own documents (print plan step 5)
+ * required fields; the DSFA adds its landscape risk picture after the
+ * report, the SDM cube its views
  */
-const ENTRY_PAGES: Record<string, number> = { dsfa: 9, 'sdm-wuerfel': 5 };
+const ENTRY_PAGES: Record<string, number> = { dsfa: 5, 'sdm-wuerfel': 5 };
 
 /** the text width of A4 with 18 mm margins, in CSS pixels */
 const A4_TEXT = Math.floor(((210 - 36) / 25.4) * 96);
@@ -290,4 +290,33 @@ test('print: an answered access request prints as the reply under Art. 15 DSGVO'
 	expect(letters).toEqual(['a)', 'b)', 'c)', 'd)', 'e)', 'f)', 'g)', 'h)']);
 	await expect(reply).toContainText('Bei Ihnen selbst erhoben.');
 	await expect(reply).toContainText('Liegt bei');
+});
+
+test('print: a DSFA prints as a report in the order of Art. 35 Abs. 7 DSGVO', async ({ page }) => {
+	await page.setViewportSize({ width: A4_TEXT, height: 1000 });
+	await page.goto('werkzeuge/dsfa/eintraege/?neu=1&beispiel=1', { waitUntil: 'networkidle' });
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+	await page.emulateMedia({ media: 'print' });
+
+	const head = page.locator('[data-print-frame]');
+	await expect(head.locator('h1')).toHaveText('Datenschutz-Folgenabschätzung nach Art. 35 DSGVO');
+	await expect(head).toContainText('Videoüberwachung der Laderampen');
+	for (const internal of ['Daily', 'Werkzeug', 'Juristische Prüfung', 'Keine Rechtsberatung']) {
+		await expect(head).not.toContainText(internal);
+	}
+	const report = page.locator('.print-parts');
+	await expect(report.locator('h2')).toHaveText([
+		/^1\. Gegenstand/,
+		/lit\. a DSGVO\)$/,
+		/lit\. b DSGVO\)$/,
+		/lit\. c DSGVO\)$/,
+		/lit\. d DSGVO\)$/,
+		'6. Beteiligung',
+		'7. Ergebnis'
+	]);
+	await expect(report).toContainText('Nicht bewertet');
+	// the risk table and the checks before sign-off are in the report, not again in the annex
+	await expect(page.locator('.dashboard .matrices')).toBeVisible();
+	await expect(page.locator('.dashboard .signoff-card')).toBeHidden();
 });
