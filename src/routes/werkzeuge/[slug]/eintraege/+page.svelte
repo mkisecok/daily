@@ -78,6 +78,8 @@
 	const newDraftKey = $derived.by(() => {
 		if (data.view !== 'new' || data.start.kind === 'empty') return draftKey.newRecord(slug);
 		const source = page.url.searchParams.get('vorlage');
+		const lesson = page.url.searchParams.get('schulung');
+		if (data.start.kind === 'lesson' && lesson) return draftKey.newFrom(slug, `lesson:${lesson}`);
 		return draftKey.newFrom(slug, source ? `copy:${source}` : 'example');
 	});
 	const referenceHref = (tool: string, id: string) =>
@@ -326,9 +328,11 @@
 		<h2 class="mode-title">
 			{start.kind === 'copy'
 				? m.records_copy_title({ title: start.of })
-				: start.kind === 'example'
-					? m.records_example_title()
-					: m.records_new()}
+				: start.kind === 'lesson'
+					? m.records_lesson_title({ title: start.of })
+					: start.kind === 'example'
+						? m.records_example_title()
+						: m.records_new()}
 		</h2>
 		{#if start.kind === 'empty' && data.definition.example}
 			<a class="button quiet no-print" href={resolve(examplePath)}>{m.records_example_load()}</a>
@@ -336,7 +340,11 @@
 	</div>
 	{#if start.kind !== 'empty'}
 		<p class="start-note measure">
-			{start.kind === 'copy' ? m.records_copy_note() : m.records_example_note()}
+			{start.kind === 'copy'
+				? m.records_copy_note()
+				: start.kind === 'lesson'
+					? m.records_lesson_note()
+					: m.records_example_note()}
 		</p>
 	{/if}
 	{#key page.url.search}

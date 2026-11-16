@@ -5,20 +5,31 @@
 	import { localized } from '#lib/i18n/links.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { cite, text } from '#lib/tools/i18n.js';
+	import { LESSON_REGISTER } from '#lib/tools/lesson-entry.js';
 	import Blanks from '#lib/ui/Blanks.svelte';
 	import Icon from '#lib/ui/Icon.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 
-	// slide 0 is the title; 1 to n are the lesson's slides
-	const total = $derived(data.lesson.slides.length);
+	// step 0 is the title, then the slides, the questions and an end step
+	const slides = $derived(data.lesson.slides.length);
+	const questions = $derived(data.lesson.quiz.length);
+	const total = $derived(slides + questions + 1);
 	const current = $derived.by(() => {
 		const n = Number(page.url.searchParams.get('folie') ?? '0');
 		return Number.isInteger(n) && n >= 0 && n <= total ? n : 0;
 	});
-	const slide = $derived(current > 0 ? data.lesson.slides[current - 1] : null);
+	const slide = $derived(current > 0 && current <= slides ? data.lesson.slides[current - 1] : null);
+	const questionIndex = $derived(current > slides && current < total ? current - slides - 1 : -1);
+	const question = $derived(questionIndex >= 0 ? data.lesson.quiz[questionIndex] : null);
 	const lessonHref = $derived(resolve(localized(`/werkzeuge/${data.tool.slug}`)));
+	const recordHref = $derived(
+		resolve(localized(`/werkzeuge/${LESSON_REGISTER}/eintraege?neu=1&schulung=${data.tool.slug}`))
+	);
+
+	/** the option chosen per question; the room answers together, so nothing is stored */
+	let chosen = $state<Record<number, number>>({});
 
 	let showNotes = $state(false);
 	let stage = $state<HTMLElement>();
@@ -53,6 +64,12 @@
 			End: () => show(total),
 			n: () => (showNotes = !showNotes),
 			f: fullscreen,
+			...Object.fromEntries(
+				(question?.options ?? []).map((_, index) => [
+					String(index + 1),
+					() => (chosen[questionIndex] = index)
+				])
+			),
 			Escape: () => {
 				if (!document.fullscreenElement) goto(lessonHref);
 			}
@@ -101,6 +118,46 @@
 			{#if slide.cite}
 				<p class="cite">{slide.cite.map((basis) => cite(basis)).join(' · ')}</p>
 			{/if}
+		{:else if question}
+			<p class="eyebrow">
+				{m.lesson_question({ n: String(questionIndex + 1), total: String(questions) })}
+			</p>
+			<h1>{text(question.text)}</h1>
+			<ol class="options">
+				{#each question.options as option, index (index)}
+					{@const answered = chosen[questionIndex] !== undefined}
+					{@const picked = chosen[questionIndex] === index}
+					<li>
+						<button
+							type="button"
+							class="option"
+							aria-pressed={picked}
+							data-result={answered ? (option.correct ? 'right' : picked ? 'wrong' : null) : null}
+							onclick={() => (chosen[questionIndex] = index)}
+						>
+							<span class="key">{index + 1}</span>
+							<span>{text(option.text)}</span>
+						</button>
+						{#if answered && (picked || option.correct)}
+							<p class="why">
+								<strong>{option.correct ? m.lesson_right() : m.lesson_wrong()}.</strong>
+								{text(option.why)}
+							</p>
+						{/if}
+					</li>
+				{/each}
+			</ol>
+			{#if question.cite}
+				<p class="cite">{cite(question.cite)}</p>
+			{/if}
+		{:else if current === total}
+			<p class="eyebrow">{text(data.tool.name)}</p>
+			<h1 class="title">{m.lesson_end_title()}</h1>
+			<p class="facts">{m.lesson_end_text()}</p>
+			<div class="end-actions">
+				<a class="button" href={recordHref}>{m.lesson_record()} →</a>
+				<a class="button quiet" href={lessonHref}>{m.lesson_handout()}</a>
+			</div>
 		{:else}
 			<p class="eyebrow">{m.category_schulung()}</p>
 			<h1 class="title">{text(data.tool.name)}</h1>
@@ -234,6 +291,72 @@
 				text-transform: uppercase;
 				color: var(--area-schulung);
 			}
+		}
+
+		& .options {
+			margin: 2rem 0 0;
+			padding: 0;
+			list-style: none;
+
+			& li + li {
+				margin-top: 0.75rem;
+			}
+		}
+
+		/* an answer the room picks; once picked, right turns green and a wrong pick red */
+		& .option {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+			width: 100%;
+			padding: 0.9rem 1.1rem;
+			font: inherit;
+			font-size: clamp(17px, 2.1vw, 23px);
+			text-align: left;
+			color: var(--ink);
+			background: var(--sheet);
+			border: 1px solid var(--rule);
+			border-radius: 10px;
+			cursor: pointer;
+
+			&:hover {
+				border-color: var(--area-schulung);
+			}
+
+			& .key {
+				display: grid;
+				flex: none;
+				place-items: center;
+				width: 1.8em;
+				height: 1.8em;
+				font-size: 0.75em;
+				font-weight: 600;
+				border: 1px solid var(--rule);
+				border-radius: 50%;
+			}
+
+			&[data-result='right'] {
+				background: var(--area-schulung-soft);
+				border-color: var(--area-schulung);
+			}
+
+			&[data-result='wrong'] {
+				background: var(--wax-soft);
+				border-color: var(--wax);
+			}
+		}
+
+		& .why {
+			margin: 0.4rem 0 0 3.2rem;
+			font-size: clamp(15px, 1.7vw, 19px);
+			color: var(--ink2);
+		}
+
+		& .end-actions {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.75rem;
+			margin-top: 2rem;
 		}
 
 		& .cite {

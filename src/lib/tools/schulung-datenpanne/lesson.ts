@@ -275,5 +275,154 @@ export const lesson: Lesson = {
 			],
 			cite: [DSGVO('Art. 33 Abs. 1')]
 		}
+	],
+	quiz: [
+		{
+			text: L(
+				'Eine E-Mail mit einer Kundenliste ging an den falschen Empfänger. Was tun Sie?',
+				'An e-mail with a customer list went to the wrong recipient. What do you do?'
+			),
+			options: [
+				{
+					text: L(
+						'Abwarten, ob sich der Empfänger meldet',
+						'Wait and see whether the recipient gets in touch'
+					),
+					correct: false,
+					why: L(
+						'Abwarten kostet Zeit von den 72 Stunden, die der Organisation für die Bewertung bleiben.',
+						'Waiting uses up the 72 hours the organisation has for its assessment.'
+					)
+				},
+				{
+					text: L(
+						'Den Empfänger um Löschung bitten und die Panne sofort über den Meldeweg melden',
+						'Ask the recipient to delete it and report the breach at once through the reporting channel'
+					),
+					correct: true,
+					why: L(
+						'Das begrenzt den Schaden und gibt der Organisation die Zeit, das Risiko zu bewerten.',
+						'This limits the harm and gives the organisation time to assess the risk.'
+					)
+				},
+				{
+					text: L(
+						'Selbst die Aufsichtsbehörde informieren',
+						'Inform the supervisory authority yourself'
+					),
+					correct: false,
+					why: L(
+						'Ob und wie gemeldet wird, entscheidet die Organisation als Verantwortliche.',
+						'Whether and how the authority is notified is for the organisation as controller to decide.'
+					)
+				}
+			],
+			cite: DSGVO('Art. 33 Abs. 1')
+		},
+		{
+			text: L('Wann beginnen die 72 Stunden?', 'When do the 72 hours start?'),
+			options: [
+				{
+					text: L(
+						'Sobald die Organisation von der Panne weiß',
+						'Once the organisation knows of the breach'
+					),
+					correct: true,
+					why: L(
+						'Beschäftigte gehören zur Organisation; deshalb zählt schon die Zeit bis zur internen Meldung.',
+						'Staff are part of the organisation, so the time until the internal report already counts.'
+					)
+				},
+				{
+					text: L(
+						'Erst wenn die Datenschutzbeauftragte davon erfährt',
+						'Only when the data protection officer hears of it'
+					),
+					correct: false,
+					why: L(
+						'Die Frist wartet nicht auf die interne Meldung; jede Verzögerung geht von ihr ab.',
+						'The deadline does not wait for the internal report; every delay comes off it.'
+					)
+				},
+				{
+					text: L('Am nächsten Werktag', 'On the next working day'),
+					correct: false,
+					why: L(
+						'Die Frist läuft in Stunden, auch am Wochenende.',
+						'The deadline runs in hours, weekends included.'
+					)
+				}
+			],
+			cite: DSGVO('Art. 33 Abs. 1')
+		},
+		{
+			text: L(
+				'Sie sind nicht sicher, ob wirklich eine Datenpanne vorliegt. Was tun Sie?',
+				'You are not sure whether it really is a breach. What do you do?'
+			),
+			options: [
+				{
+					text: L('Erst selbst klären, dann melden', 'Find out yourself first, then report'),
+					correct: false,
+					why: L(
+						'Die Bewertung ist Aufgabe der Organisation; bis dahin läuft die Frist.',
+						'The assessment is the organisation’s task; the deadline runs in the meantime.'
+					)
+				},
+				{
+					text: L('Den Verdacht sofort melden', 'Report the suspicion at once'),
+					correct: true,
+					why: L(
+						'Schon ein Verdacht wird gemeldet; ob es eine Panne ist, bewertet die Organisation.',
+						'Even a suspicion is reported; the organisation assesses whether it is a breach.'
+					)
+				},
+				{
+					text: L('Nur große Fälle melden', 'Report only large cases'),
+					correct: false,
+					why: L(
+						'Auch kleine Pannen werden dokumentiert, und ihr Risiko kann größer sein, als es aussieht.',
+						'Small breaches are documented too, and their risk can be greater than it looks.'
+					)
+				}
+			],
+			cite: DSGVO('Art. 33 Abs. 5')
+		},
+		{
+			text: L(
+				'Wer entscheidet, ob die betroffenen Personen benachrichtigt werden?',
+				'Who decides whether the people affected are informed?'
+			),
+			options: [
+				{
+					text: L('Wem die Panne passiert ist', 'Whoever the breach happened to'),
+					correct: false,
+					why: L(
+						'Beschäftigte informieren Betroffene nicht auf eigene Faust.',
+						'Staff do not inform the people affected on their own.'
+					)
+				},
+				{
+					text: L(
+						'Die Organisation, nachdem sie das Risiko bewertet hat',
+						'The organisation, after it has assessed the risk'
+					),
+					correct: true,
+					why: L(
+						'Bei voraussichtlich hohem Risiko muss die Organisation die Betroffenen unverzüglich benachrichtigen.',
+						'If the risk is likely to be high, the organisation must inform the people affected without undue delay.'
+					)
+				},
+				{
+					text: L('Der Empfänger der Daten', 'The recipient of the data'),
+					correct: false,
+					why: L(
+						'Die Pflicht liegt beim Verantwortlichen, nicht beim Empfänger.',
+						'The duty lies with the controller, not with the recipient.'
+					)
+				}
+			],
+			cite: DSGVO('Art. 34 Abs. 1')
+		}
 	]
 };

@@ -8,6 +8,7 @@ import { getStore } from '#lib/records/store/index.js';
 import type { Option, RecordData } from '#lib/records/types.js';
 import { fieldById } from '#lib/records/validate.js';
 import { getLocale } from '#lib/paraglide/runtime.js';
+import { lessonEntry, LESSON_REGISTER } from '#lib/tools/lesson-entry.js';
 import { getRecordTool, getTool, listRecordTools, tools } from '#lib/tools/registry.js';
 import type { EntryGenerator, PageLoad } from './$types';
 
@@ -24,7 +25,11 @@ export const entries: EntryGenerator = () =>
 		.map((tool) => ({ slug: tool.slug }));
 
 /** where a new entry starts from: nothing, a copy of another entry, or the tool's example */
-export type Start = { kind: 'empty' } | { kind: 'copy'; of: string } | { kind: 'example' };
+export type Start =
+	| { kind: 'empty' }
+	| { kind: 'copy'; of: string }
+	| { kind: 'example' }
+	| { kind: 'lesson'; of: string };
 
 /**
  * `?eintrag=<id>` shows a record, `?neu=1` the empty form, otherwise the
@@ -99,6 +104,14 @@ export const load: PageLoad = async ({ params, data, url, depends }) => {
 				const locale = getLocale() === 'en' ? 'en' : 'de';
 				prefill = copyData(definition, source.record.data, locale);
 				start = { kind: 'copy', of: source.record.title };
+			}
+		} else if (url.searchParams.get('schulung') && tool.slug === LESSON_REGISTER) {
+			// a session of a training module, recorded from its page or the end of the presentation
+			const lesson = url.searchParams.get('schulung')!;
+			const entry = lessonEntry(lesson, getLocale());
+			if (entry) {
+				prefill = entry;
+				start = { kind: 'lesson', of: String(entry.titel) };
 			}
 		} else if (url.searchParams.get('beispiel') === '1' && definition.example) {
 			prefill = definition.example;

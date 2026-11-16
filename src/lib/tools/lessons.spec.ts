@@ -57,4 +57,21 @@ describe('lessons', () => {
 			}
 		}
 	});
+
+	it('end with three to five questions, each with exactly one right answer and a reason', () => {
+		for (const tool of lessons) {
+			const quiz = getLesson(tool.slug)!.quiz;
+			expect(quiz.length, tool.slug).toBeGreaterThanOrEqual(3);
+			expect(quiz.length, tool.slug).toBeLessThanOrEqual(5);
+			for (const question of quiz) {
+				expect(
+					question.options.filter((o) => o.correct),
+					question.text.de
+				).toHaveLength(1);
+				expect(question.options.length, question.text.de).toBeGreaterThanOrEqual(2);
+				for (const option of question.options) expect(option.why.de, option.text.de).not.toBe('');
+				expect(question.cite, question.text.de).toBeDefined();
+			}
+		}
+	});
 });

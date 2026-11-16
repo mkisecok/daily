@@ -151,6 +151,16 @@ export type Slide = {
 };
 
 /**
+ * a question at the end of a lesson: exactly one option is correct, and
+ * every option says why it is right or wrong
+ */
+export type QuizQuestion = {
+	text: Localized;
+	options: { text: Localized; correct: boolean; why: Localized }[];
+	cite?: LegalBasis;
+};
+
+/**
  * a training module for staff (area Schulung): fixed, cited content that
  * the data protection officer presents and hands out
  */
@@ -165,4 +175,6 @@ export type Lesson = {
 	intro: Localized;
 	sources: LegalBasis[];
 	slides: Slide[];
+	/** three to five questions, asked after the slides and printed on the handout */
+	quiz: QuizQuestion[];
 };
