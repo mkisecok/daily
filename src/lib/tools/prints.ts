@@ -1,9 +1,10 @@
 import type { Component } from 'svelte';
+import type { PrintRow } from '../print/meta.js';
 import type { Titles } from '../records/format.js';
 import type { RecordEngine, RecordToolDefinition, StoredRecord } from '../records/types.js';
 import { m } from '../paraglide/messages.js';
 import AccessPrint from './betroffenenanfrage/AccessPrint.svelte';
-import { accessReady } from './betroffenenanfrage/print.js';
+import { accessHead, accessReady } from './betroffenenanfrage/print.js';
 import BreachPrint from './datenpanne/BreachPrint.svelte';
 import IncidentPrint from './vorfallmeldung/IncidentPrint.svelte';
 import type { ToolManifest } from './types.js';
@@ -47,13 +48,19 @@ export const entryPrints: Partial<
 			component: Component<EntryPrintProps>;
 			/** only for entries this holds for; the others print as a Vorgangsblatt */
 			when?: (record: StoredRecord) => boolean;
+			/**
+			 * a letter to someone outside: its head shows these rows instead of
+			 * Daily's tool, version and review, under the kind as its title
+			 */
+			letter?: (record: StoredRecord, organisation?: string | null) => PrintRow[];
 		}
 	>
 > = {
 	betroffenenanfrage: {
 		kind: m.print_kind_access,
 		component: AccessPrint,
-		when: (record) => accessReady(record.data)
+		when: (record) => accessReady(record.data),
+		letter: (record, organisation) => accessHead(record.data, organisation)
 	},
 	datenpanne: { kind: m.print_kind_breach, component: BreachPrint },
 	vorfallmeldung: { kind: m.print_kind_incident, component: IncidentPrint }

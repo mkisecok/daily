@@ -1,7 +1,10 @@
+import { formatShortDate } from '../../i18n/date.js';
+import type { PrintRow as HeadRow } from '../../print/meta.js';
 import type { PrintPart, PrintRow } from '../../print/parts.js';
 import { formatValue } from '../../records/format.js';
 import type { RecordData } from '../../records/types.js';
 import { fieldById } from '../../records/validate.js';
+import { getLocale } from '../../paraglide/runtime.js';
 import { text } from '../i18n.js';
 import type { Localized } from '../types.js';
 import { definition } from './definition.js';
@@ -11,6 +14,30 @@ const L = (de: string, en: string): Localized => ({ de, en });
 /** the access reply prints once the request asks for access and its first stage is answered */
 export const accessReady = (data: RecordData) =>
 	Array.isArray(data.rechte) && data.rechte.includes('auskunft') && !!data.a_verarbeitet;
+
+/**
+ * the head of the reply as a letter: who sends it, when, and the request it
+ * answers; the date is the day of the answer when set, else today
+ */
+export function accessHead(
+	data: RecordData,
+	organisation?: string | null,
+	locale = getLocale()
+): HeadRow[] {
+	const day = (value: unknown) =>
+		typeof value === 'string' && value ? formatShortDate(value, locale) : '';
+	const rows: HeadRow[] = [];
+	if (organisation) rows.push({ label: text(L('Von', 'From'), locale), value: organisation });
+	rows.push({
+		label: text(L('Datum', 'Date'), locale),
+		value: day(data.antwort_am) || day(new Date().toISOString())
+	});
+	const received = day(data.eingang);
+	if (received) {
+		rows.push({ label: text(L('Ihr Antrag vom', 'Your request of'), locale), value: received });
+	}
+	return rows;
+}
 
 const RIGHTS = L(
 	'Sie haben das Recht auf Berichtigung oder Löschung Ihrer Daten, auf Einschränkung der Verarbeitung und auf Widerspruch gegen die Verarbeitung (Art. 16, 17, 18, 21 DSGVO).',
