@@ -42,6 +42,16 @@ export const definition: RecordToolDefinition = {
 					cite: { law: 'DSGVO', ref: 'Art. 37 Abs. 7' }
 				},
 				{
+					id: 'ki',
+					type: 'textarea',
+					label: L('Freigegebene KI-Werkzeuge', 'Approved AI tools'),
+					help: L(
+						'Welche KI-Werkzeuge Beschäftigte dienstlich nutzen dürfen und wo die KI-Nutzungsrichtlinie steht, z. B. „Copilot im Firmenkonto; Richtlinie im Intranet unter Richtlinien > KI“.',
+						'Which AI tools staff may use for work and where the AI usage policy is kept, e.g. "Copilot in the company account; policy on the intranet under Policies > AI".'
+					),
+					cite: { law: 'KI-VO', ref: 'Art. 4' }
+				},
+				{
 					id: 'ausserhalb',
 					type: 'textarea',
 					label: L('Außerhalb der Arbeitszeit', 'Outside working hours'),

@@ -21,6 +21,13 @@ export const SLOTS = {
 	ausserhalb: {
 		label: L('Außerhalb der Arbeitszeit', 'Outside working hours'),
 		placeholder: L('[Vertretung oder IT-Bereitschaft]', '[deputy or IT on-call]')
+	},
+	ki: {
+		label: L('Freigegebene KI-Werkzeuge', 'Approved AI tools'),
+		placeholder: L(
+			'[freigegebene KI-Werkzeuge und wo die KI-Richtlinie steht]',
+			'[approved AI tools and where the AI policy is kept]'
+		)
 	}
 } as const;
 
