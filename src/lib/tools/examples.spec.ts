@@ -30,7 +30,7 @@ describe('tool examples', () => {
 				'vvt',
 				'software-einfuehrung',
 				'ki-einfuehrung',
-				'personalwechsel',
+				'personalprozesse',
 				'videoueberwachung',
 				'website-start'
 			])

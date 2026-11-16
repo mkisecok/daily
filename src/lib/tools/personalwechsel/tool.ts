@@ -5,7 +5,8 @@ import { definition, engine } from './engine.js';
 const manifest: ToolManifest = {
 	slug: 'personalwechsel',
 	category: 'datenschutz',
-	status: 'beta',
+	status: 'retired',
+	successor: 'personalprozesse',
 	shape: 'workflow',
 	version: definition.version,
 	name: { de: 'Eintritt und Austritt von Beschäftigten', en: 'Staff joining and leaving' },
