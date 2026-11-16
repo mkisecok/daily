@@ -11,6 +11,7 @@
 	import PrintReport from '#lib/tools/_shared/PrintReport.svelte';
 	import { printMeta } from '#lib/print/meta.js';
 	import PrintDocument from '#lib/ui/PrintDocument.svelte';
+	import { reportPrints } from '#lib/tools/prints.js';
 	import { resultDashboards } from '#lib/tools/dashboards.js';
 	import type { PageProps } from './$types';
 
@@ -38,6 +39,8 @@
 			)
 			.filter((row) => row.answer !== undefined);
 	});
+	// a result that drafts a document prints that document instead of the Prüfbericht
+	const ReportPrint = $derived(reportPrints[data.tool.slug]);
 </script>
 
 <svelte:head>
@@ -46,18 +49,28 @@
 
 <ToolHeader tool={data.tool} />
 
-<PrintDocument
-	kind={m.print_kind_report()}
-	title={text(data.tool.name)}
-	rows={printMeta(data.tool, {
-		version: data.run.catalogVersion,
-		at: data.run.createdAt,
-		organisation: data.organisation?.name,
-		lawAsOf: data.run.result.lawAsOf,
-		by: data.user.displayName
-	})}
-/>
-<PrintReport result={data.run.result} tool={data.tool} answers={rows} />
+{#if ReportPrint}
+	<PrintDocument
+		letter
+		kind={ReportPrint.kind()}
+		title={ReportPrint.kind()}
+		rows={ReportPrint.letter(data.run.answers, data.organisation?.name, data.run.createdAt)}
+	/>
+	<ReportPrint.component answers={data.run.answers} />
+{:else}
+	<PrintDocument
+		kind={m.print_kind_report()}
+		title={text(data.tool.name)}
+		rows={printMeta(data.tool, {
+			version: data.run.catalogVersion,
+			at: data.run.createdAt,
+			organisation: data.organisation?.name,
+			lawAsOf: data.run.result.lawAsOf,
+			by: data.user.displayName
+		})}
+	/>
+	<PrintReport result={data.run.result} tool={data.tool} answers={rows} />
+{/if}
 
 <!-- on paper the Prüfbericht above takes the place of the screen result -->
 <div class="no-print">

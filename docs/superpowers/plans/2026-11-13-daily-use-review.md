@@ -215,3 +215,10 @@ number of tools.
   Risks not rated are named in one line. The landscape risk picture and the TOM comparison follow as
   an annex; the risk table and the sign-off card no longer print twice. The example went from 9 to
   5 pages. Next: the KI-Nutzungsrichtlinie to sign, the Auditbericht.
+- Step 6, third document: the KI-Nutzungsrichtlinie prints as a policy to sign instead of a
+  Prüfbericht: a letter head with the organisation and the version (marked "Entwurf" while a
+  decision is open), § 1 to § 6 with numbered paragraphs, every placeholder in square brackets
+  marked to be filled in, a line for the day it enters into force, and signature lines for
+  management and, when the works council is involved, the works council. The warnings for the
+  drafter stay on screen. Any questionnaire can print the document it drafts (`reportPrints` in
+  `prints.ts`). Next: the Auditbericht.

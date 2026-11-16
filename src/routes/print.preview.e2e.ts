@@ -320,3 +320,51 @@ test('print: a DSFA prints as a report in the order of Art. 35 Abs. 7 DSGVO', as
 	await expect(page.locator('.dashboard .matrices')).toBeVisible();
 	await expect(page.locator('.dashboard .signoff-card')).toBeHidden();
 });
+
+test('print: the AI usage policy prints as a policy to sign, not as a Prüfbericht', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: A4_TEXT, height: 1000 });
+	await page.goto('werkzeuge/ki-nutzungsrichtlinie/pruefen/', { waitUntil: 'networkidle' });
+	const answers: Record<string, string> = {
+		p_allowlist: 'yes',
+		p_private: 'no',
+		p_personal: 'no',
+		p_confidential: 'no',
+		p_review: 'yes',
+		p_label: 'yes',
+		p_code: 'yes',
+		p_people: 'no',
+		p_training: 'yes',
+		p_contact: 'unknown',
+		p_incidents: 'yes',
+		p_council: 'yes'
+	};
+	for (const [name, value] of Object.entries(answers)) {
+		await page.locator(`input[name="answer.${name}"][value="${value}"]`).check({ force: true });
+	}
+	await page.getByRole('button', { name: 'Auswerten' }).click();
+	await page.emulateMedia({ media: 'print' });
+
+	const head = page.locator('[data-print-frame]');
+	await expect(head.locator('h1')).toHaveText('KI-Nutzungsrichtlinie');
+	await expect(head).toContainText('Entwurf, offene Stellen in eckigen Klammern');
+	for (const internal of ['Daily', 'Werkzeug', 'Juristische Prüfung', 'Keine Rechtsberatung']) {
+		await expect(head).not.toContainText(internal);
+	}
+	const policy = page.locator('.policy');
+	await expect(policy.locator('h2').first()).toHaveText('§ 1 Geltungsbereich');
+	// every placeholder is marked to be filled in before signing
+	await expect(policy.locator('mark')).toHaveText([
+		'[zuständige Stelle]',
+		'[Offen: zuständige Stelle]',
+		'[zuständige Stelle]'
+	]);
+	await expect(policy).toContainText('Diese Richtlinie tritt in Kraft am');
+	await expect(policy).toContainText('Betriebsrat: Name, Unterschrift');
+	// the warnings for the drafter stay on screen
+	await expect(page.locator('.print-result')).toHaveCount(0);
+
+	const pdf = await page.pdf({ format: 'A4', preferCSSPageSize: true });
+	expect(pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g)?.length).toBeLessThanOrEqual(2);
+});
