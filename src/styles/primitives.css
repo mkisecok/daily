@@ -163,6 +163,10 @@
 			--spine: var(--area-audit);
 		}
 
+		&[data-area='schulung'] {
+			--spine: var(--area-schulung);
+		}
+
 		&[data-area='entwickler'] {
 			--spine: var(--area-entwickler);
 		}

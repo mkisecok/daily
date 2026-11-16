@@ -126,7 +126,7 @@ describe('report composition', () => {
 	});
 
 	it('maps report kinds to categories', () => {
-		expect(KIND_CATEGORIES.datenschutz).toEqual(['datenschutz']);
-		expect(KIND_CATEGORIES.gesamt).toHaveLength(4);
+		expect(KIND_CATEGORIES.datenschutz).toEqual(['datenschutz', 'schulung']);
+		expect(KIND_CATEGORIES.gesamt).toHaveLength(5);
 	});
 });

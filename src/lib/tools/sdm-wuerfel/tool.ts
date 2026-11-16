@@ -4,7 +4,7 @@ import { definition, engine } from './engine.js';
 
 const manifest: ToolManifest = {
 	slug: 'sdm-wuerfel',
-	category: 'datenschutz',
+	category: 'schulung',
 	status: 'beta',
 	shape: 'register',
 	version: definition.version,

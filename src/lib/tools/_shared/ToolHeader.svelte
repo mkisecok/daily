@@ -12,7 +12,7 @@
 	import { text } from '../i18n.js';
 	import { getTool } from '../registry.js';
 	import { rememberVisit } from '../shelf.js';
-	import type { ToolManifest } from '../types.js';
+	import type { ToolCategory, ToolManifest } from '../types.js';
 	import Citation from './Citation.svelte';
 	import Rechtsstand from './Rechtsstand.svelte';
 	import StatusBadge from './StatusBadge.svelte';
@@ -22,15 +22,14 @@
 	// the catalogue offers the tool opened last as its first card
 	$effect(() => rememberVisit(tool.slug));
 
-	const categoryLabel = $derived(
-		tool.category === 'datenschutz'
-			? m.category_datenschutz()
-			: tool.category === 'ki'
-				? m.category_ki()
-				: tool.category === 'audit'
-					? m.category_audit()
-					: m.category_entwickler()
-	);
+	const CATEGORY_LABEL: Record<ToolCategory, () => string> = {
+		datenschutz: m.category_datenschutz,
+		ki: m.category_ki,
+		audit: m.category_audit,
+		schulung: m.category_schulung,
+		entwickler: m.category_entwickler
+	};
+	const categoryLabel = $derived(CATEGORY_LABEL[tool.category]());
 	const successor = $derived(
 		tool.status === 'retired' && tool.successor ? getTool(tool.successor) : undefined
 	);
@@ -89,6 +88,10 @@
 
 		&[data-area='audit'] {
 			--spine: var(--area-audit);
+		}
+
+		&[data-area='schulung'] {
+			--spine: var(--area-schulung);
 		}
 
 		&[data-area='entwickler'] {

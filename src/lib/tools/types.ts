@@ -1,7 +1,7 @@
 /** content strings carried by tools and catalogs (not UI chrome) */
 export type Localized = { de: string; en: string };
 
-export type ToolCategory = 'datenschutz' | 'ki' | 'audit' | 'entwickler';
+export type ToolCategory = 'datenschutz' | 'ki' | 'audit' | 'schulung' | 'entwickler';
 /** `retired`: merged into its `successor`; hidden from the catalogue, its entries stay readable */
 export type ToolStatus = 'stable' | 'beta' | 'planned' | 'retired';
 /** `utility`: an interactive tool with its own page, e.g. the repository scan */
