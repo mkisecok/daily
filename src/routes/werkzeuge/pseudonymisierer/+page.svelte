@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 	import { m } from '#lib/paraglide/messages.js';
-	import { buildRun, detect } from '#lib/tools/pseudonymisierer/detect.js';
+	import { buildRun, detect, suggest } from '#lib/tools/pseudonymisierer/detect.js';
 	import { extract, ExtractError } from '#lib/tools/pseudonymisierer/ingest/index.js';
 	import { restoreFrom } from '#lib/tools/pseudonymisierer/restore.js';
 	import {
+		DEFAULT_OFF,
 		RULE_GROUPS,
 		RULE_KEYS,
 		TIER_ORDER,
@@ -33,6 +34,11 @@
 		phone: m.anon_rule_phone,
 		address: m.anon_rule_address,
 		date: m.anon_rule_date,
+		anydate: m.anon_rule_anydate,
+		postcode: m.anon_rule_postcode,
+		plate: m.anon_rule_plate,
+		pension: m.anon_rule_pension,
+		kvnr: m.anon_rule_kvnr,
 		passport: m.anon_rule_passport,
 		ip: m.anon_rule_ip,
 		iban: m.anon_rule_iban,
@@ -71,7 +77,7 @@
 	const ACCEPT = '.pdf,.docx,.txt,.md,.markdown,.csv,.tsv,.log,.json,.xml';
 
 	let source = $state('');
-	const active = new SvelteSet<RuleKey>(RULE_KEYS);
+	const active = new SvelteSet<RuleKey>(RULE_KEYS.filter((key) => !DEFAULT_OFF.has(key)));
 	const manualMarks = new SvelteMap<string, TokenType>();
 	const mutedValues = new SvelteSet<string>();
 
@@ -86,6 +92,7 @@
 
 	const spans = $derived(detect(source, active, manualMarks, mutedValues));
 	const run = $derived(buildRun(source, spans));
+	const suggestions = $derived(suggest(source, spans));
 	const rows = $derived([...run.findings, ...run.muted]);
 	const groups = $derived(
 		TIER_ORDER.map((tier) => ({
@@ -307,6 +314,29 @@
 					{/each}
 				</ul>
 			{/each}
+
+			{#if suggestions.length > 0}
+				<h3 class="manual-title">{m.anon_suggestions()}</h3>
+				<p class="hint">{m.anon_suggestions_hint()}</p>
+				<ul class="suggestions">
+					{#each suggestions as suggestion (suggestion.value)}
+						<li>
+							<span class="value">{suggestion.value}</span>
+							<span class="reason"
+								>{suggestion.reason === 'email'
+									? m.anon_suggestion_email()
+									: m.anon_suggestion_first_name()} · {suggestion.count}×</span
+							>
+							<button
+								type="button"
+								class="button ghost"
+								onclick={() => manualMarks.set(suggestion.value, 'NAME')}
+								>{m.anon_suggestion_take()}</button
+							>
+						</li>
+					{/each}
+				</ul>
+			{/if}
 
 			<h3 class="manual-title">{m.anon_manual()}</h3>
 			<form
@@ -620,6 +650,38 @@
 	.manual-title {
 		margin: 1.5rem 0 0;
 		font-size: 15px;
+	}
+
+	.suggestions {
+		margin: 0.5rem 0 0;
+		padding: 0;
+		list-style: none;
+
+		& li {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 0.25rem 0.75rem;
+			padding: 0.35rem 0;
+			border-bottom: 1px solid var(--rule2);
+
+			&:last-child {
+				border-bottom: 0;
+			}
+		}
+
+		& .value {
+			font-weight: 600;
+		}
+
+		& .reason {
+			font-size: 13px;
+			color: var(--ink3);
+		}
+
+		& .button {
+			margin-left: auto;
+		}
 	}
 
 	.manual {
