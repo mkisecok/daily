@@ -32,6 +32,13 @@
 
 	const locale = getLocale() === 'de' ? 'de-DE' : 'en-GB';
 
+	/**
+	 * the years offered in the calendar: a century back for dates of birth and
+	 * old contracts, ten years ahead for deadlines and reviews
+	 */
+	const thisYear = new Date().getFullYear();
+	const years = Array.from({ length: 111 }, (_, i) => thisYear + 10 - i);
+
 	let trigger = $state<HTMLElement | null>(null);
 	let content = $state<HTMLElement | null>(null);
 
@@ -111,7 +118,16 @@
 					<DatePicker.PrevButton class="daily-icon-button" aria-label={m.date_previous_month()}
 						>‹</DatePicker.PrevButton
 					>
-					<DatePicker.Heading class="daily-calendar-heading" />
+					<!-- month and year jump straight to any date; the heading stays for screen readers -->
+					<DatePicker.Heading class="visually-hidden" />
+					<span class="daily-calendar-jump">
+						<DatePicker.MonthSelect class="daily-calendar-select" aria-label={m.date_month()} />
+						<DatePicker.YearSelect
+							class="daily-calendar-select"
+							{years}
+							aria-label={m.date_year()}
+						/>
+					</span>
 					<DatePicker.NextButton class="daily-icon-button" aria-label={m.date_next_month()}
 						>›</DatePicker.NextButton
 					>
