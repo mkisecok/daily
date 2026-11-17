@@ -640,5 +640,20 @@
 	"print_kind_audit": "Auditbericht",
 	"print_kind_dsfa": "Datenschutz-Folgenabschätzung nach Art. 35 DSGVO",
 	"status_retired": "Zusammengelegt",
-	"tool_retired": "Dieses Werkzeug ist in „{name}“ aufgegangen. Bestehende Einträge und Ergebnisse bleiben lesbar; Neues bitte dort."
+	"tool_retired": "Dieses Werkzeug ist in „{name}“ aufgegangen. Bestehende Einträge und Ergebnisse bleiben lesbar; Neues bitte dort.",
+	"backup_title": "Datensicherung",
+	"backup_intro": "Alle Einträge mit ihrem Verlauf, auch die archivierten und die Angaben der Organisation, in einer Datei. Mit ihr holen Sie die Einträge in diesen oder einen anderen Browser oder Arbeitsbereich zurück.",
+	"backup_export": "Sicherung herunterladen",
+	"backup_last": "Letzte Sicherung aus diesem Browser: {date}",
+	"backup_never": "Aus diesem Browser wurde noch keine Sicherung heruntergeladen.",
+	"backup_import": "Sicherung einlesen",
+	"backup_not_daily": "Diese Datei ist keine Daily-Sicherung.",
+	"backup_newer": "Diese Sicherung stammt aus einer neueren Daily-Version und kann hier nicht gelesen werden.",
+	"backup_counts": "In der Datei: {total} · neu: {added} · schon vorhanden: {present}",
+	"backup_unreadable": "nicht lesbar: {count}",
+	"backup_keep": "Vorhandene Einträge bleiben, wie sie sind; nichts wird überschrieben.",
+	"backup_confirm": "Neue Einträge übernehmen",
+	"backup_nothing": "Alle Einträge der Datei sind schon vorhanden.",
+	"backup_done": "Übernommen: {count}. Vorhandene Einträge sind unverändert.",
+	"backup_failed": "Die Sicherung konnte nicht gelesen oder übernommen werden."
 }

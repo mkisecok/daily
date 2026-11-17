@@ -219,7 +219,8 @@ describe('http store', () => {
 	const urls = {
 		records: '/api/records',
 		record: (id: string) => `/api/records/${id}`,
-		deadlines: '/api/deadlines'
+		deadlines: '/api/deadlines',
+		backup: '/api/backup'
 	};
 
 	function fakeFetch(status: number, body: unknown) {

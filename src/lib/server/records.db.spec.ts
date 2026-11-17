@@ -7,6 +7,7 @@ import type { RecordStore } from '../records/store/types.js';
 import { createDb } from './db/client.js';
 import { deadlines, memberships, organisations, users } from './db/schema.js';
 import { createRecordRepository } from './records.js';
+import { makeBackup } from '../records/backup.js';
 
 /**
  * runs against the migrated compose Postgres from `.env`, only through
@@ -179,5 +180,30 @@ describe.skipIf(!url)('record repository (Postgres)', () => {
 		expect((await store.list('test-register')).some((r) => r.id === id)).toBe(true);
 		expect((await store.get(id))?.events.at(-1)?.kind).toBe('restored');
 		expect((await store.deadlines()).some((d) => d.recordId === id)).toBe(true);
+	});
+
+	it('restores a backup into another organisation under new ids, links following', async () => {
+		const target = await store.create('test-register', { name: 'Sicherungsziel', kind: 'a' });
+		if (!target.ok) throw new Error('create failed');
+		const linked = await store.create('linked-register', {
+			name: 'Sicherungsverweis',
+			target: target.value.id
+		});
+		if (!linked.ok) throw new Error('create failed');
+		const backup = makeBackup(await store.backup());
+
+		// the same organisation already has every entry
+		expect(await store.restore(backup)).toMatchObject({ added: 0 });
+
+		const result = await other.restore(backup);
+		expect(result.added).toBeGreaterThanOrEqual(2);
+		const [copy] = await other.list('linked-register');
+		expect(copy.title).toBe('Sicherungsverweis');
+		expect(copy.id).not.toBe(linked.value.id);
+		const copied = await other.get(copy.data.target as string);
+		expect(copied?.record.title).toBe('Sicherungsziel');
+		expect(copied?.events.map((e) => e.kind)).toContain('created');
+		// the original organisation's entries are untouched
+		expect((await store.get(linked.value.id))?.record.data.target).toBe(target.value.id);
 	});
 });

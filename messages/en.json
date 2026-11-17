@@ -640,5 +640,20 @@
 	"print_kind_audit": "Audit report",
 	"print_kind_dsfa": "Data protection impact assessment under Art. 35 GDPR",
 	"status_retired": "Merged",
-	"tool_retired": "This tool has been merged into \"{name}\". Existing entries and results stay readable; please start new work there."
+	"tool_retired": "This tool has been merged into \"{name}\". Existing entries and results stay readable; please start new work there.",
+	"backup_title": "Backup",
+	"backup_intro": "Every entry with its history, archived ones and the organisation's details included, in one file. Use it to bring the entries back into this or another browser or workspace.",
+	"backup_export": "Download backup",
+	"backup_last": "Last backup from this browser: {date}",
+	"backup_never": "No backup has been downloaded from this browser yet.",
+	"backup_import": "Read a backup",
+	"backup_not_daily": "This file is not a Daily backup.",
+	"backup_newer": "This backup comes from a newer version of Daily and cannot be read here.",
+	"backup_counts": "In the file: {total} · new: {added} · already here: {present}",
+	"backup_unreadable": "not readable: {count}",
+	"backup_keep": "Entries already here stay as they are; nothing is overwritten.",
+	"backup_confirm": "Add the new entries",
+	"backup_nothing": "Every entry in the file is already here.",
+	"backup_done": "Added: {count}. Entries already here are unchanged.",
+	"backup_failed": "The backup could not be read or added."
 }

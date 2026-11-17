@@ -24,6 +24,8 @@ export function notifying(inner: Clearable, changed: () => void): Clearable {
 			after(inner.attachAssessment(id, field, answers, expectedVersion)),
 		archive: (id) => after(inner.archive(id)),
 		unarchive: (id) => after(inner.unarchive(id)),
+		backup: () => inner.backup(),
+		restore: (backup) => after(inner.restore(backup)),
 		clear: inner.clear
 			? () => {
 					inner.clear?.();

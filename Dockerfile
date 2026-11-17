@@ -26,7 +26,8 @@ RUN DATABASE_URL=postgres://build:build@127.0.0.1:1/build \
 RUN pnpm prune --prod --ignore-scripts
 
 FROM node:24.22-alpine AS runtime
-ENV NODE_ENV=production PORT=3000
+# a backup file of a whole workspace is larger than the default 512 KB request body
+ENV NODE_ENV=production PORT=3000 BODY_SIZE_LIMIT=20M
 WORKDIR /app
 COPY --from=build --chown=node:node /app/package.json ./
 COPY --from=build --chown=node:node /app/node_modules ./node_modules

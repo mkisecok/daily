@@ -15,6 +15,8 @@ function fakeStore(): RecordStore & { clear: () => void } {
 		archive: vi.fn(async () => ok),
 		unarchive: vi.fn(async () => ok),
 		deadlines: vi.fn(async () => []),
+		backup: vi.fn(async () => ({ records: [], events: [] })),
+		restore: vi.fn(async () => ({ added: 0, present: 0, unreadable: 0 })),
 		clear: vi.fn()
 	};
 }

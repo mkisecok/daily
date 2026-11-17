@@ -6,6 +6,7 @@
 	import RecordForm from '#lib/records/ui/RecordForm.svelte';
 	import { getStore } from '#lib/records/store/index.js';
 	import type { ValidationErrors } from '#lib/records/validate.js';
+	import Backup from '#lib/organisation/Backup.svelte';
 	import { ORGANISATION } from '#lib/organisation/tool.js';
 	import { text } from '#lib/tools/i18n.js';
 	import Icon from '#lib/ui/Icon.svelte';
@@ -85,6 +86,8 @@
 		oncancel={() => history.back()}
 	/>
 {/key}
+
+<Backup workspace={data.organisation?.name} preview={data.preview} />
 
 <style>
 	.local {
