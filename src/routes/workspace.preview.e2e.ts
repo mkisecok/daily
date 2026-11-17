@@ -191,6 +191,23 @@ test('preview: a tool reads the same on its page and its register, with one badg
 	expect([...new Set([...tool.badges, ...catalogue.badges])]).toEqual(['12px']);
 });
 
+test('preview: the calendar jumps to any month and year', async ({ page }) => {
+	await page.goto('berichte/', { waitUntil: 'networkidle' });
+	await page.getByRole('button', { name: 'Kalender öffnen' }).first().click();
+	const calendar = page.locator('.daily-calendar-popover');
+	await calendar.getByLabel('Jahr').selectOption('2019');
+	await calendar.getByLabel('Monat').selectOption({ label: 'März' });
+	await calendar
+		.getByRole('button', { name: /14\. März 2019|14 März 2019|März 14, 2019/ })
+		.first()
+		.click();
+	await expect(page).toHaveURL(/von=2019-03-14/);
+	// deadlines lie ahead, so the years run past this one
+	await page.getByRole('button', { name: 'Kalender öffnen' }).nth(1).click();
+	const ahead = String(new Date().getFullYear() + 5);
+	await expect(page.locator('.daily-calendar-popover').getByLabel('Jahr')).toContainText(ahead);
+});
+
 test('preview: a chosen chip stays distinguishable in forced colours', async ({ page }) => {
 	await page.emulateMedia({ forcedColors: 'active' });
 	await page.goto('werkzeuge/datenpanne/eintraege/?neu=1');

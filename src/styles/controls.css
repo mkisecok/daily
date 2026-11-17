@@ -225,10 +225,17 @@
 	margin-bottom: 0.5rem;
 }
 
-.daily-calendar-heading {
-	font-family: var(--serif);
-	font-size: 16px;
-	font-weight: 600;
+/* month and year between the arrows, as two small native selects */
+.daily-calendar-jump {
+	display: flex;
+	gap: 0.3rem;
+}
+
+.daily-calendar-select {
+	padding-block: 0.25rem;
+	padding-left: 0.5rem;
+	font-size: 14px;
+	font-weight: 500;
 }
 
 .daily-calendar-grid {

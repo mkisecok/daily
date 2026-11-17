@@ -283,6 +283,8 @@
 	"date_open_calendar": "Kalender öffnen",
 	"date_previous_month": "Vorheriger Monat",
 	"date_next_month": "Nächster Monat",
+	"date_month": "Monat",
+	"date_year": "Jahr",
 	"control_no_match": "Keine Treffer",
 	"nav_menu": "Menü",
 	"nav_close": "Menü schließen",
