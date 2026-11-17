@@ -41,7 +41,7 @@ Navigate to the same page. Measure the **same elements** with `browser_evaluate`
 
 ### Beware HMR staleness
 
-After `git stash pop`, `git checkout`, or file restoration, the dev server may serve stale CSS. **Touch the file** (`touch path/to/file`) and hard-reload before measuring.
+After `git checkout` or file restoration, the dev server may serve stale CSS. **Touch the file** (`touch path/to/file`) and hard-reload before measuring.
 
 ## Step 4: Compare and report
 

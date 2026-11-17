@@ -30,8 +30,7 @@ Before and during validation, apply the rules from these skills:
 
 ## When to run
 
-After EVERY file edit. Not at the end of a batch, after EACH edit.
-If you edited 3 files, you validate 3 times (or group by tool).
+After each coherent change, and again over every edited file before declaring done. A change that spans files (a type and its implementations) is validated once all its files are edited.
 
 ## What to run
 
