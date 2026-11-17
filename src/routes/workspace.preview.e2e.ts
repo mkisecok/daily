@@ -88,7 +88,9 @@ test('preview: a button stands as tall as the field beside it', async ({ page })
 	expect(await height(row.locator('.daily-control'))).toBe(field);
 	await page.goto('werkzeuge/', { waitUntil: 'networkidle' });
 	const chips = page.getByRole('group', { name: 'Nach Bereich filtern' }).getByRole('button');
-	const radii = await chips.evaluateAll((all) => all.map((el) => getComputedStyle(el).borderRadius));
+	const radii = await chips.evaluateAll((all) =>
+		all.map((el) => getComputedStyle(el).borderRadius)
+	);
 	expect(new Set(radii).size).toBe(1);
 });
 
