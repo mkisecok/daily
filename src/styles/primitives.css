@@ -210,6 +210,16 @@
 		color: var(--primary);
 		background: var(--primary-soft);
 	}
+
+	/* a count or a number: mono figures that keep their width */
+	&.num {
+		justify-content: center;
+		min-width: 1.4rem;
+		padding-inline: 0.4rem;
+		font-family: var(--mono);
+		font-size: 11px;
+		font-variant-numeric: tabular-nums;
+	}
 }
 
 /** Read by screen readers, not shown. */

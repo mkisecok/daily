@@ -629,7 +629,7 @@
 		color: var(--level-ink);
 		white-space: nowrap;
 		background: var(--level-soft);
-		border-radius: 999px;
+		border-radius: var(--radius-badge);
 
 		&::before {
 			width: 0.5rem;

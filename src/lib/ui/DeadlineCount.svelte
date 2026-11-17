@@ -12,7 +12,7 @@
 
 {#if due.count > 0}
 	<span
-		class="count"
+		class="badge num navy count"
 		class:overdue={due.overdue}
 		aria-label={m.deadlines_due_soon({ count: due.count })}>{due.count}</span
 	>
@@ -20,16 +20,7 @@
 
 <style>
 	.count {
-		min-width: 1.4rem;
 		margin-left: auto;
-		padding: 0 0.4rem;
-		font-family: var(--mono);
-		font-size: 11px;
-		line-height: 1.4rem;
-		text-align: center;
-		color: var(--navy);
-		background: var(--navy-soft);
-		border-radius: 999px;
 
 		&.overdue {
 			color: var(--on-wax);

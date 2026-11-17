@@ -97,7 +97,7 @@
 			{#each groups as group (group.id)}
 				<section class="group" data-urgency={group.id}>
 					<svelte:element this={`h${level}`} class="group-title">
-						{titles[group.id]()} <span class="count">{group.items.length}</span>
+						{titles[group.id]()} <span class="badge num count">{group.items.length}</span>
 					</svelte:element>
 					{@render rows(group.items)}
 				</section>
@@ -133,12 +133,10 @@
 			text-transform: uppercase;
 			color: var(--ink3);
 
+			/* the count takes the colour of its group's title */
 			& .count {
-				padding: 0 0.4rem;
-				font-size: 11px;
 				letter-spacing: normal;
-				background: var(--paper);
-				border-radius: 999px;
+				color: inherit;
 			}
 		}
 
