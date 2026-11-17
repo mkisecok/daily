@@ -24,7 +24,12 @@ const REPORT_PAGES: Record<string, number> = { 'aims-gap': 4 };
  * required fields; the DSFA adds its landscape risk picture after the
  * report, the SDM cube its views
  */
-const ENTRY_PAGES: Record<string, number> = { dsfa: 5, 'sdm-wuerfel': 5 };
+const ENTRY_PAGES: Record<string, number> = {
+	dsfa: 5,
+	'sdm-wuerfel': 5,
+	// 23 checkpoints, and a Rechtsstand line naming five laws
+	bestandsaufnahme: 4
+};
 
 /** at most this many pages for the handout of a training module */
 const HANDOUT_PAGES = 4;
