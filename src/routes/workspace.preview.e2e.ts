@@ -131,6 +131,38 @@ test('preview: every table on screen uses the shared table style', async ({ page
 	}
 });
 
+test('preview: dialogs and floating lists share one frame', async ({ page }) => {
+	await page.goto('berichte/', { waitUntil: 'networkidle' });
+	const frame = (selector: string) =>
+		page.locator(selector).evaluate((el) => {
+			const style = getComputedStyle(el);
+			return [style.borderTopColor, getComputedStyle(el, '::backdrop').backgroundColor];
+		});
+	await page.getByRole('button', { name: 'Suche öffnen' }).click();
+	await page.keyboard.type('vvt');
+	const [paletteBorder, paletteDim] = await frame('dialog[open]');
+	const commandItem = await page
+		.locator('.daily-command-item')
+		.first()
+		.evaluate((el) => [getComputedStyle(el).borderRadius, getComputedStyle(el).fontSize]);
+	await page.keyboard.press('Escape');
+	await page.getByLabel('Bericht', { exact: true }).click();
+	const [listBorder] = await frame('.daily-popover');
+	const option = await page
+		.locator('.daily-option')
+		.first()
+		.evaluate((el) => [getComputedStyle(el).borderRadius, getComputedStyle(el).fontSize]);
+	await page.keyboard.press('Escape');
+	expect(listBorder).toBe(paletteBorder);
+	expect(option).toEqual(commandItem);
+
+	await page.goto('werkzeuge/vvt/eintraege/', { waitUntil: 'networkidle' });
+	await page.getByRole('button', { name: 'Lokale Daten löschen' }).click();
+	const [confirmBorder, confirmDim] = await frame('dialog[open]');
+	expect(confirmBorder).toBe(paletteBorder);
+	expect(confirmDim).toBe(paletteDim);
+});
+
 test('preview: a chosen chip stays distinguishable in forced colours', async ({ page }) => {
 	await page.emulateMedia({ forcedColors: 'active' });
 	await page.goto('werkzeuge/datenpanne/eintraege/?neu=1');

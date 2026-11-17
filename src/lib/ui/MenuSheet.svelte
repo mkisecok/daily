@@ -140,12 +140,8 @@
 		color: var(--ink);
 		background: var(--sheet);
 		border: 0;
-		border-left: 1px solid var(--rule);
+		border-left: 1px solid var(--rule2);
 		box-shadow: var(--shadow-modal);
-
-		&::backdrop {
-			background: rgba(28, 27, 25, 0.35);
-		}
 
 		&[open] {
 			animation: slide-in 0.18s ease-out;

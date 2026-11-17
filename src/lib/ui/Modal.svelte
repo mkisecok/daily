@@ -52,17 +52,14 @@
 		border-radius: var(--radius-card);
 		box-shadow: var(--shadow-modal);
 
-		&::backdrop {
-			background: rgba(28, 27, 25, 0.35);
-		}
-
+		/* framed like a card, titled like a card */
 		& .sheet {
-			padding: 1.25rem 1.4rem 1.2rem;
+			padding: var(--card-pad);
 		}
 
 		& h2 {
 			margin-bottom: 0.6rem;
-			font-size: 20px;
+			font-size: 18px;
 		}
 	}
 </style>

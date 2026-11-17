@@ -322,3 +322,15 @@
 		}
 	}
 }
+
+/**
+ * the dim behind every modal dialog, deeper on the dark theme. Set on the
+ * backdrop itself, since not every browser lets it inherit custom properties.
+ */
+dialog::backdrop {
+	background: rgba(28, 27, 25, 0.35);
+}
+
+html[data-theme='dark'] dialog::backdrop {
+	background: rgba(0, 0, 0, 0.55);
+}
