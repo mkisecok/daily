@@ -56,12 +56,16 @@
 /**
  * buttons: blue for the main action, `.quiet` outlined, `.danger` in wax,
  * `.ghost` as a navy text button. Plain buttons in a toolbar count as `.button`.
+ * A button stands as tall as a field, so the two line up wherever they share
+ * a row; a ghost button sits in running text and keeps its own height.
  */
 .button,
 .toolbar button {
 	display: inline-flex;
 	align-items: center;
+	justify-content: center;
 	gap: 0.45rem;
+	min-height: var(--control-height);
 	padding: 0.55rem 1.1rem;
 	font-family: var(--sans);
 	font-size: 14px;
@@ -108,6 +112,7 @@
 	}
 
 	&.ghost {
+		min-height: 0;
 		padding-left: 0.4rem;
 		padding-right: 0.4rem;
 		color: var(--navy);

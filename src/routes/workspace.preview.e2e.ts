@@ -77,6 +77,23 @@ test('preview: a date field lines up with the fields beside it', async ({ page }
 	expect(await labelFont('Tag')).toBe(await labelFont('Schlagworte'));
 });
 
+test('preview: a button stands as tall as the field beside it', async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('werkzeuge/pseudonymisierer/', { waitUntil: 'networkidle' });
+	const row = page.locator('form.manual');
+	const height = async (locator: ReturnType<typeof row.locator>) =>
+		Math.round((await locator.boundingBox())!.height);
+	const field = await height(row.locator('input'));
+	expect(await height(row.getByRole('button', { name: 'Markieren' }))).toBe(field);
+	expect(await height(row.locator('.daily-control'))).toBe(field);
+	await page.goto('werkzeuge/', { waitUntil: 'networkidle' });
+	const chips = page.getByRole('group', { name: 'Nach Bereich filtern' }).getByRole('button');
+	const radii = await chips.evaluateAll((all) =>
+		all.map((el) => getComputedStyle(el).borderRadius)
+	);
+	expect(new Set(radii).size).toBe(1);
+});
+
 test('preview: a chosen chip stays distinguishable in forced colours', async ({ page }) => {
 	await page.emulateMedia({ forcedColors: 'active' });
 	await page.goto('werkzeuge/datenpanne/eintraege/?neu=1');

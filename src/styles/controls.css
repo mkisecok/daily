@@ -310,15 +310,17 @@
 		border-color 0.12s ease,
 		background-color 0.12s ease;
 
+	/* a chip for a tool area shows the area's hue (`--area`, set by the page) */
 	& .icon {
-		color: var(--ink3);
+		color: var(--area, var(--ink3));
 	}
 
 	&:hover {
 		border-color: var(--ink3);
 	}
 
-	&[data-state='on'] {
+	&[data-state='on'],
+	&[aria-pressed='true'] {
 		color: var(--ink);
 		background: var(--primary-soft);
 		border-color: var(--primary);
