@@ -136,7 +136,7 @@
 	/* earlier runs as rows in a raised card */
 	.runs {
 		max-width: 44rem;
-		padding: 1.25rem 1.25rem 0.5rem;
+		padding-bottom: 0.5rem;
 
 		& h2 {
 			font-size: 18px;

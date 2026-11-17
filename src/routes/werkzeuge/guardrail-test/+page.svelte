@@ -279,12 +279,6 @@
 <style>
 	/* the setup panel: a raised card with the sets, the mode, the fields and the prompts */
 	.setup {
-		padding: 1.25rem 1.5rem 1.5rem;
-
-		@media (max-width: 40rem) {
-			padding: 1rem;
-		}
-
 		& .intro {
 			margin-bottom: 0.5rem;
 			font-size: 15px;

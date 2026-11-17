@@ -66,7 +66,7 @@
 
 <style>
 	.pyramid {
-		padding: 1.1rem 1.25rem;
+		padding: var(--card-pad-compact);
 
 		& h2 {
 			display: flex;

@@ -322,7 +322,7 @@
 			color: var(--ink);
 			background: var(--sheet);
 			border: 1px solid var(--rule);
-			border-radius: 10px;
+			border-radius: var(--radius-card);
 			cursor: pointer;
 
 			&:hover {

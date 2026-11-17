@@ -29,7 +29,6 @@
 	.done {
 		display: grid;
 		gap: 0.75rem;
-		padding: 1.5rem 1.75rem;
 		font-size: 15.5px;
 		line-height: 1.6;
 	}

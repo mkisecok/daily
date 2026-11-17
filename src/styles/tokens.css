@@ -66,6 +66,10 @@ html[data-theme='light'] {
 
 	--radius: 8px;
 	--radius-card: 12px;
+	/* card padding: standard for content and forms, compact for small cards in a grid, sheet for a document */
+	--card-pad: 1.25rem 1.5rem;
+	--card-pad-compact: 1rem 1.25rem;
+	--card-pad-sheet: 1.75rem 2.25rem 2rem;
 	--radius-badge: 6px;
 	/* the height of a text input (0.55rem padding, a 24px line, 1px borders); select, combobox and date match it */
 	--control-height: 2.725rem;
@@ -134,4 +138,12 @@ html[data-theme='dark'] {
 	--shadow-modal: 0 16px 40px rgba(0, 0, 0, 0.6);
 
 	color-scheme: dark;
+}
+
+/* on a phone every card keeps the same narrow frame */
+@media (max-width: 40rem) {
+	html[data-theme] {
+		--card-pad: 1rem;
+		--card-pad-sheet: 1.1rem 1rem 1.25rem;
+	}
 }

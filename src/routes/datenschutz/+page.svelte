@@ -27,7 +27,6 @@
 <style>
 	.legal {
 		max-width: var(--measure);
-		padding: 1.5rem 1.75rem;
 		font-size: 15.5px;
 		line-height: 1.7;
 
@@ -88,10 +87,6 @@
 
 		& :global(code) {
 			overflow-wrap: anywhere;
-		}
-
-		@media (max-width: 40rem) {
-			padding: 1.25rem 1rem;
 		}
 	}
 

@@ -17,7 +17,6 @@
 	/* reading width for the legal text once it is in place */
 	.legal {
 		max-width: var(--measure);
-		padding: 1.5rem 1.75rem;
 		font-size: 15.5px;
 		line-height: 1.7;
 	}

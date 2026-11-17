@@ -117,11 +117,7 @@
 
 		& .reading {
 			max-width: var(--reading);
-			padding: 1.75rem 2.25rem 2rem;
-
-			@media (max-width: 40rem) {
-				padding: 1.1rem 1rem 1.25rem;
-			}
+			padding: var(--card-pad-sheet);
 
 			@media print {
 				padding: 0;
@@ -193,7 +189,7 @@
 				gap: 0.2rem;
 				min-width: 0;
 				height: 100%;
-				padding: 0.8rem 1rem;
+				padding: var(--card-pad-compact);
 				color: var(--ink);
 				transition: border-color 0.12s ease;
 

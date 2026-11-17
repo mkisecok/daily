@@ -405,11 +405,6 @@
 
 	.card {
 		margin-top: 1rem;
-		padding: 1.25rem 1.5rem 1.5rem;
-
-		@media (max-width: 40rem) {
-			padding: 1rem;
-		}
 
 		& h2 {
 			margin-bottom: 0.5rem;

@@ -240,11 +240,6 @@
 		flex-wrap: wrap;
 		gap: 1rem 1.25rem;
 		max-width: calc(var(--measure) + 3rem);
-		padding: 1.25rem 1.5rem;
-
-		@media (max-width: 40rem) {
-			padding: 1rem;
-		}
 
 		& > * {
 			min-width: 0;
@@ -271,15 +266,11 @@
 	.report {
 		max-width: 56rem;
 		margin-top: 2rem;
-		padding: 2.25rem 2.75rem 2.75rem;
+		padding: var(--card-pad-sheet);
 		background: var(--sheet);
 		border: 1px solid var(--rule2);
 		border-radius: var(--radius-card);
 		box-shadow: var(--shadow-raised);
-
-		@media (max-width: 40rem) {
-			padding: 1.25rem 1rem 1.5rem;
-		}
 
 		@media print {
 			max-width: none;
@@ -330,15 +321,11 @@
 			/* inside the sheet the registers sit flat, framed by a hairline */
 			& .tool {
 				margin-top: 0.85rem;
-				padding: 0.9rem 1.1rem;
+				padding: var(--card-pad-compact);
 				background: none;
 				border-color: var(--rule2);
 				box-shadow: none;
 				break-inside: avoid;
-
-				@media (max-width: 40rem) {
-					padding: 0.8rem 0.85rem;
-				}
 
 				& h4 {
 					font-size: 17px;

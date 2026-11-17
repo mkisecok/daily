@@ -163,7 +163,7 @@
 			flex-direction: column;
 			gap: 0.4rem;
 			min-height: 9.5rem;
-			padding: 1.1rem 1.25rem 1.25rem;
+			padding: var(--card-pad-compact);
 			transition:
 				border-color 0.12s ease,
 				box-shadow 0.12s ease;
@@ -250,7 +250,6 @@
 			display: flex;
 			flex-direction: column;
 			gap: 0.5rem;
-			padding: 1.35rem 1.5rem 1rem;
 
 			& .numeral {
 				font-family: var(--serif);

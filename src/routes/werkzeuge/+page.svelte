@@ -399,7 +399,7 @@
 		text-decoration: none;
 		background: var(--sheet);
 		border: 1px solid var(--rule2);
-		border-radius: 12px;
+		border-radius: var(--radius-card);
 		transition: border-color 0.15s ease;
 
 		&:hover {
@@ -499,12 +499,12 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.6rem;
-		padding: 1.25rem;
+		padding: var(--card-pad-compact);
 		color: var(--ink);
 		text-decoration: none;
 		background: var(--sheet);
 		border: 1px solid var(--rule2);
-		border-radius: 16px;
+		border-radius: var(--radius-card);
 		box-shadow: var(--shadow-raised);
 		transition:
 			transform 0.15s ease,

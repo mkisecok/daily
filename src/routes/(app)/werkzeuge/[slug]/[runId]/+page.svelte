@@ -138,11 +138,7 @@
 	/* the given answers as rows in a raised card */
 	.answers {
 		margin-top: 1.5rem;
-		padding: 1.25rem 1.5rem 0.5rem;
-
-		@media (max-width: 40rem) {
-			padding: 1rem 1rem 0.5rem;
-		}
+		padding-bottom: 0.5rem;
 
 		& h2 {
 			font-size: 18px;

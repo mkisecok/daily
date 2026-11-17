@@ -391,7 +391,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.2rem;
-		padding: 1rem 1.1rem;
+		padding: var(--card-pad-compact);
 
 		& .icon {
 			display: grid;
@@ -445,7 +445,7 @@
 		}
 
 		& .card {
-			padding: 1.1rem 1.25rem;
+			padding: var(--card-pad-compact);
 		}
 	}
 
@@ -480,7 +480,7 @@
 	}
 
 	.table-card {
-		padding: 1.1rem 1.25rem;
+		padding: var(--card-pad-compact);
 
 		& .scroll {
 			overflow-x: auto;
@@ -509,7 +509,7 @@
 	}
 
 	.signoff-card {
-		padding: 1.1rem 1.25rem;
+		padding: var(--card-pad-compact);
 
 		& .signoff-intro {
 			margin: 0 0 0.6rem;

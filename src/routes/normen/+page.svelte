@@ -105,12 +105,6 @@
 		max-width: calc(var(--measure) + 3rem);
 
 		& .field {
-			padding: 1.25rem 1.5rem;
-
-			@media (max-width: 40rem) {
-				padding: 1rem;
-			}
-
 			& label {
 				display: block;
 				font-family: var(--serif);
@@ -202,7 +196,7 @@
 			flex-direction: column;
 			align-items: flex-start;
 			gap: 0.35rem;
-			padding: 1.1rem 1.25rem;
+			padding: var(--card-pad-compact);
 			transition: border-color 0.12s ease;
 
 			&:hover {

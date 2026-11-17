@@ -132,9 +132,13 @@
 	}
 }
 
-/** a raised sheet with a soft frame; `.accent` adds a navy top rule */
+/**
+ * a raised sheet with a soft frame; `.accent` adds a navy top rule. Cards are
+ * padded by size only: `--card-pad` for content and forms, `--card-pad-compact`
+ * for a small card in a grid, `--card-pad-sheet` for a document.
+ */
 .card {
-	padding: 1rem 1.25rem;
+	padding: var(--card-pad);
 	background: var(--sheet);
 	border: 1px solid var(--rule2);
 	border-radius: var(--radius-card);
@@ -239,7 +243,7 @@
 	padding: 0.55rem 0.6rem 0.55rem 1rem;
 	background: var(--sheet);
 	border: 1px solid var(--rule2);
-	border-radius: 12px;
+	border-radius: var(--radius-card);
 	box-shadow: var(--shadow-float);
 
 	@media (max-width: 40rem) {
