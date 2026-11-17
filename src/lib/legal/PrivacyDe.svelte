@@ -153,6 +153,11 @@
 					</td>
 					<td>bis Sie sie löschen</td>
 				</tr>
+				<tr>
+					<td><code>daily.backup.last.v1</code> (localStorage)</td>
+					<td>merkt sich den Tag der letzten Datensicherung aus diesem Browser</td>
+					<td>bis Sie ihn löschen</td>
+				</tr>
 			{/if}
 		</tbody>
 	</table>

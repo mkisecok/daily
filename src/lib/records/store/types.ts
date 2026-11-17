@@ -1,4 +1,5 @@
 import type { Answers, Localized } from '../../tools/types.js';
+import type { Backup, BackupContent, RestoreSummary } from '../backup.js';
 import type { ValidationErrors } from '../validate.js';
 import type { Deadline, RecordEvent, StoredRecord } from '../types.js';
 
@@ -48,4 +49,8 @@ export interface RecordStore {
 	unarchive(id: string): Promise<StoreResult<StoredRecord>>;
 	/** open deadlines across all record tools, earliest first */
 	deadlines(): Promise<Deadline[]>;
+	/** every entry of the workspace, archived ones too, with its history */
+	backup(): Promise<BackupContent>;
+	/** adds the entries of a backup that are not here yet, keeping the ones that are */
+	restore(backup: Backup): Promise<RestoreSummary>;
 }

@@ -280,7 +280,12 @@ export const definition: RecordToolDefinition = {
 					required: true,
 					listColumn: true
 				},
-				{ id: 'wiedervorlage', type: 'date', label: L('Wiedervorlage', 'Next review') },
+				{
+					id: 'wiedervorlage',
+					type: 'date',
+					label: L('Wiedervorlage', 'Next review'),
+					listColumn: true
+				},
 				{ id: 'notizen', type: 'textarea', label: L('Notizen', 'Notes') }
 			]
 		}

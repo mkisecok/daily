@@ -1,3 +1,4 @@
+import { planRestore } from '../backup.js';
 import { computeDeadlines } from '../deadlines.js';
 import { getQuestionnaire as registryQuestionnaire } from '../../tools/registry.js';
 import {
@@ -267,6 +268,28 @@ export function createBrowserStore(
 
 		async deadlines() {
 			return openDeadlines(load().records).sort((a, b) => a.dueAt.localeCompare(b.dueAt));
+		},
+
+		async backup() {
+			return load();
+		},
+
+		async restore(backup) {
+			const saved = load();
+			const here = new Set(saved.records.map((r) => r.id));
+			const plan = planRestore(backup, {
+				here: (id) => here.has(id),
+				free: () => true,
+				getTool,
+				newId
+			});
+			if (plan.added > 0) {
+				save({
+					records: [...saved.records, ...plan.records],
+					events: [...saved.events, ...plan.events]
+				});
+			}
+			return { added: plan.added, present: plan.present, unreadable: plan.unreadable };
 		},
 
 		clear() {

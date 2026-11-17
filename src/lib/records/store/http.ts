@@ -1,9 +1,11 @@
+import type { RestoreSummary } from '../backup.js';
 import type { RecordDetail, RecordStore, StoreResult } from './types.js';
 
 export type HttpUrls = {
 	records: string;
 	record: (id: string) => string;
 	deadlines: string;
+	backup: string;
 };
 
 /**
@@ -53,6 +55,12 @@ export function createHttpStore(urls: HttpUrls, fetchFn: typeof fetch = fetch): 
 			call(`${urls.record(id)}/assessment`, 'POST', { field, answers, expectedVersion }),
 		archive: (id) => call(urls.record(id), 'DELETE'),
 		unarchive: (id) => call(`${urls.record(id)}/unarchive`, 'POST'),
-		deadlines: () => read(urls.deadlines)
+		deadlines: () => read(urls.deadlines),
+		backup: () => read(urls.backup),
+		async restore(backup) {
+			const result = await call<RestoreSummary>(urls.backup, 'POST', backup);
+			if (!result.ok) throw new Error(`POST ${urls.backup} failed: ${result.error}`);
+			return result.value;
+		}
 	};
 }

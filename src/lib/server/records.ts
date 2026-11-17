@@ -1,4 +1,5 @@
 import { and, asc, desc, eq, inArray, isNotNull, isNull } from 'drizzle-orm';
+import { planRestore } from '../records/backup.js';
 import { computeDeadlines } from '../records/deadlines.js';
 import {
 	checkReferences,
@@ -330,6 +331,98 @@ export function createRecordRepository(
 							return tool ? computeDeadlines(tool, toStored(row)) : [];
 						})
 						.sort((a, b) => a.dueAt.localeCompare(b.dueAt));
+				},
+
+				async backup() {
+					const rows = await db
+						.select()
+						.from(records)
+						.where(eq(records.organisationId, organisationId))
+						.orderBy(asc(records.createdAt));
+					const ids = rows.map((row) => row.id);
+					const events =
+						ids.length === 0
+							? []
+							: await db
+									.select()
+									.from(recordEvents)
+									.where(inArray(recordEvents.recordId, ids))
+									.orderBy(asc(recordEvents.createdAt));
+					return {
+						records: rows.map(toStored),
+						events: events.map((event): RecordEvent => ({
+							id: event.id,
+							recordId: event.recordId,
+							kind: event.kind,
+							changes: event.changes as FieldChanges,
+							fromState: event.fromState,
+							toState: event.toState,
+							at: event.createdAt.toISOString()
+						}))
+					};
+				},
+
+				/**
+				 * adds the backup's entries in one transaction; an id another
+				 * organisation holds is never touched, the entry gets a new one
+				 */
+				async restore(backup) {
+					return db.transaction(async (tx) => {
+						const ids = backup.records
+							.map((record) => record?.id)
+							.filter((id): id is string => typeof id === 'string' && UUID.test(id));
+						const found =
+							ids.length === 0
+								? []
+								: await tx
+										.select({ id: records.id, organisationId: records.organisationId })
+										.from(records)
+										.where(inArray(records.id, ids));
+						const owner = new Map(found.map((row) => [row.id, row.organisationId]));
+						const plan = planRestore(backup, {
+							here: (id) => owner.get(id) === organisationId,
+							free: (id) => UUID.test(id) && !owner.has(id),
+							getTool,
+							newId: () => crypto.randomUUID()
+						});
+						if (plan.records.length > 0) {
+							await tx.insert(records).values(
+								plan.records.map((record) => ({
+									id: record.id,
+									organisationId,
+									toolSlug: record.toolSlug,
+									definitionVersion: record.definitionVersion,
+									state: record.state,
+									title: record.title,
+									data: record.data,
+									version: record.version,
+									createdBy: userId,
+									updatedBy: userId,
+									createdAt: new Date(record.createdAt),
+									updatedAt: new Date(record.updatedAt),
+									archivedAt: record.archivedAt ? new Date(record.archivedAt) : null
+								}))
+							);
+						}
+						if (plan.events.length > 0) {
+							await tx.insert(recordEvents).values(
+								plan.events.map((event) => ({
+									id: event.id,
+									recordId: event.recordId,
+									userId: null,
+									kind: event.kind,
+									changes: event.changes ?? {},
+									fromState: event.fromState,
+									toState: event.toState,
+									createdAt: new Date(event.at)
+								}))
+							);
+						}
+						for (const record of plan.records) {
+							await syncDeadlines(tx, getTool(record.toolSlug)!, record);
+						}
+						return { added: plan.added, present: plan.present, unreadable: plan.unreadable };
+					});
 				}
 			};
 		}

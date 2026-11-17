@@ -142,6 +142,11 @@
 					<td>keeps the register entries you create in the preview, only in your browser</td>
 					<td>until you delete them</td>
 				</tr>
+				<tr>
+					<td><code>daily.backup.last.v1</code> (localStorage)</td>
+					<td>remembers the day of the last backup from this browser</td>
+					<td>until you delete it</td>
+				</tr>
 			{/if}
 		</tbody>
 	</table>

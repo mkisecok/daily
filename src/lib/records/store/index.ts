@@ -40,7 +40,8 @@ export function getStore(): RecordStore & { clear?: () => void } {
 			: createHttpStore({
 					records: resolve('/api/records'),
 					record: (id) => resolve('/api/records/[id]', { id }),
-					deadlines: resolve('/api/deadlines')
+					deadlines: resolve('/api/deadlines'),
+					backup: resolve('/api/backup')
 				}),
 		() => listeners.forEach((listener) => listener())
 	);
