@@ -233,3 +233,7 @@ number of tools.
   slides in Daily with a printable handout, fixed modules written by Daily with slots for the
   organisation's own details, a short quiz per module that pre-fills a Schulungsnachweis entry. The
   SDM-Würfel moves to the new area. First step: the area itself.
+- Step 7 is planned in `2026-11-17-step-7.md`: export and import of all entries, and the
+  Datenschutzhinweise (Art. 13) as a print of a VVT entry. Left out: a vendor overview (the
+  AVV-Prüfung is that register; its list gets the review date as a column) and a policy set (written
+  once a year, not daily work; a single policy only when the owner names one).
