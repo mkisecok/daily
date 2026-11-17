@@ -20,6 +20,8 @@ describe('citations into the Navigator', () => {
 			'dsgvo/art-34'
 		]);
 		expect(ids('KI-VO', 'Art. 3 Nr. 49')).toEqual(['ki-vo/art-3']);
+		expect(ids('Data Act', 'Art. 25, 29')).toEqual(['data-act/art-25', 'data-act/art-29']);
+		expect(ids('BetrVG', '§ 87 Abs. 1 Nr. 6')).toEqual(['betrvg/p-87']);
 	});
 
 	it('ignores laws outside the Navigator', () => {
@@ -59,10 +61,17 @@ describe('cross-references in law texts', () => {
 		expect(
 			linked('Abweichend von Artikel 9 Absatz 1 der Verordnung (EU) 2016/679', 'bdsg')
 		).toEqual(['Artikel 9 Absatz 1 → dsgvo/art-9']);
+		expect(linked('Artikel 23 der Verordnung (EU) 2023/2854', 'dsgvo')).toEqual([
+			'Artikel 23 → data-act/art-23'
+		]);
+		expect(linked('gemäß Artikel 25 Absatz 2', 'data-act')).toEqual([
+			'Artikel 25 Absatz 2 → data-act/art-25'
+		]);
 	});
 
 	it('links paragraphs in German statutes but not paragraphs of other acts', () => {
 		expect(linked('nach § 26 Absatz 1', 'bdsg')).toEqual(['§ 26 Absatz 1 → bdsg/p-26']);
+		expect(linked('nach § 87 Absatz 1', 'betrvg')).toEqual(['§ 87 Absatz 1 → betrvg/p-87']);
 		expect(linked('nach § 3 des Telekommunikationsgesetzes', 'tdddg')).toEqual([]);
 		expect(linked('Artikel 6 ohne Bezug', 'bdsg')).toEqual([]);
 	});

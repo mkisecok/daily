@@ -1,14 +1,14 @@
 /**
  * imports the law texts for the Normen-Navigator into src/lib/normen/data.
  *
- * DSGVO and KI-VO come from the EU Publications Office (Cellar): articles
+ * DSGVO, KI-VO and the Data Act come from the EU Publications Office (Cellar): articles
  * and annexes from the consolidated version, recitals from the original
- * Official Journal text (consolidated texts omit recitals). BDSG and TDDDG
+ * Official Journal text (consolidated texts omit recitals). BDSG, TDDDG and BetrVG
  * come from the XML of gesetze-im-internet.de. EU legislation may be
  * reused (Commission Decision 2011/833/EU); German statutes are not
  * protected by copyright (§ 5 UrhG).
  *
- * Run: pnpm normen:import
+ * Run: pnpm normen:import [law ids, e.g. data-act betrvg]
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
 import * as cheerio from 'cheerio';
@@ -44,12 +44,14 @@ type EuSource = { id: LawId; original: string };
 
 const EU: EuSource[] = [
 	{ id: 'dsgvo', original: '32016R0679' },
-	{ id: 'ki-vo', original: '32024R1689' }
+	{ id: 'ki-vo', original: '32024R1689' },
+	{ id: 'data-act', original: '32023R2854' }
 ];
 
 const DE: { id: LawId; path: string }[] = [
 	{ id: 'bdsg', path: 'bdsg_2018' },
-	{ id: 'tdddg', path: 'ttdsg' }
+	{ id: 'tdddg', path: 'ttdsg' },
+	{ id: 'betrvg', path: 'betrvg' }
 ];
 
 /** Cellar wants the brackets of corrigendum numbers such as 32016R0679R(02) encoded */
@@ -229,6 +231,84 @@ function parseConsolidated(html: string) {
 	return { chapters, articles, annexes };
 }
 
+/**
+ * articles and chapters of an act's original Official Journal text, for a
+ * language Cellar has no consolidated version in. Only sound while the act
+ * has not been amended: the caller checks that.
+ */
+function parseOriginal(html: string): ReturnType<typeof parseConsolidated> {
+	const $ = cheerio.load(html);
+	$('.oj-note, .oj-note-tag').remove();
+	const chapters: { title: string }[] = [];
+	const articles: { number: string; title: string; blocks: Block[]; chapter?: number }[] = [];
+
+	/** "(a)" rows of a list table, with nested tables as children */
+	const list = (table: AnyNode): Block[] =>
+		$(table)
+			.find('> tbody > tr, > tr')
+			.toArray()
+			.map((row) => {
+				const [label, body] = $(row).children('td').toArray();
+				const inner = $(body).children('table').toArray().flatMap(list);
+				const text = clean(
+					$(body)
+						.children('p')
+						.map((_, p) => $(p).text())
+						.get()
+						.join(' ')
+				);
+				return {
+					label: clean($(label).text()),
+					text,
+					...(inner.length > 0 ? { children: inner } : {})
+				};
+			});
+
+	/** paragraphs of an article: "1. …" with their lists, or plain text */
+	const blocks = (parent: AnyNode): Block[] =>
+		$(parent)
+			.children()
+			.toArray()
+			.flatMap((node): Block[] => {
+				const el = $(node);
+				if (el.is('p.oj-normal')) {
+					const text = clean(el.text());
+					return text ? [{ text }] : [];
+				}
+				if (el.is('table')) return list(node);
+				if (el.is('div') && /^\d{3}\.\d{3}$/.test(el.attr('id') ?? '')) {
+					const [first, ...rest] = blocks(node);
+					if (!first) return [];
+					const numbered = /^(\d+[a-z]?\.)\s*(.*)$/s.exec(first.text);
+					const head: Block = numbered
+						? { label: numbered[1], text: numbered[2] }
+						: { text: first.text };
+					return [{ ...head, ...(rest.length > 0 ? { children: rest } : {}) }];
+				}
+				return [];
+			});
+
+	$('p.oj-ti-section-1, div.eli-subdivision[id^="art_"]').each((_, node) => {
+		const el = $(node);
+		if (el.is('p.oj-ti-section-1')) {
+			const text = clean(el.text());
+			if (!/^(KAPITEL|CHAPTER)\b/i.test(text)) return;
+			const title = clean(el.parent().find('p.oj-ti-section-2').first().text());
+			chapters.push({ title: `${text} – ${title}` });
+			return;
+		}
+		const id = el.attr('id') ?? '';
+		if (!/^art_\d+[a-z]?$/.test(id)) return;
+		articles.push({
+			number: id.slice(4),
+			title: clean(el.find('.oj-sti-art').first().text()),
+			blocks: blocks(node),
+			chapter: chapters.length > 0 ? chapters.length - 1 : undefined
+		});
+	});
+	return { chapters, articles, annexes: [] };
+}
+
 function parseRecitals(html: string): Map<string, string> {
 	const $ = cheerio.load(html);
 	const recitals = new Map<string, string>();
@@ -253,14 +333,21 @@ async function importEu(source: EuSource): Promise<LawText> {
 
 	const [consDe, consEn, origDe, origEn, amendments, corrigenda] = await Promise.all([
 		cellar(consolidated, 'de'),
-		cellar(consolidated, 'en'),
+		cellarOptional(consolidated, 'en'),
 		cellar(source.original, 'de'),
 		cellar(source.original, 'en'),
 		related(source.original, 'amends'),
 		related(source.original, 'corrects')
 	]);
+	const date = versionDate(consolidated);
+	// an amendment published after the version date is not in this text yet
+	const amended = amendments.filter((a) => a.date <= date).map((a) => a.celex);
+	if (consEn === null && amended.length > 0) {
+		throw new Error(`${source.id}: no English consolidated text, and the act was amended`);
+	}
 	const de = parseConsolidated(consDe);
-	const en = parseConsolidated(consEn);
+	// unamended acts may lack an English consolidated text: the original is the same law
+	const en = consEn === null ? parseOriginal(origEn) : parseConsolidated(consEn);
 	const enArticles = new Map(en.articles.map((a) => [a.number, a]));
 	const enAnnexes = new Map(en.annexes.map((a) => [a.number, a]));
 	const recitalsDe = parseRecitals(origDe);
@@ -282,9 +369,6 @@ async function importEu(source: EuSource): Promise<LawText> {
 			console.log(source.id, celex, lang, applied, 'recital corrections');
 		}
 	}
-	const date = versionDate(consolidated);
-	// an amendment published after the version date is not in this text yet
-	const amended = amendments.filter((a) => a.date <= date).map((a) => a.celex);
 	const version = (lang: Lang) => {
 		const parts =
 			lang === 'de'
@@ -298,7 +382,9 @@ async function importEu(source: EuSource): Promise<LawText> {
 							: 'Erwägungsgründe aus dem Amtsblatt'
 					]
 				: [
-						`Consolidated version of ${longDate(date, lang)}`,
+						consEn === null
+							? `Official Journal text, unamended as of ${longDate(date, lang)}; corrigenda not applied`
+							: `Consolidated version of ${longDate(date, lang)}`,
 						amended.length > 0
 							? `amended by ${amended.map((a) => actName(a, lang)).join(', ')}`
 							: '',
@@ -347,7 +433,7 @@ async function importEu(source: EuSource): Promise<LawText> {
 				version: version('de')
 			},
 			en: {
-				url: `https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:${consolidated}`,
+				url: `https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:${consEn === null ? source.original : consolidated}`,
 				version: version('en')
 			}
 		},
@@ -449,13 +535,17 @@ async function importDe(law: { id: LawId; path: string }): Promise<LawText> {
 	};
 }
 
+/** the laws named on the command line, or all of them */
+const only = process.argv.slice(2);
+const wanted = (id: LawId) => only.length === 0 || only.includes(id);
+
 mkdirSync(OUT, { recursive: true });
-for (const source of EU) {
+for (const source of EU.filter((s) => wanted(s.id))) {
 	const law = await importEu(source);
 	writeFileSync(`${OUT}/${law.id}.json`, JSON.stringify(law));
 	console.log(law.id, law.provisions.length, 'provisions,', law.chapters.length, 'chapters');
 }
-for (const source of DE) {
+for (const source of DE.filter((s) => wanted(s.id))) {
 	const law = await importDe(source);
 	writeFileSync(`${OUT}/${law.id}.json`, JSON.stringify(law));
 	console.log(law.id, law.provisions.length, 'provisions,', law.chapters.length, 'chapters');

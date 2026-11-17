@@ -27,6 +27,12 @@ export const LAWS: LawMeta[] = [
 		english: true
 	},
 	{
+		id: 'data-act',
+		law: 'Data Act',
+		name: L('Datenverordnung (EU) 2023/2854', 'Data Act (EU) 2023/2854'),
+		english: true
+	},
+	{
 		id: 'bdsg',
 		law: 'BDSG',
 		name: L('Bundesdatenschutzgesetz', 'Federal Data Protection Act'),
@@ -40,8 +46,19 @@ export const LAWS: LawMeta[] = [
 			'Telecommunications Digital Services Data Protection Act'
 		),
 		english: false
+	},
+	{
+		id: 'betrvg',
+		law: 'BetrVG',
+		name: L('Betriebsverfassungsgesetz', 'Works Constitution Act'),
+		english: false
 	}
 ];
+
+const STATUTES = new Set<LawId>(['bdsg', 'tdddg', 'betrvg']);
+
+/** a German statute: numbered by §, so an "Artikel" in it points to another act */
+export const isStatute = (id: LawId) => STATUTES.has(id);
 
 function L(de: string, en: string): Localized {
 	return { de, en };
