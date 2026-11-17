@@ -387,7 +387,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.2rem;
-		padding: 0.9rem 1.1rem;
+		padding: var(--card-pad-compact);
 		border-top: 3px solid var(--rule);
 
 		&[data-status='luecke'] {
@@ -412,7 +412,7 @@
 	}
 
 	.cube-card {
-		padding: 1.1rem 1.25rem;
+		padding: var(--card-pad-compact);
 
 		& .front {
 			margin: 0.25rem 0 0;
@@ -562,7 +562,7 @@
 		gap: 1rem;
 
 		& .view {
-			padding: 1.1rem 1.25rem;
+			padding: var(--card-pad-compact);
 		}
 
 		& .scroll {

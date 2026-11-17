@@ -85,8 +85,10 @@
 		margin-top: 1.5rem;
 		padding: 0;
 
+		/* a record reads in the frame its form is filled in */
 		& .section {
-			padding: 1rem 1.25rem 0.5rem;
+			padding: var(--card-pad);
+			padding-bottom: 0.5rem;
 
 			& + .section {
 				border-top: 1px solid var(--rule2);

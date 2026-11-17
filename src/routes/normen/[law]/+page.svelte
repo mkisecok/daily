@@ -81,11 +81,8 @@
 		overflow-wrap: anywhere;
 
 		& section {
-			padding: 1.1rem 1.25rem 0.75rem;
-
-			@media (max-width: 40rem) {
-				padding: 0.9rem 0.75rem 0.5rem;
-			}
+			padding: var(--card-pad);
+			padding-bottom: 0.75rem;
 
 			& h2 {
 				padding: 0 0.5rem 0.6rem;

@@ -94,6 +94,23 @@ test('preview: a button stands as tall as the field beside it', async ({ page })
 	expect(new Set(radii).size).toBe(1);
 });
 
+test('preview: cards keep to the three card sizes', async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	// standard, compact and sheet sides: --card-pad, --card-pad-compact, --card-pad-sheet
+	const sizes = new Set(['24px', '20px', '36px']);
+	for (const path of ['', 'normen/', 'normen/dsgvo/', 'berichte/', 'werkzeuge/pseudonymisierer/']) {
+		await page.goto(path, { waitUntil: 'networkidle' });
+		const sides = await page
+			.locator('main .card')
+			.evaluateAll((cards) => cards.map((card) => getComputedStyle(card).paddingLeft));
+		expect(sides.length, path).toBeGreaterThan(0);
+		expect(
+			sides.filter((side) => !sizes.has(side)),
+			path
+		).toEqual([]);
+	}
+});
+
 test('preview: a chosen chip stays distinguishable in forced colours', async ({ page }) => {
 	await page.emulateMedia({ forcedColors: 'active' });
 	await page.goto('werkzeuge/datenpanne/eintraege/?neu=1');

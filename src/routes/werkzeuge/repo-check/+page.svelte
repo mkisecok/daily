@@ -182,12 +182,6 @@
 <style>
 	/* the input panel: a raised card with the pickers, the paste field and the actions */
 	.input {
-		padding: 1.25rem 1.5rem 1.5rem;
-
-		@media (max-width: 40rem) {
-			padding: 1rem;
-		}
-
 		& .intro {
 			margin-bottom: 1.25rem;
 			font-size: 15px;

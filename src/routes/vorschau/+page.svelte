@@ -66,8 +66,6 @@
 		gap: 1rem;
 
 		& .part {
-			padding: 1.35rem 1.5rem 1.5rem;
-
 			& h2 {
 				font-size: 21px;
 			}

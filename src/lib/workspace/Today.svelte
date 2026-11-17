@@ -141,7 +141,7 @@
 
 		& .block {
 			&.card {
-				padding: 1.1rem 1.25rem 1.25rem;
+				padding: var(--card-pad-compact);
 			}
 
 			& h3 {

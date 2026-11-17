@@ -451,11 +451,7 @@
 	/* a note reads like a sheet; on paper the frame goes */
 	.note {
 		max-width: calc(var(--measure) + 4.5rem);
-		padding: 1.75rem 2.25rem 2rem;
-
-		@media (max-width: 40rem) {
-			padding: 1.1rem 1rem 1.25rem;
-		}
+		padding: var(--card-pad-sheet);
 
 		@media print {
 			padding: 0;
@@ -502,11 +498,6 @@
 
 	.editor {
 		max-width: calc(var(--measure) + 4.5rem);
-		padding: 1.5rem 2rem 1.75rem;
-
-		@media (max-width: 40rem) {
-			padding: 1rem;
-		}
 
 		& .field {
 			display: block;

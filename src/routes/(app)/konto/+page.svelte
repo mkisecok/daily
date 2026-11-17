@@ -132,8 +132,6 @@
 	}
 
 	.card {
-		padding: 1.25rem 1.5rem;
-
 		& h2 {
 			font-size: 18px;
 			margin-bottom: 0.75rem;
