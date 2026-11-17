@@ -5,24 +5,25 @@ const L = (de: string, en: string) => ({ de, en });
 export const ORGANISATION = 'organisation';
 
 /**
- * the organisation's own details that training modules show: one entry per
- * organisation, kept by the records store like notes, so it is scoped to
+ * the organisation's own details that training modules and the documents
+ * Daily drafts show: one entry per organisation, kept by the records store like notes, so it is scoped to
  * the active organisation and lives in the browser in the preview. Not a
- * tool of the catalogue. Only details a module uses belong here.
+ * tool of the catalogue. Only details a module or a document uses belong
+ * here.
  */
 export const definition: RecordToolDefinition = {
 	slug: ORGANISATION,
 	version: 1,
 	intro: L(
-		'Die Angaben, die in Schulungen und Handouts erscheinen. Sie gelten für die ganze Organisation und werden nur einmal eingetragen.',
-		'The details that appear in training sessions and handouts. They apply to the whole organisation and are entered once.'
+		'Die Angaben, die in Schulungen, Handouts und Schreiben wie den Datenschutzhinweisen erscheinen. Sie gelten für die ganze Organisation und werden nur einmal eingetragen.',
+		'The details that appear in training sessions, handouts and documents such as privacy notices. They apply to the whole organisation and are entered once.'
 	),
 	sources: [],
 	titleField: 'meldeweg',
 	sections: [
 		{
 			id: 'angaben',
-			title: L('Angaben für Schulungen', 'Details for training'),
+			title: L('Angaben für Schulungen und Schreiben', 'Details for training and documents'),
 			fields: [
 				{
 					id: 'meldeweg',
@@ -40,6 +41,16 @@ export const definition: RecordToolDefinition = {
 					label: L('Datenschutzbeauftragte: Kontakt', 'Data protection officer: contact'),
 					help: L('Name, Telefon und E-Mail.', 'Name, phone and e-mail.'),
 					cite: { law: 'DSGVO', ref: 'Art. 37 Abs. 7' }
+				},
+				{
+					id: 'anschrift',
+					type: 'textarea',
+					label: L('Anschrift des Verantwortlichen', 'Address of the controller'),
+					help: L(
+						'Postanschrift und eine allgemeine Kontaktadresse, z. B. „Musterstraße 1, 70173 Stuttgart, info@beispiel.de“. Steht in den Datenschutzhinweisen.',
+						'Postal address and a general contact, e.g. "Musterstraße 1, 70173 Stuttgart, info@example.com". Appears in privacy notices.'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 13 Abs. 1 lit. a' }
 				},
 				{
 					id: 'ki',

@@ -22,6 +22,10 @@ export const SLOTS = {
 		label: L('Außerhalb der Arbeitszeit', 'Outside working hours'),
 		placeholder: L('[Vertretung oder IT-Bereitschaft]', '[deputy or IT on-call]')
 	},
+	anschrift: {
+		label: L('Anschrift des Verantwortlichen', 'Address of the controller'),
+		placeholder: L('[Anschrift und Kontakt]', '[address and contact]')
+	},
 	ki: {
 		label: L('Freigegebene KI-Werkzeuge', 'Approved AI tools'),
 		placeholder: L(

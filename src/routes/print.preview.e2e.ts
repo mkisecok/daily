@@ -295,6 +295,45 @@ test('print: an AI incident prints as a report under Art. 73 KI-VO', async ({ pa
 	}
 });
 
+test('print: a VVT entry prints its privacy notice under Art. 13 DSGVO', async ({ page }) => {
+	await page.setViewportSize({ width: A4_TEXT, height: 1000 });
+	await page.goto('organisation/', { waitUntil: 'networkidle' });
+	await page.locator('#field-anschrift').fill('Musterstraße 1, 70173 Stuttgart');
+	await page.locator('#field-dsb').fill('Dr. Petra Schmidt, dsb@beispiel.de');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page.locator('.notice')).toContainText('Gespeichert.');
+
+	await page.goto('werkzeuge/vvt/eintraege/?neu=1&beispiel=1', { waitUntil: 'networkidle' });
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+	// the button prints the notice, and the entry sheet comes back after printing
+	await page.evaluate(() => (window.print = () => {}));
+	await page.getByRole('button', { name: 'Datenschutzhinweise drucken' }).click();
+	const title = page.locator('[data-print-frame] h1');
+	await expect(title).toHaveText('Datenschutzhinweise nach Art. 13 DSGVO');
+	await page.evaluate(() => window.dispatchEvent(new Event('afterprint')));
+	await expect(title).not.toHaveText('Datenschutzhinweise nach Art. 13 DSGVO');
+
+	await page.goto(`${page.url()}&druck=hinweise`, { waitUntil: 'networkidle' });
+	await page.emulateMedia({ media: 'print' });
+	const head = page.locator('[data-print-frame]');
+	await expect(head.locator('h1')).toHaveText('Datenschutzhinweise nach Art. 13 DSGVO');
+	for (const internal of ['Daily', 'Werkzeug', 'Juristische Prüfung', 'Keine Rechtsberatung']) {
+		await expect(head).not.toContainText(internal);
+	}
+	const notice = page.locator('.print-parts');
+	await expect(notice.locator('h2')).toHaveText([
+		'Angaben nach Art. 13 Abs. 1 DSGVO',
+		'Angaben nach Art. 13 Abs. 2 DSGVO'
+	]);
+	await expect(notice).toContainText('Musterstraße 1, 70173 Stuttgart');
+	await expect(notice).toContainText('Dr. Petra Schmidt, dsb@beispiel.de');
+	await expect(notice).toContainText('Art. 77 DSGVO');
+	await expect(notice.locator('.signature')).toHaveCount(0);
+	// the notice takes the place of the entry sheet, which comes back for "Drucken"
+	await expect(page.locator('.print-body')).toHaveCount(1);
+});
+
 test('print: an answered access request prints as the reply under Art. 15 DSGVO', async ({
 	page
 }) => {
