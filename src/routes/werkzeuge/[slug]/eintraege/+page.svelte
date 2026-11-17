@@ -484,6 +484,7 @@
 					{record}
 					titles={data.titles}
 					composed={data.composed}
+					details={data.details}
 				/>
 			{:else}
 				<PrintEntry

@@ -1,6 +1,7 @@
 import type { Component } from 'svelte';
 import type { PrintRow } from '../print/meta.js';
 import type { Titles } from '../records/format.js';
+import type { Details } from '../organisation/slots.js';
 import type { Composed } from '../records/links.js';
 import type { RecordEngine, RecordToolDefinition, StoredRecord } from '../records/types.js';
 import { m } from '../paraglide/messages.js';
@@ -45,6 +46,8 @@ export type EntryPrintProps = {
 	titles?: Titles;
 	/** the referenced records the entry composes, such as the audit of a report */
 	composed?: Composed[];
+	/** the organisation's details, such as the DPO's contact for line b of a breach notice */
+	details?: Details;
 };
 
 /**
