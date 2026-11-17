@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { noticeParts } from './print.js';
+import { noticeHead, noticeParts } from './print.js';
 
 const rows = (data: Record<string, unknown>) =>
 	noticeParts(data as never, 'erfasst', 'de').flatMap((part) => part.rows);
@@ -25,5 +25,25 @@ describe('breach notification on paper', () => {
 			.rows.map((row) => row.letter);
 		expect(letters).toEqual(['a', 'a', 'a', 'b', 'c', 'c', 'd']);
 		expect(rows({}).find((row) => row.letter === 'b')?.fill).toBe(true);
+	});
+
+	it('heads the notice as a letter to the authority', () => {
+		const record = {
+			title: 'USB-Stick verloren',
+			data: {
+				behoerde: 'LfDI Baden-Württemberg',
+				gemeldet_am: '2026-11-12T10:00:00.000Z',
+				aktenzeichen: 'DP-123'
+			}
+		};
+		expect(noticeHead(record as never, 'Muster GmbH', 'de')).toEqual([
+			{ label: 'An', value: 'LfDI Baden-Württemberg' },
+			{ label: 'Verantwortlicher', value: 'Muster GmbH' },
+			{ label: 'Datum', value: '12.11.2026' },
+			{ label: 'Aktenzeichen', value: 'DP-123' },
+			{ label: 'Betreff', value: 'USB-Stick verloren' }
+		]);
+		const draft = noticeHead({ title: 'X', data: {} } as never, null, 'de');
+		expect(draft.map((row) => row.label)).toEqual(['Datum', 'Betreff']);
 	});
 });

@@ -10,11 +10,13 @@ import AuditPrint from './auditbericht/AuditPrint.svelte';
 import { auditHead } from './auditbericht/print.js';
 import { accessHead, accessReady } from './betroffenenanfrage/print.js';
 import BreachPrint from './datenpanne/BreachPrint.svelte';
+import { noticeHead } from './datenpanne/print.js';
 import DsfaPrint from './dsfa/DsfaPrint.svelte';
 import PolicyPrint from './ki-nutzungsrichtlinie/PolicyPrint.svelte';
 import { policyHead } from './ki-nutzungsrichtlinie/print.js';
 import { dsfaHead } from './dsfa/print.js';
 import IncidentPrint from './vorfallmeldung/IncidentPrint.svelte';
+import { incidentHead } from './vorfallmeldung/print.js';
 import type { Answers, ToolManifest } from './types.js';
 import VvtPrint from './vvt/VvtPrint.svelte';
 
@@ -77,13 +79,21 @@ export const entryPrints: Partial<
 		when: (record) => accessReady(record.data),
 		letter: (record, organisation) => accessHead(record.data, organisation)
 	},
-	datenpanne: { kind: m.print_kind_breach, component: BreachPrint },
+	datenpanne: {
+		kind: m.print_kind_breach,
+		component: BreachPrint,
+		letter: (record, organisation) => noticeHead(record, organisation, getLocale())
+	},
 	dsfa: {
 		kind: m.print_kind_dsfa,
 		component: DsfaPrint,
 		letter: (record, organisation) => dsfaHead(record, organisation, getLocale())
 	},
-	vorfallmeldung: { kind: m.print_kind_incident, component: IncidentPrint }
+	vorfallmeldung: {
+		kind: m.print_kind_incident,
+		component: IncidentPrint,
+		letter: (record, organisation) => incidentHead(record, organisation, getLocale())
+	}
 };
 
 /** what a questionnaire result printed as a document of its own gets */

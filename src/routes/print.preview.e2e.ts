@@ -261,6 +261,13 @@ test('print: a data breach prints as a notification under Art. 33 DSGVO', async 
 	const letters = (await notice.locator('.letter').allTextContents()).filter((l) => l.trim());
 	expect(letters).toEqual(['a)', 'a)', 'a)', 'b)', 'c)', 'c)', 'd)']);
 	await expect(notice).toContainText('fehlt');
+	// a letter to the supervisory authority carries none of Daily's internal lines
+	const head = page.locator('[data-print-frame]');
+	await expect(head).toContainText('Betreff');
+	await expect(head).toContainText('Fehlversand Gehaltsabrechnung');
+	for (const internal of ['Daily', 'Werkzeug', 'Juristische Prüfung', 'Keine Rechtsberatung']) {
+		await expect(head).not.toContainText(internal);
+	}
 });
 
 test('print: an AI incident prints as a report under Art. 73 KI-VO', async ({ page }) => {
@@ -275,6 +282,11 @@ test('print: an AI incident prints as a report under Art. 73 KI-VO', async ({ pa
 	const report = page.locator('.print-parts');
 	await expect(report).toContainText('15 Tage (Art. 73 Abs. 2)');
 	await expect(report).toContainText('Untersuchung und Korrektur (Art. 73 Abs. 6)');
+	const head = page.locator('[data-print-frame]');
+	await expect(head).toContainText('Betreff');
+	for (const internal of ['Daily', 'Werkzeug', 'Juristische Prüfung', 'Keine Rechtsberatung']) {
+		await expect(head).not.toContainText(internal);
+	}
 });
 
 test('print: an answered access request prints as the reply under Art. 15 DSGVO', async ({

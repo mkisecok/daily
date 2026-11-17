@@ -1,3 +1,4 @@
+import type { PrintRow as HeadRow } from '../../print/meta.js';
 import type { PrintPart, PrintRow } from '../../print/parts.js';
 import { daysAfterDay } from '../../records/deadlines.js';
 import { formatValue } from '../../records/format.js';
@@ -5,10 +6,29 @@ import type { RecordData, StoredRecord } from '../../records/types.js';
 import { fieldById } from '../../records/validate.js';
 import { text } from '../i18n.js';
 import type { Localized } from '../types.js';
+import { letterHead } from '../datenpanne/print.js';
 import { definition } from './definition.js';
 import { PARAGRAPH, reportingDays } from './engine.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
+
+const SENDER: Record<string, Localized> = {
+	anbieter: L('Anbieter', 'Provider'),
+	betreiber: L('Betreiber', 'Deployer')
+};
+
+/**
+ * the head of the report as a letter to the market surveillance authority,
+ * with the organisation under the role it reports in
+ */
+export function incidentHead(
+	record: StoredRecord,
+	organisation: string | null | undefined,
+	locale: string
+): HeadRow[] {
+	const role = typeof record.data.rolle === 'string' ? record.data.rolle : '';
+	return letterHead(record, organisation, locale, SENDER[role] ?? L('Absender', 'Sender'));
+}
 
 /**
  * a serious incident as the market surveillance authority asks for it under
