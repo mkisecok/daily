@@ -213,7 +213,7 @@
 	<section class="card table-card no-print">
 		<h2><Icon name="list-details" size={18} />{m.dsfa_dash_table()}</h2>
 		<div class="scroll">
-			<table>
+			<table class="daily-table compact">
 				<thead>
 					<tr>
 						<th>#</th>
@@ -290,7 +290,7 @@
 				{#if comparison.needTooLow}{m.dsfa_tom_need_low()}{/if}
 			</p>
 			<div class="scroll">
-				<table>
+				<table class="daily-table compact">
 					<thead>
 						<tr>
 							<th>{m.dsfa_tom_col_goal()}</th>
@@ -580,38 +580,6 @@
 	}
 
 	table {
-		width: 100%;
-		font-size: 14px;
-		border-collapse: collapse;
-
-		& thead th {
-			padding: 0.5rem 0.65rem;
-			font-size: 12px;
-			font-weight: 600;
-			color: var(--ink3);
-			text-align: left;
-			text-transform: uppercase;
-			letter-spacing: 0.04em;
-			white-space: nowrap;
-			border-bottom: 1px solid var(--rule);
-		}
-
-		& td,
-		& tbody th {
-			padding: 0.7rem 0.65rem;
-			vertical-align: middle;
-			text-align: left;
-			border-bottom: 1px solid var(--rule2);
-		}
-
-		& tbody th {
-			font-weight: 600;
-		}
-
-		& tbody tr:last-child > * {
-			border-bottom: 0;
-		}
-
 		& .rating {
 			font-family: var(--mono);
 			font-size: 13px;

@@ -89,7 +89,7 @@
 	6(1)(b) GDPR, for language and colour scheme on Art. 6(1)(f) GDPR.
 </p>
 <div class="table">
-	<table>
+	<table class="daily-table flush">
 		<thead>
 			<tr><th>Name</th><th>Purpose</th><th>Duration</th></tr>
 		</thead>

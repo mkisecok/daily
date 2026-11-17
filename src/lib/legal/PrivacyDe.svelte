@@ -95,7 +95,7 @@
 	Farbschema auf Art. 6 Abs. 1 lit. f DSGVO.
 </p>
 <div class="table">
-	<table>
+	<table class="daily-table flush">
 		<thead>
 			<tr><th>Name</th><th>Zweck</th><th>Dauer</th></tr>
 		</thead>

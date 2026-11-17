@@ -89,7 +89,7 @@
 		{#if data.runs.length === 0}
 			<p class="empty">{m.tool_runs_empty()}</p>
 		{:else}
-			<table>
+			<table class="daily-table flush">
 				<thead>
 					<tr>
 						<th>{m.col_date()}</th>
@@ -148,28 +148,10 @@
 		}
 
 		& table {
-			width: 100%;
 			margin-top: 0.75rem;
-			border-collapse: collapse;
-			font-size: 14px;
-
-			& th {
-				padding: 0.4rem 1rem 0.4rem 0;
-				font-size: 12px;
-				font-weight: 600;
-				text-align: left;
-				color: var(--ink3);
-				border-bottom: 1px solid var(--rule2);
-			}
 
 			& td {
-				padding: 0.7rem 1rem 0.7rem 0;
 				font-variant-numeric: tabular-nums;
-				border-bottom: 1px solid var(--rule2);
-			}
-
-			& tr:last-child td {
-				border-bottom: 0;
 			}
 
 			& .result {
