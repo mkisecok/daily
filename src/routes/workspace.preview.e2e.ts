@@ -163,6 +163,34 @@ test('preview: dialogs and floating lists share one frame', async ({ page }) => 
 	expect(confirmDim).toBe(paletteDim);
 });
 
+test('preview: a tool reads the same on its page and its register, with one badge size', async ({
+	page
+}) => {
+	const meta = async (path: string) => {
+		await page.goto(path, { waitUntil: 'networkidle' });
+		return page.evaluate(() => ({
+			chips: [...document.querySelectorAll('main .basis .chip')].map((chip) =>
+				chip.textContent?.trim()
+			),
+			area: document.querySelector('main .tool-meta .category')?.textContent?.trim(),
+			badges: [
+				...new Set(
+					[...document.querySelectorAll('main .badge:not(.num)')].map(
+						(badge) => getComputedStyle(badge).fontSize
+					)
+				)
+			]
+		}));
+	};
+	const tool = await meta('werkzeuge/vvt/');
+	const register = await meta('werkzeuge/vvt/eintraege/');
+	expect(tool.chips.length).toBeGreaterThan(0);
+	expect(register.chips).toEqual(tool.chips);
+	expect(register.area).toBe(tool.area);
+	const catalogue = await meta('werkzeuge/');
+	expect([...new Set([...tool.badges, ...catalogue.badges])]).toEqual(['12px']);
+});
+
 test('preview: a chosen chip stays distinguishable in forced colours', async ({ page }) => {
 	await page.emulateMedia({ forcedColors: 'active' });
 	await page.goto('werkzeuge/datenpanne/eintraege/?neu=1');

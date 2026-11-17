@@ -731,10 +731,6 @@
 			margin-top: 0.1rem;
 			font-size: 12px;
 			color: var(--ink3);
-
-			& :global(.badge) {
-				font-size: 10.5px;
-			}
 		}
 
 		&:hover {

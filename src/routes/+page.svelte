@@ -82,7 +82,7 @@
 	{#snippet meta()}
 		<p class="today">
 			<time datetime={data.today.slice(0, 10)}>{formatLongDate(data.today, data.locale)}</time>
-			<span class="badge">{m.dateline_issue({ n: String(data.issue) })}</span>
+			<span class="badge num">{m.dateline_issue({ n: String(data.issue) })}</span>
 			<span class="status">{m.landing_status()}</span>
 		</p>
 	{/snippet}
@@ -128,10 +128,6 @@
 		& time {
 			font-family: var(--serif);
 			font-size: 15px;
-		}
-
-		& .badge {
-			font-family: var(--mono);
 		}
 
 		& .status {

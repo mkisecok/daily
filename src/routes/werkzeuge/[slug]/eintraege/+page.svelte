@@ -30,8 +30,7 @@
 	import { formatShortDate, formatTime } from '#lib/i18n/date.js';
 	import { text } from '#lib/tools/i18n.js';
 	import { getRecordTool } from '#lib/tools/registry.js';
-	import Citation from '#lib/tools/_shared/Citation.svelte';
-	import StatusBadge from '#lib/tools/_shared/StatusBadge.svelte';
+	import ToolMeta from '#lib/tools/_shared/ToolMeta.svelte';
 	import Verdict from '#lib/tools/_shared/Verdict.svelte';
 	import { recordDashboards } from '#lib/tools/dashboards.js';
 	import { alsoPrints, entryPrints, registerPrints } from '#lib/tools/prints.js';
@@ -280,13 +279,7 @@
 </svelte:head>
 
 {#snippet toolMeta()}
-	<p class="tool-meta">
-		<StatusBadge status={data.tool.status} />
-		{#each data.tool.legalBasis as basis (basis.law + basis.ref)}
-			<span class="sep" aria-hidden="true">·</span>
-			<Citation {basis} />
-		{/each}
-	</p>
+	<ToolMeta tool={data.tool} />
 {/snippet}
 
 {#snippet listActions()}
@@ -675,18 +668,6 @@
 {/if}
 
 <style>
-	.tool-meta {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: baseline;
-		gap: 0.6rem;
-		margin-top: 0.75rem;
-
-		& .sep {
-			color: var(--ink3);
-		}
-	}
-
 	/* soft navy info cards: the preview notice and status messages */
 	.local,
 	.message {
