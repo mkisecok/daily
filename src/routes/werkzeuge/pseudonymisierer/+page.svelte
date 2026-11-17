@@ -63,6 +63,11 @@
 		SEXUAL_ORIENT: m.anon_type_sexual,
 		CUSTOM: m.anon_type_custom
 	};
+	const GROUP_CHIP: Record<(typeof RULE_GROUPS)[number]['id'], () => string> = {
+		standard: m.anon_chip_standard,
+		financial: m.anon_chip_financial,
+		art9: m.anon_chip_art9
+	};
 	const GROUP_TITLE: Record<(typeof RULE_GROUPS)[number]['id'], () => string> = {
 		standard: m.anon_group_standard,
 		financial: m.anon_group_financial,
@@ -118,6 +123,51 @@
 	const typeItems = $derived(
 		TOKEN_TYPES.map((type) => ({ value: type, label: TYPE_LABEL[type]() }))
 	);
+
+	const STANDARD = RULE_KEYS.filter((key) => !DEFAULT_OFF.has(key));
+	/** strict switches every rule on, standard all but the ones a normal run leaves off */
+	const level = $derived(
+		active.size === RULE_KEYS.length
+			? 'strict'
+			: active.size === STANDARD.length && STANDARD.every((key) => active.has(key))
+				? 'standard'
+				: 'custom'
+	);
+
+	function setLevel(next: 'standard' | 'strict') {
+		active.clear();
+		for (const key of next === 'strict' ? RULE_KEYS : STANDARD) active.add(key);
+	}
+
+	/**
+	 * a group counts as on when its everyday rules are; the rules a standard run
+	 * leaves off (every date) follow the level, not the group chip
+	 */
+	const everyday = (keys: readonly RuleKey[]) => keys.filter((key) => !DEFAULT_OFF.has(key));
+	const groupOn = (keys: readonly RuleKey[]) => everyday(keys).every((key) => active.has(key));
+
+	/** a group chip switches its rules together: all off when they were on, else on */
+	function toggleGroup(keys: readonly RuleKey[]) {
+		if (groupOn(keys)) {
+			for (const key of keys) active.delete(key);
+		} else {
+			for (const key of everyday(keys)) active.add(key);
+		}
+	}
+
+	/** replaced values a group's rules found, counted once each */
+	const groupCount = (keys: readonly RuleKey[]) =>
+		run.findings.filter((finding) => finding.ruleKey && keys.includes(finding.ruleKey)).length;
+
+	let marked = $state<HTMLElement | null>(null);
+
+	/** a selection inside the highlighted text becomes the value to mark */
+	function takeMarkedSelection() {
+		const selection = document.getSelection();
+		if (!marked || !selection?.anchorNode || !marked.contains(selection.anchorNode)) return;
+		const selected = selection.toString().trim();
+		if (selected && selected.length <= 120) manualValue = selected;
+	}
 
 	function toggle(value: string) {
 		if (mutedValues.has(value)) mutedValues.delete(value);
@@ -207,6 +257,8 @@
 	}
 </script>
 
+<svelte:document onselectionchange={takeMarkedSelection} />
+
 <svelte:head>
 	<title>{text(data.tool.name)} — Daily</title>
 	<meta name="description" content={text(data.tool.summary)} />
@@ -230,146 +282,179 @@
 	<textarea id="anon-source" rows="10" bind:value={source} onselect={takeSelection}></textarea>
 </section>
 
-<div class="work">
-	<section class="card rules" aria-labelledby="anon-rules">
-		<h2 id="anon-rules">{m.anon_rules()}</h2>
-		{#each RULE_GROUPS as group (group.id)}
-			<fieldset data-art9={group.art9 || undefined}>
-				<legend>{GROUP_TITLE[group.id]()}</legend>
-				{#each group.keys as key (key)}
-					<Switch
-						id="rule-{key}"
-						bind:checked={
-							() => active.has(key), (on) => (on ? active.add(key) : active.delete(key))
-						}>{RULE_LABEL[key]()}</Switch
-					>
-				{/each}
-			</fieldset>
-		{/each}
-	</section>
-
-	<div class="results">
-		{#if source.trim()}
-			<section class="card" aria-labelledby="anon-marked">
-				<h2 id="anon-marked">{m.anon_marked()}</h2>
-				<p class="hint">{m.anon_marked_hint()}</p>
-				<p class="marked">
-					{#each segments as segment, index (index)}
-						{#if segment.span}
-							<button
-								type="button"
-								class="mark"
-								data-tier={TOKEN_TIER[segment.span.type]}
-								aria-pressed={!segment.span.muted}
-								title={segment.span.muted ? undefined : segment.span.replacement}
-								onclick={() => toggle(segment.text)}>{segment.text}</button
-							>
-						{:else}{segment.text}{/if}
-					{/each}
-				</p>
-			</section>
-		{/if}
-
-		<section class="card" aria-labelledby="anon-findings">
-			<h2 id="anon-findings">{m.anon_findings()}</h2>
-			{#if rows.length === 0}
-				<p class="hint">{m.anon_findings_empty()}</p>
-			{/if}
-			{#each groups as group (group.tier)}
-				<h3 class="tier" data-tier={group.tier}>{TIER_TITLE[group.tier]()}</h3>
-				<ul class="findings">
-					{#each group.rows as row (row.original)}
-						{@const id = `finding-${rows.indexOf(row)}`}
-						<li data-tier={group.tier} data-muted={row.muted || undefined}>
-							<span class="value">
-								<Switch id="{id}-on" bind:checked={() => !row.muted, () => toggle(row.original)}
-									>{row.original}</Switch
-								>
-							</span>
-							<code class="token">{row.muted ? '—' : row.replacement}</code>
-							<span class="category">
-								<label class="hidden-label" for="{id}-type"
-									>{m.anon_category({ value: row.original })}</label
-								>
-								<Select
-									id="{id}-type"
-									required
-									items={typeItems}
-									placeholder={m.anon_manual_type()}
-									bind:value={() => row.type, (type) => retype(row, type as TokenType)}
-								/>
-							</span>
-							<span class="badges">
-								{#if !row.confident}<span class="badge wax">{m.anon_unconfirmed()}</span>{/if}
-								{#if row.manual}
-									<span class="badge">{m.anon_by_hand()}</span>
-									<button
-										type="button"
-										class="button ghost"
-										onclick={() => manualMarks.delete(row.original)}>{m.anon_unmark()}</button
-									>
-								{/if}
-							</span>
-						</li>
-					{/each}
-				</ul>
+<section class="card detection" aria-labelledby="anon-rules">
+	<h2 id="anon-rules">{m.anon_rules()}</h2>
+	<div class="bar">
+		<div class="levels" role="group" aria-label={m.anon_level()}>
+			<button
+				type="button"
+				class="daily-chip"
+				aria-pressed={level === 'standard'}
+				onclick={() => setLevel('standard')}>{m.anon_level_standard()}</button
+			>
+			<button
+				type="button"
+				class="daily-chip"
+				aria-pressed={level === 'strict'}
+				onclick={() => setLevel('strict')}>{m.anon_level_strict()}</button
+			>
+			{#if level === 'custom'}<span class="custom">{m.anon_level_custom()}</span>{/if}
+		</div>
+		<div class="groups" role="group" aria-label={m.anon_groups()}>
+			{#each RULE_GROUPS as group (group.id)}
+				<button
+					type="button"
+					class="daily-chip"
+					data-art9={group.art9 || undefined}
+					aria-pressed={groupOn(group.keys)}
+					onclick={() => toggleGroup(group.keys)}
+					>{GROUP_CHIP[group.id]()}
+					<span class="badge num">{groupCount(group.keys)}</span></button
+				>
 			{/each}
+		</div>
+	</div>
+	<p class="hint">
+		{level === 'strict' ? m.anon_level_strict_hint() : m.anon_level_standard_hint()}
+	</p>
+	<details class="single">
+		<summary>{m.anon_rules_single()}</summary>
+		<div class="rule-groups">
+			{#each RULE_GROUPS as group (group.id)}
+				<fieldset data-art9={group.art9 || undefined}>
+					<legend>{GROUP_TITLE[group.id]()}</legend>
+					{#each group.keys as key (key)}
+						<Switch
+							id="rule-{key}"
+							bind:checked={
+								() => active.has(key), (on) => (on ? active.add(key) : active.delete(key))
+							}>{RULE_LABEL[key]()}</Switch
+						>
+					{/each}
+				</fieldset>
+			{/each}
+		</div>
+	</details>
+</section>
 
-			{#if suggestions.length > 0}
-				<h3 class="manual-title">{m.anon_suggestions()}</h3>
-				<p class="hint">{m.anon_suggestions_hint()}</p>
-				<ul class="suggestions">
-					{#each suggestions as suggestion (suggestion.value)}
-						<li>
-							<span class="value">{suggestion.value}</span>
-							<span class="reason"
-								>{suggestion.reason === 'email'
-									? m.anon_suggestion_email()
-									: m.anon_suggestion_first_name()} · {suggestion.count}×</span
-							>
+{#if source.trim()}
+	<section class="card" aria-labelledby="anon-marked">
+		<h2 id="anon-marked">{m.anon_marked()}</h2>
+		<p class="hint">{m.anon_marked_hint()}</p>
+		<!-- a selection here fills the field below, as one in the source text does -->
+		<p class="marked" bind:this={marked}>
+			{#each segments as segment, index (index)}
+				{#if segment.span}
+					<button
+						type="button"
+						class="mark"
+						data-tier={TOKEN_TIER[segment.span.type]}
+						aria-pressed={!segment.span.muted}
+						title={segment.span.muted ? undefined : segment.span.replacement}
+						onclick={() => toggle(segment.text)}>{segment.text}</button
+					>
+				{:else}{segment.text}{/if}
+			{/each}
+		</p>
+
+		<h3 class="manual-title">{m.anon_manual()}</h3>
+		<form
+			class="manual"
+			onsubmit={(event) => {
+				event.preventDefault();
+				mark();
+			}}
+		>
+			<label>
+				<span class="daily-label field-label">{m.anon_manual_value()}</span>
+				<input type="text" bind:value={manualValue} aria-describedby="anon-manual-hint" />
+			</label>
+			<span class="manual-type">
+				<label class="daily-label field-label" for="anon-manual-type">{m.anon_manual_type()}</label>
+				<Select
+					id="anon-manual-type"
+					required
+					items={typeItems}
+					placeholder={m.anon_manual_type()}
+					bind:value={() => manualType, (type) => (manualType = type as TokenType)}
+				/>
+			</span>
+			<button type="submit" class="button" disabled={!manualValue.trim()}>
+				{m.anon_manual_add()}
+			</button>
+			<p id="anon-manual-hint" class="hint">{m.anon_manual_hint()}</p>
+		</form>
+	</section>
+{/if}
+
+<section class="card" aria-labelledby="anon-findings">
+	<h2 id="anon-findings">{m.anon_findings()}</h2>
+	{#if rows.length === 0}
+		<p class="hint">{m.anon_findings_empty()}</p>
+	{/if}
+	{#each groups as group (group.tier)}
+		<h3 class="tier" data-tier={group.tier}>{TIER_TITLE[group.tier]()}</h3>
+		<ul class="findings">
+			{#each group.rows as row (row.original)}
+				{@const id = `finding-${rows.indexOf(row)}`}
+				<li data-tier={group.tier} data-muted={row.muted || undefined}>
+					<span class="value">
+						<Switch id="{id}-on" bind:checked={() => !row.muted, () => toggle(row.original)}
+							>{row.original}</Switch
+						>
+					</span>
+					<code class="token">{row.muted ? '—' : row.replacement}</code>
+					<span class="category">
+						<label class="hidden-label" for="{id}-type"
+							>{m.anon_category({ value: row.original })}</label
+						>
+						<Select
+							id="{id}-type"
+							required
+							items={typeItems}
+							placeholder={m.anon_manual_type()}
+							bind:value={() => row.type, (type) => retype(row, type as TokenType)}
+						/>
+					</span>
+					<span class="badges">
+						{#if !row.confident}<span class="badge wax">{m.anon_unconfirmed()}</span>{/if}
+						{#if row.manual}
+							<span class="badge">{m.anon_by_hand()}</span>
 							<button
 								type="button"
 								class="button ghost"
-								onclick={() => manualMarks.set(suggestion.value, 'NAME')}
-								>{m.anon_suggestion_take()}</button
+								onclick={() => manualMarks.delete(row.original)}>{m.anon_unmark()}</button
 							>
-						</li>
-					{/each}
-				</ul>
-			{/if}
+						{/if}
+					</span>
+				</li>
+			{/each}
+		</ul>
+	{/each}
 
-			<h3 class="manual-title">{m.anon_manual()}</h3>
-			<form
-				class="manual"
-				onsubmit={(event) => {
-					event.preventDefault();
-					mark();
-				}}
-			>
-				<label>
-					<span class="daily-label field-label">{m.anon_manual_value()}</span>
-					<input type="text" bind:value={manualValue} aria-describedby="anon-manual-hint" />
-				</label>
-				<span class="manual-type">
-					<label class="daily-label field-label" for="anon-manual-type"
-						>{m.anon_manual_type()}</label
+	{#if suggestions.length > 0}
+		<h3 class="manual-title">{m.anon_suggestions()}</h3>
+		<p class="hint">{m.anon_suggestions_hint()}</p>
+		<ul class="suggestions">
+			{#each suggestions as suggestion (suggestion.value)}
+				<li>
+					<span class="value">{suggestion.value}</span>
+					<span class="reason"
+						>{suggestion.reason === 'email'
+							? m.anon_suggestion_email()
+							: m.anon_suggestion_first_name()} · {suggestion.count}×</span
 					>
-					<Select
-						id="anon-manual-type"
-						required
-						items={typeItems}
-						placeholder={m.anon_manual_type()}
-						bind:value={() => manualType, (type) => (manualType = type as TokenType)}
-					/>
-				</span>
-				<button type="submit" class="button" disabled={!manualValue.trim()}>
-					{m.anon_manual_add()}
-				</button>
-				<p id="anon-manual-hint" class="hint">{m.anon_manual_hint()}</p>
-			</form>
-		</section>
-	</div>
-</div>
+					<button
+						type="button"
+						class="button ghost"
+						onclick={() => manualMarks.set(suggestion.value, 'NAME')}
+						>{m.anon_suggestion_take()}</button
+					>
+				</li>
+			{/each}
+		</ul>
+	{/if}
+</section>
 
 <section class="card io">
 	<label class="daily-label field-label" for="anon-output">{m.anon_output()}</label>
@@ -499,29 +584,49 @@
 		white-space: nowrap;
 	}
 
-	/* rules beside the results on wide screens, above them otherwise */
-	.work {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr);
-		gap: 0 1rem;
-		align-items: start;
-
-		@media (min-width: 80rem) {
-			grid-template-columns: minmax(14rem, 17rem) minmax(0, 1fr);
-		}
-	}
-
-	.rules {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
-		gap: 0 1.5rem;
-
-		@media (min-width: 80rem) {
-			grid-template-columns: minmax(0, 1fr);
+	/* level and groups in one bar; the single rules fold away below */
+	.detection {
+		& .bar {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 0.75rem 1.5rem;
+			margin: 0.25rem 0 0.6rem;
 		}
 
-		& h2 {
-			grid-column: 1 / -1;
+		& .levels,
+		& .groups {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 0.4rem;
+		}
+
+		& .custom {
+			font-size: 13px;
+			color: var(--ink3);
+		}
+
+		& .groups .badge {
+			margin-left: 0.15rem;
+		}
+
+		& .hint {
+			margin-bottom: 0.5rem;
+		}
+
+		& summary {
+			width: fit-content;
+			font-size: 14px;
+			font-weight: 500;
+			color: var(--navy);
+			cursor: pointer;
+		}
+
+		& .rule-groups {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+			gap: 0 1.5rem;
 		}
 
 		& fieldset {
