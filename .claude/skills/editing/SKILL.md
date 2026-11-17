@@ -12,7 +12,7 @@ user-invocable: true
   - no trailing period on fragments (headers, bullets that aren't full sentences, single-noun phrases): `- open /maplibre?debug` not `- open /maplibre?debug.`
   - A full-sentence bullet starts with a capital letter and ends with a period.
   - no space between number and unit: `30s` not `30 s`
-- Never use `any` or `unknown`: fix the actual issue.
+- Never use `any`: fix the actual issue. Use `unknown` only where data arrives untyped (parsed JSON, a request body, a file) and narrow it before use.
 - Never use a lint or TypeScript directive (`eslint-disable`, `oxlint-disable`, `svelte-ignore`, `@ts-ignore`, `@ts-expect-error`, `@ts-nocheck`) to silence a real defect, except as allowed below: fix the actual issue. If code is unused, delete it or wire it up. A directive is allowed only when:
   - the user asks for it
   - a specific constraint requires the code as written (a `Map` that must not be reactive)
@@ -26,13 +26,13 @@ user-invocable: true
 - `.svelte` or `.svelte.ts/.svelte.js` files: ALWAYS invoke `svelte:svelte-code-writer` skill BEFORE writing or editing. No exceptions.
 - `.svelte`, `.svelte.ts`, `.svelte.js` files: ALWAYS run the Svelte autofixer (`mcp__plugin_svelte_svelte__svelte-autofixer`) after editing to validate Svelte 5 correctness.
 - When user says "test first" or "write failing test": write the test, run it, confirm it FAILS, only then implement the fix. Never apply both in the same pass.
-- **Don't export types without checking if any consumer imports them.** Run knip via `pnpm lint:file` to catch unused exports (see [SETUP.md](https://github.com/fubits1/svelte-skills/blob/main/SETUP.md)). If it's only used internally, keep it private.
+- **Don't export types without checking if any consumer imports them.** Grep for importers first (this project has no knip). If it's only used internally, keep it private.
 - **Before writing a config override**, check what it overrides. If per-item value equals the inherited default, the override does nothing: don't write it.
 - **Markdown files:** after writing or editing any `.md` file, run `pnpm exec markdownlint <file>` (`pnpm dlx markdownlint-cli <file>` if it isn't installed) and fix all errors before declaring done.
 - **Visual refactors (CSS, inline styles, class: directives, layout changes):** Follow this workflow BEFORE editing:
-  1. Ensure a Storybook story exists for the component. If not, write one first.
-  2. Open the story in the browser via Playwright MCP and take a BEFORE screenshot (`/tmp/before-<component>.png`).
+  1. Find a page that renders the component (this project has no Storybook).
+  2. Open it in the browser and take a BEFORE screenshot.
   3. Apply the refactor.
-  4. Take an AFTER screenshot (`/tmp/after-<component>.png`).
+  4. Take an AFTER screenshot of the same page.
   5. Compare visually. If anything shifted, fix it before declaring done.
-     If changes are already applied without a before screenshot: `git stash`, screenshot, `git stash pop`, screenshot, compare.
+     If changes are already applied without a before screenshot: commit them as a temporary WIP commit, check out the parent, screenshot, return to the WIP commit, screenshot, compare. Not `git stash`: worktrees share one stash stack.

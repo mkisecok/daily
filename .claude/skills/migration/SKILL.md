@@ -40,7 +40,8 @@ Do NOT assume version numbers (.nvmrc, TypeScript, etc.), which config blocks to
 ### 3a: Restore Pre-Upgrade State (if deps already changed)
 
 ```bash
-git stash
+git commit -am "wip: upgraded deps"   # not git stash: worktrees share one stash stack
+git checkout HEAD~1 -- package.json pnpm-lock.yaml
 pnpm install
 # verify project builds with OLD deps
 ```
@@ -56,7 +57,7 @@ pnpm install
 ### 3c: Restore Upgraded State
 
 ```bash
-git stash pop
+git checkout HEAD -- package.json pnpm-lock.yaml
 pnpm install
 ```
 
@@ -72,7 +73,7 @@ Run new tests, they must pass on current state BEFORE any migration edits.
 
 ## Phase 5: Make Changes
 
-Per `validate`: edit ONE file, validate (build + lint + type-check), confirm 0 new errors, then next file. Never batch edits without validating between them.
+Per `validate`: make one coherent change, validate it (build, lint, type-check), confirm 0 new errors, then make the next.
 
 ## Phase 6: Post-Migration Verification
 
@@ -98,12 +99,10 @@ Not optional during migration:
 
 ## Anti-Patterns
 
-These are real failures from an actual migration attempt:
-
 | Failure                                        | Why It's Wrong                                                        |
 | ---------------------------------------------- | --------------------------------------------------------------------- |
 | Taking "before" baselines after deps upgraded  | Baselines reflect post-upgrade state, comparison is meaningless      |
-| Assuming version numbers instead of asking     | User wanted Node 24, not 22. ASK.                                     |
+| Assuming version numbers instead of asking     | The version is the user's choice: ask                                 |
 | "Run build and check browser" as verification  | Proves nothing about regressions without baselines to compare against |
 | Not using sitemap as route source of truth     | Guessing at routes misses pages                                       |
 | Not writing new tests before migration         | If existing tests don't cover all routes, regressions slip through    |
@@ -111,60 +110,3 @@ These are real failures from an actual migration attempt:
 | Skipping section measurements                  | Screenshots alone prove nothing per pixel-perfect                     |
 | Not checking `git status` first                | Led to worthless baselines                                            |
 
-## Reference: Example Plan (Astro 5 to 6)
-
-```markdown
-# Astro 6 Migration Plan
-
-**Current state (from `git diff package.json`):**
-
-- package.json is MODIFIED but NOT committed
-- Old (committed): Astro 5.17.3, TS 5.9.3, Svelte 5.53, vite-plugin-svelte 6.2.4
-- New (working tree): Astro 6.1.2, TS 6.0.2, Svelte 5.55.1, vite-plugin-svelte 7.0.0
-- pnpm-lock.yaml also modified
-
-**Implication:** Baselines MUST be captured after git stash restores old deps.
-
-### Task 0: Restore old deps for baseline capture
-
-- [ ] git stash (save upgraded package.json + lockfile)
-- [ ] pnpm install (restore old lockfile)
-- [ ] pnpm astro build — verify project builds with old deps
-
-### Task 1: Capture baselines on OLD deps
-
-- [ ] Build: save full log, record exact page count
-- [ ] Sitemap: copy all XML files, extract every <loc> URL to flat list
-- [ ] Screenshots: every sitemap URL via Playwright, assert no console errors
-- [ ] Sections: measure every visible section via getBoundingClientRect(), save JSON
-- [ ] Tests: run existing tests, save output, record pass/fail counts
-
-### Task 2: Restore upgraded deps
-
-- [ ] git stash pop
-- [ ] pnpm install
-- [ ] pnpm astro build (verify still works)
-
-### Task 3: Write regression tests BEFORE code changes
-
-- [ ] tests/routes.spec.ts — sitemap-driven, every URL, assert loads with content
-- [ ] tests/sections.spec.ts — homepage sections + detail pages (DE+EN)
-- [ ] Run all tests — must pass before any migration edits
-
-### Task 4-7: Code changes (one file, validate after each)
-
-- .nvmrc: update version (ASK which — don't assume)
-- content.config.ts: z import from astro:content → astro/zod
-- content.config.ts: deprecated Zod validators → Zod 4 equivalents
-- astro.config.mjs: remove stale config blocks (ASK which — don't assume)
-
-### Task 8: Post-migration verification
-
-- [ ] Build: page count matches baseline exactly
-- [ ] Sitemap diff: identical to baseline URL list
-- [ ] All tests pass (old + new)
-- [ ] Screenshot every route, compare to baseline
-- [ ] Measure sections, compare to baseline (0px diff required)
-- [ ] Full validation (lint, type-check, svelte-check) exits 0
-- [ ] Report with proof: exit codes, page counts, sitemap diff, test results, measurement table
-```
