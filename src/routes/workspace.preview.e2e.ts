@@ -80,6 +80,8 @@ test('preview: a date field lines up with the fields beside it', async ({ page }
 test('preview: a button stands as tall as the field beside it', async ({ page }) => {
 	await page.setViewportSize({ width: 1280, height: 900 });
 	await page.goto('werkzeuge/pseudonymisierer/', { waitUntil: 'networkidle' });
+	// the marking row sits under the highlighted text, which needs a text
+	await page.getByRole('button', { name: 'Beispieltext' }).click();
 	const row = page.locator('form.manual');
 	const height = async (locator: ReturnType<typeof row.locator>) =>
 		Math.round((await locator.boundingBox())!.height);

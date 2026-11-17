@@ -32,6 +32,53 @@ test('preview: the Pseudonymisierer replaces personal data and restores the repl
 	);
 });
 
+test('preview: levels and group chips switch the rules, and a selection in the text is marked', async ({
+	page
+}) => {
+	await page.goto('werkzeuge/pseudonymisierer/', { waitUntil: 'networkidle' });
+	const source = page.getByLabel('Text', { exact: true });
+	await source.fill(
+		'Vertrag vom 03.04.2024 mit Svenja Hoffmann, Steuer-ID 86095742719. Projekt Nordlicht.'
+	);
+	const output = page.getByRole('textbox', { name: 'Pseudonymisierter Text' });
+	await expect(output).toHaveValue(
+		'Vertrag vom 03.04.2024 mit «NAME_1», Steuer-ID «NUMBER_1». Projekt Nordlicht.'
+	);
+
+	// strict replaces every date as well
+	await page.getByRole('button', { name: 'Streng' }).click();
+	await expect(output).toHaveValue(
+		'Vertrag vom «DATE_1» mit «NAME_1», Steuer-ID «NUMBER_1». Projekt Nordlicht.'
+	);
+
+	// a group chip switches its rules together and shows how much it found
+	const numbers = page
+		.getByRole('group', { name: 'Gruppen' })
+		.getByRole('button', { name: /Kenn- und Finanznummern/ });
+	await expect(numbers).toContainText('1');
+	await numbers.click();
+	await expect(numbers).toHaveAttribute('aria-pressed', 'false');
+	await expect(page.locator('.custom')).toHaveText('Angepasst');
+	// the number rules are off; the phone rule still catches eleven digits
+	await expect(output).not.toHaveValue(/NUMBER_1/);
+
+	// selecting a word in the highlighted text fills the marking row
+	await page.locator('.marked').evaluate((marked) => {
+		const node = [...marked.childNodes].find(
+			(n) => n.nodeType === 3 && n.textContent?.includes('Nordlicht')
+		)!;
+		const start = node.textContent!.indexOf('Nordlicht');
+		const range = document.createRange();
+		range.setStart(node, start);
+		range.setEnd(node, start + 'Nordlicht'.length);
+		document.getSelection()!.removeAllRanges();
+		document.getSelection()!.addRange(range);
+	});
+	await expect(page.getByLabel('Text, der ersetzt werden soll')).toHaveValue('Nordlicht');
+	await page.getByRole('button', { name: 'Markieren' }).click();
+	await expect(output).toHaveValue(/Projekt «NAME_2»\.$/);
+});
+
 test('preview: the old Anonymisierer address forwards to the Pseudonymisierer', async ({
 	page
 }) => {
