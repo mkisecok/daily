@@ -1,5 +1,5 @@
 // ported from mkisecok/dataGuard (MIT)
-import { DETECT_ORDER, RULES, RULE_TYPE } from './rules.js';
+import { DETECT_ORDER, NAME_DICT, RULES, RULE_TYPE, isNameWord } from './rules.js';
 import type { Finding, Mapping, RuleKey, RunResult, Span, TokenType } from './types.js';
 
 /**
@@ -106,7 +106,83 @@ export function detect(
 		}
 	});
 
-	return resolveOverlaps(raw, mutedValues);
+	const first = resolveOverlaps(raw, mutedValues);
+	if (!activeRules.has('name')) return first;
+	const parts = followUps(text, first, DETECT_ORDER.indexOf('name'));
+	return parts.length > 0 ? resolveOverlaps([...raw, ...parts], mutedValues) : first;
+}
+
+const TITLE_WORDS = new Set(['herr', 'herrn', 'frau', 'dr.', 'prof.', 'mr.', 'mrs.', 'ms.']);
+
+/**
+ * a found full name gives its parts away when they stand alone later: after
+ * "Katharina Brandt" the text goes on with "Frau Brandt sagte" or just
+ * "Brandt". Each part gets a token of its own, so restoring "Brandt" never
+ * writes back the full name.
+ */
+function followUps(text: string, spans: Span[], prio: number): Omit<Span, 'id'>[] {
+	const out: Omit<Span, 'id'>[] = [];
+	const seen = new Set<string>();
+	for (const span of spans) {
+		if (span.type !== 'NAME' || span.muted) continue;
+		const words = span.value.split(/[ \t]+/).filter((word) => !TITLE_WORDS.has(word.toLowerCase()));
+		if (words.length < 2) continue;
+		for (const word of words) {
+			if (seen.has(word) || !isNameWord(word)) continue;
+			seen.add(word);
+			for (const i of allOccurrences(text, word)) {
+				out.push({
+					start: i,
+					end: i + word.length,
+					value: word,
+					type: 'NAME',
+					ruleKey: 'name',
+					prio,
+					manual: false,
+					muted: false
+				});
+			}
+		}
+	}
+	return out;
+}
+
+/** a word that may be a name the rules did not catch, with how often it occurs */
+export type Suggestion = { value: string; count: number; reason: 'first-name' | 'email' };
+
+const FIRST = new Set(NAME_DICT);
+
+/**
+ * names the rules leave alone because nothing around them gives them away: a
+ * first name on its own ("Katharina meldete sich"), or a name spelled out in
+ * an e-mail address ("katharina.brandt@…" next to a "Brandt" in the text).
+ * Offered for one click, never replaced on their own: a first name may also
+ * be a product or a place.
+ */
+export function suggest(text: string, spans: Span[]): Suggestion[] {
+	const covered = (start: number, end: number) =>
+		spans.some((span) => start < span.end && span.start < end);
+	const marked = new Set(spans.map((span) => span.value));
+	const found = new Map<string, Suggestion>();
+	const add = (value: string, reason: Suggestion['reason']) => {
+		if (marked.has(value) || found.has(value)) return;
+		const free = allOccurrences(text, value).filter((i) => !covered(i, i + value.length));
+		if (free.length > 0) found.set(value, { value, count: free.length, reason });
+	};
+
+	for (const match of text.matchAll(/\p{Lu}[\p{Ll}-]{2,}/gu)) {
+		if (FIRST.has(match[0])) add(match[0], 'first-name');
+	}
+	for (const span of spans) {
+		if (span.type !== 'EMAIL') continue;
+		const local = span.value.split('@')[0] ?? '';
+		for (const part of local.split(/[._-]+/)) {
+			if (part.length < 3 || /\d/.test(part)) continue;
+			const word = part[0]!.toUpperCase() + part.slice(1).toLowerCase();
+			if (isNameWord(word)) add(word, 'email');
+		}
+	}
+	return [...found.values()].sort((a, b) => b.count - a.count || a.value.localeCompare(b.value));
 }
 
 /** drops overlapping detections: detector priority first, then leftmost, then longest */

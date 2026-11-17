@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { buildRun, detect } from './detect.js';
+import { buildRun, detect, suggest } from './detect.js';
 import { kindOf } from './ingest/index.js';
 import { restoreFrom } from './restore.js';
-import { RULE_KEYS } from './rules.js';
+import { DEFAULT_OFF, RULE_KEYS, validKvnr, validTaxId } from './rules.js';
 import type { RuleKey, TokenType } from './types.js';
 
 const ALL = new Set<RuleKey>(RULE_KEYS);
@@ -214,5 +214,100 @@ describe('file kinds', () => {
 		expect(kindOf({ name: 'notiz', type: 'text/plain' })).toBe('text');
 		expect(kindOf({ name: 'scan.png', type: 'image/png' })).toBeNull();
 		expect(kindOf({ name: 'alt.doc', type: '' })).toBeNull();
+	});
+});
+
+describe('names the context gives away', () => {
+	it('finds a name after a greeting and under a sign-off', () => {
+		expect(values('Hallo Katharina, danke für die Unterlagen.', only('name'))).toEqual([
+			'Katharina'
+		]);
+		expect(values('Sehr geehrte Frau Brandt,\nanbei der Bericht.', only('name'))).toEqual([
+			'Brandt'
+		]);
+		expect(values('Viele Grüße\nTobias Reinhardt\nVertrieb', only('name'))).toEqual([
+			'Tobias Reinhardt'
+		]);
+	});
+
+	it('does not take a group greeting for a name', () => {
+		expect(values('Sehr geehrte Damen und Herren, liebe Kolleginnen', only('name'))).toEqual([]);
+		expect(values('Hallo Team, liebe Grüße', only('name'))).toEqual([]);
+	});
+
+	it('knows far more first names than before', () => {
+		expect(values('Gespräch mit Svenja Hoffmann und Yusuf Demir', only('name'))).toEqual([
+			'Svenja Hoffmann',
+			'Yusuf Demir'
+		]);
+	});
+
+	it('catches the parts of a found name when they stand alone later', () => {
+		const text = 'Katharina Brandt meldete den Vorfall. Später bestätigte Brandt die Meldung.';
+		const run = buildRun(text, detect(text, only('name'), NONE, UNMUTED));
+		expect(run.text).toBe('«NAME_1» meldete den Vorfall. Später bestätigte «NAME_2» die Meldung.');
+		expect(run.mapping['Brandt']?.replacement).toBe('«NAME_2»');
+	});
+});
+
+describe('name suggestions', () => {
+	it('offers a first name on its own and a name spelled out in an e-mail address', () => {
+		const text = 'Katharina schrieb an brandt.k@example.com; Brandt antwortete nicht.';
+		const spans = detect(text, only('email'), NONE, UNMUTED);
+		expect(suggest(text, spans).map((s) => [s.value, s.reason])).toEqual([
+			['Brandt', 'email'],
+			['Katharina', 'first-name']
+		]);
+	});
+
+	it('offers nothing that is already replaced', () => {
+		const text = 'Herr Brandt und Katharina Brandt';
+		expect(suggest(text, detect(text, only('name'), NONE, UNMUTED))).toEqual([]);
+	});
+});
+
+describe('German identifiers', () => {
+	it('checks the Steuer-ID and keeps a failing one as unconfirmed', () => {
+		expect(validTaxId('86095742719')).toBe(true);
+		expect(validTaxId('86095742718')).toBe(false);
+		const [good] = detect('Steuer-ID 86 095 742 719', only('taxid'), NONE, UNMUTED);
+		expect([good?.value, good?.confident]).toEqual(['86 095 742 719', true]);
+		const [bad] = detect('Steuer-ID 86095742718', only('taxid'), NONE, UNMUTED);
+		expect(bad?.confident).toBe(false);
+	});
+
+	it('finds a health insurance number only with a valid check digit', () => {
+		expect(validKvnr('A123456780')).toBe(true);
+		expect(values('KVNR A123456780, Artikel B123456789', only('kvnr'))).toEqual(['A123456780']);
+	});
+
+	it('finds a pension insurance number that carries a date of birth', () => {
+		expect(values('RV-Nummer 65 170839 J 003', only('pension'))).toEqual(['65 170839 J 003']);
+		expect(values('Auftrag 12 999939 X 001', only('pension'))).toEqual([]);
+	});
+
+	it('finds a labelled ID card number, a number plate and a postcode with its town', () => {
+		expect(values('Personalausweis: C01X00T47', only('passport'))).toEqual(['C01X00T47']);
+		expect(values('Fahrzeug M-AB 1234 und S-XY 12E, nicht ISO-27001', only('plate'))).toEqual([
+			'M-AB 1234',
+			'S-XY 12E'
+		]);
+		expect(values('Hauptstraße 5, 60311 Frankfurt am Main', only('postcode'))).toEqual([
+			'60311 Frankfurt am Main'
+		]);
+	});
+
+	it('finds any date only when switched on, which a standard run leaves off', () => {
+		expect(DEFAULT_OFF.has('anydate')).toBe(true);
+		expect(values('Vertrag vom 03.04.2024, Frist bis 1. März 2025', only('anydate'))).toEqual([
+			'03.04.2024',
+			'1. März 2025'
+		]);
+	});
+
+	it('finds an IPv6 address but not a time of day', () => {
+		expect(values('Zugriff von 2001:db8::8a2e:370:7334 um 12:30:45', only('ip'))).toEqual([
+			'2001:db8::8a2e:370:7334'
+		]);
 	});
 });
