@@ -70,7 +70,7 @@
 
 <section class="move" aria-label={text(T.title)}>
 	<h2>{text(T.checklist)}</h2>
-	<table class="progress">
+	<table class="daily-table compact flush progress">
 		<thead>
 			<tr>
 				<th scope="col">{text(T.part)}</th>
@@ -122,7 +122,7 @@
 	{/if}
 
 	{#if risks.length > 0}
-		<table class="risks">
+		<table class="daily-table compact flush risks">
 			<thead>
 				<tr>
 					<th scope="col" class="num">#</th>
@@ -183,30 +183,6 @@
 	}
 
 	table {
-		width: 100%;
-		border-collapse: collapse;
-		font-size: 14px;
-
-		& th,
-		& td {
-			padding: 0.5rem 0.75rem 0.5rem 0;
-			text-align: left;
-			vertical-align: middle;
-			border-bottom: 1px solid var(--rule2);
-		}
-
-		& thead th {
-			font-size: 11px;
-			font-weight: 400;
-			letter-spacing: 0.06em;
-			text-transform: uppercase;
-			color: var(--ink3);
-		}
-
-		& tbody th {
-			font-weight: 500;
-		}
-
 		& .num {
 			font-variant-numeric: tabular-nums;
 			text-align: right;

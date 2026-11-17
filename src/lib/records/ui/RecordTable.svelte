@@ -70,7 +70,7 @@
 {/snippet}
 
 <div class="rows">
-	<table>
+	<table class="daily-table">
 		{#if caption}<caption class="visually-hidden">{caption}</caption>{/if}
 		<thead>
 			<tr>
@@ -125,32 +125,7 @@
 		border-radius: var(--radius-card);
 		box-shadow: var(--shadow-raised);
 
-		& table {
-			width: 100%;
-			border-collapse: collapse;
-			font-size: 14px;
-		}
-
-		& th,
-		& td {
-			padding: 0.85rem 1rem;
-			text-align: left;
-			vertical-align: middle;
-		}
-
 		& thead th {
-			padding-top: 0.65rem;
-			padding-bottom: 0.65rem;
-			font-family: var(--mono);
-			font-size: 11px;
-			font-weight: 500;
-			letter-spacing: 0.1em;
-			text-transform: uppercase;
-			white-space: nowrap;
-			color: var(--ink3);
-			background: var(--paper);
-			border-bottom: 1px solid var(--rule2);
-
 			/* the header text itself is the sort control */
 			& .sort {
 				all: unset;
@@ -175,29 +150,15 @@
 		}
 
 		& tbody tr {
-			border-bottom: 1px solid var(--rule2);
 			transition: background-color 0.12s ease;
-
-			&:last-child {
-				border-bottom: 0;
-			}
 
 			&:hover {
 				background: var(--navy-soft);
 			}
 		}
 
-		& tbody th {
-			font-size: 15px;
-			font-weight: 600;
-
-			& a {
-				color: var(--ink);
-			}
-		}
-
-		& td {
-			color: var(--ink2);
+		& tbody th a {
+			color: var(--ink);
 		}
 
 		& .date {
@@ -216,16 +177,23 @@
 				clip-path: inset(50%);
 			}
 
+			/* a stacked row keeps one hairline under it, not one per cell */
 			& tbody tr {
 				display: grid;
 				gap: 0.25rem;
 				padding: 0.85rem 1rem;
+				border-bottom: 1px solid var(--rule2);
+
+				&:last-child {
+					border-bottom: 0;
+				}
 			}
 
 			& tbody th,
 			& td {
 				display: block;
 				padding: 0;
+				border-bottom: 0;
 			}
 
 			& td::before {

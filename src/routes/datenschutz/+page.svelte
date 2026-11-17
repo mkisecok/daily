@@ -70,21 +70,6 @@
 			overflow-x: auto;
 		}
 
-		& :global(table) {
-			width: 100%;
-			border-collapse: collapse;
-			font-size: 14px;
-			line-height: 1.5;
-		}
-
-		& :global(th),
-		& :global(td) {
-			padding: 0.5rem 0.75rem 0.5rem 0;
-			text-align: left;
-			vertical-align: top;
-			border-bottom: 1px solid var(--rule);
-		}
-
 		& :global(code) {
 			overflow-wrap: anywhere;
 		}

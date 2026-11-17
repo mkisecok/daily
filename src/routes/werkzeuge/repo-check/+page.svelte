@@ -152,7 +152,7 @@
 			<button type="button" class="quiet" onclick={() => window.print()}>{text(T.print)}</button>
 		</div>
 		<div class="scroll card">
-			<table class="findings">
+			<table class="daily-table findings">
 				<thead>
 					<tr>
 						<th scope="col">{text(T.category)}</th>
@@ -241,31 +241,9 @@
 	.scroll {
 		overflow-x: auto;
 		margin-top: 1rem;
-		padding: 0.5rem 1.25rem;
+		padding: 0.25rem 0;
 
 		& .findings {
-			width: 100%;
-			border-collapse: collapse;
-			font-size: 13px;
-
-			& th,
-			& td {
-				padding: 0.6rem 1rem 0.6rem 0;
-				text-align: left;
-				vertical-align: baseline;
-				border-bottom: 1px solid var(--rule2);
-			}
-
-			& th {
-				font-size: 12px;
-				font-weight: 600;
-				color: var(--ink3);
-			}
-
-			& tbody tr:last-child td {
-				border-bottom: 0;
-			}
-
 			& tr[data-category='geheimnis'] .category {
 				color: var(--wax);
 			}

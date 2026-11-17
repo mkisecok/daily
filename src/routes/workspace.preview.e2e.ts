@@ -111,6 +111,26 @@ test('preview: cards keep to the three card sizes', async ({ page }) => {
 	}
 });
 
+test('preview: every table on screen uses the shared table style', async ({ page }) => {
+	await page.goto('werkzeuge/vvt/eintraege/?neu=1&beispiel=1', { waitUntil: 'networkidle' });
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page).toHaveURL(/eintrag=/);
+	for (const path of ['werkzeuge/vvt/eintraege/', 'datenschutz/']) {
+		await page.goto(path, { waitUntil: 'networkidle' });
+		const tables = await page.locator('main table').evaluateAll((all) =>
+			// the print versions stay hidden on screen and keep the paper styles
+			all
+				.filter((table) => table.getBoundingClientRect().width > 0)
+				.map((table) => [
+					table.classList.contains('daily-table'),
+					getComputedStyle(table.querySelector('th')!).textTransform
+				])
+		);
+		expect(tables.length, path).toBeGreaterThan(0);
+		expect(tables, path).toEqual(tables.map(() => [true, 'uppercase']));
+	}
+});
+
 test('preview: a chosen chip stays distinguishable in forced colours', async ({ page }) => {
 	await page.emulateMedia({ forcedColors: 'active' });
 	await page.goto('werkzeuge/datenpanne/eintraege/?neu=1');

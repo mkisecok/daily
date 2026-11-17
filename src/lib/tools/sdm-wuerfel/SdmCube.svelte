@@ -249,7 +249,7 @@
 		<section class="card view" aria-labelledby="{uid}-a">
 			<h3 id="{uid}-a">{m.sdm_cube_view_a()}</h3>
 			<div class="scroll">
-				<table>
+				<table class="daily-table compact">
 					<thead>
 						<tr>
 							<th>{m.sdm_cube_goal()}</th>
@@ -278,7 +278,7 @@
 		<section class="card view" aria-labelledby="{uid}-b">
 			<h3 id="{uid}-b">{m.sdm_cube_view_b()}</h3>
 			<div class="scroll">
-				<table>
+				<table class="daily-table compact">
 					<thead>
 						<tr>
 							<th>{m.sdm_cube_goal()}</th>
@@ -570,29 +570,8 @@
 		}
 	}
 
-	table {
-		width: 100%;
-		font-size: 13px;
-		border-collapse: collapse;
-
-		& th,
-		& td {
-			padding: 0.35rem 0.5rem;
-			text-align: left;
-			border-top: 1px solid var(--rule2);
-		}
-
-		& thead th {
-			font-size: 12px;
-			font-weight: 600;
-			color: var(--ink3);
-			border-top: 0;
-		}
-
-		& tbody th {
-			font-weight: 500;
-			white-space: nowrap;
-		}
+	table tbody th {
+		white-space: nowrap;
 	}
 
 	.dot {

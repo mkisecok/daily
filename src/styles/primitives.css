@@ -255,3 +255,70 @@
 		display: none;
 	}
 }
+
+/**
+ * a table of data: small mono capitals over the columns, 14px rows divided by
+ * hairlines, the first line of every cell on one baseline. `.compact` tightens
+ * a table inside a dashboard card; `.flush` lines a table on the page up with
+ * the text beside it. Components add only rules for their own columns.
+ */
+.daily-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 14px;
+	line-height: 1.5;
+
+	& th,
+	& td {
+		padding: 0.75rem 1rem;
+		text-align: left;
+		vertical-align: baseline;
+		border-bottom: 1px solid var(--rule2);
+	}
+
+	& thead th {
+		padding-block: 0.6rem;
+		font-family: var(--mono);
+		font-size: 11px;
+		font-weight: 500;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		white-space: nowrap;
+		color: var(--ink3);
+		border-bottom-color: var(--rule);
+	}
+
+	& tbody th {
+		font-weight: 600;
+		color: var(--ink);
+	}
+
+	& td {
+		color: var(--ink2);
+	}
+
+	& tbody tr:last-child > * {
+		border-bottom: 0;
+	}
+
+	&.compact {
+		& th,
+		& td {
+			padding: 0.55rem 0.65rem;
+		}
+
+		& thead th {
+			padding-block: 0.45rem;
+		}
+	}
+
+	&.flush {
+		& :is(th, td):first-child {
+			padding-left: 0;
+		}
+
+		& :is(th, td):last-child {
+			padding-right: 0;
+		}
+	}
+}
