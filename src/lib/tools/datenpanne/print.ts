@@ -1,3 +1,5 @@
+import { formatShortDate } from '../../i18n/date.js';
+import type { PrintRow as HeadRow } from '../../print/meta.js';
 import type { PrintPart, PrintRow } from '../../print/parts.js';
 import { formatValue, type Titles } from '../../records/format.js';
 import type { RecordData, StoredRecord } from '../../records/types.js';
@@ -8,6 +10,48 @@ import { definition } from './definition.js';
 import { notificationDue } from './engine.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
+
+/**
+ * the head of the notice as a letter to the supervisory authority: who it
+ * goes to, who sends it, the day of the notice (today until it is sent), the
+ * authority's reference once there is one and the breach it is about
+ */
+export function noticeHead(
+	record: StoredRecord,
+	organisation: string | null | undefined,
+	locale: string
+): HeadRow[] {
+	return letterHead(record, organisation, locale, L('Verantwortlicher', 'Controller'));
+}
+
+/** the rows both letters to an authority share, under the sender's role */
+export function letterHead(
+	record: StoredRecord,
+	organisation: string | null | undefined,
+	locale: string,
+	sender: Localized
+): HeadRow[] {
+	const given = (id: string) => {
+		const value = record.data[id];
+		return typeof value === 'string' ? value.trim() : '';
+	};
+	const rows: HeadRow[] = [];
+	if (given('behoerde'))
+		rows.push({ label: text(L('An', 'To'), locale), value: given('behoerde') });
+	if (organisation) rows.push({ label: text(sender, locale), value: organisation });
+	rows.push({
+		label: text(L('Datum', 'Date'), locale),
+		value: formatShortDate(given('gemeldet_am') || new Date().toISOString(), locale)
+	});
+	if (given('aktenzeichen')) {
+		rows.push({
+			label: text(L('Aktenzeichen', 'Reference'), locale),
+			value: given('aktenzeichen')
+		});
+	}
+	rows.push({ label: text(L('Betreff', 'Subject'), locale), value: record.title });
+	return rows;
+}
 
 /**
  * a breach as the supervisory authority's form asks for it: the timing of

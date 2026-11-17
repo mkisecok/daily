@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { incidentParts } from './print.js';
+import { incidentHead, incidentParts } from './print.js';
 
 const answer = (data: Record<string, unknown>, label: string) =>
 	incidentParts(data as never, 'erfasst', 'de')
@@ -33,5 +33,13 @@ describe('AI incident report on paper', () => {
 		expect(
 			answer({ rolle: 'anbieter' }, 'Anbieter informiert am (Art. 26 Abs. 5)')
 		).toBeUndefined();
+	});
+
+	it('names the organisation by the role it reports in', () => {
+		const head = (rolle?: string) =>
+			incidentHead({ title: 'X', data: { rolle } } as never, 'Muster GmbH', 'de')[0].label;
+		expect(head('anbieter')).toBe('Anbieter');
+		expect(head('betreiber')).toBe('Betreiber');
+		expect(head()).toBe('Absender');
 	});
 });
