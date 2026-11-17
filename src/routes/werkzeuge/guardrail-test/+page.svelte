@@ -177,7 +177,7 @@
 	</fieldset>
 
 	<div class="field">
-		<label for="canary">{text(T.canary)}</label>
+		<label class="daily-label" for="canary">{text(T.canary)}</label>
 		<span class="inline">
 			<input id="canary" type="text" bind:value={canary} />
 			<button type="button" class="button ghost" onclick={() => (canary = newCanary())}
@@ -189,19 +189,19 @@
 
 	{#if mode === 'endpoint'}
 		<div class="field">
-			<label for="url">{text(T.url)}</label>
+			<label class="daily-label" for="url">{text(T.url)}</label>
 			<input id="url" type="url" bind:value={url} />
 		</div>
 		<div class="field">
-			<label for="model">{text(T.model)}</label>
+			<label class="daily-label" for="model">{text(T.model)}</label>
 			<input id="model" type="text" bind:value={model} />
 		</div>
 		<div class="field">
-			<label for="key">{text(T.key)}</label>
+			<label class="daily-label" for="key">{text(T.key)}</label>
 			<input id="key" type="password" autocomplete="off" bind:value={key} />
 		</div>
 		<div class="field">
-			<label for="system">{text(T.system)}</label>
+			<label class="daily-label" for="system">{text(T.system)}</label>
 			<textarea id="system" rows="3" bind:value={system} placeholder={defaultSystem}></textarea>
 			<p class="help">{text(T.cors)}</p>
 		</div>
@@ -226,7 +226,7 @@
 					{text(prompt.text)}
 				</p>
 				{#if mode === 'manual' || answers[prompt.id] !== undefined}
-					<label class="answer-label" for="answer-{prompt.id}">{text(T.answer)}</label>
+					<label class="daily-label answer-label" for="answer-{prompt.id}">{text(T.answer)}</label>
 					<textarea id="answer-{prompt.id}" rows="3" bind:value={answers[prompt.id]}></textarea>
 				{/if}
 				{#if errors[prompt.id]}
@@ -326,16 +326,9 @@
 			margin-top: 1rem;
 			max-width: var(--measure);
 
-			& label {
-				display: block;
-				font-size: 14px;
-				font-weight: 600;
-			}
-
 			& input,
 			& textarea {
 				width: 100%;
-				margin-top: 0.3rem;
 			}
 
 			& .inline {
@@ -353,7 +346,6 @@
 				}
 
 				& .button {
-					margin-top: 0.3rem;
 					white-space: nowrap;
 				}
 			}
@@ -406,11 +398,11 @@
 				}
 			}
 
+			/* a label under every prompt, a size smaller than the prompt it answers */
 			& .answer-label {
-				display: block;
+				--field-label-size: 14px;
+
 				margin-top: 0.6rem;
-				font-size: 13px;
-				color: var(--ink2);
 			}
 
 			& .error {

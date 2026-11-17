@@ -128,10 +128,10 @@
 		</span>
 	</div>
 
-	<label class="paste-label" for="paste">{text(T.paste)}</label>
+	<label class="daily-label paste-label" for="paste">{text(T.paste)}</label>
 	<textarea id="paste" rows="8" bind:value={pasted} spellcheck="false"></textarea>
 	<label class="paste-name">
-		{text(T.pasteName)}
+		<span class="daily-label">{text(T.pasteName)}</span>
 		<input type="text" bind:value={pastedName} />
 	</label>
 
@@ -217,17 +217,13 @@
 		}
 
 		& .paste-label {
-			display: block;
 			margin-top: 1.5rem;
-			font-size: 14px;
-			font-weight: 600;
 		}
 
 		/* code and file names stay in mono */
 		& textarea,
 		& .paste-name input {
 			width: 100%;
-			margin-top: 0.4rem;
 			font-family: var(--mono);
 			font-size: 13px;
 		}
@@ -235,8 +231,6 @@
 		& .paste-name {
 			display: block;
 			margin-top: 0.9rem;
-			font-size: 13px;
-			color: var(--ink2);
 
 			& input {
 				max-width: 24rem;

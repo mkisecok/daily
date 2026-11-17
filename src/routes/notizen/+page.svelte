@@ -173,7 +173,7 @@
 {#if editing}
 	<form class="editor card" onsubmit={save}>
 		<label class="field">
-			<span>{m.notes_title()}</span>
+			<span class="daily-label">{m.notes_title()}</span>
 			<input type="text" bind:value={draft.titel} required />
 		</label>
 		<div class="field">
@@ -215,13 +215,13 @@
 				<DatePicker bind:value={draft.tag} label={m.notes_day()} granularity="day" />
 			</div>
 			<label class="field grow">
-				<span>{m.notes_tags()}</span>
+				<span class="daily-label">{m.notes_tags()}</span>
 				<input type="text" bind:value={draft.schlagworte} />
 				<small>{m.notes_tags_help()}</small>
 			</label>
 		</div>
 		<label class="field">
-			<span>{m.notes_source()}</span>
+			<span class="daily-label">{m.notes_source()}</span>
 			<input type="text" bind:value={draft.quelle} />
 			<small>{m.notes_source_help()}</small>
 		</label>
@@ -509,8 +509,6 @@
 		}
 
 		& .field {
-			--field-label-size: 15px;
-
 			display: block;
 			margin-top: 1rem;
 
@@ -518,16 +516,9 @@
 				margin-top: 0;
 			}
 
-			& span {
-				display: block;
-				font-size: 14px;
-				font-weight: 500;
-			}
-
 			& input,
 			& textarea {
 				width: 100%;
-				margin-top: 0.3rem;
 			}
 
 			/* markdown source is written in mono on purpose */
@@ -546,10 +537,16 @@
 			}
 		}
 
+		/* fields side by side start on one line; the row keeps the gap above them */
 		& .row {
 			display: flex;
 			flex-wrap: wrap;
-			gap: 0 1.5rem;
+			gap: 1rem 1.5rem;
+			margin-top: 1rem;
+
+			& > .field {
+				margin-top: 0;
+			}
 
 			& .grow {
 				flex: 1 1 16rem;

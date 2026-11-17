@@ -10,6 +10,8 @@
 	import PrintDeadlines from '#lib/records/ui/PrintDeadlines.svelte';
 	import { text } from '#lib/tools/i18n.js';
 	import PageHeader from '#lib/ui/PageHeader.svelte';
+	import DatePicker from '#lib/ui/form/DatePicker.svelte';
+	import Select from '#lib/ui/form/Select.svelte';
 	import PrintDocument from '#lib/ui/PrintDocument.svelte';
 	import type { PageProps } from './$types';
 
@@ -49,36 +51,38 @@
 </div>
 
 <form class="settings card no-print" onsubmit={(e) => e.preventDefault()}>
-	<label>
-		<span>{m.reports_kind()}</span>
-		<select value={data.kind} onchange={(e) => update({ art: e.currentTarget.value })}>
-			{#each Object.entries(KIND_LABEL) as [value, label] (value)}
-				<option {value}>{label()}</option>
-			{/each}
-		</select>
-	</label>
-	<label>
-		<span>{m.reports_from()}</span>
-		<input
-			type="date"
-			value={data.period.from}
-			onchange={(e) => update({ von: e.currentTarget.value })}
+	<div class="kind">
+		<label class="daily-label" for="report-kind">{m.reports_kind()}</label>
+		<Select
+			id="report-kind"
+			required
+			value={data.kind}
+			items={Object.entries(KIND_LABEL).map(([value, label]) => ({ value, label: label() }))}
+			placeholder={m.reports_kind()}
+			onchange={(art) => update({ art })}
 		/>
-	</label>
-	<label>
-		<span>{m.reports_to()}</span>
-		<input
-			type="date"
-			value={data.period.to}
-			onchange={(e) => update({ bis: e.currentTarget.value })}
+	</div>
+	<div>
+		<!-- a date typed only in part is no period yet -->
+		<DatePicker
+			bind:value={() => data.period.from, (von) => von && update({ von })}
+			label={m.reports_from()}
+			granularity="day"
 		/>
-	</label>
+	</div>
+	<div>
+		<DatePicker
+			bind:value={() => data.period.to, (bis) => bis && update({ bis })}
+			label={m.reports_to()}
+			granularity="day"
+		/>
+	</div>
 	<label class="wide">
-		<span>{m.reports_preface()}</span>
+		<span class="daily-label">{m.reports_preface()}</span>
 		<textarea rows="3" bind:value={preface}></textarea>
 	</label>
 	<label class="wide">
-		<span>{m.reports_outlook()}</span>
+		<span class="daily-label">{m.reports_outlook()}</span>
 		<textarea rows="3" bind:value={outlook}></textarea>
 	</label>
 	<p class="toolbar wide">
@@ -242,21 +246,12 @@
 			padding: 1rem;
 		}
 
-		& label {
+		& > * {
 			min-width: 0;
-
-			& span {
-				display: block;
-				font-size: 14px;
-				font-weight: 500;
-			}
 		}
 
-		& select,
-		& input,
-		& textarea {
-			max-width: 100%;
-			margin-top: 0.3rem;
+		& .kind {
+			min-width: 13rem;
 		}
 
 		& .wide {

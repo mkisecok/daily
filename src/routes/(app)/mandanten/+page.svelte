@@ -75,7 +75,7 @@
 </ul>
 
 <form method="post" action="?/create" class="create card" use:enhance>
-	<label for="new-name">{m.org_add()}</label>
+	<label class="daily-label" for="new-name">{m.org_add()}</label>
 	<input id="new-name" name="name" maxlength="120" required placeholder={m.org_name()} />
 	<span class="toolbar"><button type="submit">{m.org_add()}</button></span>
 	{#if form && 'action' in form && form.action === 'create'}
@@ -177,6 +177,11 @@
 			max-width: 32rem;
 		}
 
+		/* buttons stand as tall as the name field beside them */
+		& button {
+			min-height: var(--control-height);
+		}
+
 		& .invalid {
 			width: 100%;
 			font-size: 13px;
@@ -198,8 +203,7 @@
 
 		& label {
 			width: 100%;
-			font-family: var(--serif);
-			font-size: 18px;
+			margin-bottom: 0;
 		}
 	}
 </style>
