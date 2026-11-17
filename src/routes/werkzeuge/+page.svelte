@@ -206,13 +206,18 @@
 	<div class="filters">
 		<h2>{m.tools_all()} <span class="count">{visible.length}</span></h2>
 		<div class="chips" role="group" aria-label={m.tools_filter_label()}>
-			<button type="button" class="chip" aria-pressed={area === null} onclick={() => (area = null)}>
+			<button
+				type="button"
+				class="daily-chip"
+				aria-pressed={area === null}
+				onclick={() => (area = null)}
+			>
 				{m.tools_filter_all()} <span class="count">{tools.length}</span>
 			</button>
 			{#each categories as category (category)}
 				<button
 					type="button"
-					class="chip"
+					class="daily-chip"
 					data-area={category}
 					aria-pressed={area === category}
 					onclick={() => (area = area === category ? null : category)}
@@ -660,46 +665,6 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.4rem;
-	}
-
-	.chip {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.4rem;
-		min-height: 2.25rem;
-		padding: 0 0.85rem;
-		font: inherit;
-		font-size: 13.5px;
-		font-weight: 500;
-		color: var(--ink2);
-		background: var(--sheet);
-		border: 1px solid var(--rule);
-		border-radius: 999px;
-		cursor: pointer;
-
-		& :global(svg) {
-			color: var(--area);
-		}
-
-		&:hover {
-			border-color: var(--primary);
-		}
-
-		&:focus-visible {
-			outline: none;
-			box-shadow: 0 0 0 3px var(--navy-soft);
-		}
-
-		&[aria-pressed='true'] {
-			color: var(--on-primary);
-			background: var(--primary);
-			border-color: var(--primary);
-
-			& :global(svg),
-			& .count {
-				color: inherit;
-			}
-		}
 	}
 
 	.tiles {

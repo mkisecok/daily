@@ -642,11 +642,6 @@
 			width: 100%;
 		}
 
-		/* the button stands as tall as the field and the select beside it */
-		& .button {
-			min-height: var(--control-height);
-		}
-
 		& .field-label {
 			margin-top: 0.75rem;
 		}

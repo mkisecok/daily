@@ -177,11 +177,6 @@
 			max-width: 32rem;
 		}
 
-		/* buttons stand as tall as the name field beside them */
-		& button {
-			min-height: var(--control-height);
-		}
-
 		& .invalid {
 			width: 100%;
 			font-size: 13px;
