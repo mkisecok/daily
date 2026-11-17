@@ -246,6 +246,11 @@ test('print: a note, a law article and a report print in the frame', async ({ pa
 
 test('print: a data breach prints as a notification under Art. 33 DSGVO', async ({ page }) => {
 	await page.setViewportSize({ width: A4_TEXT, height: 1000 });
+	// line b names the DPO from the organisation's details
+	await page.goto('organisation/', { waitUntil: 'networkidle' });
+	await page.locator('#field-dsb').fill('Dr. Petra Schmidt\ndsb@beispiel.de');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page.locator('.notice')).toContainText('Gespeichert.');
 	await page.goto('werkzeuge/datenpanne/eintraege/?neu=1', { waitUntil: 'networkidle' });
 	await page.locator('#field-bezeichnung').fill('Fehlversand Gehaltsabrechnung');
 	await pickDate(page, 'Kenntnis am', '2026-11-10T08:00');
@@ -260,6 +265,7 @@ test('print: a data breach prints as a notification under Art. 33 DSGVO', async 
 	await expect(notice).toContainText('13.11.2026 08:00');
 	const letters = (await notice.locator('.letter').allTextContents()).filter((l) => l.trim());
 	expect(letters).toEqual(['a)', 'a)', 'a)', 'b)', 'c)', 'c)', 'd)']);
+	await expect(notice).toContainText('Dr. Petra Schmidt, dsb@beispiel.de');
 	await expect(notice).toContainText('fehlt');
 	// a letter to the supervisory authority carries none of Daily's internal lines
 	const head = page.locator('[data-print-frame]');

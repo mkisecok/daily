@@ -27,6 +27,14 @@ describe('breach notification on paper', () => {
 		expect(rows({}).find((row) => row.letter === 'b')?.fill).toBe(true);
 	});
 
+	it("fills line b with the DPO's contact from the organisation's details", () => {
+		const line = noticeParts({} as never, 'erfasst', 'de', {}, 'Dr. Erika Muster, 0711 123')
+			.flatMap((part) => part.rows)
+			.find((row) => row.letter === 'b');
+		expect(line?.value).toBe('Dr. Erika Muster, 0711 123');
+		expect(line?.fill).toBeUndefined();
+	});
+
 	it('heads the notice as a letter to the authority', () => {
 		const record = {
 			title: 'USB-Stick verloren',

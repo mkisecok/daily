@@ -57,14 +57,15 @@ export function letterHead(
  * a breach as the supervisory authority's form asks for it: the timing of
  * Art. 33(1), the four letters of Art. 33(3), the communication to data
  * subjects under Art. 34 and what else the entry knows. An empty answer
- * stays empty for the caller to mark; the data protection officer is never
- * in the entry and gets a line to fill in.
+ * stays empty for the caller to mark; the data protection officer comes
+ * from the organisation's details, or gets a line to fill in.
  */
 export function noticeParts(
 	data: RecordData,
 	state: StoredRecord['state'],
 	locale: string,
-	titles: Titles = {}
+	titles: Titles = {},
+	dsb = ''
 ): PrintPart[] {
 	const value = (...ids: string[]) =>
 		ids
@@ -141,8 +142,8 @@ export function noticeParts(
 						'Name und Kontaktdaten des Datenschutzbeauftragten oder einer Anlaufstelle',
 						'Name and contact details of the data protection officer or another contact point'
 					),
-					'',
-					true
+					dsb,
+					!dsb
 				),
 				row('c', L('Wahrscheinliche Folgen', 'Likely consequences'), value('folgen')),
 				row('c', L('Risiko und Begründung', 'Risk and reasons'), value('risiko', 'begruendung')),

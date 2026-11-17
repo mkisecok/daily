@@ -4,6 +4,8 @@ import { browser } from '$app/env';
 import type { Titles } from '#lib/records/format.js';
 import { copyData } from '#lib/records/copy.js';
 import { createLinks, type Backlinks, type Composed } from '#lib/records/links.js';
+import { loadDetails } from '#lib/organisation/load.js';
+import type { Details } from '#lib/organisation/slots.js';
 import { getStore } from '#lib/records/store/index.js';
 import type { Option, RecordData } from '#lib/records/types.js';
 import { fieldById } from '#lib/records/validate.js';
@@ -51,7 +53,9 @@ export const load: PageLoad = async ({ params, data, url, depends }) => {
 		titles: {} as Titles,
 		choices: {} as Record<string, Option[]>,
 		backlinks: [] as Backlinks,
-		composed: [] as Composed[]
+		composed: [] as Composed[],
+		/** the organisation's details, for a document that names its contacts */
+		details: {} as Details
 	};
 	// prerendering still calls load; the store only exists in the browser, which loads again
 	if (!browser) return { ...base, view: 'list' as const, records: [], archived: false };
@@ -63,10 +67,11 @@ export const load: PageLoad = async ({ params, data, url, depends }) => {
 	if (id) {
 		const detail = await store.get(id);
 		if (!detail) return { ...base, view: 'detail' as const, detail };
-		const [titles, choices, backlinks] = await Promise.all([
+		const [titles, choices, backlinks, organisation] = await Promise.all([
 			links.titles(definition),
 			links.choices(definition),
-			links.backlinks(tool.slug, id)
+			links.backlinks(tool.slug, id),
+			loadDetails()
 		]);
 		const composed = await Promise.all(
 			(definition.composes ?? []).map(async (fieldId): Promise<Composed | null> => {
@@ -90,7 +95,8 @@ export const load: PageLoad = async ({ params, data, url, depends }) => {
 			titles,
 			choices,
 			backlinks,
-			composed: composed.filter((c): c is Composed => c !== null)
+			composed: composed.filter((c): c is Composed => c !== null),
+			details: organisation.details
 		};
 	}
 	if (url.searchParams.get('neu') === '1') {
