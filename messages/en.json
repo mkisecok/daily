@@ -655,5 +655,7 @@
 	"backup_confirm": "Add the new entries",
 	"backup_nothing": "Every entry in the file is already here.",
 	"backup_done": "Added: {count}. Entries already here are unchanged.",
-	"backup_failed": "The backup could not be read or added."
+	"backup_failed": "The backup could not be read or added.",
+	"records_print_notice": "Print privacy notice",
+	"print_kind_notice": "Privacy notice under Art. 13 GDPR"
 }

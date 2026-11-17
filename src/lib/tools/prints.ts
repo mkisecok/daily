@@ -19,6 +19,8 @@ import { dsfaHead } from './dsfa/print.js';
 import IncidentPrint from './vorfallmeldung/IncidentPrint.svelte';
 import { incidentHead } from './vorfallmeldung/print.js';
 import type { Answers, ToolManifest } from './types.js';
+import NoticePrint from './vvt/NoticePrint.svelte';
+import { noticeHead as vvtNoticeHead, noticeReady } from './vvt/notice.js';
 import VvtPrint from './vvt/VvtPrint.svelte';
 
 /** what a printed register gets: the tool, its entries and who they belong to */
@@ -48,6 +50,8 @@ export type EntryPrintProps = {
 	composed?: Composed[];
 	/** the organisation's details, such as the DPO's contact for line b of a breach notice */
 	details?: Details;
+	/** the organisation's name, for a document that names its sender in the body */
+	organisation?: string | null;
 };
 
 /**
@@ -96,6 +100,35 @@ export const entryPrints: Partial<
 		kind: m.print_kind_incident,
 		component: IncidentPrint,
 		letter: (record, organisation) => incidentHead(record, organisation, getLocale())
+	}
+};
+
+/**
+ * a second document an entry prints on request, with a button of its own
+ * next to "Drucken", such as the privacy notice of a VVT entry; `?druck=<id>`
+ * opens the entry with it on paper
+ */
+export const alsoPrints: Partial<
+	Record<
+		string,
+		{
+			id: string;
+			/** the button */
+			label: () => string;
+			kind: () => string;
+			component: Component<EntryPrintProps>;
+			when?: (record: StoredRecord) => boolean;
+			letter: (record: StoredRecord, organisation?: string | null) => PrintRow[];
+		}
+	>
+> = {
+	vvt: {
+		id: 'hinweise',
+		label: m.records_print_notice,
+		kind: m.print_kind_notice,
+		component: NoticePrint,
+		when: (record) => noticeReady(record.data),
+		letter: (record, organisation) => vvtNoticeHead(record, organisation, getLocale())
 	}
 };
 

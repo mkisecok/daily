@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { afterNavigate, goto, invalidate } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
@@ -33,7 +34,7 @@
 	import StatusBadge from '#lib/tools/_shared/StatusBadge.svelte';
 	import Verdict from '#lib/tools/_shared/Verdict.svelte';
 	import { recordDashboards } from '#lib/tools/dashboards.js';
-	import { entryPrints, registerPrints } from '#lib/tools/prints.js';
+	import { alsoPrints, entryPrints, registerPrints } from '#lib/tools/prints.js';
 	import ConfirmDialog from '#lib/ui/ConfirmDialog.svelte';
 	import Icon from '#lib/ui/Icon.svelte';
 	import Select from '#lib/ui/form/Select.svelte';
@@ -67,6 +68,24 @@
 		if (!print || !detail) return undefined;
 		return !print.when || print.when(detail.record) ? print : undefined;
 	});
+	// a second document of the entry, such as a VVT entry's privacy notice, on its own button
+	const AlsoPrint = $derived.by(() => {
+		const print = alsoPrints[data.definition.slug];
+		if (!print || !detail) return undefined;
+		return !print.when || print.when(detail.record) ? print : undefined;
+	});
+	let printingAlso = $state(false);
+	const Print = $derived(
+		AlsoPrint && (printingAlso || page.url.searchParams.get('druck') === AlsoPrint.id)
+			? AlsoPrint
+			: EntryPrint
+	);
+
+	async function printAlso() {
+		printingAlso = true;
+		await tick();
+		window.print();
+	}
 	const assessment = $derived(detail ? (engine?.assess?.(detail.record) ?? null) : null);
 
 	const listPath = $derived(localized(`/werkzeuge/${slug}/eintraege`));
@@ -253,6 +272,8 @@
 	}
 </script>
 
+<svelte:window onafterprint={() => (printingAlso = false)} />
+
 <svelte:head>
 	<title>{text(data.tool.name)} — Daily</title>
 	<meta name="description" content={text(data.tool.summary)} />
@@ -365,16 +386,16 @@
 		<p class="toolbar"><a class="button quiet" href={resolve(listPath)}>{m.records_back()}</a></p>
 	{:else}
 		{@const record = detail.record}
-		{#if EntryPrint?.letter}
+		{#if Print?.letter}
 			<PrintDocument
 				letter
-				kind={EntryPrint.kind()}
-				title={EntryPrint.kind()}
-				rows={EntryPrint.letter(record, data.organisation?.name)}
+				kind={Print.kind()}
+				title={Print.kind()}
+				rows={Print.letter(record, data.organisation?.name)}
 			/>
 		{:else}
 			<PrintDocument
-				kind={EntryPrint ? EntryPrint.kind() : m.print_kind_entry()}
+				kind={Print ? Print.kind() : m.print_kind_entry()}
 				title={record.title}
 				rows={printMeta(data.tool, {
 					version: data.definition.version,
@@ -423,6 +444,9 @@
 					<button type="button" class="quiet" onclick={() => window.print()}
 						>{m.records_print()}</button
 					>
+					{#if AlsoPrint}
+						<button type="button" class="quiet" onclick={printAlso}>{AlsoPrint.label()}</button>
+					{/if}
 					<a class="button quiet" href={resolve(listPath)}>{m.records_back()}</a>
 					<a class="button quiet" href={resolve(copyPath(record.id))}>{m.records_duplicate()}</a>
 					<a
@@ -478,13 +502,14 @@
 				/>
 			{/key}
 		{:else}
-			{#if EntryPrint}
-				<EntryPrint.component
+			{#if Print}
+				<Print.component
 					definition={data.definition}
 					{record}
 					titles={data.titles}
 					composed={data.composed}
 					details={data.details}
+					organisation={data.organisation?.name}
 				/>
 			{:else}
 				<PrintEntry
@@ -548,7 +573,7 @@
 
 			<!-- a document of its own, such as the audit report, already carries the composed parts -->
 			{#each data.composed as part (part.record.id)}
-				<section class="composed" class:no-print={EntryPrint}>
+				<section class="composed" class:no-print={Print}>
 					<h2 class="eyebrow">{m.records_composed()}</h2>
 					<h3>
 						{text(part.tool.manifest.name)}:

@@ -3,14 +3,15 @@
 	A document that follows a form part by part, on paper only: one table per
 	part with the letter, the question and the answer, the same columns in
 	every part, "fehlt" for an empty answer, room to write where a line is to
-	be filled in, and lines to sign at the end. Used by the breach
-	notification and the AI incident report.
+	be filled in, and lines to sign at the end unless the document is not
+	signed. Used by the breach notification, the AI incident report and the
+	privacy notice.
 -->
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
 	import type { PrintPart } from './parts.js';
 
-	let { parts }: { parts: PrintPart[] } = $props();
+	let { parts, signature = true }: { parts: PrintPart[]; signature?: boolean } = $props();
 </script>
 
 <section class="print-body print-only print-parts">
@@ -31,10 +32,12 @@
 		</table>
 	{/each}
 
-	<div class="signature">
-		<div class="line">{m.print_sign_place()}</div>
-		<div class="line">{m.print_sign_name()}</div>
-	</div>
+	{#if signature}
+		<div class="signature">
+			<div class="line">{m.print_sign_place()}</div>
+			<div class="line">{m.print_sign_name()}</div>
+		</div>
+	{/if}
 </section>
 
 <style>

@@ -23,6 +23,7 @@ Phase 0 is done when no row has an open finding of severity "wrong result".
 | Tool                                        | Slug                             | Area        | Reviewer | Date | Findings | Severity | Status |
 | ------------------------------------------- | -------------------------------- | ----------- | -------- | ---- | -------- | -------- | ------ |
 | Verzeichnis von Verarbeitungstätigkeiten    | `vvt`                            | Datenschutz |          |      |          |          | open   |
+| Datenschutzhinweise (Art. 13, aus dem VVT)  | `vvt` (`?druck=hinweise`)        | Datenschutz |          |      |          |          | open   |
 | Datenschutz-Folgenabschätzung               | `dsfa`                           | Datenschutz |          |      |          |          | open   |
 | DSFA-Schwellwertanalyse                     | `dsfa-schwellwert`               | Datenschutz |          |      |          |          | open   |
 | Risikoklassifizierung                       | `risikoklassifizierung`          | KI          |          |      |          |          | open   |

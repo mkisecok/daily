@@ -655,5 +655,7 @@
 	"backup_confirm": "Neue Einträge übernehmen",
 	"backup_nothing": "Alle Einträge der Datei sind schon vorhanden.",
 	"backup_done": "Übernommen: {count}. Vorhandene Einträge sind unverändert.",
-	"backup_failed": "Die Sicherung konnte nicht gelesen oder übernommen werden."
+	"backup_failed": "Die Sicherung konnte nicht gelesen oder übernommen werden.",
+	"records_print_notice": "Datenschutzhinweise drucken",
+	"print_kind_notice": "Datenschutzhinweise nach Art. 13 DSGVO"
 }
