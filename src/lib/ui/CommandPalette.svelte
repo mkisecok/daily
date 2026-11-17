@@ -191,10 +191,6 @@
 		border-radius: var(--radius-card);
 		box-shadow: var(--shadow-modal);
 
-		&::backdrop {
-			background: rgba(28, 27, 25, 0.3);
-		}
-
 		& .field {
 			display: flex;
 			align-items: center;
