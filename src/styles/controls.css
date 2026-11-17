@@ -166,11 +166,18 @@
 	color: var(--wax);
 }
 
-.daily-field-label {
+.daily-field-label,
+.daily-label {
 	display: inline;
 	font-family: var(--serif);
 	font-size: var(--field-label-size, 16px);
 	color: var(--ink);
+}
+
+/* a field label on a line of its own, above its control: every form labels its fields this way */
+.daily-label {
+	display: block;
+	margin-bottom: 0.4rem;
 }
 
 .daily-date-input {

@@ -219,7 +219,7 @@
 		<span class="status" class:error={status?.error} aria-live="polite">{status?.text ?? ''}</span>
 	</div>
 
-	<label class="field-label" for="anon-source">{m.anon_source()}</label>
+	<label class="daily-label field-label" for="anon-source">{m.anon_source()}</label>
 	<textarea id="anon-source" rows="10" bind:value={source} onselect={takeSelection}></textarea>
 </section>
 
@@ -317,11 +317,13 @@
 				}}
 			>
 				<label>
-					<span class="field-label">{m.anon_manual_value()}</span>
+					<span class="daily-label field-label">{m.anon_manual_value()}</span>
 					<input type="text" bind:value={manualValue} aria-describedby="anon-manual-hint" />
 				</label>
 				<span class="manual-type">
-					<label class="field-label" for="anon-manual-type">{m.anon_manual_type()}</label>
+					<label class="daily-label field-label" for="anon-manual-type"
+						>{m.anon_manual_type()}</label
+					>
 					<Select
 						id="anon-manual-type"
 						required
@@ -340,7 +342,7 @@
 </div>
 
 <section class="card io">
-	<label class="field-label" for="anon-output">{m.anon_output()}</label>
+	<label class="daily-label field-label" for="anon-output">{m.anon_output()}</label>
 	<p class="hint">{m.anon_output_hint()}</p>
 	<textarea id="anon-output" rows="10" readonly value={run.text}></textarea>
 	<div class="toolbar actions">
@@ -352,13 +354,13 @@
 </section>
 
 <section class="card io">
-	<label class="field-label" for="anon-reply">{m.anon_reply()}</label>
+	<label class="daily-label field-label" for="anon-reply">{m.anon_reply()}</label>
 	<p class="hint">{m.anon_reply_hint()}</p>
 	<textarea id="anon-reply" rows="8" bind:value={reply}></textarea>
 
 	{#if restored}
 		{#if stale}<p class="notice">{m.anon_stale()}</p>{/if}
-		<label class="field-label" for="anon-restored">{m.anon_restored()}</label>
+		<label class="daily-label field-label" for="anon-restored">{m.anon_restored()}</label>
 		<textarea id="anon-restored" rows="10" readonly value={restored.text}></textarea>
 		<p class="hint" aria-live="polite">
 			{m.anon_restored_count({ count: restored.count, total: restored.total })}
@@ -437,10 +439,7 @@
 	}
 
 	.field-label {
-		display: block;
-		margin: 1.25rem 0 0.4rem;
-		font-size: 14px;
-		font-weight: 600;
+		margin-top: 1.25rem;
 	}
 
 	textarea {
@@ -641,6 +640,11 @@
 
 		& input {
 			width: 100%;
+		}
+
+		/* the button stands as tall as the field and the select beside it */
+		& .button {
+			min-height: var(--control-height);
 		}
 
 		& .field-label {

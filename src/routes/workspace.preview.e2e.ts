@@ -50,6 +50,33 @@ test('preview: notes stay in the browser and reports read the browser records', 
 	await expect(page.locator('.report')).toContainText('nur in der vollständigen Installation');
 });
 
+test('preview: the report kind and period are chosen with the app controls', async ({ page }) => {
+	await page.goto('berichte/', { waitUntil: 'networkidle' });
+	await page.getByLabel('Bericht', { exact: true }).click();
+	await page.getByRole('option', { name: 'Bericht KI-Governance' }).click();
+	await expect(page).toHaveURL(/art=ki/);
+	await pickDate(page, 'Von', '2026-03-01');
+	await expect(page).toHaveURL(/von=2026-03-01/);
+	await expect(page.locator('.cover')).toContainText('01.03.2026');
+});
+
+test('preview: a date field lines up with the fields beside it', async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('notizen/', { waitUntil: 'networkidle' });
+	await page.getByRole('button', { name: 'Heutige Notiz' }).click();
+	await page.getByRole('button', { name: 'Bearbeiten' }).click();
+	const day = page.getByRole('group', { name: 'Tag', exact: true });
+	const tags = page.getByLabel('Schlagworte');
+	const top = async (locator: typeof tags) => (await locator.boundingBox())!.y;
+	expect(Math.abs((await top(day)) - (await top(tags)))).toBeLessThan(1);
+	const labelFont = (text: string) =>
+		page
+			.locator('.editor')
+			.getByText(text, { exact: true })
+			.evaluate((el) => getComputedStyle(el).fontFamily + getComputedStyle(el).fontSize);
+	expect(await labelFont('Tag')).toBe(await labelFont('Schlagworte'));
+});
+
 test('preview: a chosen chip stays distinguishable in forced colours', async ({ page }) => {
 	await page.emulateMedia({ forcedColors: 'active' });
 	await page.goto('werkzeuge/datenpanne/eintraege/?neu=1');

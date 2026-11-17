@@ -21,7 +21,8 @@ test('the data protection report lists this year’s records with status and ass
 
 	await page.getByRole('link', { name: 'Berichte' }).click();
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Berichte');
-	await page.getByLabel('Bericht').selectOption('datenschutz');
+	await page.getByLabel('Bericht', { exact: true }).click();
+	await page.getByRole('option', { name: 'Tätigkeitsbericht Datenschutz' }).click();
 	await expect(page).toHaveURL(/art=datenschutz/);
 	await expect(page.locator('.cover h2')).toHaveText('Tätigkeitsbericht Datenschutz');
 
@@ -34,6 +35,7 @@ test('the data protection report lists this year’s records with status and ass
 	await page.getByLabel('Vorbemerkung').fill('Berichtsjahr mit einer Panne.');
 	await expect(page.locator('.report .free')).toContainText('Berichtsjahr mit einer Panne.');
 
-	await page.getByLabel('Bericht').selectOption('ki');
+	await page.getByLabel('Bericht', { exact: true }).click();
+	await page.getByRole('option', { name: 'Bericht KI-Governance' }).click();
 	await expect(page.locator('.report')).not.toContainText(title);
 });
