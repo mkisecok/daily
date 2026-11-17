@@ -5,22 +5,12 @@ import { listFeed, listSources, type FeedFilter } from '#lib/server/feed/query.j
 import { KIND_TAGS, REGULATION_TAGS } from '#lib/server/feed/tagging.js';
 import type { PageServerLoad } from './$types';
 
-const REGIONS = ['eu', 'de', 'land'] as const;
-const ALL_TAGS: readonly string[] = [...REGULATION_TAGS, ...KIND_TAGS];
-
+/** paging and bookmarks need the database; Art and Regelwerk filter on the page */
 function readFilter(url: URL, userId?: string): FeedFilter {
-	const tag = url.searchParams.get('tag') ?? undefined;
-	const region = url.searchParams.get('region') ?? undefined;
-	const source = url.searchParams.get('quelle') ?? undefined;
 	const before = url.searchParams.get('vor');
 	const merken = url.searchParams.get('merken') === '1';
 	const beforeDate = before ? new Date(before) : undefined;
 	return {
-		tag: tag && ALL_TAGS.includes(tag) ? tag : undefined,
-		region: REGIONS.includes(region as (typeof REGIONS)[number])
-			? (region as FeedFilter['region'])
-			: undefined,
-		source,
 		before: beforeDate && !Number.isNaN(beforeDate.getTime()) ? beforeDate : undefined,
 		bookmarkedBy: merken && userId ? userId : undefined
 	};
@@ -35,7 +25,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		return {
 			items: items.map((item) => ({ ...item, publishedAt: item.publishedAt.toISOString() })),
 			sources,
-			filter: { tag: null, region: null, source: null, before: null, merken: false },
+			merken: false,
 			tags
 		};
 	}
@@ -48,13 +38,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	return {
 		items: items.map((item) => ({ ...item, publishedAt: item.publishedAt.toISOString() })),
 		sources: sources.map((s) => ({ ...s, lastItemAt: s.lastItemAt?.toISOString() ?? null })),
-		filter: {
-			tag: filter.tag ?? null,
-			region: filter.region ?? null,
-			source: filter.source ?? null,
-			before: filter.before?.toISOString() ?? null,
-			merken: Boolean(filter.bookmarkedBy)
-		},
+		merken: Boolean(filter.bookmarkedBy),
 		tags
 	};
 };

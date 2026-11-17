@@ -1,23 +1,23 @@
 import { expect, test } from '@playwright/test';
 
-test('news page renders filters and applies them through the query string', async ({ page }) => {
-	await page.goto('/nachrichten');
+test('news page filters by Art and Regelwerk through the query string', async ({ page }) => {
+	await page.goto('/nachrichten?art=bussgeld');
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Nachrichten');
 
 	const filters = page.getByRole('navigation', { name: 'Filter' });
-	await expect(filters.getByRole('link', { name: 'DSGVO' })).toBeVisible();
-	await expect(filters.getByRole('link', { name: 'Bußgeld' })).toBeVisible();
-
-	await filters.getByRole('link', { name: 'Bußgeld' }).click();
-	await expect(page).toHaveURL(/\/nachrichten\?tag=bussgeld$/);
-	await expect(filters.getByRole('link', { name: 'Bußgeld' })).toHaveAttribute(
+	await expect(filters.getByRole('link', { name: /^Bußgeld/ })).toHaveAttribute(
 		'aria-current',
 		'true'
 	);
+	await expect(filters.getByRole('link', { name: 'Filter Bußgeld entfernen' })).toBeVisible();
 
-	await filters.getByRole('link', { name: 'EU', exact: true }).click();
-	await expect(page).toHaveURL(/tag=bussgeld/);
-	await expect(page).toHaveURL(/region=eu/);
+	await filters.getByRole('link', { name: 'Filter Bußgeld entfernen' }).click();
+	await expect(page).toHaveURL(/\/nachrichten$/);
+	await expect(filters.getByRole('link', { name: 'Alle', exact: true })).toHaveAttribute(
+		'aria-current',
+		'true'
+	);
+	await expect(filters.getByText(/^\d+ Meldungen$/)).toBeVisible();
 });
 
 test('news page is available in English', async ({ page }) => {

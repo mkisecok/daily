@@ -3,9 +3,6 @@ import type { Database } from '../db/client.js';
 import { bookmarks, feedItems, feedSources } from '../db/schema.js';
 
 export type FeedFilter = {
-	tag?: string;
-	region?: 'eu' | 'de' | 'land';
-	source?: string;
 	/** exclusive upper bound for publishedAt (pagination by day) */
 	before?: Date;
 	/** only items the given user bookmarked */
@@ -37,9 +34,6 @@ export async function listFeed(
 	const since = new Date(before.getTime() - PAGE_DAYS * 24 * 60 * 60 * 1000);
 
 	const conditions = [lt(feedItems.publishedAt, before), gte(feedItems.publishedAt, since)];
-	if (filter.tag) conditions.push(sql`${feedItems.tags} @> ARRAY[${filter.tag}]::text[]`);
-	if (filter.region) conditions.push(eq(feedSources.region, filter.region));
-	if (filter.source) conditions.push(eq(feedSources.slug, filter.source));
 	if (filter.bookmarkedBy) {
 		conditions.push(
 			inArray(

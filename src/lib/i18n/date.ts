@@ -31,6 +31,19 @@ export function formatLongDate(iso: string, locale: string): string {
 	}).format(new Date(iso));
 }
 
+/** a day split for a date rail: "17", "Di.", "Nov." / "17", "Tue", "Nov" */
+export function formatDayParts(
+	iso: string,
+	locale: string
+): { day: string; weekday: string; month: string } {
+	const date = new Date(iso);
+	return {
+		day: formatter(locale, { day: 'numeric' }).format(date),
+		weekday: formatter(locale, { weekday: 'short' }).format(date),
+		month: formatter(locale, { month: 'short' }).format(date)
+	};
+}
+
 /** "13.10.2026" / "13/10/2026" */
 export function formatShortDate(iso: string, locale: string): string {
 	return formatter(locale, { day: '2-digit', month: '2-digit', year: 'numeric' }).format(
