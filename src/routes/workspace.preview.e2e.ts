@@ -5,13 +5,26 @@ test('preview: Navigator pages and search work under the base path', async ({ pa
 	// the search loads its index on input, which needs the hydrated page
 	await page.goto('normen/', { waitUntil: 'networkidle' });
 	await page.getByLabel('In allen Gesetzen suchen').fill('Art. 22');
-	await expect(page.locator('.hits li')).toHaveCount(2);
+	await expect(page.locator('.hits li')).toHaveCount(3);
 	await page.locator('.hits a', { hasText: 'DSGVO' }).click();
 	await expect(page).toHaveURL(/\/daily\/normen\/dsgvo\/art-22\/$/);
 	await expect(page.getByRole('heading', { level: 1 })).toContainText(
 		'Automatisierte Entscheidungen'
 	);
 	await expect(page.locator('.cited')).toContainText('KI und DSGVO');
+});
+
+test('preview: the Data Act and the BetrVG open with the tools that cite them', async ({
+	page
+}) => {
+	await page.goto('normen/data-act/art-25/');
+	await expect(page.getByRole('heading', { level: 1 })).toContainText(
+		'Vertragsklauseln für den Wechsel'
+	);
+	await expect(page.locator('.cited')).toContainText('Dienstleister wechseln');
+	await page.goto('normen/betrvg/p-87/');
+	await expect(page.getByRole('heading', { level: 1 })).toContainText('Mitbestimmungsrechte');
+	await expect(page.locator('.cited a').first()).toBeVisible();
 });
 
 test('preview: notes stay in the browser and reports read the browser records', async ({

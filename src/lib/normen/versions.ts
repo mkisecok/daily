@@ -12,8 +12,10 @@ export type LawVersion = { kind: 'consolidated' | 'amended'; asOf: string };
 export const LAW_VERSIONS: Record<LawId, LawVersion> = {
 	dsgvo: { kind: 'consolidated', asOf: '2016-05-04' },
 	'ki-vo': { kind: 'consolidated', asOf: '2026-07-27' },
+	'data-act': { kind: 'consolidated', asOf: '2023-12-22' },
 	bdsg: { kind: 'amended', asOf: '2026-07-03' },
-	tdddg: { kind: 'amended', asOf: '2026-03-10' }
+	tdddg: { kind: 'amended', asOf: '2026-03-10' },
+	betrvg: { kind: 'amended', asOf: '2024-07-19' }
 };
 
 const iso = (day: string, month: string, year: string) =>

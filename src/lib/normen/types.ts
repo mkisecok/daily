@@ -1,4 +1,4 @@
-export type LawId = 'dsgvo' | 'ki-vo' | 'bdsg' | 'tdddg';
+export type LawId = 'dsgvo' | 'ki-vo' | 'data-act' | 'bdsg' | 'tdddg' | 'betrvg';
 
 export type Lang = 'de' | 'en';
 

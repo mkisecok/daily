@@ -7,8 +7,8 @@
  * 0 otherwise (also when a version is only announced).
  *
  * `--eu-only` checks the EU acts alone: gesetze-im-internet.de refuses
- * GitHub-hosted runners, so the weekly workflow leaves BDSG and TDDDG to a
- * local run.
+ * GitHub-hosted runners, so the weekly workflow leaves the German statutes
+ * to a local run.
  *
  * Run: pnpm normen:check [--eu-only] [--out report.md]
  */
@@ -20,8 +20,12 @@ import { lawsInUse } from '../../src/lib/tools/rechtsstand.js';
 import { tools } from '../../src/lib/tools/registry.js';
 import { consolidatedVersions, standOf, statuteXml } from './sources.js';
 
-const EU: Partial<Record<LawId, string>> = { dsgvo: '32016R0679', 'ki-vo': '32024R1689' };
-const DE: Partial<Record<LawId, string>> = { bdsg: 'bdsg_2018', tdddg: 'ttdsg' };
+const EU: Partial<Record<LawId, string>> = {
+	dsgvo: '32016R0679',
+	'ki-vo': '32024R1689',
+	'data-act': '32023R2854'
+};
+const DE: Partial<Record<LawId, string>> = { bdsg: 'bdsg_2018', tdddg: 'ttdsg', betrvg: 'betrvg' };
 
 const committed = (id: LawId) =>
 	JSON.parse(readFileSync(`src/lib/normen/data/${id}.json`, 'utf8')) as LawText;

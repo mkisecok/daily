@@ -61,8 +61,8 @@ entries stay in your browser).
 - **Mandanten** – external officers add client organisations and switch between them; every
   assessment, register entry and deadline belongs to the active one.
 
-- **Normen** – DSGVO, KI-VO (consolidated, with the Omnibus amendments), BDSG and TDDDG with
-  linked cross-references, recitals, annexes and search; every citation in Daily opens its
+- **Normen** – DSGVO, KI-VO (consolidated, with the Omnibus amendments), Data Act, BDSG, TDDDG
+  and BetrVG with linked cross-references, recitals, annexes and search; every citation in Daily opens its
   provision. Texts are imported from the EU Publications Office and gesetze-im-internet.de
   (`pnpm normen:import`).
 - **Notizen** – a notebook with today's note, Markdown, linked citations and search; notes can be

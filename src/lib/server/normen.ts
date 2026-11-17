@@ -1,8 +1,10 @@
 import bdsgRaw from '../normen/data/bdsg.json?raw';
+import betrvgRaw from '../normen/data/betrvg.json?raw';
+import dataActRaw from '../normen/data/data-act.json?raw';
 import dsgvoRaw from '../normen/data/dsgvo.json?raw';
 import kivoRaw from '../normen/data/ki-vo.json?raw';
 import tdddgRaw from '../normen/data/tdddg.json?raw';
-import { KIND_ORDER, provisionLabel } from '../normen/laws.js';
+import { KIND_ORDER, LAWS, provisionLabel } from '../normen/laws.js';
 import { crossReferences } from '../normen/crossref.js';
 import type { Block, Lang, LawId, LawText, Provision, RenderedBlock } from '../normen/types.js';
 import { citationIndex, type CitingTool, type ToolCitations } from '../normen/usage.js';
@@ -12,8 +14,10 @@ import { tools } from '../tools/registry.js';
 const RAW: Record<LawId, string> = {
 	dsgvo: dsgvoRaw,
 	'ki-vo': kivoRaw,
+	'data-act': dataActRaw,
 	bdsg: bdsgRaw,
-	tdddg: tdddgRaw
+	tdddg: tdddgRaw,
+	betrvg: betrvgRaw
 };
 const cache = new Map<LawId, LawText>();
 
@@ -109,7 +113,7 @@ function render(blocks: Block[], law: LawId): RenderedBlock[] {
 	}));
 }
 
-export const ALL_LAWS: LawId[] = ['dsgvo', 'ki-vo', 'bdsg', 'tdddg'];
+export const ALL_LAWS: LawId[] = LAWS.map((law) => law.id);
 
 export function allProvisionIds(): { law: LawId; id: string }[] {
 	return ALL_LAWS.flatMap((law) => lawText(law).provisions.map((p) => ({ law, id: p.id })));
