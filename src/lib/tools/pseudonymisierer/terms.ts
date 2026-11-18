@@ -10,9 +10,16 @@ export const TERMS_KEY = 'daily.anon.terms.v1';
  * puts the placeholder note above the outgoing text; `deep` restarts the name
  * model on the next visit, when it is still in the browser's cache.
  */
-export type Terms = { always: string; never: string; note: boolean; deep: boolean };
+export type Terms = {
+	always: string;
+	never: string;
+	note: boolean;
+	deep: boolean;
+	/** the user's own standard: the rules switched on, or none saved */
+	mine: string[] | null;
+};
 
-const EMPTY: Terms = { always: '', never: '', note: true, deep: false };
+const EMPTY: Terms = { always: '', never: '', note: true, deep: false, mine: null };
 
 /** the lines of a term list: trimmed, at least two characters, each once */
 export function termList(text: string): string[] {
@@ -36,7 +43,10 @@ export function readTerms(): Terms {
 			always: typeof stored.always === 'string' ? stored.always : '',
 			never: typeof stored.never === 'string' ? stored.never : '',
 			note: stored.note !== false,
-			deep: stored.deep === true
+			deep: stored.deep === true,
+			mine: Array.isArray(stored.mine)
+				? stored.mine.filter((key): key is string => typeof key === 'string')
+				: null
 		};
 	} catch {
 		return { ...EMPTY };

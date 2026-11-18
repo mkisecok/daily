@@ -345,3 +345,33 @@ describe('own terms', () => {
 		}
 	});
 });
+
+describe('every special category of Art. 9', () => {
+	it('ends a labelled value at the end of its sentence', () => {
+		expect(values('Diagnose: Asthma. Konfession: katholisch. Zutritt per Fingerabdruck.')).toEqual(
+			expect.arrayContaining(['Asthma', 'katholisch', 'Fingerabdruck'])
+		);
+	});
+
+	it('finds origin, trade union, genetic and biometric data', () => {
+		expect(values('Herkunft: kurdisch; Migrationshintergrund bekannt', only('ethnic'))).toEqual([
+			'kurdisch',
+			'Migrationshintergrund'
+		]);
+		expect(values('Sie ist Mitglied der IG Metall.', only('union'))).toEqual(['IG Metall']);
+		expect(values('Gentest: BRCA1-Mutation nachgewiesen', only('genetic'))).toEqual([
+			'BRCA1-Mutation nachgewiesen'
+		]);
+		expect(
+			values('Zutritt per Fingerabdruck, Gesichtserkennung am Tor', only('biometric'))
+		).toEqual(['Fingerabdruck', 'Gesichtserkennung']);
+	});
+
+	it('counts philosophical beliefs with religion', () => {
+		expect(values('Weltanschauung: humanistisch', only('religion'))).toEqual(['humanistisch']);
+	});
+
+	it('keeps nationality out of ethnic origin', () => {
+		expect(values('Staatsangehörigkeit: deutsch', only('ethnic'))).toEqual([]);
+	});
+});
