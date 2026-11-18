@@ -13,6 +13,14 @@
 		TOKEN_TYPES
 	} from '#lib/tools/pseudonymisierer/rules.js';
 	import { SAMPLE } from '#lib/tools/pseudonymisierer/sample.js';
+	import {
+		AI_NOTE,
+		readTerms,
+		termList,
+		withoutNever,
+		writeTerms
+	} from '#lib/tools/pseudonymisierer/terms.js';
+	import { getLocale } from '#lib/paraglide/runtime.js';
 	import type {
 		Finding,
 		Mapping,
@@ -95,8 +103,28 @@
 	let sent = $state<{ text: string; mapping: Mapping } | null>(null);
 	let reply = $state('');
 
-	const spans = $derived(detect(source, active, manualMarks, mutedValues));
+	/** the browser's own term lists and the note setting, kept across visits */
+	let terms = $state(readTerms());
+	const always = $derived(termList(terms.always));
+	const never = $derived(termList(terms.never));
+	/** own terms count as marks; a hand mark on the same value wins */
+	const marks = $derived(
+		new Map<string, TokenType>([
+			...always.map((term): [string, TokenType] => [term, 'CUSTOM']),
+			...manualMarks
+		])
+	);
+
+	function saveTerms(change: Partial<typeof terms>) {
+		terms = { ...terms, ...change };
+		writeTerms(terms);
+	}
+
+	const spans = $derived(withoutNever(detect(source, active, marks, mutedValues), never));
 	const run = $derived(buildRun(source, spans));
+	const note = getLocale() === 'de' ? AI_NOTE.de : AI_NOTE.en;
+	/** exactly what goes into the AI chat: the note, if wanted, then the text */
+	const outgoing = $derived(run.text.trim() && terms.note ? `${note}\n\n${run.text}` : run.text);
 	const suggestions = $derived(suggest(source, spans));
 	const rows = $derived([...run.findings, ...run.muted]);
 	const groups = $derived(
@@ -118,7 +146,7 @@
 		return out;
 	});
 	const restored = $derived(reply.trim() ? restoreFrom(reply, sent?.mapping ?? run.mapping) : null);
-	const stale = $derived(sent !== null && sent.text !== run.text);
+	const stale = $derived(sent !== null && sent.text !== outgoing);
 
 	const typeItems = $derived(
 		TOKEN_TYPES.map((type) => ({ value: type, label: TYPE_LABEL[type]() }))
@@ -242,7 +270,7 @@
 	}
 
 	function copyOutput() {
-		const snapshot = { text: run.text, mapping: { ...run.mapping } };
+		const snapshot = { text: outgoing, mapping: { ...run.mapping } };
 		copy(snapshot.text, () => (sent = snapshot));
 	}
 
@@ -335,6 +363,31 @@
 			{/each}
 		</div>
 	</details>
+	<details class="single own">
+		<summary
+			>{m.anon_terms()}{#if always.length + never.length > 0}
+				<span class="badge num">{always.length + never.length}</span>{/if}</summary
+		>
+		<p class="hint">{m.anon_terms_hint()}</p>
+		<div class="term-lists">
+			<label>
+				<span class="daily-label">{m.anon_terms_always()}</span>
+				<textarea
+					rows="4"
+					value={terms.always}
+					oninput={(event) => saveTerms({ always: event.currentTarget.value })}
+					placeholder={m.anon_terms_always_placeholder()}></textarea>
+			</label>
+			<label>
+				<span class="daily-label">{m.anon_terms_never()}</span>
+				<textarea
+					rows="4"
+					value={terms.never}
+					oninput={(event) => saveTerms({ never: event.currentTarget.value })}
+					placeholder={m.anon_terms_never_placeholder()}></textarea>
+			</label>
+		</div>
+	</details>
 </section>
 
 {#if source.trim()}
@@ -418,13 +471,15 @@
 					</span>
 					<span class="badges">
 						{#if !row.confident}<span class="badge wax">{m.anon_unconfirmed()}</span>{/if}
-						{#if row.manual}
+						{#if manualMarks.has(row.original)}
 							<span class="badge">{m.anon_by_hand()}</span>
 							<button
 								type="button"
 								class="button ghost"
 								onclick={() => manualMarks.delete(row.original)}>{m.anon_unmark()}</button
 							>
+						{:else if row.manual}
+							<span class="badge navy">{m.anon_own_term()}</span>
 						{/if}
 					</span>
 				</li>
@@ -459,7 +514,13 @@
 <section class="card io">
 	<label class="daily-label field-label" for="anon-output">{m.anon_output()}</label>
 	<p class="hint">{m.anon_output_hint()}</p>
-	<textarea id="anon-output" rows="10" readonly value={run.text}></textarea>
+	<textarea id="anon-output" rows="10" readonly value={outgoing}></textarea>
+	<!-- outside the toolbar, whose buttons are styled as actions -->
+	<div class="note-switch">
+		<Switch id="anon-note" bind:checked={() => terms.note, (on) => saveTerms({ note: on })}
+			>{m.anon_note()}</Switch
+		>
+	</div>
 	<div class="toolbar actions">
 		<button type="button" onclick={copyOutput} disabled={!run.text}>{m.anon_copy()}</button>
 		<span class="status" class:error={copyStatus?.error} aria-live="polite"
@@ -621,6 +682,20 @@
 			font-weight: 500;
 			color: var(--navy);
 			cursor: pointer;
+		}
+
+		& .own {
+			margin-top: 0.6rem;
+		}
+
+		& .term-lists {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+			gap: 1rem 1.5rem;
+
+			& textarea {
+				width: 100%;
+			}
 		}
 
 		& .rule-groups {
@@ -824,6 +899,10 @@
 			font-size: 13px;
 			background: var(--canvas);
 		}
+	}
+
+	.note-switch {
+		margin-top: 0.75rem;
 	}
 
 	.actions {

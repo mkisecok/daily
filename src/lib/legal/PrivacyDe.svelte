@@ -154,6 +154,14 @@
 					<td>bis Sie sie löschen</td>
 				</tr>
 				<tr>
+					<td><code>daily.anon.terms.v1</code> (localStorage)</td>
+					<td
+						>Eigene Begriffe des Pseudonymisierers (immer oder nie ersetzen) und ob der Hinweis für
+						die KI vorangestellt wird</td
+					>
+					<td>bis Sie ihn löschen</td>
+				</tr>
+				<tr>
 					<td><code>daily.backup.last.v1</code> (localStorage)</td>
 					<td>merkt sich den Tag der letzten Datensicherung aus diesem Browser</td>
 					<td>bis Sie ihn löschen</td>

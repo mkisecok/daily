@@ -122,6 +122,13 @@
 			{/each}
 		</ul>
 	</nav>
+
+	<nav class="quick" aria-label={m.today_before_ai()}>
+		<h3>{m.today_before_ai()}</h3>
+		<a class="button quiet" href={resolve(localized('/werkzeuge/pseudonymisierer'))}>
+			<Icon name="eye-off" size={16} />{m.command_pseudonymise()}
+		</a>
+	</nav>
 </section>
 
 <style>

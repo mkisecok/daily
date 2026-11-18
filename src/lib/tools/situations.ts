@@ -49,6 +49,12 @@ export const SITUATIONS: Situation[] = [
 		tool: 'ki-einfuehrung'
 	},
 	{
+		id: 'ki-chat',
+		label: L('Ein Text soll in einen KI-Chat', 'A text is going into an AI chat'),
+		icon: 'eye-off',
+		tool: 'pseudonymisierer'
+	},
+	{
 		id: 'dienstleister',
 		label: L('Ein Dienstleister kommt dazu', 'A service provider joins'),
 		icon: 'building',
