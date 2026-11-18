@@ -1,4 +1,5 @@
 // ported from mkisecok/dataGuard (MIT)
+import { PAGE_BREAK } from '../pages.js';
 import type { ExtractResult } from '../types.js';
 
 /** below this, a "text layer" is page furniture rather than content */
@@ -47,7 +48,8 @@ export async function extractPdf(file: File): Promise<ExtractResult> {
 		if (chars < MIN_CHARS_PER_PAGE * doc.numPages) {
 			return { text: '', pages: doc.numPages, needsOcr: true };
 		}
-		return { text: pages.join('\n\n'), pages: doc.numPages };
+		// the pages stay apart, so the Pseudonymisierer can show them one by one
+		return { text: pages.join(`\n${PAGE_BREAK}\n`), pages: doc.numPages };
 	} finally {
 		await task.destroy();
 	}

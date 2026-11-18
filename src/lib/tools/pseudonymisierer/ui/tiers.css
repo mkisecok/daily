@@ -1,0 +1,48 @@
+/**
+ * the Pseudonymisierer's tier colours, shared by its page, the page view and
+ * the review: Art. 9 alone in wax, identifiers navy, numbers blue, the rest ink
+ */
+[data-anon-tier] {
+	--tier: var(--ink2);
+	--tier-soft: var(--neutral-soft);
+
+	&[data-anon-tier='3'] {
+		--tier: var(--wax);
+		--tier-soft: var(--wax-soft);
+	}
+
+	&[data-anon-tier='1'] {
+		--tier: var(--navy);
+		--tier-soft: var(--navy-soft);
+	}
+
+	&[data-anon-tier='2'] {
+		--tier: var(--primary);
+		--tier-soft: var(--primary-soft);
+	}
+}
+
+/* a finding in the text: tinted in its tier, struck through when it goes out in the clear */
+.anon-mark {
+	padding: 0 0.15rem;
+	font: inherit;
+	color: var(--tier);
+	background: var(--tier-soft);
+	border: 0;
+	border-bottom: 2px solid var(--tier);
+	border-radius: 3px;
+	cursor: pointer;
+
+	&[aria-pressed='false'] {
+		color: var(--ink3);
+		background: none;
+		border-bottom-style: dashed;
+		border-bottom-color: var(--rule);
+		text-decoration: line-through;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--navy);
+		outline-offset: 1px;
+	}
+}

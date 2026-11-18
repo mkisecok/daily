@@ -1,5 +1,32 @@
 import { expect, test } from '@playwright/test';
 
+/** a PDF with one line of text on each page, built by hand so the test needs no fixture file */
+function pdf(pages: string[]): Buffer {
+	const objects: string[] = [];
+	const kids = pages.map((_, i) => `${4 + i * 2} 0 R`).join(' ');
+	objects.push('<< /Type /Catalog /Pages 2 0 R >>');
+	objects.push(`<< /Type /Pages /Kids [${kids}] /Count ${pages.length} >>`);
+	objects.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
+	for (const [i, line] of pages.entries()) {
+		const stream = `BT /F1 12 Tf 72 720 Td (${line}) Tj ET`;
+		objects.push(
+			`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents ${5 + i * 2} 0 R >>`
+		);
+		objects.push(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);
+	}
+	let out = '%PDF-1.4\n';
+	const offsets: number[] = [];
+	for (const [i, body] of objects.entries()) {
+		offsets.push(out.length);
+		out += `${i + 1} 0 obj\n${body}\nendobj\n`;
+	}
+	const xref = out.length;
+	out += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+	for (const offset of offsets) out += `${String(offset).padStart(10, '0')} 00000 n \n`;
+	out += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+	return Buffer.from(out, 'latin1');
+}
+
 /** the note a standard run puts above the outgoing text */
 const NOTE =
 	'Hinweis: Personenbezogene Daten in diesem Text sind durch Platzhalter in «…» ersetzt. Bitte übernimm die Platzhalter unverändert in deine Antwort.\n\n';
@@ -30,7 +57,7 @@ test('preview: the Pseudonymisierer replaces personal data and restores the repl
 	await expect(page.locator('.leftover')).not.toContainText('Seite');
 
 	// switching a finding off sends it in the clear
-	await page.locator('.marked .mark', { hasText: 'Müllerstraße 5' }).click();
+	await page.locator('.marked .anon-mark', { hasText: 'Müllerstraße 5' }).click();
 	await expect(output).toHaveValue(
 		NOTE + 'Patientin: «NAME_1», Müllerstraße 5\nE-Mail: «EMAIL_1»\nDer Transport ist bezahlt.'
 	);
@@ -158,6 +185,50 @@ test('preview: each Art. 9 category has its own chip, and an own standard holds 
 			.getByRole('group', { name: 'Besondere Kategorien nach Art. 9 DSGVO einzeln' })
 			.getByRole('button', { name: /Gewerkschaft/ })
 	).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('preview: an imported PDF shows page by page, and findings can be checked one by one', async ({
+	page
+}) => {
+	await page.goto('werkzeuge/pseudonymisierer/', { waitUntil: 'networkidle' });
+	await page.locator('label.file input[type=file]').setInputFiles({
+		name: 'akte.pdf',
+		mimeType: 'application/pdf',
+		buffer: pdf([
+			'Herr Brandt meldete den Vorfall am Montag.',
+			'Frau Weber hat die Unterlagen geprueft.',
+			'Kontakt: info@example.com, Diagnose: Asthma'
+		])
+	});
+	const pager = page.getByRole('navigation', { name: 'Seiten' });
+	await expect(pager).toContainText('Seite 1 von 3');
+	await expect(page.locator('.marked')).toContainText('Brandt');
+	await expect(page.locator('.marked')).not.toContainText('Weber');
+
+	await pager.getByRole('button', { name: /Weiter/ }).click();
+	await expect(pager).toContainText('Seite 2 von 3');
+	await expect(page.locator('.marked')).toContainText('Weber');
+	// the last page holds Art. 9 data, so its box says so
+	const last = page
+		.getByRole('list', { name: 'Alle Seiten' })
+		.getByRole('button', { name: /^Seite 3/ });
+	await expect(last).toHaveAttribute('data-art9', 'true');
+	await last.click();
+	await expect(pager).toContainText('Seite 3 von 3');
+
+	// the AI gets the pages as blank lines, never the page break itself
+	const output = page.getByRole('textbox', { name: 'Pseudonymisierter Text' });
+	await expect(output).not.toHaveValue(/\f/);
+
+	// finding by finding, with J to go on and a button to keep one in the clear
+	await page.getByRole('button', { name: /Fund für Fund/ }).click();
+	await expect(page.locator('.finding-review')).toContainText('Fund 1 von 4 · Seite 1');
+	await page.keyboard.press('j');
+	await expect(page.locator('.finding-review')).toContainText('Fund 2 von 4 · Seite 2');
+	await page.getByRole('button', { name: 'Im Klartext lassen' }).click();
+	await expect(output).toHaveValue(/Frau Weber hat/);
+	await page.getByRole('button', { name: 'Seitenweise' }).click();
+	await expect(pager).toContainText('Seite 2 von 3');
 });
 
 test('preview: the old Anonymisierer address forwards to the Pseudonymisierer', async ({

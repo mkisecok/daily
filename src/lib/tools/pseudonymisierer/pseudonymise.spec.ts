@@ -347,6 +347,12 @@ describe('own terms', () => {
 });
 
 describe('every special category of Art. 9', () => {
+	it('ends a labelled value at a comma, so a name after it stays a name', () => {
+		expect(values('Diagnose: Asthma, laut Attest von Dr. Petra Vogel')).toEqual(
+			expect.arrayContaining(['Asthma', 'Petra Vogel'])
+		);
+	});
+
 	it('ends a labelled value at the end of its sentence', () => {
 		expect(values('Diagnose: Asthma. Konfession: katholisch. Zutritt per Fingerabdruck.')).toEqual(
 			expect.arrayContaining(['Asthma', 'katholisch', 'Fingerabdruck'])
