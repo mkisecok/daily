@@ -1,14 +1,14 @@
 <!--
 	@component
-	On/off switch on Bits UI with its label beside it: a thin rail with a knob
-	that slides right and fills blue when on, and the state as a word ("an",
-	"aus") so it does not rest on colour. Use it for settings that apply at
-	once, not for answers that may be left open.
+	On/off switch on Bits UI with its label beside it: a classic switch whose
+	track fills blue and whose white knob slides right when on. The knob's
+	place shows the state as well as the colour, and the switch role announces
+	it. Use it for settings that apply at once, not for answers that may be
+	left open.
 -->
 <script lang="ts">
 	import { Switch } from 'bits-ui';
 	import type { Snippet } from 'svelte';
-	import { m } from '#lib/paraglide/messages.js';
 
 	let {
 		id,
@@ -19,11 +19,7 @@
 
 <span class="daily-switch-row">
 	<Switch.Root {id} bind:checked class="daily-switch">
-		<span class="daily-switch-rail"><Switch.Thumb class="daily-switch-thumb" /></span>
-		<!-- the switch role already announces the state -->
-		<span class="daily-switch-word" aria-hidden="true">
-			{checked ? m.switch_on() : m.switch_off()}
-		</span>
+		<Switch.Thumb class="daily-switch-thumb" />
 	</Switch.Root>
 	<label for={id}>{@render children()}</label>
 </span>

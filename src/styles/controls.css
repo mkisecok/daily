@@ -362,89 +362,69 @@
 }
 
 .daily-switch {
-	--knob: 0.8rem;
+	/* a classic switch: a filled track, a white knob that slides right when on */
+	--track-w: 2.25rem;
+	--track-h: 1.3rem;
+	--knob: calc(var(--track-h) - 4px);
 
-	display: inline-flex;
+	position: relative;
+	display: inline-block;
 	flex: none;
-	gap: 0.45rem;
-	align-items: center;
-	height: 1.35rem;
+	width: var(--track-w);
+	height: var(--track-h);
 	padding: 0;
-	color: var(--ink3);
-	background: none;
-	border: 0;
+	background: var(--rule);
+	border: 1px solid transparent;
+	border-radius: calc(var(--track-h) / 2);
 	cursor: pointer;
+	transition: background-color 0.15s ease;
+
+	&:hover {
+		background: var(--ink3);
+	}
 
 	&[data-state='checked'] {
-		color: var(--primary);
+		background: var(--primary);
+
+		&:hover {
+			background: var(--primary-strong);
+		}
 	}
 
 	&:focus-visible {
 		outline: 2px solid var(--navy);
-		outline-offset: 3px;
-		border-radius: 2px;
+		outline-offset: 2px;
 	}
 
-	&:hover .daily-switch-thumb {
-		border-color: var(--ink2);
-	}
+	/* forced colours drop the fill, so the track keeps a frame and the knob a colour */
+	@media (forced-colors: active) {
+		border-color: ButtonText;
 
-	&[data-state='checked']:hover .daily-switch-thumb {
-		border-color: var(--primary);
-	}
-}
+		& .daily-switch-thumb {
+			border: 1px solid ButtonText;
+		}
 
-.daily-switch-rail {
-	position: relative;
-	display: block;
-	width: 1.9rem;
-	height: var(--knob);
-
-	&::before {
-		position: absolute;
-		top: calc(50% - 1px);
-		right: 0;
-		left: 0;
-		height: 2px;
-		content: '';
-		background: var(--rule);
-		border-radius: 1px;
-		transition: background-color 0.15s ease;
-	}
-
-	[data-state='checked'] > &::before {
-		background: var(--primary);
+		&[data-state='checked'] .daily-switch-thumb {
+			background: Highlight;
+		}
 	}
 }
 
 .daily-switch-thumb {
 	position: absolute;
-	top: 0;
-	left: 0;
+	top: 1px;
+	left: 1px;
 	display: block;
 	width: var(--knob);
 	height: var(--knob);
-	background: var(--sheet);
-	border: 1.5px solid var(--ink3);
+	background: #fff;
 	border-radius: 50%;
-	transition:
-		transform 0.15s ease,
-		background-color 0.15s ease,
-		border-color 0.15s ease;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+	transition: transform 0.15s ease;
 
-	&[data-state='checked'] {
-		background: var(--primary);
-		border-color: var(--primary);
-		transform: translateX(calc(1.9rem - var(--knob)));
+	[data-state='checked'] > & {
+		transform: translateX(calc(var(--track-w) - var(--knob) - 4px));
 	}
-}
-
-.daily-switch-word {
-	min-width: 1.6rem;
-	font-family: var(--mono);
-	font-size: 11px;
-	line-height: 1;
-	letter-spacing: 0.02em;
 }
 
 /* command palette (Bits UI Command) */
@@ -503,7 +483,6 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.daily-switch,
-	.daily-switch-rail::before,
 	.daily-switch-thumb,
 	.daily-chip,
 	.daily-control {
