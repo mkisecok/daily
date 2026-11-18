@@ -243,6 +243,12 @@ describe('names the context gives away', () => {
 		]);
 	});
 
+	it('keeps a hyphenated first name whole', () => {
+		expect(values('Bericht von Marie-Luise Ostermann-Kühn (Personal)', only('name'))).toEqual([
+			'Marie-Luise Ostermann-Kühn'
+		]);
+	});
+
 	it('catches the parts of a found name when they stand alone later', () => {
 		const text = 'Katharina Brandt meldete den Vorfall. Später bestätigte Brandt die Meldung.';
 		const run = buildRun(text, detect(text, only('name'), NONE, UNMUTED));

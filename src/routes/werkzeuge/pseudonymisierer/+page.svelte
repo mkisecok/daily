@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 	import { m } from '#lib/paraglide/messages.js';
 	import { buildRun, detect, suggest } from '#lib/tools/pseudonymisierer/detect.js';
@@ -12,6 +13,8 @@
 		TOKEN_TIER,
 		TOKEN_TYPES
 	} from '#lib/tools/pseudonymisierer/rules.js';
+	import { DeepModel } from '#lib/tools/pseudonymisierer/deep/model.svelte.js';
+	import { MODEL_MB } from '#lib/tools/pseudonymisierer/deep/protocol.js';
 	import { SAMPLE } from '#lib/tools/pseudonymisierer/sample.js';
 	import {
 		AI_NOTE,
@@ -125,7 +128,36 @@
 	const note = getLocale() === 'de' ? AI_NOTE.de : AI_NOTE.en;
 	/** exactly what goes into the AI chat: the note, if wanted, then the text */
 	const outgoing = $derived(run.text.trim() && terms.note ? `${note}\n\n${run.text}` : run.text);
-	const suggestions = $derived(suggest(source, spans));
+	/** the opt-in name model; its finds join the suggestions, never the text by themselves */
+	const deep = new DeepModel();
+	const suggestions = $derived(
+		suggest(
+			source,
+			spans,
+			deep.names.map((name) => name.value)
+		)
+	);
+
+	// the worker is outside Svelte: hand it each new text once the model is ready
+	$effect(() => deep.scan(source));
+
+	onMount(() => {
+		(async () => {
+			await deep.check();
+			// a model switched on before and still cached starts again without asking
+			if (terms.deep && deep.cached) deep.start();
+		})();
+	});
+
+	function deepOn() {
+		saveTerms({ deep: true });
+		deep.start();
+	}
+
+	function deepOff() {
+		saveTerms({ deep: false });
+		void deep.stop();
+	}
 	const rows = $derived([...run.findings, ...run.muted]);
 	const groups = $derived(
 		TIER_ORDER.map((tier) => ({
@@ -388,6 +420,29 @@
 			</label>
 		</div>
 	</details>
+
+	<div class="deep" data-status={deep.status}>
+		<h3>{m.anon_deep_title()} <span class="badge">Beta</span></h3>
+		{#if deep.status === 'off'}
+			<p class="hint">{m.anon_deep_hint({ mb: String(MODEL_MB) })}</p>
+			<button type="button" class="button quiet" onclick={deepOn}>
+				{deep.cached ? m.anon_deep_start_cached() : m.anon_deep_start({ mb: String(MODEL_MB) })}
+			</button>
+		{:else if deep.status === 'loading'}
+			<p class="hint" aria-live="polite">
+				{deep.progress > 0
+					? m.anon_deep_loading_share({ share: String(Math.round(deep.progress * 100)) })
+					: m.anon_deep_loading()}
+			</p>
+			<progress max="1" value={deep.progress || undefined}></progress>
+		{:else if deep.status === 'ready'}
+			<p class="hint" aria-live="polite">{m.anon_deep_ready()}</p>
+			<button type="button" class="button ghost" onclick={deepOff}>{m.anon_deep_off()}</button>
+		{:else}
+			<p class="hint error" role="alert">{m.anon_deep_error({ reason: deep.error })}</p>
+			<button type="button" class="button quiet" onclick={deepOn}>{m.anon_deep_retry()}</button>
+		{/if}
+	</div>
 </section>
 
 {#if source.trim()}
@@ -497,7 +552,9 @@
 					<span class="reason"
 						>{suggestion.reason === 'email'
 							? m.anon_suggestion_email()
-							: m.anon_suggestion_first_name()} · {suggestion.count}×</span
+							: suggestion.reason === 'model'
+								? m.anon_suggestion_model()
+								: m.anon_suggestion_first_name()} · {suggestion.count}×</span
 					>
 					<button
 						type="button"
@@ -686,6 +743,34 @@
 
 		& .own {
 			margin-top: 0.6rem;
+		}
+
+		/* the opt-in model: a ruled-off row at the foot of the card */
+		& .deep {
+			margin-top: 1rem;
+			padding-top: 0.9rem;
+			border-top: 1px solid var(--rule2);
+
+			& h3 {
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+				margin-bottom: 0.35rem;
+				font-size: 15px;
+			}
+
+			& .hint {
+				max-width: var(--measure);
+			}
+
+			& .error {
+				color: var(--wax);
+			}
+
+			& progress {
+				width: min(100%, 24rem);
+				accent-color: var(--primary);
+			}
 		}
 
 		& .term-lists {

@@ -63,7 +63,8 @@ export default defineConfig(({ mode }) => {
 							mode: 'auto',
 							directives: {
 								'default-src': ['self'],
-								'script-src': ['self', ...templateScriptHashes()],
+								// wasm-unsafe-eval: the Pseudonymisierer's opt-in name model runs as WebAssembly
+								'script-src': ['self', 'wasm-unsafe-eval', ...templateScriptHashes()],
 								// Bits UI positions popovers with style attributes
 								'style-src': ['self', 'unsafe-inline'],
 								'img-src': ['self', 'data:', 'blob:'],

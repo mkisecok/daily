@@ -103,6 +103,12 @@ const START = '(?:^|[^\\p{L}\\p{N}])';
 /** a capitalised word, hyphenated parts allowed: "Weber", "Müller-Lüdenscheidt" */
 const PART = '\\p{Lu}\\p{Ll}{2,}(?:-\\p{Lu}\\p{Ll}+)*(?![\\p{L}\\p{N}])';
 const NAMECORE = `${PART}(?:[ \\t]+${PART})?`;
+/**
+ * a known first name starts only after a non-hyphen, and may carry a
+ * hyphenated second first name: "Marie-Luise", never "-Luise" alone
+ */
+const NAME_START = '(?:^|[^\\p{L}\\p{N}-])';
+const FIRST_PART = '(?:-\\p{Lu}\\p{Ll}+)?';
 const TITLES = 'Herr|Frau|Herrn|Dr\\.|Prof\\.|Rechtsanwalt|Rechtsanwältin|Mr\\.|Mrs\\.|Ms\\.';
 const PLABELS =
 	'Name|Vorname|Nachname|Kunde|Kundin|Patient|Patientin|Mitarbeiter|Mitarbeiterin|' +
@@ -120,7 +126,7 @@ const SIGNOFFS =
 const NAME_RE = new RegExp(
 	`${START}(?:(?:${TITLES})[ \\t]{1,2}` +
 		`|(?:${PLABELS})[ \\t]*:[ \\t]*(?:(?:Dr|Prof|Herr|Frau|Rechtsanwalt|Rechtsanwältin)\\.?[ \\t]+)?)(?<v>${NAMECORE})` +
-		`|${START}(?<v2>(?:${NAME_DICT.join('|')})[ \\t]+${NAMECORE})` +
+		`|${NAME_START}(?<v2>(?:${NAME_DICT.join('|')})${FIRST_PART}[ \\t]+${NAMECORE})` +
 		`|${START}(?:${GREETINGS})[ \\t]+(?:(?:Herr|Frau|Dr\\.|Prof\\.)[ \\t]+)*(?<v3>${NAMECORE})` +
 		`|${START}(?:${SIGNOFFS})[,!.]?[ \\t]*\\r?\\n[ \\t]*(?<v4>${NAMECORE})[ \\t]*(?=\\r?\\n|$)`,
 	'gu'

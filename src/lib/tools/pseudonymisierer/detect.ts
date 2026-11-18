@@ -148,7 +148,7 @@ function followUps(text: string, spans: Span[], prio: number): Omit<Span, 'id'>[
 }
 
 /** a word that may be a name the rules did not catch, with how often it occurs */
-export type Suggestion = { value: string; count: number; reason: 'first-name' | 'email' };
+export type Suggestion = { value: string; count: number; reason: 'first-name' | 'email' | 'model' };
 
 const FIRST = new Set(NAME_DICT);
 
@@ -157,9 +157,13 @@ const FIRST = new Set(NAME_DICT);
  * first name on its own ("Katharina meldete sich"), or a name spelled out in
  * an e-mail address ("katharina.brandt@…" next to a "Brandt" in the text).
  * Offered for one click, never replaced on their own: a first name may also
- * be a product or a place.
+ * be a product or a place. Names the opt-in model found join them.
  */
-export function suggest(text: string, spans: Span[]): Suggestion[] {
+export function suggest(
+	text: string,
+	spans: Span[],
+	modelNames: readonly string[] = []
+): Suggestion[] {
 	const covered = (start: number, end: number) =>
 		spans.some((span) => start < span.end && span.start < end);
 	const marked = new Set(spans.map((span) => span.value));
@@ -170,6 +174,8 @@ export function suggest(text: string, spans: Span[]): Suggestion[] {
 		if (free.length > 0) found.set(value, { value, count: free.length, reason });
 	};
 
+	// the opt-in model's finds first: they cover names no list knows
+	for (const name of modelNames) add(name, 'model');
 	for (const match of text.matchAll(/\p{Lu}[\p{Ll}-]{2,}/gu)) {
 		if (FIRST.has(match[0])) add(match[0], 'first-name');
 	}
