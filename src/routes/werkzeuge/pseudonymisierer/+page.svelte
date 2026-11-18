@@ -230,26 +230,6 @@
 		saveTerms({ mine: null });
 	}
 
-	/** Art. 9 categories one by one: the most sensitive data, each with its own chip */
-	const ART9 = RULE_GROUPS.find((group) => group.art9)!.keys;
-	const ruleCount = (key: RuleKey) =>
-		run.findings.filter((finding) => finding.ruleKey === key).length;
-	const ART9_CHIP: Partial<Record<RuleKey, () => string>> = {
-		health: m.anon_art9_health,
-		religion: m.anon_art9_religion,
-		political: m.anon_art9_political,
-		sexual: m.anon_art9_sexual,
-		ethnic: m.anon_art9_ethnic,
-		union: m.anon_art9_union,
-		genetic: m.anon_art9_genetic,
-		biometric: m.anon_art9_biometric
-	};
-
-	function toggleRule(key: RuleKey) {
-		if (active.has(key)) active.delete(key);
-		else active.add(key);
-	}
-
 	/**
 	 * a group counts as on when its everyday rules are; the rules a standard run
 	 * leaves off (every date) follow the level, not the group chip
@@ -394,8 +374,8 @@
 </section>
 
 <section class="card detection" aria-labelledby="anon-rules">
-	<h2 id="anon-rules">{m.anon_rules()}</h2>
-	<div class="bar">
+	<div class="head">
+		<h2 id="anon-rules">{m.anon_rules()}</h2>
 		<div class="levels" role="group" aria-label={m.anon_level()}>
 			<button
 				type="button"
@@ -417,50 +397,29 @@
 					onclick={() => setLevel('mine')}>{m.anon_level_mine()}</button
 				>
 			{/if}
-			{#if level === 'custom'}
-				<span class="custom">{m.anon_level_custom()}</span>
-				<button type="button" class="button ghost" onclick={saveMine}
-					>{m.anon_level_save_mine()}</button
-				>
-			{:else if level === 'mine'}
-				<button type="button" class="button ghost" onclick={forgetMine}
-					>{m.anon_level_forget_mine()}</button
-				>
-			{/if}
-		</div>
-		<div class="groups" role="group" aria-label={m.anon_groups()}>
-			{#each RULE_GROUPS.filter((group) => !group.art9) as group (group.id)}
-				<button
-					type="button"
-					class="daily-chip"
-					data-art9={group.art9 || undefined}
-					aria-pressed={groupOn(group.keys)}
-					onclick={() => toggleGroup(group.keys)}
-					>{GROUP_CHIP[group.id]()}
-					<span class="badge num">{groupCount(group.keys)}</span></button
-				>
-			{/each}
+			{#if level === 'custom'}<span class="custom">{m.anon_level_custom()}</span>{/if}
 		</div>
 	</div>
-	<div class="art9" role="group" aria-label={m.anon_art9_chips()}>
-		<!-- the group chip leads its own row and switches every Art. 9 category at once -->
-		<button
-			type="button"
-			class="daily-chip all"
-			aria-pressed={groupOn(ART9)}
-			onclick={() => toggleGroup(ART9)}
-			>{m.anon_chip_art9()} <span class="badge num">{groupCount(ART9)}</span></button
-		>
-		{#each ART9 as key (key)}
-			<button
-				type="button"
-				class="daily-chip"
-				aria-pressed={active.has(key)}
-				onclick={() => toggleRule(key)}
-				>{ART9_CHIP[key]?.()} <span class="badge num">{ruleCount(key)}</span></button
-			>
+
+	<!-- what is on, at a glance; the switches themselves are under "Einzelne Regeln" -->
+	<ul class="summary" aria-label={m.anon_summary()}>
+		{#each RULE_GROUPS as group (group.id)}
+			<li data-art9={group.art9 || undefined}>
+				<span class="name">{GROUP_CHIP[group.id]()}</span>
+				<span class="state"
+					>{m.anon_summary_on({
+						on: String(group.keys.filter((key) => active.has(key)).length),
+						total: String(group.keys.length)
+					})}</span
+				>
+				<span class="found"
+					>{groupCount(group.keys) === 1
+						? m.anon_summary_found_one()
+						: m.anon_summary_found({ count: String(groupCount(group.keys)) })}</span
+				>
+			</li>
 		{/each}
-	</div>
+	</ul>
 	<p class="hint">
 		{level === 'strict'
 			? m.anon_level_strict_hint()
@@ -468,12 +427,16 @@
 				? m.anon_level_mine_hint()
 				: m.anon_level_standard_hint()}
 	</p>
+
 	<details class="single">
 		<summary>{m.anon_rules_single()}</summary>
 		<div class="rule-groups">
 			{#each RULE_GROUPS as group (group.id)}
 				<fieldset data-art9={group.art9 || undefined}>
 					<legend>{GROUP_TITLE[group.id]()}</legend>
+					<button type="button" class="button ghost all" onclick={() => toggleGroup(group.keys)}
+						>{groupOn(group.keys) ? m.anon_group_all_off() : m.anon_group_all_on()}</button
+					>
 					{#each group.keys as key (key)}
 						<Switch
 							id="rule-{key}"
@@ -484,6 +447,20 @@
 					{/each}
 				</fieldset>
 			{/each}
+		</div>
+		<!-- the own standard is kept where the switches are set -->
+		<div class="mine">
+			{#if level === 'mine'}
+				<p class="hint">{m.anon_mine_active()}</p>
+				<button type="button" class="button quiet" onclick={forgetMine}
+					>{m.anon_level_forget_mine()}</button
+				>
+			{:else}
+				<p class="hint">{mine ? m.anon_mine_replace_hint() : m.anon_mine_hint()}</p>
+				<button type="button" class="button quiet" onclick={saveMine}
+					>{m.anon_level_save_mine()}</button
+				>
+			{/if}
 		</div>
 	</details>
 	<details class="single own">
@@ -788,16 +765,20 @@
 
 	/* level and groups in one bar; the single rules fold away below */
 	.detection {
-		& .bar {
+		& .head {
 			display: flex;
 			flex-wrap: wrap;
 			align-items: center;
-			gap: 0.75rem 1.5rem;
-			margin: 0.25rem 0 0.6rem;
+			justify-content: space-between;
+			gap: 0.5rem 1rem;
+			margin-bottom: 0.75rem;
+
+			& h2 {
+				margin: 0;
+			}
 		}
 
-		& .levels,
-		& .groups {
+		& .levels {
 			display: flex;
 			flex-wrap: wrap;
 			align-items: center;
@@ -805,27 +786,47 @@
 		}
 
 		& .custom {
+			margin-left: 0.25rem;
 			font-size: 13px;
 			color: var(--ink3);
 		}
 
-		/* every Art. 9 category on its own chip, labelled in the alarm colour */
-		& .art9 {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-			gap: 0.4rem;
-			margin-bottom: 0.6rem;
+		/* one quiet line per group: what is on and what it found */
+		& .summary {
+			display: grid;
+			gap: 0.3rem;
+			margin: 0 0 0.6rem;
+			padding: 0;
+			list-style: none;
+			font-size: 14px;
 
-			& .all {
-				margin-right: 0.35rem;
-				font-weight: 600;
+			& li {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0 0.5rem;
+				align-items: baseline;
+			}
+
+			& .name {
+				min-width: 13rem;
+				font-weight: 500;
+			}
+
+			& li[data-art9] .name {
 				color: var(--wax);
 			}
-		}
 
-		& .groups .badge {
-			margin-left: 0.15rem;
+			& .state,
+			& .found {
+				color: var(--ink2);
+				font-variant-numeric: tabular-nums;
+			}
+
+			& .found::before {
+				content: '·';
+				margin-right: 0.5rem;
+				color: var(--ink3);
+			}
 		}
 
 		& .hint {
@@ -884,12 +885,16 @@
 
 		& .rule-groups {
 			display: grid;
-			grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
-			gap: 0 1.5rem;
+			grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+			align-items: start;
+			gap: 0 2rem;
 		}
 
+		/* every column keeps its own rhythm, however long the others are */
 		& fieldset {
+			position: relative;
 			display: grid;
+			align-content: start;
 			gap: 0.5rem;
 			margin: 0.75rem 0 0;
 			padding: 0;
@@ -905,6 +910,31 @@
 
 		& fieldset[data-art9] legend {
 			color: var(--wax);
+		}
+
+		/* "Alle an/aus" on the line of the group title */
+		& fieldset .all {
+			position: absolute;
+			top: -1.85rem;
+			right: 0;
+			padding-block: 0.2rem;
+			font-size: 13px;
+		}
+
+		/* saving the own standard closes the list of switches */
+		& .mine {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 0.5rem 1rem;
+			margin-top: 1rem;
+			padding-top: 0.9rem;
+			border-top: 1px solid var(--rule2);
+
+			& .hint {
+				margin: 0;
+				max-width: 36rem;
+			}
 		}
 	}
 
