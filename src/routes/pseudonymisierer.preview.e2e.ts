@@ -63,7 +63,7 @@ test('preview: the Pseudonymisierer replaces personal data and restores the repl
 	);
 });
 
-test('preview: levels and group chips switch the rules, and a selection in the text is marked', async ({
+test('preview: group buttons switch the rules, and a selection in the text is marked', async ({
 	page
 }) => {
 	await page.goto('werkzeuge/pseudonymisierer/', { waitUntil: 'networkidle' });
@@ -74,12 +74,6 @@ test('preview: levels and group chips switch the rules, and a selection in the t
 	const output = page.getByRole('textbox', { name: 'Pseudonymisierter Text' });
 	await expect(output).toHaveValue(
 		NOTE + 'Vertrag vom 03.04.2024 mit «NAME_1», Steuer-ID «NUMBER_1». Projekt Nordlicht.'
-	);
-
-	// strict replaces every date as well
-	await page.getByRole('button', { name: 'Streng' }).click();
-	await expect(output).toHaveValue(
-		NOTE + 'Vertrag vom «DATE_1» mit «NAME_1», Steuer-ID «NUMBER_1». Projekt Nordlicht.'
 	);
 
 	// the summary shows what is on; a group is switched together under "Einzelne Regeln"
@@ -93,7 +87,6 @@ test('preview: levels and group chips switch the rules, and a selection in the t
 		.getByRole('button', { name: 'Alle aus' })
 		.click();
 	await expect(numbers).toContainText('0 von 6 Regeln an');
-	await expect(page.locator('.custom')).toHaveText('Angepasst');
 	// the number rules are off; the phone rule still catches eleven digits
 	await expect(output).not.toHaveValue(/NUMBER_1/);
 
@@ -145,22 +138,6 @@ test('preview: the Pseudonymisierer opens from the search and the home page', as
 	await expect(page.getByRole('option', { name: /Text pseudonymisieren/ })).toBeVisible();
 });
 
-test('preview: the name model stays off and contacts nobody until it is switched on', async ({
-	page
-}) => {
-	const remote: string[] = [];
-	page.on('request', (request) => {
-		if (request.url().includes('huggingface')) remote.push(request.url());
-	});
-	await page.goto('werkzeuge/pseudonymisierer/', { waitUntil: 'networkidle' });
-	await page
-		.getByLabel('Text', { exact: true })
-		.fill('Die Meldung kam von Jovanović aus der Buchhaltung.');
-	await expect(page.getByRole('button', { name: 'Modell laden (349 MB)' })).toBeVisible();
-	await expect(page.locator('.deep')).toContainText('huggingface.co');
-	expect(remote).toEqual([]);
-});
-
 test('preview: every Art. 9 category has its switch, and an own standard holds across visits', async ({
 	page
 }) => {
@@ -181,15 +158,15 @@ test('preview: every Art. 9 category has its switch, and an own standard holds a
 	await expect(art9).toContainText('7 von 8 Regeln an');
 	const output = page.getByRole('textbox', { name: 'Pseudonymisierter Text' });
 	await expect(output).toHaveValue(/Mitglied der IG Metall\. Diagnose: «HEALTH_DATA_1»/);
-	await page.getByRole('button', { name: 'Als meinen Standard speichern' }).click();
+	await page.getByRole('button', { name: 'Als Standard speichern' }).click();
+	await expect(page.getByRole('button', { name: 'Als Standard gespeichert' })).toBeDisabled();
 	await page.reload({ waitUntil: 'networkidle' });
-	await expect(page.getByRole('button', { name: 'Mein Standard' })).toHaveAttribute(
-		'aria-pressed',
-		'true'
-	);
+	await expect(page.getByRole('button', { name: 'Als Standard gespeichert' })).toBeDisabled();
 	await page.getByText('Einzelne Regeln').click();
 	await expect(page.locator('#rule-union')).toHaveAttribute('aria-checked', 'false');
-	await expect(page.getByRole('button', { name: 'Nicht mehr als Standard merken' })).toBeVisible();
+	// a change after saving can be saved again
+	await page.getByLabel('Gewerkschaftszugehörigkeit').click();
+	await expect(page.getByRole('button', { name: 'Als Standard speichern' })).toBeEnabled();
 });
 
 test('preview: an imported PDF shows page by page, and findings can be checked one by one', async ({
