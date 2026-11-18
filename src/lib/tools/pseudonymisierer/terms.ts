@@ -7,19 +7,17 @@ export const TERMS_KEY = 'daily.anon.terms.v1';
  * terms the user keeps for every text, one per line as typed: `always` are
  * replaced wherever they occur (client or product names the rules cannot
  * know), `never` stay as they are (the organisation's own name, a law). `note`
- * puts the placeholder note above the outgoing text; `deep` restarts the name
- * model on the next visit, when it is still in the browser's cache.
+ * puts the placeholder note above the outgoing text.
  */
 export type Terms = {
 	always: string;
 	never: string;
 	note: boolean;
-	deep: boolean;
 	/** the user's own standard: the rules switched on, or none saved */
 	mine: string[] | null;
 };
 
-const EMPTY: Terms = { always: '', never: '', note: true, deep: false, mine: null };
+const EMPTY: Terms = { always: '', never: '', note: true, mine: null };
 
 /** the lines of a term list: trimmed, at least two characters, each once */
 export function termList(text: string): string[] {
@@ -43,7 +41,6 @@ export function readTerms(): Terms {
 			always: typeof stored.always === 'string' ? stored.always : '',
 			never: typeof stored.never === 'string' ? stored.never : '',
 			note: stored.note !== false,
-			deep: stored.deep === true,
 			mine: Array.isArray(stored.mine)
 				? stored.mine.filter((key): key is string => typeof key === 'string')
 				: null

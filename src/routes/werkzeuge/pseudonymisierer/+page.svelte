@@ -13,8 +13,6 @@
 		TOKEN_TIER,
 		TOKEN_TYPES
 	} from '#lib/tools/pseudonymisierer/rules.js';
-	import { DeepModel } from '#lib/tools/pseudonymisierer/deep/model.svelte.js';
-	import { MODEL_MB } from '#lib/tools/pseudonymisierer/deep/protocol.js';
 	import { PAGE_BREAK, pagesOf } from '#lib/tools/pseudonymisierer/pages.js';
 	import FindingReview from '#lib/tools/pseudonymisierer/ui/FindingReview.svelte';
 	import PageView from '#lib/tools/pseudonymisierer/ui/PageView.svelte';
@@ -105,7 +103,7 @@
 	const ACCEPT = '.pdf,.docx,.txt,.md,.markdown,.csv,.tsv,.log,.json,.xml';
 
 	let source = $state('');
-	/** the user's own standard where one is saved, else the standard level */
+	/** the user's own standard where one is saved, else the standard set */
 	const savedMine = readTerms().mine?.filter((key): key is RuleKey =>
 		(RULE_KEYS as string[]).includes(key)
 	);
@@ -148,36 +146,13 @@
 	/** the text for the AI: page breaks of an imported PDF become blank lines */
 	const sendable = $derived(run.text.replaceAll(PAGE_BREAK, ''));
 	const outgoing = $derived(sendable.trim() && terms.note ? `${note}\n\n${sendable}` : sendable);
-	/** the opt-in name model; its finds join the suggestions, never the text by themselves */
-	const deep = new DeepModel();
-	const suggestions = $derived(
-		suggest(
-			source,
-			spans,
-			deep.names.map((name) => name.value)
-		)
-	);
+	const suggestions = $derived(suggest(source, spans));
 
-	// the worker is outside Svelte: hand it each new text once the model is ready
-	$effect(() => deep.scan(source));
-
+	// an earlier version could load a name model; whatever it left in the cache goes
 	onMount(() => {
-		(async () => {
-			await deep.check();
-			// a model switched on before and still cached starts again without asking
-			if (terms.deep && deep.cached) deep.start();
-		})();
+		if ('caches' in window) void caches.delete('daily-gliner-v1').catch(() => {});
 	});
 
-	function deepOn() {
-		saveTerms({ deep: true });
-		deep.start();
-	}
-
-	function deepOff() {
-		saveTerms({ deep: false });
-		void deep.stop();
-	}
 	const rows = $derived([...run.findings, ...run.muted]);
 	const groups = $derived(
 		TIER_ORDER.map((tier) => ({
@@ -197,42 +172,23 @@
 		TOKEN_TYPES.map((type) => ({ value: type, label: TYPE_LABEL[type]() }))
 	);
 
-	const STANDARD = RULE_KEYS.filter((key) => !DEFAULT_OFF.has(key));
-	/** strict switches every rule on, standard all but the ones a normal run leaves off */
-	const same = (keys: readonly string[]) =>
-		active.size === keys.length && keys.every((key) => active.has(key as RuleKey));
 	/** the user's saved standard, when there is one */
 	const mine = $derived(
 		terms.mine?.filter((key): key is RuleKey => (RULE_KEYS as string[]).includes(key)) ?? null
 	);
-	const level = $derived(
-		same(STANDARD)
-			? 'standard'
-			: same(RULE_KEYS)
-				? 'strict'
-				: mine && same(mine)
-					? 'mine'
-					: 'custom'
+	/** whether the switches are exactly the saved standard */
+	const saved = $derived(
+		mine !== null && active.size === mine.length && mine.every((key) => active.has(key))
 	);
-
-	function setLevel(next: 'standard' | 'strict' | 'mine') {
-		const keys = next === 'strict' ? RULE_KEYS : next === 'mine' && mine ? mine : STANDARD;
-		active.clear();
-		for (const key of keys) active.add(key);
-	}
 
 	/** keeps the current switches as the user's own standard, the start of every visit */
 	function saveMine() {
 		saveTerms({ mine: [...active] });
 	}
 
-	function forgetMine() {
-		saveTerms({ mine: null });
-	}
-
 	/**
 	 * a group counts as on when its everyday rules are; the rules a standard run
-	 * leaves off (every date) follow the level, not the group chip
+	 * leaves off (every date) stay out of the group button
 	 */
 	const everyday = (keys: readonly RuleKey[]) => keys.filter((key) => !DEFAULT_OFF.has(key));
 	const groupOn = (keys: readonly RuleKey[]) => everyday(keys).every((key) => active.has(key));
@@ -376,29 +332,9 @@
 <section class="card detection" aria-labelledby="anon-rules">
 	<div class="head">
 		<h2 id="anon-rules">{m.anon_rules()}</h2>
-		<div class="levels" role="group" aria-label={m.anon_level()}>
-			<button
-				type="button"
-				class="daily-chip"
-				aria-pressed={level === 'standard'}
-				onclick={() => setLevel('standard')}>{m.anon_level_standard()}</button
-			>
-			<button
-				type="button"
-				class="daily-chip"
-				aria-pressed={level === 'strict'}
-				onclick={() => setLevel('strict')}>{m.anon_level_strict()}</button
-			>
-			{#if mine}
-				<button
-					type="button"
-					class="daily-chip"
-					aria-pressed={level === 'mine'}
-					onclick={() => setLevel('mine')}>{m.anon_level_mine()}</button
-				>
-			{/if}
-			{#if level === 'custom'}<span class="custom">{m.anon_level_custom()}</span>{/if}
-		</div>
+		<button type="button" class="button quiet" disabled={saved} onclick={saveMine}
+			>{saved ? m.anon_mine_saved() : m.anon_mine_save()}</button
+		>
 	</div>
 
 	<!-- what is on, at a glance; the switches themselves are under "Einzelne Regeln" -->
@@ -420,13 +356,6 @@
 			</li>
 		{/each}
 	</ul>
-	<p class="hint">
-		{level === 'strict'
-			? m.anon_level_strict_hint()
-			: level === 'mine'
-				? m.anon_level_mine_hint()
-				: m.anon_level_standard_hint()}
-	</p>
 
 	<details class="single">
 		<summary>{m.anon_rules_single()}</summary>
@@ -447,20 +376,6 @@
 					{/each}
 				</fieldset>
 			{/each}
-		</div>
-		<!-- the own standard is kept where the switches are set -->
-		<div class="mine">
-			{#if level === 'mine'}
-				<p class="hint">{m.anon_mine_active()}</p>
-				<button type="button" class="button quiet" onclick={forgetMine}
-					>{m.anon_level_forget_mine()}</button
-				>
-			{:else}
-				<p class="hint">{mine ? m.anon_mine_replace_hint() : m.anon_mine_hint()}</p>
-				<button type="button" class="button quiet" onclick={saveMine}
-					>{m.anon_level_save_mine()}</button
-				>
-			{/if}
 		</div>
 	</details>
 	<details class="single own">
@@ -488,29 +403,6 @@
 			</label>
 		</div>
 	</details>
-
-	<div class="deep" data-status={deep.status}>
-		<h3>{m.anon_deep_title()} <span class="badge">Beta</span></h3>
-		{#if deep.status === 'off'}
-			<p class="hint">{m.anon_deep_hint({ mb: String(MODEL_MB) })}</p>
-			<button type="button" class="button quiet" onclick={deepOn}>
-				{deep.cached ? m.anon_deep_start_cached() : m.anon_deep_start({ mb: String(MODEL_MB) })}
-			</button>
-		{:else if deep.status === 'loading'}
-			<p class="hint" aria-live="polite">
-				{deep.progress > 0
-					? m.anon_deep_loading_share({ share: String(Math.round(deep.progress * 100)) })
-					: m.anon_deep_loading()}
-			</p>
-			<progress max="1" value={deep.progress || undefined}></progress>
-		{:else if deep.status === 'ready'}
-			<p class="hint" aria-live="polite">{m.anon_deep_ready()}</p>
-			<button type="button" class="button ghost" onclick={deepOff}>{m.anon_deep_off()}</button>
-		{:else}
-			<p class="hint error" role="alert">{m.anon_deep_error({ reason: deep.error })}</p>
-			<button type="button" class="button quiet" onclick={deepOn}>{m.anon_deep_retry()}</button>
-		{/if}
-	</div>
 </section>
 
 {#if source.trim()}
@@ -634,9 +526,7 @@
 					<span class="reason"
 						>{suggestion.reason === 'email'
 							? m.anon_suggestion_email()
-							: suggestion.reason === 'model'
-								? m.anon_suggestion_model()
-								: m.anon_suggestion_first_name()} · {suggestion.count}×</span
+							: m.anon_suggestion_first_name()} · {suggestion.count}×</span
 					>
 					<button
 						type="button"
@@ -763,7 +653,7 @@
 		white-space: nowrap;
 	}
 
-	/* level and groups in one bar; the single rules fold away below */
+	/* the title and the save button in one bar; the single rules fold away below */
 	.detection {
 		& .head {
 			display: flex;
@@ -776,19 +666,6 @@
 			& h2 {
 				margin: 0;
 			}
-		}
-
-		& .levels {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-			gap: 0.4rem;
-		}
-
-		& .custom {
-			margin-left: 0.25rem;
-			font-size: 13px;
-			color: var(--ink3);
 		}
 
 		/* one quiet line per group: what is on and what it found */
@@ -845,34 +722,6 @@
 			margin-top: 0.6rem;
 		}
 
-		/* the opt-in model: a ruled-off row at the foot of the card */
-		& .deep {
-			margin-top: 1rem;
-			padding-top: 0.9rem;
-			border-top: 1px solid var(--rule2);
-
-			& h3 {
-				display: flex;
-				align-items: center;
-				gap: 0.5rem;
-				margin-bottom: 0.35rem;
-				font-size: 15px;
-			}
-
-			& .hint {
-				max-width: var(--measure);
-			}
-
-			& .error {
-				color: var(--wax);
-			}
-
-			& progress {
-				width: min(100%, 24rem);
-				accent-color: var(--primary);
-			}
-		}
-
 		& .term-lists {
 			display: grid;
 			grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
@@ -919,22 +768,6 @@
 			right: 0;
 			padding-block: 0.2rem;
 			font-size: 13px;
-		}
-
-		/* saving the own standard closes the list of switches */
-		& .mine {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-			gap: 0.5rem 1rem;
-			margin-top: 1rem;
-			padding-top: 0.9rem;
-			border-top: 1px solid var(--rule2);
-
-			& .hint {
-				margin: 0;
-				max-width: 36rem;
-			}
 		}
 	}
 
