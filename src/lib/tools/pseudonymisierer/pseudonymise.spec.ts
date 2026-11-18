@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { buildRun, detect, suggest } from './detect.js';
 import { kindOf } from './ingest/index.js';
 import { restoreFrom } from './restore.js';
+import { AI_NOTE, termList, withoutNever } from './terms.js';
 import { DEFAULT_OFF, RULE_KEYS, validKvnr, validTaxId } from './rules.js';
 import type { RuleKey, TokenType } from './types.js';
 
@@ -309,5 +310,32 @@ describe('German identifiers', () => {
 		expect(values('Zugriff von 2001:db8::8a2e:370:7334 um 12:30:45', only('ip'))).toEqual([
 			'2001:db8::8a2e:370:7334'
 		]);
+	});
+});
+
+describe('own terms', () => {
+	it('reads one term per line, trimmed, each once, ignoring single letters', () => {
+		expect(termList('  Muster GmbH \n\nX\nMuster GmbH\nNordlicht')).toEqual([
+			'Muster GmbH',
+			'Nordlicht'
+		]);
+	});
+
+	it('keeps a never-term in the clear, but not one marked by hand', () => {
+		const text = 'Svenja Hoffmann und Tobias Reinhardt';
+		const spans = detect(text, only('name'), NONE, UNMUTED);
+		expect(withoutNever(spans, ['svenja hoffmann']).map((s) => s.value)).toEqual([
+			'Tobias Reinhardt'
+		]);
+		const marked = detect(text, only('name'), new Map([['Svenja Hoffmann', 'NAME']]), UNMUTED);
+		expect(withoutNever(marked, ['Svenja Hoffmann']).map((s) => s.value)).toContain(
+			'Svenja Hoffmann'
+		);
+	});
+
+	it('writes a note that names no placeholder, so a repeated note leaves no stray token', () => {
+		for (const note of Object.values(AI_NOTE)) {
+			expect(restoreFrom(note, {}).leftover).toEqual([]);
+		}
 	});
 });

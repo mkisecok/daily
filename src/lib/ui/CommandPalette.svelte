@@ -51,6 +51,14 @@
 			path: localized(`/werkzeuge/${tool.slug}`)
 		})),
 		{
+			id: 'action:pseudonymise',
+			group: m.command_actions(),
+			label: m.command_pseudonymise(),
+			keywords: ['anonymisieren', 'pseudonymisieren', 'schwärzen', 'KI', 'ChatGPT', 'AI', 'redact'],
+			icon: 'eye-off',
+			path: localized('/werkzeuge/pseudonymisierer')
+		},
+		{
 			id: 'action:note',
 			group: m.command_actions(),
 			label: m.notes_new(),

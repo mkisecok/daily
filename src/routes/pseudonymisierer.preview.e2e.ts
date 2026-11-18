@@ -1,5 +1,9 @@
 import { expect, test } from '@playwright/test';
 
+/** the note a standard run puts above the outgoing text */
+const NOTE =
+	'Hinweis: Personenbezogene Daten in diesem Text sind durch Platzhalter in «…» ersetzt. Bitte übernimm die Platzhalter unverändert in deine Antwort.\n\n';
+
 test('preview: the Pseudonymisierer replaces personal data and restores the reply', async ({
 	page
 }) => {
@@ -12,7 +16,7 @@ test('preview: the Pseudonymisierer replaces personal data and restores the repl
 
 	const output = page.getByRole('textbox', { name: 'Pseudonymisierter Text' });
 	await expect(output).toHaveValue(
-		'Patientin: «NAME_1», «ADDRESS_1»\nE-Mail: «EMAIL_1»\nDer Transport ist bezahlt.'
+		NOTE + 'Patientin: «NAME_1», «ADDRESS_1»\nE-Mail: «EMAIL_1»\nDer Transport ist bezahlt.'
 	);
 	await expect(page.locator('.findings li')).toHaveCount(3);
 
@@ -28,7 +32,7 @@ test('preview: the Pseudonymisierer replaces personal data and restores the repl
 	// switching a finding off sends it in the clear
 	await page.locator('.marked .mark', { hasText: 'Müllerstraße 5' }).click();
 	await expect(output).toHaveValue(
-		'Patientin: «NAME_1», Müllerstraße 5\nE-Mail: «EMAIL_1»\nDer Transport ist bezahlt.'
+		NOTE + 'Patientin: «NAME_1», Müllerstraße 5\nE-Mail: «EMAIL_1»\nDer Transport ist bezahlt.'
 	);
 });
 
@@ -42,13 +46,13 @@ test('preview: levels and group chips switch the rules, and a selection in the t
 	);
 	const output = page.getByRole('textbox', { name: 'Pseudonymisierter Text' });
 	await expect(output).toHaveValue(
-		'Vertrag vom 03.04.2024 mit «NAME_1», Steuer-ID «NUMBER_1». Projekt Nordlicht.'
+		NOTE + 'Vertrag vom 03.04.2024 mit «NAME_1», Steuer-ID «NUMBER_1». Projekt Nordlicht.'
 	);
 
 	// strict replaces every date as well
 	await page.getByRole('button', { name: 'Streng' }).click();
 	await expect(output).toHaveValue(
-		'Vertrag vom «DATE_1» mit «NAME_1», Steuer-ID «NUMBER_1». Projekt Nordlicht.'
+		NOTE + 'Vertrag vom «DATE_1» mit «NAME_1», Steuer-ID «NUMBER_1». Projekt Nordlicht.'
 	);
 
 	// a group chip switches its rules together and shows how much it found
@@ -77,6 +81,37 @@ test('preview: levels and group chips switch the rules, and a selection in the t
 	await expect(page.getByLabel('Text, der ersetzt werden soll')).toHaveValue('Nordlicht');
 	await page.getByRole('button', { name: 'Markieren' }).click();
 	await expect(output).toHaveValue(/Projekt «NAME_2»\.$/);
+});
+
+test('preview: own terms hold across visits, and the note for the AI can be left off', async ({
+	page
+}) => {
+	await page.goto('werkzeuge/pseudonymisierer/', { waitUntil: 'networkidle' });
+	await page.getByText('Eigene Begriffe').click();
+	await page.getByLabel('Immer ersetzen').fill('Projekt Nordlicht');
+	await page.getByLabel('Nie ersetzen').fill('Svenja Hoffmann');
+	await page.reload({ waitUntil: 'networkidle' });
+
+	await page
+		.getByLabel('Text', { exact: true })
+		.fill('Projekt Nordlicht: Svenja Hoffmann und Tobias Reinhardt.');
+	const output = page.getByRole('textbox', { name: 'Pseudonymisierter Text' });
+	await expect(output).toHaveValue(NOTE + '«CUSTOM_1»: Svenja Hoffmann und «NAME_1».');
+	await expect(page.locator('.findings li', { hasText: 'Projekt Nordlicht' })).toContainText(
+		'Eigener Begriff'
+	);
+
+	await page.getByText('Hinweis für die KI voranstellen').click();
+	await expect(output).toHaveValue('«CUSTOM_1»: Svenja Hoffmann und «NAME_1».');
+});
+
+test('preview: the Pseudonymisierer opens from the search and the home page', async ({ page }) => {
+	await page.goto('', { waitUntil: 'networkidle' });
+	await page.getByRole('link', { name: 'Text pseudonymisieren' }).click();
+	await expect(page).toHaveURL(/\/werkzeuge\/pseudonymisierer\/$/);
+	await page.getByRole('button', { name: 'Suche öffnen' }).click();
+	await page.keyboard.type('schwärzen');
+	await expect(page.getByRole('option', { name: /Text pseudonymisieren/ })).toBeVisible();
 });
 
 test('preview: the old Anonymisierer address forwards to the Pseudonymisierer', async ({
