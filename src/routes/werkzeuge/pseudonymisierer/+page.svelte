@@ -59,7 +59,11 @@
 		health: m.anon_rule_health,
 		religion: m.anon_rule_religion,
 		political: m.anon_rule_political,
-		sexual: m.anon_rule_sexual
+		sexual: m.anon_rule_sexual,
+		ethnic: m.anon_rule_ethnic,
+		union: m.anon_rule_union,
+		genetic: m.anon_rule_genetic,
+		biometric: m.anon_rule_biometric
 	};
 	const TYPE_LABEL: Record<TokenType, () => string> = {
 		NAME: m.anon_type_name,
@@ -72,6 +76,10 @@
 		RELIGION: m.anon_type_religion,
 		POLITICAL: m.anon_type_political,
 		SEXUAL_ORIENT: m.anon_type_sexual,
+		ETHNIC_ORIGIN: m.anon_type_ethnic,
+		TRADE_UNION: m.anon_type_union,
+		GENETIC_DATA: m.anon_type_genetic,
+		BIOMETRIC_DATA: m.anon_type_biometric,
 		CUSTOM: m.anon_type_custom
 	};
 	const GROUP_CHIP: Record<(typeof RULE_GROUPS)[number]['id'], () => string> = {
@@ -93,7 +101,13 @@
 	const ACCEPT = '.pdf,.docx,.txt,.md,.markdown,.csv,.tsv,.log,.json,.xml';
 
 	let source = $state('');
-	const active = new SvelteSet<RuleKey>(RULE_KEYS.filter((key) => !DEFAULT_OFF.has(key)));
+	/** the user's own standard where one is saved, else the standard level */
+	const savedMine = readTerms().mine?.filter((key): key is RuleKey =>
+		(RULE_KEYS as string[]).includes(key)
+	);
+	const active = new SvelteSet<RuleKey>(
+		savedMine ?? RULE_KEYS.filter((key) => !DEFAULT_OFF.has(key))
+	);
 	const manualMarks = new SvelteMap<string, TokenType>();
 	const mutedValues = new SvelteSet<string>();
 
@@ -186,17 +200,55 @@
 
 	const STANDARD = RULE_KEYS.filter((key) => !DEFAULT_OFF.has(key));
 	/** strict switches every rule on, standard all but the ones a normal run leaves off */
+	const same = (keys: readonly string[]) =>
+		active.size === keys.length && keys.every((key) => active.has(key as RuleKey));
+	/** the user's saved standard, when there is one */
+	const mine = $derived(
+		terms.mine?.filter((key): key is RuleKey => (RULE_KEYS as string[]).includes(key)) ?? null
+	);
 	const level = $derived(
-		active.size === RULE_KEYS.length
-			? 'strict'
-			: active.size === STANDARD.length && STANDARD.every((key) => active.has(key))
-				? 'standard'
-				: 'custom'
+		same(STANDARD)
+			? 'standard'
+			: same(RULE_KEYS)
+				? 'strict'
+				: mine && same(mine)
+					? 'mine'
+					: 'custom'
 	);
 
-	function setLevel(next: 'standard' | 'strict') {
+	function setLevel(next: 'standard' | 'strict' | 'mine') {
+		const keys = next === 'strict' ? RULE_KEYS : next === 'mine' && mine ? mine : STANDARD;
 		active.clear();
-		for (const key of next === 'strict' ? RULE_KEYS : STANDARD) active.add(key);
+		for (const key of keys) active.add(key);
+	}
+
+	/** keeps the current switches as the user's own standard, the start of every visit */
+	function saveMine() {
+		saveTerms({ mine: [...active] });
+	}
+
+	function forgetMine() {
+		saveTerms({ mine: null });
+	}
+
+	/** Art. 9 categories one by one: the most sensitive data, each with its own chip */
+	const ART9 = RULE_GROUPS.find((group) => group.art9)!.keys;
+	const ruleCount = (key: RuleKey) =>
+		run.findings.filter((finding) => finding.ruleKey === key).length;
+	const ART9_CHIP: Partial<Record<RuleKey, () => string>> = {
+		health: m.anon_art9_health,
+		religion: m.anon_art9_religion,
+		political: m.anon_art9_political,
+		sexual: m.anon_art9_sexual,
+		ethnic: m.anon_art9_ethnic,
+		union: m.anon_art9_union,
+		genetic: m.anon_art9_genetic,
+		biometric: m.anon_art9_biometric
+	};
+
+	function toggleRule(key: RuleKey) {
+		if (active.has(key)) active.delete(key);
+		else active.add(key);
 	}
 
 	/**
@@ -358,10 +410,27 @@
 				aria-pressed={level === 'strict'}
 				onclick={() => setLevel('strict')}>{m.anon_level_strict()}</button
 			>
-			{#if level === 'custom'}<span class="custom">{m.anon_level_custom()}</span>{/if}
+			{#if mine}
+				<button
+					type="button"
+					class="daily-chip"
+					aria-pressed={level === 'mine'}
+					onclick={() => setLevel('mine')}>{m.anon_level_mine()}</button
+				>
+			{/if}
+			{#if level === 'custom'}
+				<span class="custom">{m.anon_level_custom()}</span>
+				<button type="button" class="button ghost" onclick={saveMine}
+					>{m.anon_level_save_mine()}</button
+				>
+			{:else if level === 'mine'}
+				<button type="button" class="button ghost" onclick={forgetMine}
+					>{m.anon_level_forget_mine()}</button
+				>
+			{/if}
 		</div>
 		<div class="groups" role="group" aria-label={m.anon_groups()}>
-			{#each RULE_GROUPS as group (group.id)}
+			{#each RULE_GROUPS.filter((group) => !group.art9) as group (group.id)}
 				<button
 					type="button"
 					class="daily-chip"
@@ -374,8 +443,31 @@
 			{/each}
 		</div>
 	</div>
+	<div class="art9" role="group" aria-label={m.anon_art9_chips()}>
+		<!-- the group chip leads its own row and switches every Art. 9 category at once -->
+		<button
+			type="button"
+			class="daily-chip all"
+			aria-pressed={groupOn(ART9)}
+			onclick={() => toggleGroup(ART9)}
+			>{m.anon_chip_art9()} <span class="badge num">{groupCount(ART9)}</span></button
+		>
+		{#each ART9 as key (key)}
+			<button
+				type="button"
+				class="daily-chip"
+				aria-pressed={active.has(key)}
+				onclick={() => toggleRule(key)}
+				>{ART9_CHIP[key]?.()} <span class="badge num">{ruleCount(key)}</span></button
+			>
+		{/each}
+	</div>
 	<p class="hint">
-		{level === 'strict' ? m.anon_level_strict_hint() : m.anon_level_standard_hint()}
+		{level === 'strict'
+			? m.anon_level_strict_hint()
+			: level === 'mine'
+				? m.anon_level_mine_hint()
+				: m.anon_level_standard_hint()}
 	</p>
 	<details class="single">
 		<summary>{m.anon_rules_single()}</summary>
@@ -723,6 +815,21 @@
 		& .custom {
 			font-size: 13px;
 			color: var(--ink3);
+		}
+
+		/* every Art. 9 category on its own chip, labelled in the alarm colour */
+		& .art9 {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 0.4rem;
+			margin-bottom: 0.6rem;
+
+			& .all {
+				margin-right: 0.35rem;
+				font-weight: 600;
+				color: var(--wax);
+			}
 		}
 
 		& .groups .badge {

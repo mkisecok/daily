@@ -130,6 +130,36 @@ test('preview: the name model stays off and contacts nobody until it is switched
 	expect(remote).toEqual([]);
 });
 
+test('preview: each Art. 9 category has its own chip, and an own standard holds across visits', async ({
+	page
+}) => {
+	await page.goto('werkzeuge/pseudonymisierer/', { waitUntil: 'networkidle' });
+	await page
+		.getByLabel('Text', { exact: true })
+		.fill('Sie ist Mitglied der IG Metall. Diagnose: Asthma.');
+	const art9 = page.getByRole('group', { name: 'Besondere Kategorien nach Art. 9 DSGVO einzeln' });
+	// the group chip for all of them, then the eight categories
+	await expect(art9.getByRole('button')).toHaveCount(9);
+	const union = art9.getByRole('button', { name: /Gewerkschaft/ });
+	await expect(union).toContainText('1');
+
+	// switching one category off leaves the others on, and that set can be kept
+	await union.click();
+	const output = page.getByRole('textbox', { name: 'Pseudonymisierter Text' });
+	await expect(output).toHaveValue(/Mitglied der IG Metall\. Diagnose: «HEALTH_DATA_1»/);
+	await page.getByRole('button', { name: 'Als meinen Standard speichern' }).click();
+	await page.reload({ waitUntil: 'networkidle' });
+	await expect(page.getByRole('button', { name: 'Mein Standard' })).toHaveAttribute(
+		'aria-pressed',
+		'true'
+	);
+	await expect(
+		page
+			.getByRole('group', { name: 'Besondere Kategorien nach Art. 9 DSGVO einzeln' })
+			.getByRole('button', { name: /Gewerkschaft/ })
+	).toHaveAttribute('aria-pressed', 'false');
+});
+
 test('preview: the old Anonymisierer address forwards to the Pseudonymisierer', async ({
 	page
 }) => {

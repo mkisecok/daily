@@ -27,7 +27,11 @@ export type RuleKey =
 	| 'health'
 	| 'religion'
 	| 'political'
-	| 'sexual';
+	| 'sexual'
+	| 'ethnic'
+	| 'union'
+	| 'genetic'
+	| 'biometric';
 
 /**
  * placeholder type written into the outgoing text. Several detectors share
@@ -45,6 +49,10 @@ export type TokenType =
 	| 'RELIGION'
 	| 'POLITICAL'
 	| 'SEXUAL_ORIENT'
+	| 'ETHNIC_ORIGIN'
+	| 'TRADE_UNION'
+	| 'GENETIC_DATA'
+	| 'BIOMETRIC_DATA'
 	| 'CUSTOM';
 
 export type Rule = {

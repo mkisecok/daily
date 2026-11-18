@@ -280,20 +280,40 @@ export const RULES: Record<RuleKey, Rule> = {
 	health: {
 		art9: true,
 		// a labelled clinical value (label kept out) or a condition named on its own
-		re: /\b(?:Diagnose|Medikation|Therapie(?:plan)?|Erkrankung|Befund|Symptome?|Behandlung|Operation|Krankheit|Allergie|Impfstatus|Blutgruppe|Blutzucker|Blutdruck|Cholesterin)[:\s]{1,4}(?<v>[^\n]{3,80})|\b(?:HIV|AIDS|Diabetes(?:\s+mellitus(?:\s+Typ\s+\d)?)?|Hypertonie|Migräne|Depression|depressive\s+Episode|Hypothyreose|Asthma|Krebs|Karzinom|Tumor|Schizophrenie|Epilepsie|Demenz|Alzheimer|Multiple\s+Sklerose|Parkinson)\b/gi
+		re: /\b(?:Diagnose|Medikation|Therapie(?:plan)?|Erkrankung|Befund|Symptome?|Behandlung|Operation|Krankheit|Allergie|Impfstatus|Blutgruppe|Blutzucker|Blutdruck|Cholesterin)[:\s]{1,4}(?<v>[^\n.;]{3,80})|\b(?:HIV|AIDS|Diabetes(?:\s+mellitus(?:\s+Typ\s+\d)?)?|Hypertonie|Migräne|Depression|depressive\s+Episode|Hypothyreose|Asthma|Krebs|Karzinom|Tumor|Schizophrenie|Epilepsie|Demenz|Alzheimer|Multiple\s+Sklerose|Parkinson)\b/gi
 	},
 	religion: {
 		art9: true,
-		re: /\b(?:Religionszugehörigkeit|Religion|Konfession|Kirchensteuer|Glaube|faith|religious\s+affiliation|denomination)[:\s]{1,4}(?<v>[^\n]{2,60})|\b(?:evangelisch|katholisch|römisch-katholisch|muslimisch|islamisch|jüdisch|buddhistisch|hinduistisch|orthodox|protestantisch)\b/gi
+		re: /\b(?:Religionszugehörigkeit|Religion|Konfession|Kirchensteuer|Glaube|Weltanschauung|faith|religious\s+affiliation|denomination|philosophical\s+beliefs?)[:\s]{1,4}(?<v>[^\n.;]{2,60})|\b(?:evangelisch|katholisch|römisch-katholisch|muslimisch|islamisch|jüdisch|buddhistisch|hinduistisch|orthodox|protestantisch)\b/gi
 	},
 	political: {
 		art9: true,
-		re: /\b(?:Partei(?:mitglied(?:schaft)?)?|Politische\s+(?:Überzeugung|Ansicht|Zugehörigkeit)|Ortsverband|Kreisverband|political\s+(?:party|affiliation|view))[:\s]{1,4}(?<v>[^\n]{2,80})/gi
+		re: /\b(?:Partei(?:mitglied(?:schaft)?)?|Politische\s+(?:Überzeugung|Ansicht|Zugehörigkeit)|Ortsverband|Kreisverband|political\s+(?:party|affiliation|view))[:\s]{1,4}(?<v>[^\n.;]{2,80})/gi
 	},
 	sexual: {
 		art9: true,
 		// the closing boundary keeps "trans" out of "Transport", "Transfer" and "transparent"
 		re: /\b(?:sexuelle[rn]?\s+(?:Orientierung|Identität)|Geschlechtsidentität|sexual\s+(?:orientation|identity)|gender\s+identity|(?:homo|bi|pan)sexuell(?:e[mnrs]?)?|nicht-binär(?:e[mnrs]?)?|queer|lesbisch(?:e[mnrs]?)?|schwul(?:e[mnrs]?)?|trans(?:gender|sexuell(?:e[mnrs]?)?|ident(?:e[mnrs]?)?|frau|mann)?)(?![\p{L}\p{N}])[:\s]*[^\n]{0,60}/giu
+	},
+	ethnic: {
+		art9: true,
+		// a labelled origin; nationality is not ethnic origin and stays out
+		re: /\b(?:ethnische\s+Herkunft|Herkunft|Abstammung|Ethnie|ethnic\s+origin|ethnicity|racial\s+origin)[:\s]{1,4}(?<v>[^\n.;]{2,60})|\b(?:Migrationshintergrund|Sinti|Roma)\b/gu
+	},
+	union: {
+		art9: true,
+		// a labelled membership, or a membership in a named union
+		re: /\b(?:Gewerkschaft(?:smitglied(?:schaft)?|szugehörigkeit)?|trade\s+union(?:\s+membership)?)[:\s]{1,4}(?<v>[^\n.;]{2,60})|\bMitglied(?:\s+(?:der|bei|in\s+der|bei\s+der))?\s+(?<v2>ver\.di|IG\s+Metall|IG\s+BCE|IG\s+BAU|GEW|EVG|NGG|GdP|Marburger\s+Bund|dbb)\b/gu
+	},
+	genetic: {
+		art9: true,
+		// a labelled genetic finding, or a test named in the text
+		re: /\b(?:genetische\s+Daten|Gentest|Genanalyse|DNA-Analyse|Erbanlage|genetic\s+(?:data|test))[:\s]{1,4}(?<v>[^\n.;]{2,80})|\b(?:BRCA[12](?:-Mutation)?|Gentest|Genanalyse|DNA-Probe|Vaterschaftstest)\b/gu
+	},
+	biometric: {
+		art9: true,
+		// biometric features named in the text, with a value after a colon where one follows
+		re: /\b(?:Fingerabdr(?:uck|ücke)|Fingerabdruck-Template|Gesichtsbild|Gesichtserkennung|Gesichtsgeometrie|Iris-?Scan|Venenscan|Stimmprofil|biometrische[nrs]?\s+(?:Daten|Merkmal(?:e)?|Lichtbild)|fingerprints?|facial\s+(?:recognition|geometry)|iris\s+scan|voiceprint)\b(?:[:][ \t]*(?<v>[^\n.;]{2,80}))?/giu
 	}
 };
 
@@ -318,7 +338,11 @@ export const RULE_TYPE: Record<RuleKey, TokenType> = {
 	health: 'HEALTH_DATA',
 	religion: 'RELIGION',
 	political: 'POLITICAL',
-	sexual: 'SEXUAL_ORIENT'
+	sexual: 'SEXUAL_ORIENT',
+	ethnic: 'ETHNIC_ORIGIN',
+	union: 'TRADE_UNION',
+	genetic: 'GENETIC_DATA',
+	biometric: 'BIOMETRIC_DATA'
 };
 
 /**
@@ -346,6 +370,10 @@ export const DETECT_ORDER: RuleKey[] = [
 	'religion',
 	'political',
 	'sexual',
+	'ethnic',
+	'union',
+	'genetic',
+	'biometric',
 	'name'
 ];
 
@@ -375,7 +403,16 @@ export const RULE_GROUPS = [
 	{
 		id: 'art9',
 		art9: true,
-		keys: ['health', 'religion', 'political', 'sexual'] satisfies RuleKey[]
+		keys: [
+			'health',
+			'religion',
+			'political',
+			'sexual',
+			'ethnic',
+			'union',
+			'genetic',
+			'biometric'
+		] satisfies RuleKey[]
 	}
 ] as const;
 
@@ -400,6 +437,10 @@ export const TOKEN_TYPES: TokenType[] = [
 	'RELIGION',
 	'POLITICAL',
 	'SEXUAL_ORIENT',
+	'ETHNIC_ORIGIN',
+	'TRADE_UNION',
+	'GENETIC_DATA',
+	'BIOMETRIC_DATA',
 	'CUSTOM'
 ];
 
@@ -414,6 +455,10 @@ export const TOKEN_TIER: Record<TokenType, Tier> = {
 	RELIGION: 3,
 	POLITICAL: 3,
 	SEXUAL_ORIENT: 3,
+	ETHNIC_ORIGIN: 3,
+	TRADE_UNION: 3,
+	GENETIC_DATA: 3,
+	BIOMETRIC_DATA: 3,
 	CUSTOM: 0
 };
 
