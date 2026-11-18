@@ -15,6 +15,9 @@
 	} from '#lib/tools/pseudonymisierer/rules.js';
 	import { DeepModel } from '#lib/tools/pseudonymisierer/deep/model.svelte.js';
 	import { MODEL_MB } from '#lib/tools/pseudonymisierer/deep/protocol.js';
+	import { PAGE_BREAK, pagesOf } from '#lib/tools/pseudonymisierer/pages.js';
+	import FindingReview from '#lib/tools/pseudonymisierer/ui/FindingReview.svelte';
+	import PageView from '#lib/tools/pseudonymisierer/ui/PageView.svelte';
 	import { SAMPLE } from '#lib/tools/pseudonymisierer/sample.js';
 	import {
 		AI_NOTE,
@@ -33,6 +36,7 @@
 	} from '#lib/tools/pseudonymisierer/types.js';
 	import { text } from '#lib/tools/i18n.js';
 	import ToolHeader from '#lib/tools/_shared/ToolHeader.svelte';
+	import '#lib/tools/pseudonymisierer/ui/tiers.css';
 	import Select from '#lib/ui/form/Select.svelte';
 	import Switch from '#lib/ui/form/Switch.svelte';
 	import type { PageProps } from './$types';
@@ -141,7 +145,9 @@
 	const run = $derived(buildRun(source, spans));
 	const note = getLocale() === 'de' ? AI_NOTE.de : AI_NOTE.en;
 	/** exactly what goes into the AI chat: the note, if wanted, then the text */
-	const outgoing = $derived(run.text.trim() && terms.note ? `${note}\n\n${run.text}` : run.text);
+	/** the text for the AI: page breaks of an imported PDF become blank lines */
+	const sendable = $derived(run.text.replaceAll(PAGE_BREAK, ''));
+	const outgoing = $derived(sendable.trim() && terms.note ? `${note}\n\n${sendable}` : sendable);
 	/** the opt-in name model; its finds join the suggestions, never the text by themselves */
 	const deep = new DeepModel();
 	const suggestions = $derived(
@@ -179,18 +185,11 @@
 			rows: rows.filter((row) => TOKEN_TIER[row.type] === tier)
 		})).filter((group) => group.rows.length > 0)
 	);
-	/** the source cut into plain text and marks, for the highlighted view */
-	const segments = $derived.by(() => {
-		const out: { text: string; span?: (typeof spans)[number] }[] = [];
-		let cursor = 0;
-		for (const span of spans) {
-			if (span.start > cursor) out.push({ text: source.slice(cursor, span.start) });
-			out.push({ text: span.value, span });
-			cursor = span.end;
-		}
-		if (cursor < source.length) out.push({ text: source.slice(cursor) });
-		return out;
-	});
+	/** the text in pages, and where the page view and the review stand */
+	const pages = $derived(pagesOf(source));
+	let page = $state(0);
+	let finding = $state(0);
+	let view = $state<'pages' | 'review'>('pages');
 	const restored = $derived(reply.trim() ? restoreFrom(reply, sent?.mapping ?? run.mapping) : null);
 	const stale = $derived(sent !== null && sent.text !== outgoing);
 
@@ -541,21 +540,35 @@
 	<section class="card" aria-labelledby="anon-marked">
 		<h2 id="anon-marked">{m.anon_marked()}</h2>
 		<p class="hint">{m.anon_marked_hint()}</p>
-		<!-- a selection here fills the field below, as one in the source text does -->
-		<p class="marked" bind:this={marked}>
-			{#each segments as segment, index (index)}
-				{#if segment.span}
-					<button
-						type="button"
-						class="mark"
-						data-tier={TOKEN_TIER[segment.span.type]}
-						aria-pressed={!segment.span.muted}
-						title={segment.span.muted ? undefined : segment.span.replacement}
-						onclick={() => toggle(segment.text)}>{segment.text}</button
-					>
-				{:else}{segment.text}{/if}
-			{/each}
-		</p>
+		<div class="views" role="group" aria-label={m.anon_views()}>
+			<button
+				type="button"
+				class="daily-chip"
+				aria-pressed={view === 'pages'}
+				onclick={() => (view = 'pages')}>{m.anon_view_pages()}</button
+			>
+			<button
+				type="button"
+				class="daily-chip"
+				aria-pressed={view === 'review'}
+				onclick={() => (view = 'review')}
+				>{m.anon_view_review()} <span class="badge num">{spans.length}</span></button
+			>
+		</div>
+		{#if view === 'pages'}
+			<!-- a selection here fills the field below, as one in the source text does -->
+			<PageView text={source} {spans} {pages} bind:page bind:element={marked} ontoggle={toggle} />
+		{:else}
+			<FindingReview
+				text={source}
+				{spans}
+				{pages}
+				bind:index={finding}
+				onpage={(at) => (page = at)}
+				typeLabel={(type) => TYPE_LABEL[type]()}
+				ontoggle={toggle}
+			/>
+		{/if}
 
 		<h3 class="manual-title">{m.anon_manual()}</h3>
 		<form
@@ -593,11 +606,11 @@
 		<p class="hint">{m.anon_findings_empty()}</p>
 	{/if}
 	{#each groups as group (group.tier)}
-		<h3 class="tier" data-tier={group.tier}>{TIER_TITLE[group.tier]()}</h3>
+		<h3 class="tier" data-anon-tier={group.tier}>{TIER_TITLE[group.tier]()}</h3>
 		<ul class="findings">
 			{#each group.rows as row (row.original)}
 				{@const id = `finding-${rows.indexOf(row)}`}
-				<li data-tier={group.tier} data-muted={row.muted || undefined}>
+				<li data-anon-tier={group.tier} data-muted={row.muted || undefined}>
 					<span class="value">
 						<Switch id="{id}-on" bind:checked={() => !row.muted, () => toggle(row.original)}
 							>{row.original}</Switch
@@ -707,27 +720,6 @@
 </section>
 
 <style>
-	/* tier colours: Art. 9 alone in wax, identifiers navy, numbers blue, the rest ink */
-	[data-tier] {
-		--tier: var(--ink2);
-		--tier-soft: var(--neutral-soft);
-
-		&[data-tier='3'] {
-			--tier: var(--wax);
-			--tier-soft: var(--wax-soft);
-		}
-
-		&[data-tier='1'] {
-			--tier: var(--navy);
-			--tier-soft: var(--navy-soft);
-		}
-
-		&[data-tier='2'] {
-			--tier: var(--primary);
-			--tier-soft: var(--primary-soft);
-		}
-	}
-
 	.card {
 		margin-top: 1rem;
 
@@ -916,36 +908,11 @@
 		}
 	}
 
-	.marked {
-		margin: 0;
-		font-size: 14px;
-		line-height: 1.9;
-		white-space: pre-wrap;
-		overflow-wrap: anywhere;
-
-		& .mark {
-			padding: 0 0.15rem;
-			font: inherit;
-			color: var(--tier);
-			background: var(--tier-soft);
-			border: 0;
-			border-bottom: 2px solid var(--tier);
-			border-radius: 3px;
-			cursor: pointer;
-
-			&[aria-pressed='false'] {
-				color: var(--ink3);
-				background: none;
-				border-bottom-style: dashed;
-				border-bottom-color: var(--rule);
-				text-decoration: line-through;
-			}
-
-			&:focus-visible {
-				outline: 2px solid var(--navy);
-				outline-offset: 1px;
-			}
-		}
+	.views {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin-bottom: 1rem;
 	}
 
 	.tier {
