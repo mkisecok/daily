@@ -114,6 +114,22 @@ test('preview: the Pseudonymisierer opens from the search and the home page', as
 	await expect(page.getByRole('option', { name: /Text pseudonymisieren/ })).toBeVisible();
 });
 
+test('preview: the name model stays off and contacts nobody until it is switched on', async ({
+	page
+}) => {
+	const remote: string[] = [];
+	page.on('request', (request) => {
+		if (request.url().includes('huggingface')) remote.push(request.url());
+	});
+	await page.goto('werkzeuge/pseudonymisierer/', { waitUntil: 'networkidle' });
+	await page
+		.getByLabel('Text', { exact: true })
+		.fill('Die Meldung kam von Jovanović aus der Buchhaltung.');
+	await expect(page.getByRole('button', { name: 'Modell laden (349 MB)' })).toBeVisible();
+	await expect(page.locator('.deep')).toContainText('huggingface.co');
+	expect(remote).toEqual([]);
+});
+
 test('preview: the old Anonymisierer address forwards to the Pseudonymisierer', async ({
 	page
 }) => {

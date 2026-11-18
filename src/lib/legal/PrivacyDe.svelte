@@ -154,6 +154,14 @@
 					<td>bis Sie sie löschen</td>
 				</tr>
 				<tr>
+					<td><code>daily-gliner-v1</code> (Cache Storage)</td>
+					<td
+						>das Sprachmodell der Gründlichen Erkennung im Pseudonymisierer, nur wenn Sie sie
+						einschalten</td
+					>
+					<td>bis Sie die Gründliche Erkennung ausschalten</td>
+				</tr>
+				<tr>
 					<td><code>daily.anon.terms.v1</code> (localStorage)</td>
 					<td
 						>Eigene Begriffe des Pseudonymisierers (immer oder nie ersetzen) und ob der Hinweis für
@@ -221,6 +229,13 @@
 	Browser. Texte, Dateien und Ergebnisse werden nicht an uns übertragen. Der Guardrail-Test sendet
 	Anfragen nur an den Endpunkt, den Sie selbst eintragen, und zwar direkt aus Ihrem Browser; für
 	diese Verbindung gelten die Bedingungen des jeweiligen Anbieters.
+</p>
+<p>
+	Schalten Sie im Pseudonymisierer die Gründliche Erkennung ein, lädt Ihr Browser einmalig ein
+	Sprachmodell (rund 350&nbsp;MB) und die zugehörigen Tokenizer-Dateien von huggingface.co (Hugging
+	Face, Inc., USA). Dabei erhält Hugging Face Ihre IP-Adresse und die üblichen Verbindungsdaten.
+	Ihre Texte werden nicht übertragen: Das Modell arbeitet in Ihrem Browser. Es bleibt im Speicher
+	Ihres Browsers, bis Sie die Gründliche Erkennung wieder ausschalten.
 </p>
 
 <h2>{preview ? 6 : 8}. Nachrichten und Normtexte</h2>

@@ -1,2 +1,6 @@
 allowBuilds:
   esbuild: true
+  # pulled in by gliner's tokenizer library for Node; the browser model needs none of their native builds
+  onnxruntime-node: false
+  protobufjs: false
+  sharp: false

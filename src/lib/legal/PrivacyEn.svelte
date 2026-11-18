@@ -143,6 +143,13 @@
 					<td>until you delete them</td>
 				</tr>
 				<tr>
+					<td><code>daily-gliner-v1</code> (Cache Storage)</td>
+					<td
+						>the language model of the Pseudonymiser's thorough detection, only if you switch it on</td
+					>
+					<td>until you switch thorough detection off</td>
+				</tr>
+				<tr>
 					<td><code>daily.anon.terms.v1</code> (localStorage)</td>
 					<td
 						>the Pseudonymiser's own terms (always or never replace) and whether the note for the AI
@@ -208,6 +215,13 @@
 	Texts, files and results are not sent to us. The guardrail test sends requests only to the
 	endpoint you enter yourself, directly from your browser; that connection is subject to the
 	provider's terms.
+</p>
+<p>
+	If you switch on thorough detection in the Pseudonymiser, your browser downloads a language model
+	(about 350&nbsp;MB) and its tokenizer files once from huggingface.co (Hugging Face, Inc., USA).
+	Hugging Face receives your IP address and the usual connection data. Your texts are not sent: the
+	model works in your browser. It stays in your browser's storage until you switch thorough
+	detection off again.
 </p>
 
 <h2>{preview ? 6 : 8}. News and legal texts</h2>
