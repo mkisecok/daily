@@ -63,7 +63,9 @@
 				onclick={() => (page = current + 1)}>{m.anon_page_next()} ›</button
 			>
 			<span class="count"
-				>{m.anon_page_findings({ count: String(stats[current]?.count ?? 0) })}</span
+				>{stats[current]?.count === 1
+					? m.anon_page_findings_one()
+					: m.anon_page_findings({ count: String(stats[current]?.count ?? 0) })}</span
 			>
 		</nav>
 	{/if}

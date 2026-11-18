@@ -82,13 +82,17 @@ test('preview: levels and group chips switch the rules, and a selection in the t
 		NOTE + 'Vertrag vom «DATE_1» mit «NAME_1», Steuer-ID «NUMBER_1». Projekt Nordlicht.'
 	);
 
-	// a group chip switches its rules together and shows how much it found
-	const numbers = page
-		.getByRole('group', { name: 'Gruppen' })
-		.getByRole('button', { name: /Kenn- und Finanznummern/ });
-	await expect(numbers).toContainText('1');
-	await numbers.click();
-	await expect(numbers).toHaveAttribute('aria-pressed', 'false');
+	// the summary shows what is on; a group is switched together under "Einzelne Regeln"
+	const summary = page.getByRole('list', { name: 'Was erkannt wird' });
+	const numbers = summary.getByRole('listitem').filter({ hasText: 'Kenn- und Finanznummern' });
+	await expect(numbers).toContainText('6 von 6 Regeln an');
+	await expect(numbers).toContainText('1 Fund');
+	await page.getByText('Einzelne Regeln').click();
+	await page
+		.getByRole('group', { name: 'Kenn- und Finanznummern' })
+		.getByRole('button', { name: 'Alle aus' })
+		.click();
+	await expect(numbers).toContainText('0 von 6 Regeln an');
 	await expect(page.locator('.custom')).toHaveText('Angepasst');
 	// the number rules are off; the phone rule still catches eleven digits
 	await expect(output).not.toHaveValue(/NUMBER_1/);
@@ -157,21 +161,24 @@ test('preview: the name model stays off and contacts nobody until it is switched
 	expect(remote).toEqual([]);
 });
 
-test('preview: each Art. 9 category has its own chip, and an own standard holds across visits', async ({
+test('preview: every Art. 9 category has its switch, and an own standard holds across visits', async ({
 	page
 }) => {
 	await page.goto('werkzeuge/pseudonymisierer/', { waitUntil: 'networkidle' });
 	await page
 		.getByLabel('Text', { exact: true })
 		.fill('Sie ist Mitglied der IG Metall. Diagnose: Asthma.');
-	const art9 = page.getByRole('group', { name: 'Besondere Kategorien nach Art. 9 DSGVO einzeln' });
-	// the group chip for all of them, then the eight categories
-	await expect(art9.getByRole('button')).toHaveCount(9);
-	const union = art9.getByRole('button', { name: /Gewerkschaft/ });
-	await expect(union).toContainText('1');
+	const art9 = page
+		.getByRole('list', { name: 'Was erkannt wird' })
+		.getByRole('listitem')
+		.filter({ hasText: 'Art. 9 DSGVO' });
+	await expect(art9).toContainText('8 von 8 Regeln an');
+	await expect(art9).toContainText('2 Funde');
 
 	// switching one category off leaves the others on, and that set can be kept
-	await union.click();
+	await page.getByText('Einzelne Regeln').click();
+	await page.getByLabel('Gewerkschaftszugehörigkeit').click();
+	await expect(art9).toContainText('7 von 8 Regeln an');
 	const output = page.getByRole('textbox', { name: 'Pseudonymisierter Text' });
 	await expect(output).toHaveValue(/Mitglied der IG Metall\. Diagnose: «HEALTH_DATA_1»/);
 	await page.getByRole('button', { name: 'Als meinen Standard speichern' }).click();
@@ -180,11 +187,9 @@ test('preview: each Art. 9 category has its own chip, and an own standard holds 
 		'aria-pressed',
 		'true'
 	);
-	await expect(
-		page
-			.getByRole('group', { name: 'Besondere Kategorien nach Art. 9 DSGVO einzeln' })
-			.getByRole('button', { name: /Gewerkschaft/ })
-	).toHaveAttribute('aria-pressed', 'false');
+	await page.getByText('Einzelne Regeln').click();
+	await expect(page.locator('#rule-union')).toHaveAttribute('aria-checked', 'false');
+	await expect(page.getByRole('button', { name: 'Nicht mehr als Standard merken' })).toBeVisible();
 });
 
 test('preview: an imported PDF shows page by page, and findings can be checked one by one', async ({
