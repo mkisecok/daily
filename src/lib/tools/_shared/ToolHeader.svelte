@@ -1,8 +1,8 @@
 <!--
 	@component
 	Head of a tool page in the Arbeitsbereich: a trail back to the catalogue,
-	the tool name as the page title, its status and area, and the legal basis
-	as citation chips.
+	the tool name as the page title, its status and area, the legal basis as
+	citation chips, and the button that plays the tool's demo.
 -->
 <script lang="ts">
 	import { localized } from '#lib/i18n/links.js';
@@ -12,6 +12,9 @@
 	import { text } from '../i18n.js';
 	import { getTool } from '../registry.js';
 	import { rememberVisit } from '../shelf.js';
+	import Icon from '#lib/ui/Icon.svelte';
+	import { demo } from './demo/demo.svelte.js';
+	import { scriptFor, workHref } from './demo/scripts.js';
 	import type { ToolManifest } from '../types.js';
 	import Rechtsstand from './Rechtsstand.svelte';
 	import ToolMeta from './ToolMeta.svelte';
@@ -25,6 +28,7 @@
 		tool.status === 'retired' && tool.successor ? getTool(tool.successor) : undefined
 	);
 	const trail = $derived([{ label: m.nav_tools(), path: localized('/werkzeuge') }]);
+	const script = $derived(scriptFor(tool));
 </script>
 
 <PageHeader title={text(tool.name)} {trail}>
@@ -38,6 +42,18 @@
 			</p>
 		{/if}
 	{/snippet}
+	{#snippet actions()}
+		{#if script}
+			<button
+				type="button"
+				class="button quiet demo-start no-print"
+				disabled={demo.active}
+				onclick={() => demo.start(tool, script, workHref(tool))}
+			>
+				<Icon name="player-play" size={16} />{m.demo_button()}
+			</button>
+		{/if}
+	{/snippet}
 </PageHeader>
 
 <style>
@@ -48,5 +64,9 @@
 		font-size: 14px;
 		background: var(--navy-soft);
 		border-radius: var(--radius);
+	}
+
+	.demo-start {
+		gap: 0.4rem;
 	}
 </style>

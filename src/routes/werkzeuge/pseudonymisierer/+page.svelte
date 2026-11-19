@@ -320,7 +320,9 @@
 			{m.anon_import()}
 			<input type="file" accept={ACCEPT} disabled={reading} onchange={importFile} />
 		</label>
-		<button type="button" class="quiet" onclick={() => (source = SAMPLE)}>{m.anon_sample()}</button>
+		<button type="button" class="quiet" data-demo="sample" onclick={() => (source = SAMPLE)}
+			>{m.anon_sample()}</button
+		>
 		<button type="button" class="quiet" onclick={clear}>{m.anon_clear()}</button>
 		<span class="status" class:error={status?.error} aria-live="polite">{status?.text ?? ''}</span>
 	</div>
@@ -551,7 +553,9 @@
 		>
 	</div>
 	<div class="toolbar actions">
-		<button type="button" onclick={copyOutput} disabled={!run.text}>{m.anon_copy()}</button>
+		<button type="button" data-demo="copy" onclick={copyOutput} disabled={!run.text}
+			>{m.anon_copy()}</button
+		>
 		<span class="status" class:error={copyStatus?.error} aria-live="polite"
 			>{copyStatus?.text ?? ''}</span
 		>

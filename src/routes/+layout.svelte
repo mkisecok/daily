@@ -19,6 +19,7 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import Footer from '#lib/ui/Footer.svelte';
 	import CommandPalette from '#lib/ui/CommandPalette.svelte';
+	import DemoOverlay from '#lib/tools/_shared/demo/DemoOverlay.svelte';
 	import MenuSheet from '#lib/ui/MenuSheet.svelte';
 	import Sidebar from '#lib/ui/Sidebar.svelte';
 	import Topbar from '#lib/ui/Topbar.svelte';
@@ -53,6 +54,7 @@
 </div>
 
 <CommandPalette bind:open={paletteOpen} withRecords={!!data.user || PUBLIC_PREVIEW} />
+<DemoOverlay />
 
 <MenuSheet
 	bind:open={menuOpen}

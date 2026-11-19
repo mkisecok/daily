@@ -238,7 +238,8 @@
 
 	{#if mode === 'manual'}
 		<div class="toolbar">
-			<button type="button" onclick={evaluate} disabled={prompts.length === 0}>{text(T.run)}</button
+			<button type="button" data-demo="run" onclick={evaluate} disabled={prompts.length === 0}
+				>{text(T.run)}</button
 			>
 		</div>
 	{/if}

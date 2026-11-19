@@ -136,7 +136,12 @@
 	</label>
 
 	<div class="toolbar actions">
-		<button type="button" onclick={run} disabled={busy || (files.length === 0 && !pasted.trim())}>
+		<button
+			type="button"
+			data-demo="run"
+			onclick={run}
+			disabled={busy || (files.length === 0 && !pasted.trim())}
+		>
 			{text(T.run)}
 		</button>
 		<button type="button" class="quiet" onclick={reset}>{text(T.reset)}</button>
