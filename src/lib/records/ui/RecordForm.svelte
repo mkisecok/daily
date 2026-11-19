@@ -15,6 +15,7 @@
 	import { formatShortDate, formatTime } from '#lib/i18n/date.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { clearDraft, loadDraft, saveDraft } from '../drafts.js';
+	import { demo } from '#lib/tools/_shared/demo/demo.svelte.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { text } from '#lib/tools/i18n.js';
 	import type { FieldDef, Option, RecordData, RecordToolDefinition } from '../types.js';
@@ -103,7 +104,8 @@
 	let pending: URL | null = null;
 
 	beforeNavigate((navigation) => {
-		if (!dirty || leaving) return;
+		// a demo fills the form for show; its end undoes the drafts and moves on
+		if (!dirty || leaving || demo.active) return;
 		// closing the tab or leaving the site: the browser asks itself
 		navigation.cancel();
 		if (navigation.type === 'leave' || !navigation.to) return;
