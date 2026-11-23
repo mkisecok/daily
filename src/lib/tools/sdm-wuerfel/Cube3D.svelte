@@ -94,23 +94,66 @@
 	);
 
 	/** where a block sits: centred, spread by `apart`, its slice moved out beside the cube */
-	function place(p: Pos): string {
+	function spot(p: Pos): Pos {
 		const step = S + apart;
-		let tx = (p.x - (X - 1) / 2) * step;
-		let ty = (p.y - (Y - 1) / 2) * step;
-		let tz = ((Z - 1) / 2 - p.z) * step;
+		let x = (p.x - (X - 1) / 2) * step;
+		let y = (p.y - (Y - 1) / 2) * step;
+		let z = ((Z - 1) / 2 - p.z) * step;
 		if (inSlice(p)) {
 			if (mode === 'goal') {
-				tx += (X * step) / 2 + S * 2;
-				tz = ((Z + 1) / 2) * step;
+				x += (X * step) / 2 + S * 2;
+				z = ((Z + 1) / 2) * step;
 			} else if (mode === 'level') {
-				ty -= (Y * step) / 2 + S * 2;
+				y -= (Y * step) / 2 + S * 2;
 			} else {
-				tx += (X * step) / 2 + S * 2;
+				x += (X * step) / 2 + S * 2;
 			}
 		}
-		return `translate3d(${tx}px, ${ty}px, ${tz}px)`;
+		return { x, y, z };
 	}
+
+	function place(p: Pos): string {
+		const { x, y, z } = spot(p);
+		return `translate3d(${x}px, ${y}px, ${z}px)`;
+	}
+
+	/** the scene's size, and the distance of its eye, as in the CSS */
+	let sceneWidth = $state(0);
+	let sceneHeight = $state(0);
+	const EYE = 1200;
+	const MARGIN = 16;
+
+	/**
+	 * how the cube fits the scene: every block turned as the cube is and seen
+	 * in perspective, then the whole moved to the middle and made smaller until
+	 * it fits; it never grows past its size
+	 */
+	const fit = $derived.by(() => {
+		if (!sceneWidth || !sceneHeight) return { x: 0, y: 0, k: 1 };
+		const [cx, sx] = [Math.cos((rx * Math.PI) / 180), Math.sin((rx * Math.PI) / 180)];
+		const [cy, sy] = [Math.cos((ry * Math.PI) / 180), Math.sin((ry * Math.PI) / 180)];
+		// half the space diagonal of a block, so a block fits from any side
+		const r = S * 0.87;
+		let [left, right, top, bottom] = [Infinity, -Infinity, Infinity, -Infinity];
+		for (const p of blocks) {
+			const { x, y, z } = spot(p);
+			const x1 = x * cy + z * sy;
+			const z1 = -x * sy + z * cy;
+			const y2 = y * cx - z1 * sx;
+			const z2 = y * sx + z1 * cx;
+			const near = EYE / Math.max(EYE * 0.2, EYE - z2 - r);
+			left = Math.min(left, (x1 - r) * near);
+			right = Math.max(right, (x1 + r) * near);
+			top = Math.min(top, (y2 - r) * near);
+			bottom = Math.max(bottom, (y2 + r) * near);
+		}
+		const k = Math.min(
+			1,
+			(sceneWidth - MARGIN * 2) / (right - left),
+			(sceneHeight - MARGIN * 2) / (bottom - top)
+		);
+		return { x: (-(left + right) / 2) * k, y: (-(top + bottom) / 2) * k, k };
+	});
 
 	const name = (p: Pos) =>
 		m.sdm3d_cell({
@@ -331,6 +374,8 @@
 			aria-label={m.sdm3d_label({ n: X * Y * Z })}
 			aria-describedby="sdm3d-keys"
 			tabindex="0"
+			bind:clientWidth={sceneWidth}
+			bind:clientHeight={sceneHeight}
 			onpointerdown={down}
 			onpointermove={move}
 			onpointerup={up}
@@ -339,7 +384,8 @@
 		>
 			<div
 				class="cube"
-				style:transform="translateX({picked ? -S * 1.5 : 0}px) rotateX({rx}deg) rotateY({ry}deg)"
+				style:transform="translate({fit.x}px, {fit.y}px) scale3d({fit.k}, {fit.k}, {fit.k}) rotateX({rx}deg)
+				rotateY({ry}deg)"
 			>
 				{#each blocks as p (`${p.x},${p.y},${p.z}`)}
 					{@const status = at(p)}
