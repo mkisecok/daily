@@ -12,7 +12,9 @@
 	import { localized } from '#lib/i18n/links.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import Icon from '#lib/ui/Icon.svelte';
-	import type { RecordView } from '../../records/types.js';
+	import { invalidate } from '$app/navigation';
+	import { getStore } from '../../records/store/index.js';
+	import type { RecordView, StoredRecord } from '../../records/types.js';
 	import { text } from '../i18n.js';
 	import {
 		buildCube,
@@ -26,7 +28,10 @@
 	import Cube3D from './Cube3D.svelte';
 	import { priorities, progress } from './focus.js';
 
-	let { record }: { record: RecordView & { id?: string } } = $props();
+	let {
+		record
+	}: { record: RecordView & Partial<Pick<StoredRecord, 'id' | 'version' | 'archivedAt'>> } =
+		$props();
 
 	const uid = $props.id();
 	let chosenAxis = $state<Axis | null>(null);
@@ -44,6 +49,25 @@
 
 	const total = VORGAENGE.length * EBENEN.length * ZIELE.length;
 	const relevant = $derived(total - cube.counts.entfaellt);
+
+	/**
+	 * rates from the cube: the change goes into the stored entry at the version
+	 * shown, then the page loads it again. A saved, live entry only.
+	 */
+	const rate = $derived.by(() => {
+		const { id, version } = record;
+		if (!id || !version || record.archivedAt) return undefined;
+		return async (change: Record<string, unknown>): Promise<string | null> => {
+			try {
+				const result = await getStore().update(id, { ...record.data, ...change }, version);
+				if (!result.ok) return result.error === 'conflict' ? m.sdm3d_conflict() : m.sdm3d_failed();
+				await invalidate('records:data');
+				return null;
+			} catch {
+				return m.sdm3d_failed();
+			}
+		};
+	});
 
 	/** what to fix first, the five most pressing; the rest only counted */
 	const SHOWN = 5;
@@ -136,7 +160,7 @@
 				>
 			{/each}
 		</div>
-		<Cube3D {record} {axis} status={STATUS} />
+		<Cube3D {record} {axis} status={STATUS} onrate={rate} />
 		<p class="legend">
 			{#each ORDER as status (status)}
 				<span class="s-{status}">{STATUS[status]()}</span>

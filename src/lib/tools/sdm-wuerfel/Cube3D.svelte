@@ -6,8 +6,11 @@
 	"Nur Lücken" fades all but the gaps. A click on a block, or Enter on the
 	cell chosen with the arrow keys, pulls its slice (one goal, one level or
 	one column) out of the cube and lays it flat beside it, with what the
-	chosen cell asks for and a link to rate it. The tables of the result
-	carry the same values for print and screen readers.
+	chosen cell asks for and a link to rate it. With `onrate`, the panel
+	rates the cell in place: the goal on that level, the operations with a
+	gap and whether the processing performs them; the keys 1 to 4 rate the
+	level of the cell the arrow keys are on. The tables of the result carry
+	the same values for print and screen readers.
 -->
 <script lang="ts">
 	import { resolve } from '$app/paths';
@@ -15,18 +18,32 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import type { RecordView } from '../../records/types.js';
 	import { text } from '../i18n.js';
-	import { cells, columns, EBENEN, VORGAENGE, ZIELE, type Axis, type CellStatus } from './cube.js';
+	import {
+		activeVorgaenge,
+		cells,
+		columns,
+		EBENEN,
+		LEVEL_STATUS,
+		levelStatus,
+		VORGAENGE,
+		ZIELE,
+		type Axis,
+		type CellStatus
+	} from './cube.js';
 	import { REQUIREMENTS } from './definition.js';
 
 	let {
 		record,
 		axis,
-		status: statusLabel
+		status: statusLabel,
+		onrate
 	}: {
 		/** the entry; with its id, a cell links to rating it */
 		record: RecordView & { id?: string };
 		axis: Axis;
 		status: Record<CellStatus, () => string>;
+		/** stores changed fields of the entry; resolves to an error message, or null once saved */
+		onrate?: (change: Record<string, unknown>) => Promise<string | null>;
 	} = $props();
 
 	type Pos = { x: number; y: number; z: number };
@@ -172,6 +189,12 @@
 		} else if (event.key === 'Escape' && picked) {
 			close();
 			return;
+		} else if (onrate && /^[1-4]$/.test(event.key)) {
+			// the four ratings in the order of the form
+			const value = LEVEL_STATUS[Number(event.key) - 1]!.value;
+			read = cursor;
+			void setLevel(`${ZIELE[cursor.z]!.id}_${EBENEN[cursor.y]!.id}`, value);
+			return;
 		} else return;
 		event.preventDefault();
 		cursor = c;
@@ -235,6 +258,43 @@
 	});
 
 	const shown = $derived(hover ?? cursor);
+	const keysHint = $derived(onrate ? `${m.sdm3d_keys()} ${m.sdm3d_keys_rate()}` : m.sdm3d_keys());
+
+	/** the rating under way, and how the last one ended */
+	let saving = $state(false);
+	let outcome = $state<{ text: string; error: boolean } | null>(null);
+
+	async function rate(change: Record<string, unknown>) {
+		if (!onrate || saving) return;
+		saving = true;
+		outcome = { text: m.sdm3d_saving(), error: false };
+		const error = await onrate(change);
+		saving = false;
+		outcome = error ? { text: error, error: true } : { text: m.sdm3d_saved(), error: false };
+	}
+
+	/** the rating of the chosen cell: its level, and its column's operations */
+	const rating = $derived.by(() => {
+		if (!read || !onrate) return null;
+		const goal = ZIELE[read.z]!;
+		const level = EBENEN[read.y]!;
+		const active = activeVorgaenge(record);
+		const marked = record.data[`${goal.id}_luecken`];
+		const gaps = Array.isArray(marked) ? (marked as string[]) : [];
+		return {
+			goal,
+			level,
+			field: `${goal.id}_${level.id}`,
+			value: levelStatus(record, goal.id, level.id),
+			active,
+			gaps,
+			operations: VORGAENGE.filter((v) => cols[read!.x]!.vorgaenge.includes(v.id))
+		};
+	});
+
+	const setLevel = (field: string, value: string) => rate({ [field]: value });
+	const toggle = (list: string[], id: string) =>
+		list.includes(id) ? list.filter((v) => v !== id) : [...list, id];
 </script>
 
 <div class="cube3d" data-open={!!picked || undefined}>
@@ -345,6 +405,63 @@
 				<div class="detail">
 					<p class="where">{detail.name}</p>
 					<span class="pill s-{detail.status}">{statusLabel[detail.status]()}</span>
+					{#if rating}
+						<fieldset class="rate" disabled={saving}>
+							<legend
+								>{m.sdm3d_rate_level({
+									goal: text(rating.goal.title),
+									n: rating.level.n
+								})}</legend
+							>
+							<div class="choices">
+								{#each LEVEL_STATUS as option, index (option.value)}
+									<label class="choice s-{option.value}">
+										<input
+											type="radio"
+											name="sdm3d-rate"
+											value={option.value}
+											checked={rating.value === option.value}
+											onchange={() => setLevel(rating.field, option.value)}
+										/>
+										<span class="name">{text(option.label)}</span>
+										<span class="key" aria-hidden="true">{index + 1}</span>
+									</label>
+								{/each}
+							</div>
+							<p class="hint">{m.sdm3d_rate_hint()}</p>
+							{#each rating.operations as operation (operation.id)}
+								{@const on = rating.active.includes(operation.id)}
+								<div class="operation">
+									<label>
+										<input
+											type="checkbox"
+											checked={on}
+											onchange={() => rate({ vorgaenge: toggle(rating.active, operation.id) })}
+										/>
+										{m.sdm3d_rate_active({
+											vorgang: `${text(operation.title)} (${operation.code})`
+										})}
+									</label>
+									{#if on}
+										<label>
+											<input
+												type="checkbox"
+												checked={rating.gaps.includes(operation.id)}
+												onchange={() =>
+													rate({
+														[`${rating.goal.id}_luecken`]: toggle(rating.gaps, operation.id)
+													})}
+											/>
+											{m.sdm3d_rate_gap({ vorgang: operation.code })}
+										</label>
+									{/if}
+								</div>
+							{/each}
+						</fieldset>
+						{#if outcome}
+							<p class="outcome" class:error={outcome.error} role="status">{outcome.text}</p>
+						{/if}
+					{/if}
 					{#if detail.requirement}
 						<p class="label">{m.sdm3d_requirement()}</p>
 						<p>{text(detail.requirement)}</p>
@@ -358,7 +475,9 @@
 						<p class="notes">{detail.notes}</p>
 					{/if}
 					<div class="toolbar">
-						{#if detail.href}<a class="button quiet" href={detail.href}>{m.sdm3d_edit()}</a>{/if}
+						{#if detail.href}<a class="button quiet" href={detail.href}
+								>{onrate ? m.sdm3d_open_form() : m.sdm3d_edit()}</a
+							>{/if}
 						<button type="button" class="button ghost" onclick={close}>{m.sdm3d_back()}</button>
 					</div>
 				</div>
@@ -370,7 +489,7 @@
 
 	<p class="under no-print">
 		<span class="now">{name(shown)}: {statusLabel[at(shown)]()}</span>
-		<span id="sdm3d-keys" class="keys">{m.sdm3d_keys()}</span>
+		<span id="sdm3d-keys" class="keys">{keysHint}</span>
 	</p>
 	<p class="axes">
 		{m.sdm3d_axes({
@@ -654,6 +773,100 @@
 
 		& .toolbar {
 			margin-top: 0.75rem;
+		}
+	}
+
+	/* rating in place: the four ratings as a segmented row, then the operations */
+	.rate {
+		margin: 0.75rem 0 0;
+		padding: 0;
+		border: 0;
+
+		& legend {
+			margin-bottom: 0.4rem;
+			font-size: 12px;
+			font-weight: 600;
+			color: var(--ink3);
+		}
+
+		& .choices {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 4px;
+		}
+
+		& .choice {
+			display: flex;
+			align-items: center;
+			gap: 0.35rem;
+			padding: 0.3rem 0.5rem;
+			font-family: var(--sans);
+			font-size: 13px;
+			line-height: 1.3;
+			background: var(--sheet);
+			border: 1px solid var(--rule);
+			border-radius: var(--radius);
+			cursor: pointer;
+
+			& input {
+				accent-color: var(--fill);
+			}
+
+			&:has(input:checked) {
+				color: var(--ink-s);
+				background: var(--soft);
+				border-color: var(--fill);
+			}
+
+			&.s-entfaellt:has(input:checked) {
+				border-color: var(--ink3);
+			}
+
+			& .name {
+				flex: 1;
+			}
+
+			& .key {
+				font-family: var(--mono);
+				font-size: 11px;
+				color: var(--ink3);
+			}
+		}
+
+		& .hint {
+			margin: 0.35rem 0 0;
+			font-size: 12px;
+			color: var(--ink3);
+		}
+
+		& .operation {
+			display: grid;
+			gap: 0.2rem;
+			margin-top: 0.5rem;
+			font-size: 13px;
+
+			& label {
+				display: flex;
+				align-items: center;
+				gap: 0.4rem;
+			}
+
+			& label + label {
+				padding-left: 1.4rem;
+			}
+		}
+
+		&:disabled {
+			opacity: 0.7;
+		}
+	}
+
+	.outcome {
+		font-size: 12.5px;
+		color: var(--ink3);
+
+		&.error {
+			color: var(--wax);
 		}
 	}
 

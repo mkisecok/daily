@@ -33,7 +33,7 @@ test('preview: the SDM cube pulls a slice out and links to rating the cell', asy
 	await slice.getByRole('button', { name: 'Ebene', exact: true }).click();
 	await expect(slice.getByRole('heading', { name: 'Fachapplikation' })).toBeVisible();
 
-	await slice.getByRole('link', { name: 'Bewertung bearbeiten' }).click();
+	await slice.getByRole('link', { name: 'Im Formular öffnen' }).click();
 	await expect(page.getByRole('button', { name: 'Speichern' })).toBeVisible();
 	await expect(page.getByText('Ebene 2: Fachapplikation').nth(3)).toBeInViewport();
 });
@@ -61,4 +61,38 @@ test('preview: the SDM result ranks what to fix first and counts the ratings', a
 	]);
 	await focus.locator('li').first().getByRole('link', { name: 'Bewertung bearbeiten' }).click();
 	await expect(page.getByRole('button', { name: 'Speichern' })).toBeVisible();
+});
+
+test('preview: a cell of the SDM cube is rated in place and stays rated', async ({ page }) => {
+	await saveExample(page);
+	const cube = page.getByRole('application', { name: /SDM-Würfel in 3D/ });
+	const viewB = page.getByRole('region', { name: /Sicht b/ });
+	const minimisation = viewB.getByRole('row', { name: /Datenminimierung/ }).locator('.pill');
+	await expect(minimisation).toHaveText(['Teilweise', 'Lücke', 'Teilweise']);
+
+	// data minimisation on level 2, rated in the slice panel
+	await cube.focus();
+	for (let i = 0; i < 3; i++) await page.keyboard.press('PageDown');
+	await page.keyboard.press('ArrowDown');
+	await page.keyboard.press('Enter');
+	const rate = page.locator('.slice .rate');
+	await expect(rate.locator('legend')).toHaveText('Datenminimierung auf Ebene 2');
+	await rate.getByRole('radio', { name: 'Umgesetzt', exact: true }).check();
+	await expect(page.locator('.slice .outcome')).toHaveText('Gespeichert');
+	await expect(page.locator('.slice .detail .pill')).toHaveText('Umgesetzt');
+	await expect(minimisation).toHaveText(['Teilweise', 'Umgesetzt', 'Teilweise']);
+
+	// the key 3 rates the level of the cell the arrow keys are on as a gap
+	await cube.focus();
+	await page.keyboard.press('3');
+	await expect(minimisation).toHaveText(['Teilweise', 'Lücke', 'Teilweise']);
+
+	// collecting is no part of the processing any more: the column falls away for every goal
+	await rate.getByLabel('Sammeln (Sn) kommt in der Verarbeitung vor').uncheck();
+	await expect(page.locator('.slice .detail .pill')).toHaveText('Nicht relevant');
+
+	await page.reload({ waitUntil: 'networkidle' });
+	await expect(minimisation).toHaveText(['Teilweise', 'Lücke', 'Teilweise']);
+	// 120 relevant cells before; collecting had 21, one of them not relevant already
+	await expect(page.locator('.figure strong').first()).toHaveText('100');
 });
