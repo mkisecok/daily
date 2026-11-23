@@ -4,6 +4,7 @@ import { validateRecord } from '../../records/validate.js';
 import { buildCube, cell, columns, defaultAxis, worst, ZIELE } from './cube.js';
 import { definition, REQUIREMENTS } from './definition.js';
 import { engine } from './engine.js';
+import { priorities, progress } from './focus.js';
 
 const view = (data: RecordData) => ({ state: null, data: validateRecord(definition, data).data });
 
@@ -174,9 +175,72 @@ describe('SDM cube: assessment', () => {
 		).toBe(true);
 	});
 
+	it('names a gap recorded for an operation that is not chosen', () => {
+		const notes = assess({ ...base, transparenz_luecken: ['zf'] }).notes!.map((n) => n.de);
+		expect(notes).toContain(
+			'Transparenz: Lücke bei Zusammenführen (Zf) eingetragen, aber der Vorgang ist nicht ausgewählt; den Vorgang ergänzen oder die Lücke streichen.'
+		);
+	});
+
+	it('questions a level that no goal finds relevant', () => {
+		const none = Object.fromEntries(ZIELE.map((z) => [`${z.id}_e3`, 'entfaellt']));
+		const notes = assess({ ...base, ...none }).notes!.map((n) => n.de);
+		expect(notes.some((n) => n.startsWith('Ebene 3 (Infrastruktur) ist für kein'))).toBe(true);
+		expect(assess(base).notes!.some((n) => n.de.includes('ist für kein'))).toBe(false);
+	});
+
 	it('sets the review as a deadline', () => {
 		expect(
 			engine.deadlines!(view({ ...base, wiedervorlage: '2027-03-01' })).map((d) => d.kind)
 		).toEqual(['wiedervorlage']);
+	});
+});
+
+describe('SDM cube: what to fix first', () => {
+	it('ranks goals by their weakest level, and weighs the operations that lean on them', () => {
+		const record = view({ ...base, transparenz_e2: 'luecke', datenminimierung_e1: 'teilweise' });
+		const [first, second] = priorities(record);
+		expect(first.goal).toBe('transparenz');
+		expect(first.levels).toEqual([{ level: 'e2', status: 'luecke' }]);
+		// a gap 10, disclosing (Bt) leans on transparency 3
+		expect(first.score).toBe(13);
+		expect(first.why[0].de).toContain('stellt Daten bereit');
+		// partly 4, the business process 2, storing and erasing lean on minimisation 3
+		expect([second.goal, second.score]).toEqual(['datenminimierung', 9]);
+		expect(priorities(view(base))).toEqual([]);
+	});
+
+	it('lists every weak level of a goal once, the most pressing first', () => {
+		const record = view({
+			...base,
+			datenminimierung_e1: 'teilweise',
+			datenminimierung_e2: 'luecke',
+			datenminimierung_e3: 'teilweise'
+		});
+		const [first] = priorities(record);
+		expect(first.levels.map((l) => l.level)).toEqual(['e2', 'e1', 'e3']);
+		// the gap 10, two more weak levels 2, storing and erasing 3
+		expect(first.score).toBe(15);
+		expect(first.why).toHaveLength(2);
+	});
+
+	it('counts recorded gaps and a high risk', () => {
+		const record = view({
+			...base,
+			risikostufe: 'hoch',
+			integritaet_e3: 'luecke',
+			integritaet_luecken: ['aw', 'bn']
+		});
+		const [first] = priorities(record);
+		expect(first.score).toBe((10 + 2) * 1.5);
+		expect(first.why.at(-1)!.de).toBe('Lücke eingetragen bei Aufbewahren (Aw), Benutzen (Bn).');
+	});
+
+	it('counts the ratings given', () => {
+		expect(progress(view(base))).toEqual({ rated: 21, total: 21 });
+		expect(progress(view({ ...base, transparenz_e1: '', transparenz_e2: '' }))).toEqual({
+			rated: 19,
+			total: 21
+		});
 	});
 });

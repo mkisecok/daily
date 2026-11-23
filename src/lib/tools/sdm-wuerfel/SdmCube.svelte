@@ -8,6 +8,8 @@
 	readers.
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import { localized } from '#lib/i18n/links.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import Icon from '#lib/ui/Icon.svelte';
 	import type { RecordView } from '../../records/types.js';
@@ -22,6 +24,7 @@
 		type CellStatus
 	} from './cube.js';
 	import Cube3D from './Cube3D.svelte';
+	import { priorities, progress } from './focus.js';
 
 	let { record }: { record: RecordView & { id?: string } } = $props();
 
@@ -41,6 +44,19 @@
 
 	const total = VORGAENGE.length * EBENEN.length * ZIELE.length;
 	const relevant = $derived(total - cube.counts.entfaellt);
+
+	/** what to fix first, the five most pressing; the rest only counted */
+	const SHOWN = 5;
+	const focus = $derived(priorities(record));
+	const rated = $derived(progress(record));
+	const goalTitle = (id: string) => text(ZIELE.find((z) => z.id === id)!.title);
+	const levelOf = (id: string) => EBENEN.find((e) => e.id === id)!;
+	const editHref = (field: string) =>
+		record.id
+			? resolve(
+					localized(`/werkzeuge/sdm-wuerfel/eintraege?eintrag=${record.id}&bearbeiten=${field}`)
+				)
+			: null;
 </script>
 
 <section class="cube-dash" aria-label={m.sdm_cube_title()}>
@@ -72,7 +88,44 @@
 		</div>
 	</div>
 
-	<section class="card cube-card">
+	<p class="progress">
+		<span class="label">{m.sdm_progress_label()}</span>
+		<span class="meter" aria-hidden="true"
+			><span style:width="{(rated.rated / rated.total) * 100}%"></span></span
+		>
+		<span>{m.sdm_progress({ rated: rated.rated, total: rated.total })}</span>
+	</p>
+
+	<section class="card focus" aria-labelledby="{uid}-focus">
+		<h3 id="{uid}-focus">{m.sdm_focus_title()}</h3>
+		{#if focus.length === 0}
+			<p class="none">{m.sdm_focus_none()}</p>
+		{:else}
+			<ol>
+				{#each focus.slice(0, SHOWN) as item (item.goal)}
+					{@const href = editHref(`${item.goal}_${item.levels[0]!.level}`)}
+					<li>
+						<div class="line">
+							<strong>{goalTitle(item.goal)}</strong>
+							{#each item.levels as weak (weak.level)}
+								<span class="pill s-{weak.status}"
+									>{m.sdm_cube_level({ n: levelOf(weak.level).n })} · {STATUS[weak.status]()}</span
+								>
+							{/each}
+							{#if href}<a class="edit no-print" {href}>{m.sdm3d_edit()}</a>{/if}
+						</div>
+						{#each item.why as why (why.de)}<p class="why">{text(why)}</p>{/each}
+					</li>
+				{/each}
+			</ol>
+			{#if focus.length > SHOWN}
+				<p class="more">{m.sdm_focus_more({ count: focus.length - SHOWN })}</p>
+			{/if}
+		{/if}
+	</section>
+
+	<!-- on paper the tables of views a and b carry the cube; one angle of it would say less -->
+	<section class="card cube-card no-print">
 		<div class="group no-print" role="group" aria-label={m.sdm_cube_axis()}>
 			{#each [['phasen', m.sdm_cube_axis_phasen()], ['vorgaenge', m.sdm_cube_axis_vorgaenge()]] as const as [value, name] (value)}
 				<button
@@ -254,6 +307,80 @@
 			font-size: 28px;
 			font-weight: 700;
 			line-height: 1.15;
+		}
+	}
+
+	/* how far the rating has come, one quiet line */
+	.progress {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.4rem 0.75rem;
+		margin: 0;
+		font-size: 13px;
+		color: var(--ink2);
+
+		& .label {
+			font-weight: 600;
+		}
+
+		& .meter {
+			width: min(100%, 14rem);
+			height: 6px;
+			overflow: hidden;
+			background: var(--rule2);
+			border-radius: 3px;
+
+			& span {
+				display: block;
+				height: 100%;
+				background: var(--primary);
+			}
+		}
+	}
+
+	/* the gaps to close first, each with why it ranks high */
+	.focus {
+		padding: var(--card-pad-compact);
+
+		& ol {
+			display: grid;
+			gap: 0.75rem;
+			margin: 0;
+			padding-left: 1.25rem;
+		}
+
+		& .line {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 0.3rem 0.6rem;
+
+			& strong {
+				font-weight: 500;
+			}
+
+			& .edit {
+				margin-left: auto;
+				font-size: 13px;
+			}
+		}
+
+		& .why {
+			margin: 0.2rem 0 0;
+			font-size: 13px;
+			color: var(--ink2);
+		}
+
+		& .none,
+		& .more {
+			margin: 0;
+			font-size: 13px;
+			color: var(--ink3);
+		}
+
+		& .more {
+			margin-top: 0.6rem;
 		}
 	}
 

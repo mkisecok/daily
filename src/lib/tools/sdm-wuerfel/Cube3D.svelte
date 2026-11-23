@@ -463,10 +463,6 @@
 		@media (max-width: 40rem) {
 			height: 320px;
 		}
-
-		@media print {
-			height: 240px;
-		}
 	}
 
 	.cube {
