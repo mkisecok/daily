@@ -38,6 +38,51 @@ test('preview: the SDM cube pulls a slice out and links to rating the cell', asy
 	await expect(page.getByText('Ebene 2: Fachapplikation').nth(3)).toBeInViewport();
 });
 
+/** how far the blocks reach past the scene, in pixels, and the size of a block */
+function spill(page: Page) {
+	return page.locator('.cube3d .scene').evaluate((scene) => {
+		const box = scene.getBoundingClientRect();
+		let out = 0;
+		for (const face of scene.querySelectorAll('.block .f')) {
+			const f = face.getBoundingClientRect();
+			out = Math.max(
+				out,
+				box.left - f.left,
+				f.right - box.right,
+				box.top - f.top,
+				f.bottom - box.bottom
+			);
+		}
+		const block = scene.querySelector('.block .front')!.getBoundingClientRect();
+		return { out, size: block.width };
+	});
+}
+
+test('preview: the SDM cube stays in its window, spread apart and with a slice out', async ({
+	page
+}) => {
+	await saveExample(page);
+	const cube = page.getByRole('application', { name: /SDM-Würfel in 3D/ });
+	const whole = await spill(page);
+	expect(whole.out).toBeLessThanOrEqual(0);
+
+	await page.locator('.cube3d .apart input').fill('36');
+	await cube.focus();
+	await page.keyboard.press('Enter');
+	await expect(page.locator('.slice h4')).toBeVisible();
+	// the cube has moved and shrunk to fit; the 0.6s transition ends first
+	await page.waitForTimeout(800);
+	const spread = await spill(page);
+	expect(spread.out).toBeLessThanOrEqual(0);
+	expect(spread.size).toBeLessThan(whole.size);
+
+	for (const view of ['Oben · Sicht a', 'Seite · Sicht b', 'Vorne · Sicht c']) {
+		await page.getByRole('button', { name: view }).click();
+		await page.waitForTimeout(800);
+		expect((await spill(page)).out, view).toBeLessThanOrEqual(0);
+	}
+});
+
 test('preview: the SDM result ranks what to fix first and counts the ratings', async ({ page }) => {
 	await saveExample(page);
 	await expect(page.locator('.cube-dash .progress')).toContainText(
