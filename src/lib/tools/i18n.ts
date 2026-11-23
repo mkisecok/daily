@@ -14,7 +14,9 @@ const BODIES = new Set<LegalBasis['law']>([
 	'BVerwG',
 	'EU-Kommission',
 	'BSI',
-	'KI-MIG'
+	'KI-MIG',
+	'BVerfG',
+	'DIN'
 ]);
 
 /**
