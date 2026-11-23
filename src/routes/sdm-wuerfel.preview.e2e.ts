@@ -37,3 +37,28 @@ test('preview: the SDM cube pulls a slice out and links to rating the cell', asy
 	await expect(page.getByRole('button', { name: 'Speichern' })).toBeVisible();
 	await expect(page.getByText('Ebene 2: Fachapplikation').nth(3)).toBeInViewport();
 });
+
+test('preview: the SDM result ranks what to fix first and counts the ratings', async ({ page }) => {
+	await saveExample(page);
+	await expect(page.locator('.cube-dash .progress')).toContainText(
+		'20 von 21 Bewertungen der Ziele je Ebene'
+	);
+	const focus = page.getByRole('region', { name: 'Zuerst angehen' });
+	// minimisation comes first: a gap in the application, two levels partly, storing and erasing
+	const first = focus.locator('li').first();
+	await expect(first.locator('strong')).toHaveText('Datenminimierung');
+	await expect(first.locator('.pill')).toHaveText([
+		'Ebene 2 · Lücke',
+		'Ebene 1 · Teilweise',
+		'Ebene 3 · Teilweise'
+	]);
+	await expect(first).toContainText('Löschfristen tragen');
+	await expect(focus.locator('li strong')).toHaveText([
+		'Datenminimierung',
+		'Intervenierbarkeit',
+		'Transparenz',
+		'Integrität'
+	]);
+	await focus.locator('li').first().getByRole('link', { name: 'Bewertung bearbeiten' }).click();
+	await expect(page.getByRole('button', { name: 'Speichern' })).toBeVisible();
+});

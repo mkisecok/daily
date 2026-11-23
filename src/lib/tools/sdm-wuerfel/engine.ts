@@ -90,6 +90,34 @@ function assess(record: RecordView): QuestionnaireResult {
 		}
 	}
 
+	// a gap recorded for an operation the processing does not perform counts nowhere
+	for (const ziel of ZIELE) {
+		const marked = record.data[`${ziel.id}_luecken`];
+		const stray = VORGAENGE.filter(
+			(v) => Array.isArray(marked) && marked.includes(v.id) && !active.includes(v.id)
+		);
+		if (stray.length === 0) continue;
+		const names = (lang: 'de' | 'en') =>
+			stray.map((v) => `${v.title[lang]} (${v.code})`).join(', ');
+		notes.push(
+			L(
+				`${ziel.title.de}: Lücke bei ${names('de')} eingetragen, aber der Vorgang ist nicht ausgewählt; den Vorgang ergänzen oder die Lücke streichen.`,
+				`${ziel.title.en}: gap recorded for ${names('en')}, but the operation is not chosen; add the operation or remove the gap.`
+			)
+		);
+	}
+
+	// every processing runs in a process, an application and on infrastructure
+	for (const ebene of EBENEN) {
+		if (!ZIELE.every((z) => levelStatus(record, z.id, ebene.id) === 'entfaellt')) continue;
+		notes.push(
+			L(
+				`Ebene ${ebene.n} (${ebene.title.de}) ist für kein Gewährleistungsziel relevant. Jede Verarbeitung hat ein Fachverfahren, eine Anwendung und eine Infrastruktur; die Bewertung prüfen.`,
+				`Level ${ebene.n} (${ebene.title.en.toLowerCase()}) is relevant to no protection goal. Every processing has a process, an application and infrastructure; check the rating.`
+			)
+		);
+	}
+
 	if (open.length > 0) {
 		notes.unshift(
 			L(`Noch nicht bewertet: ${join(open, 'de')}.`, `Not yet assessed: ${join(open, 'en')}.`)
