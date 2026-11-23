@@ -26,7 +26,8 @@ const REPORT_PAGES: Record<string, number> = { 'aims-gap': 4 };
  */
 const ENTRY_PAGES: Record<string, number> = {
 	dsfa: 5,
-	'sdm-wuerfel': 5,
+	// the example's notes on seven goals, then the cube and its two views
+	'sdm-wuerfel': 6,
 	// 23 checkpoints, and a Rechtsstand line naming five laws
 	bestandsaufnahme: 4
 };

@@ -161,6 +161,48 @@ export const definition: RecordToolDefinition = {
 		{ law: 'DSGVO', ref: 'Art. 32' }
 	],
 	titleField: 'bezeichnung',
+	example: {
+		bezeichnung: 'Bewerbermanagement (Beispiel)',
+		risikostufe: 'normal',
+		vorgaenge: ['sn', 'aw', 'bn', 'bt', 'es', 'bs'],
+		ebene1:
+			'Stellenausschreibung, Eingang und Sichtung der Bewerbungen durch die Personalabteilung, Auswahlgespräche mit der Fachabteilung, Zu- oder Absage.',
+		ebene2:
+			'Bewerberportal eines Dienstleisters mit Rollen für Personalabteilung und Fachabteilung, E-Mail für Rückfragen.',
+		ebene3:
+			'Rechenzentrum des Dienstleisters in der EU, Anmeldung über das zentrale Konto der Organisation, tägliche Sicherung.',
+		vertraulichkeit_e1: 'umgesetzt',
+		vertraulichkeit_e2: 'umgesetzt',
+		vertraulichkeit_e3: 'umgesetzt',
+		vertraulichkeit_anmerkungen:
+			'Fachabteilung sieht nur die Bewerbungen auf ihre eigenen Stellen; Verschlüsselung laut AVV.',
+		integritaet_e1: 'umgesetzt',
+		integritaet_e2: 'teilweise',
+		integritaet_e3: 'umgesetzt',
+		integritaet_anmerkungen: 'Das Portal protokolliert Änderungen am Status, nicht an Notizen.',
+		verfuegbarkeit_e1: 'umgesetzt',
+		verfuegbarkeit_e2: 'umgesetzt',
+		verfuegbarkeit_e3: 'umgesetzt',
+		datenminimierung_e1: 'teilweise',
+		datenminimierung_e2: 'luecke',
+		datenminimierung_e3: 'teilweise',
+		datenminimierung_luecken: ['aw', 'bs'],
+		datenminimierung_anmerkungen:
+			'Absagen werden nicht automatisch nach sechs Monaten gelöscht; das Portal kann es, ist aber nicht eingestellt.',
+		nichtverkettung_e1: 'umgesetzt',
+		nichtverkettung_e2: 'umgesetzt',
+		nichtverkettung_e3: 'entfaellt',
+		transparenz_e1: 'umgesetzt',
+		transparenz_e2: 'teilweise',
+		transparenz_e3: 'umgesetzt',
+		transparenz_luecken: ['bt'],
+		transparenz_anmerkungen:
+			'Datenschutzhinweis im Portal; die Weitergabe an die Fachabteilung ist darin nicht genannt.',
+		intervenierbarkeit_e1: 'teilweise',
+		intervenierbarkeit_e2: 'umgesetzt',
+		verantwortlich: 'Personalleitung',
+		status: 'in_pruefung'
+	},
 	sections: [
 		{
 			id: 'gegenstand',
