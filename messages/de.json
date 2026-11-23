@@ -755,6 +755,7 @@
 	"backup_failed": "Die Sicherung konnte nicht gelesen oder übernommen werden.",
 	"records_print_notice": "Datenschutzhinweise drucken",
 	"print_kind_notice": "Datenschutzhinweise nach Art. 13 DSGVO",
+	"print_kind_notice_14": "Datenschutzhinweise nach Art. 14 DSGVO",
 	"demo_button": "So funktioniert's",
 	"demo_label": "Vorführung",
 	"demo_stop": "Beenden",

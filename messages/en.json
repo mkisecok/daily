@@ -755,6 +755,7 @@
 	"backup_failed": "The backup could not be read or added.",
 	"records_print_notice": "Print privacy notice",
 	"print_kind_notice": "Privacy notice under Art. 13 GDPR",
+	"print_kind_notice_14": "Privacy notice under Art. 14 GDPR",
 	"demo_button": "How it works",
 	"demo_label": "Demo",
 	"demo_stop": "Stop",

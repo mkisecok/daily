@@ -395,13 +395,13 @@
 		{#if Print?.letter}
 			<PrintDocument
 				letter
-				kind={Print.kind()}
-				title={Print.kind()}
+				kind={Print.kind(record)}
+				title={Print.kind(record)}
 				rows={Print.letter(record, data.organisation?.name)}
 			/>
 		{:else}
 			<PrintDocument
-				kind={Print ? Print.kind() : m.print_kind_entry()}
+				kind={Print ? Print.kind(record) : m.print_kind_entry()}
 				title={record.title}
 				rows={printMeta(data.tool, {
 					version: data.definition.version,

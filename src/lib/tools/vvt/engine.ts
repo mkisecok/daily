@@ -1,4 +1,5 @@
 import { fromBerlinInput } from '../../i18n/date.js';
+import { dateAfterMonths, dayAt } from '../../records/deadlines.js';
 import type { DeadlineSpec, RecordData, RecordEngine, RecordView } from '../../records/types.js';
 import { fieldById, isEmpty } from '../../records/validate.js';
 import type { LegalBasis, Localized, QuestionnaireResult, Reason } from '../types.js';
@@ -11,10 +12,27 @@ const listHas = (record: RecordView, field: string, value: string) => {
 	return Array.isArray(list) && list.includes(value);
 };
 
-/** the review date at 9:00 German time, unless the activity is discontinued */
+const text = (value: unknown) => (typeof value === 'string' ? value.trim() : '');
+
+/** a review is due a year after the last one, unless a date is set */
+const REVIEW_MONTHS = 12;
+
+/** whether the last review is more than a year old on `now` */
+export function reviewOutdated(record: RecordView, now = new Date()): boolean {
+	const last = text(record.data.geprueft_am);
+	if (!last) return false;
+	return now.getTime() >= Date.parse(dayAt(dateAfterMonths(last, REVIEW_MONTHS), '00:00'));
+}
+
+/**
+ * the review date at 9:00 German time, or a year after the last review
+ * when none is set, unless the activity is discontinued
+ */
 function deadlines(record: RecordView): DeadlineSpec[] {
-	const date = record.data.wiedervorlage;
-	if (typeof date !== 'string' || record.data.status === 'eingestellt') return [];
+	const last = text(record.data.geprueft_am);
+	const date =
+		text(record.data.wiedervorlage) || (last ? dateAfterMonths(last, REVIEW_MONTHS) : '');
+	if (!date || record.data.status === 'eingestellt') return [];
 	return [
 		{
 			kind: 'wiedervorlage',
@@ -96,17 +114,93 @@ function assess(record: RecordView): QuestionnaireResult {
 		);
 		citations.push({ law: 'DSGVO', ref: 'Art. 44' });
 	}
-	if (
-		(listHas(record, 'datenkategorien', 'art9') || listHas(record, 'datenkategorien', 'art10')) &&
-		!listHas(record, 'rechtsgrundlagen', 'art9')
-	) {
+	if (listHas(record, 'datenkategorien', 'art9') && !listHas(record, 'rechtsgrundlagen', 'art9')) {
 		notes.push(
 			L(
-				'Besondere Kategorien oder Strafdaten ohne Ausnahme nach Art. 9 Abs. 2 bzw. Grundlage nach Art. 10: Rechtsgrundlage ergänzen.',
-				'Special categories or criminal offence data without an Art. 9(2) exception or Art. 10 basis: add the legal basis.'
+				'Besondere Kategorien ohne Ausnahme nach Art. 9 Abs. 2: die Ausnahme als Rechtsgrundlage ergänzen.',
+				'Special categories without an exception under Art. 9(2): add the exception as a legal basis.'
 			)
 		);
 		citations.push({ law: 'DSGVO', ref: 'Art. 9 Abs. 2' });
+	}
+	if (
+		listHas(record, 'datenkategorien', 'art10') &&
+		!listHas(record, 'rechtsgrundlagen', 'art10')
+	) {
+		notes.push(
+			L(
+				'Daten über Straftaten ohne Grundlage nach Art. 10: nur unter behördlicher Aufsicht oder wenn ein Gesetz es erlaubt, etwa beim Führungszeugnis.',
+				'Criminal offence data without a basis under Art. 10: only under official authority or where a law allows it, e.g. for a certificate of good conduct.'
+			)
+		);
+		citations.push({ law: 'DSGVO', ref: 'Art. 10' });
+	}
+	if (!processor) {
+		if (isEmpty(record.data.rechtsgrundlagen)) {
+			notes.push(
+				L(
+					'Keine Rechtsgrundlage angegeben: Art. 30 verlangt sie nicht, aber die Datenschutzhinweise und die Rechenschaftspflicht (Art. 5 Abs. 2) brauchen sie.',
+					'No legal basis given: Art. 30 does not require it, but the privacy notice and accountability (Art. 5(2)) need it.'
+				)
+			);
+		}
+		if (listHas(record, 'rechtsgrundlagen', 'interesse') && isEmpty(record.data.interessen)) {
+			notes.push(
+				L(
+					'Berechtigte Interessen ohne Angabe, welche: sie sind in den Datenschutzhinweisen zu nennen (Art. 13 Abs. 1 lit. d) und gegen die Interessen der Betroffenen abzuwägen.',
+					'Legitimate interests without saying which: they must be named in the privacy notice (Art. 13(1)(d)) and weighed against the interests of the data subjects.'
+				)
+			);
+		}
+		if (
+			(listHas(record, 'rechtsgrundlagen', 'pflicht') ||
+				listHas(record, 'rechtsgrundlagen', 'oeffentlich')) &&
+			isEmpty(record.data.rechtsgrundlagen_details)
+		) {
+			notes.push(
+				L(
+					'Rechtliche Verpflichtung oder öffentliche Aufgabe ohne die Norm, die sie begründet (Art. 6 Abs. 3): unter „Rechtsgrundlage im Einzelnen“ angeben.',
+					'Legal obligation or public task without the provision that establishes it (Art. 6(3)): give it under "Legal basis in detail".'
+				)
+			);
+		}
+		if (
+			listHas(record, 'betroffene', 'minderjaehrige') &&
+			listHas(record, 'rechtsgrundlagen', 'einwilligung')
+		) {
+			notes.push(
+				L(
+					'Einwilligung von Minderjährigen: bei Diensten der Informationsgesellschaft unter 16 Jahren nur mit Zustimmung der Eltern (Art. 8 Abs. 1).',
+					'Consent of minors: for information society services under 16 only with parental consent (Art. 8(1)).'
+				)
+			);
+			citations.push({ law: 'DSGVO', ref: 'Art. 8' });
+		}
+		if (record.data.automatisiert === true && record.data.dsfa === 'nicht_erforderlich') {
+			notes.push(
+				L(
+					'Automatisierte Entscheidungen oder Profiling, aber keine DSFA: bei rechtlicher oder ähnlich erheblicher Wirkung ist sie in der Regel nötig (Art. 35 Abs. 3 lit. a).',
+					'Automated decisions or profiling, but no DPIA: with legal or similarly significant effect one is usually needed (Art. 35(3)(a)).'
+				)
+			);
+		}
+	}
+	if (transfer && listHas(record, 'garantien', 'ausnahme')) {
+		notes.push(
+			L(
+				'Ausnahmen nach Art. 49 tragen nur gelegentliche Übermittlungen; für regelmäßige Übermittlungen braucht es Garantien nach Art. 46, etwa Standardvertragsklauseln.',
+				'Derogations under Art. 49 only cover occasional transfers; regular transfers need safeguards under Art. 46, such as standard contractual clauses.'
+			)
+		);
+		citations.push({ law: 'DSGVO', ref: 'Art. 49' });
+	}
+	if (record.data.status !== 'eingestellt' && reviewOutdated(record)) {
+		notes.push(
+			L(
+				'Die letzte Prüfung liegt mehr als zwölf Monate zurück: den Eintrag prüfen und das Datum fortschreiben.',
+				'The last review is more than twelve months old: review the entry and update the date.'
+			)
+		);
 	}
 	if (listHas(record, 'rechtsgrundlagen', 'beschaeftigung')) {
 		notes.push(

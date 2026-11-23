@@ -1,6 +1,10 @@
-import type { RecordToolDefinition } from '../../records/types.js';
+import type { RecordData, RecordToolDefinition } from '../../records/types.js';
 
 const L = (de: string, en: string) => ({ de, en });
+
+const listHas = (data: RecordData, id: string, value: string) =>
+	Array.isArray(data[id]) && (data[id] as string[]).includes(value);
+const controller = (data: RecordData) => data.rolle !== 'auftragsverarbeiter';
 
 /** the legal bases of Art. 6(1), with the special cases the record most often needs */
 export const LEGAL_BASES = [
@@ -36,6 +40,13 @@ export const LEGAL_BASES = [
 		)
 	},
 	{
+		value: 'art10',
+		label: L(
+			'Grundlage nach Art. 10 (Daten über Straftaten)',
+			'Basis under Art. 10 (criminal offence data)'
+		)
+	},
+	{
 		value: 'beschaeftigung',
 		label: L(
 			'Beschäftigungsverhältnis (Art. 88 DSGVO, § 26 BDSG)',
@@ -50,7 +61,7 @@ export const LEGAL_BASES = [
  */
 export const definition: RecordToolDefinition = {
 	slug: 'vvt',
-	version: 1,
+	version: 2,
 	intro: L(
 		'Ein Eintrag je Verarbeitungstätigkeit. Das Verzeichnis enthält die Angaben nach Art. 30 Abs. 1 DSGVO (als Verantwortlicher) oder Abs. 2 (als Auftragsverarbeiter) und ist der Aufsichtsbehörde auf Anfrage vorzulegen. Name und Kontaktdaten des Verantwortlichen und des Datenschutzbeauftragten stehen im Kopf der Druckfassung.',
 		'One entry per processing activity. The record holds the information under Art. 30(1) GDPR (as controller) or Art. 30(2) (as processor) and must be made available to the supervisory authority on request. Name and contact details of the controller and the DPO head the print version.'
@@ -68,10 +79,17 @@ export const definition: RecordToolDefinition = {
 		zwecke:
 			'Abrechnung von Lohn und Gehalt, Meldungen an Finanzamt und Sozialversicherung, Bescheinigungen für Beschäftigte.',
 		rechtsgrundlagen: ['vertrag', 'pflicht'],
+		rechtsgrundlagen_details:
+			'Arbeitsvertrag; Lohnsteuerabzug nach § 38 und § 41 EStG, Meldungen nach § 28a SGB IV.',
 		betroffene: ['beschaeftigte'],
 		datenkategorien: ['stammdaten', 'kontakt', 'vertrag', 'zahlung', 'art9'],
 		datenkategorien_details:
 			'Steuer-ID, Sozialversicherungsnummer, Bankverbindung; Religionszugehörigkeit für die Kirchensteuer.',
+		herkunft: 'beides',
+		quelle: 'Finanzamt (Lohnsteuerabzugsmerkmale), Krankenkasse.',
+		bereitstellung: 'gesetzlich',
+		bereitstellung_folgen: 'Ohne die Angaben kann der Lohn nicht ordnungsgemäß abgerechnet werden.',
+		automatisiert: false,
 		empfaenger: ['intern', 'auftragsverarbeiter', 'behoerden', 'banken'],
 		empfaenger_details: 'Lohnbüro als Auftragsverarbeiter, Finanzamt, Krankenkassen, Hausbank.',
 		drittland: false,
@@ -172,6 +190,28 @@ export const definition: RecordToolDefinition = {
 					),
 					options: LEGAL_BASES,
 					cite: { law: 'DSGVO', ref: 'Art. 6 Abs. 1' }
+				},
+				{
+					id: 'rechtsgrundlagen_details',
+					type: 'textarea',
+					label: L('Rechtsgrundlage im Einzelnen', 'Legal basis in detail'),
+					help: L(
+						'Bei rechtlicher Verpflichtung oder öffentlicher Aufgabe die Norm (z. B. § 41 EStG, § 147 AO), bei besonderen Kategorien der Buchstabe des Art. 9 Abs. 2.',
+						'For a legal obligation or public task the provision (e.g. § 41 EStG, § 147 AO), for special categories the letter of Art. 9(2).'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 6 Abs. 3' },
+					when: controller
+				},
+				{
+					id: 'interessen',
+					type: 'textarea',
+					label: L('Berechtigte Interessen', 'Legitimate interests'),
+					help: L(
+						'Welche Interessen verfolgt werden und warum sie die Interessen der Betroffenen überwiegen. Erscheint in den Datenschutzhinweisen.',
+						'Which interests are pursued and why they override those of the data subjects. Appears in the privacy notice.'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 6 Abs. 1 lit. f, Art. 13 Abs. 1 lit. d' },
+					when: (data) => listHas(data, 'rechtsgrundlagen', 'interesse')
 				}
 			]
 		},
@@ -243,6 +283,84 @@ export const definition: RecordToolDefinition = {
 					id: 'datenkategorien_details',
 					type: 'textarea',
 					label: L('Weitere Angaben zu den Daten', 'Further details on the data')
+				},
+				{
+					id: 'herkunft',
+					type: 'select',
+					label: L('Herkunft der Daten', 'Where the data comes from'),
+					options: [
+						{
+							value: 'betroffene',
+							label: L('Von den Betroffenen selbst', 'From the data subjects themselves')
+						},
+						{ value: 'dritte', label: L('Von Dritten', 'From others') },
+						{ value: 'beides', label: L('Von beiden', 'From both') }
+					],
+					help: L(
+						'Bestimmt, ob die Datenschutzhinweise Art. 13 oder Art. 14 folgen.',
+						'Decides whether the privacy notice follows Art. 13 or Art. 14.'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 13, 14' },
+					when: controller
+				},
+				{
+					id: 'quelle',
+					type: 'textarea',
+					label: L('Quelle der Daten', 'Source of the data'),
+					help: L(
+						'Von wem die Daten stammen, und ob aus öffentlich zugänglichen Quellen.',
+						'Whom the data comes from, and whether from publicly accessible sources.'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 14 Abs. 2 lit. f' },
+					when: (data) =>
+						controller(data) && (data.herkunft === 'dritte' || data.herkunft === 'beides')
+				},
+				{
+					id: 'bereitstellung',
+					type: 'select',
+					label: L('Pflicht zur Bereitstellung', 'Obligation to provide the data'),
+					options: [
+						{ value: 'gesetzlich', label: L('Gesetzlich vorgeschrieben', 'Required by law') },
+						{
+							value: 'vertraglich',
+							label: L(
+								'Für den Vertrag oder seinen Abschluss erforderlich',
+								'Required for the contract or to enter into it'
+							)
+						},
+						{ value: 'freiwillig', label: L('Freiwillig', 'Voluntary') }
+					],
+					cite: { law: 'DSGVO', ref: 'Art. 13 Abs. 2 lit. e' },
+					when: (data) => controller(data) && data.herkunft !== 'dritte'
+				},
+				{
+					id: 'bereitstellung_folgen',
+					type: 'textarea',
+					label: L(
+						'Folgen, wenn die Daten nicht bereitgestellt werden',
+						'Consequences if the data is not provided'
+					),
+					when: (data) => controller(data) && data.herkunft !== 'dritte' && !!data.bereitstellung
+				},
+				{
+					id: 'automatisiert',
+					type: 'boolean',
+					label: L(
+						'Automatisierte Entscheidung einschließlich Profiling',
+						'Automated decision-making including profiling'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 22 Abs. 1, 4' },
+					when: controller
+				},
+				{
+					id: 'automatisiert_logik',
+					type: 'textarea',
+					label: L(
+						'Beteiligte Logik, Tragweite und Auswirkungen',
+						'Logic involved, significance and consequences'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 13 Abs. 2 lit. f' },
+					when: (data) => controller(data) && data.automatisiert === true
 				}
 			]
 		},

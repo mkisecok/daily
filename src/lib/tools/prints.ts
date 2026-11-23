@@ -63,7 +63,8 @@ export const entryPrints: Partial<
 	Record<
 		string,
 		{
-			kind: () => string;
+			/** the document's kind, its title; it may follow the entry */
+			kind: (record?: StoredRecord) => string;
 			component: Component<EntryPrintProps>;
 			/** only for entries this holds for; the others print as a Vorgangsblatt */
 			when?: (record: StoredRecord) => boolean;
@@ -115,7 +116,8 @@ export const alsoPrints: Partial<
 			id: string;
 			/** the button */
 			label: () => string;
-			kind: () => string;
+			/** the document's kind, its title; it may follow the entry */
+			kind: (record?: StoredRecord) => string;
 			component: Component<EntryPrintProps>;
 			when?: (record: StoredRecord) => boolean;
 			letter: (record: StoredRecord, organisation?: string | null) => PrintRow[];
@@ -125,7 +127,8 @@ export const alsoPrints: Partial<
 	vvt: {
 		id: 'hinweise',
 		label: m.records_print_notice,
-		kind: m.print_kind_notice,
+		kind: (record) =>
+			record?.data.herkunft === 'dritte' ? m.print_kind_notice_14() : m.print_kind_notice(),
 		component: NoticePrint,
 		when: (record) => noticeReady(record.data),
 		letter: (record, organisation) => vvtNoticeHead(record, organisation, getLocale())

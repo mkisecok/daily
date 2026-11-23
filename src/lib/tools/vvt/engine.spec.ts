@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { RecordData } from '../../records/types.js';
 import { validateRecord } from '../../records/validate.js';
 import type { QuestionnaireResult } from '../types.js';
-import { definition, engine } from './engine.js';
+import { definition, engine, reviewOutdated } from './engine.js';
 
 function view(data: RecordData) {
 	return { state: null, data: validateRecord(definition, data).data };
@@ -102,5 +102,67 @@ describe('VVT', () => {
 		expect(engine.deadlines!(view({ wiedervorlage: '2027-01-11', status: 'eingestellt' }))).toEqual(
 			[]
 		);
+	});
+});
+
+describe('VVT: lawfulness and review', () => {
+	beforeAll(() => {
+		vi.useFakeTimers({ toFake: ['Date'] });
+		vi.setSystemTime(new Date('2026-11-23T12:00:00Z'));
+	});
+	afterAll(() => {
+		vi.useRealTimers();
+	});
+
+	it('asks for a legal basis, the interests and the provision behind an obligation', () => {
+		expect(notes({ ...complete, rechtsgrundlagen: [] })).toContain('Keine Rechtsgrundlage');
+		expect(notes({ ...complete, rechtsgrundlagen: ['interesse'] })).toContain(
+			'Berechtigte Interessen ohne Angabe'
+		);
+		expect(
+			notes({ ...complete, rechtsgrundlagen: ['interesse'], interessen: 'Direktwerbung' })
+		).not.toContain('Berechtigte Interessen ohne Angabe');
+		expect(notes({ ...complete, rechtsgrundlagen: ['pflicht'] })).toContain('Art. 6 Abs. 3');
+		expect(
+			notes({ ...complete, rechtsgrundlagen: ['pflicht'], rechtsgrundlagen_details: '§ 147 AO' })
+		).toBe('');
+	});
+
+	it('needs an Art. 10 basis for criminal offence data, apart from Art. 9', () => {
+		const crime = { ...complete, datenkategorien: ['art10'] };
+		expect(notes(crime)).toContain('Art. 10');
+		expect(notes({ ...crime, rechtsgrundlagen: ['einwilligung', 'art10'] })).toBe('');
+	});
+
+	it('flags consent of minors, Art. 49 for regular transfers and profiling without a DPIA', () => {
+		expect(notes({ ...complete, betroffene: ['minderjaehrige'] })).toContain('Art. 8 Abs. 1');
+		expect(
+			notes({
+				...complete,
+				drittland: true,
+				drittland_details: 'USA',
+				garantien: ['ausnahme']
+			})
+		).toContain('nur gelegentliche');
+		expect(notes({ ...complete, automatisiert: true })).toContain('Art. 35 Abs. 3 lit. a');
+	});
+
+	it('leaves a processor without the controller checks', () => {
+		const processor = {
+			...complete,
+			rolle: 'auftragsverarbeiter',
+			auftraggeber: 'Muster AG',
+			rechtsgrundlagen: []
+		};
+		expect(notes(processor)).toBe('');
+	});
+
+	it('falls due a year after the last review and flags an old one', () => {
+		expect(engine.deadlines!(view({ geprueft_am: '2026-03-01', status: 'aktiv' }))).toEqual([
+			expect.objectContaining({ dueAt: '2027-03-01T08:00:00.000Z' })
+		]);
+		expect(reviewOutdated(view({ geprueft_am: '2025-11-01' }))).toBe(true);
+		expect(notes({ ...complete, geprueft_am: '2025-11-01' })).toContain('zwölf Monate');
+		expect(notes({ ...complete, geprueft_am: '2025-11-01', status: 'eingestellt' })).toBe('');
 	});
 });
