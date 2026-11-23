@@ -28,8 +28,17 @@ const complete: RecordData = {
 	verarbeitung: 'Kameras im Lager, Speicherung 72 Stunden',
 	zwecke: 'Schutz vor Diebstahl',
 	notwendigkeit: 'Mildere Mittel geprüft',
+	verhaeltnismaessigkeit: 'Nutzen überwiegt',
 	rechtsgrundlagen: ['interesse'],
 	dsb: 'Zustimmung mit Auflagen',
+	dsb_umsetzung: 'Auflagen übernommen',
+	standpunkt: 'Betriebsrat beteiligt',
+	e_information: 'umgesetzt',
+	e_rechte: 'umgesetzt',
+	e_auftragsverarbeitung: 'umgesetzt',
+	e_drittland: 'entfaellt',
+	e_design: 'umgesetzt',
+	e_loeschfristen: 'umgesetzt',
 	schwellwert: {
 		tool: 'dsfa-schwellwert',
 		catalogVersion: 1,
@@ -190,7 +199,9 @@ describe('DSFA: workflow and deadlines', () => {
 			...complete,
 			restrisiko: 'Restrisiken vertretbar',
 			umgesetzt: true,
-			entscheidung: 'Freigegeben',
+			beschluss: 'durchfuehren',
+			freigegeben_von: 'Geschäftsführung',
+			freigegeben_am: '2026-10-20',
 			konsultation_am: '2026-10-14T08:00:00.000Z'
 		};
 		expect(options(ok, 'bewertet')).toEqual({
@@ -222,7 +233,13 @@ describe('DSFA: workflow and deadlines', () => {
 	});
 
 	it('signs off only once the residual risks are handled and the measures are in place', () => {
-		const ready = { ...complete, restrisiko: 'Vertretbar', entscheidung: 'Freigegeben' };
+		const ready = {
+			...complete,
+			restrisiko: 'Vertretbar',
+			beschluss: 'durchfuehren',
+			freigegeben_von: 'Geschäftsführung',
+			freigegeben_am: '2026-10-20'
+		};
 		expect(options({ ...ready, restrisiko: '' }, 'bewertet').abgeschlossen).toBe(false);
 		expect(options(ready, 'bewertet').abgeschlossen).toBe(false);
 		expect(options({ ...ready, umgesetzt: true }, 'bewertet').abgeschlossen).toBe(true);
@@ -270,7 +287,7 @@ describe('DSFA: links and screening handoff', () => {
 		.map((question) => question.id);
 
 	it('links the DSFA to its processing activity and the TOM catalogue', () => {
-		expect(definition.version).toBe(3);
+		expect(definition.version).toBe(4);
 		expect(referenceFields(definition).map((f) => [f.id, f.tool])).toEqual([
 			['vvt', 'vvt'],
 			['tom', 'tom-katalog']
@@ -295,5 +312,94 @@ describe('DSFA: links and screening handoff', () => {
 		expect(engine.fromAssessment!('other', result, view({ bezeichnung: 'X' }))).toEqual({});
 		const none = screening.engine(screening.catalog, answersWith([]));
 		expect(engine.fromAssessment!('schwellwert', none, view({ bezeichnung: 'X' }))).toEqual({});
+	});
+});
+
+describe('DSFA: EDPB template 2026', () => {
+	const options = (data: RecordData, state: string) =>
+		Object.fromEntries(
+			allowedTransitions(definition, view(data, state)).map((o) => [
+				o.transition.to,
+				!o.blocked && o.missing.length === 0
+			])
+		);
+	const signed: RecordData = {
+		...complete,
+		restrisiko: 'Vertretbar',
+		umgesetzt: true,
+		beschluss: 'durchfuehren',
+		freigegeben_von: 'Geschäftsführung',
+		freigegeben_am: '2026-10-20'
+	};
+	const notes = (data: RecordData) =>
+		assess(data)
+			.notes!.map((n) => n.de)
+			.join('\n');
+
+	it('needs every safeguard assessed, and open ones only with conditions', () => {
+		expect(options(signed, 'bewertet').abgeschlossen).toBe(true);
+		expect(options({ ...signed, e_rechte: '' }, 'bewertet').abgeschlossen).toBe(false);
+		const planned = { ...signed, e_auftragsverarbeitung: 'geplant' };
+		expect(options(planned, 'bewertet').abgeschlossen).toBe(false);
+		expect(options({ ...planned, beschluss: 'auflagen' }, 'bewertet').abgeschlossen).toBe(true);
+		expect(
+			options({ ...signed, e_rechte: '', beschluss: 'abbruch' }, 'bewertet').abgeschlossen
+		).toBe(true);
+		expect(notes(planned)).toContain(
+			'Noch nicht vollständig umgesetzt: Verträge mit Auftragsverarbeitern'
+		);
+	});
+
+	it('asks about consent only where it is a legal basis', () => {
+		expect(notes(signed)).not.toContain('Einwilligung');
+		expect(notes({ ...signed, rechtsgrundlagen: ['einwilligung'] })).toContain(
+			'Noch nicht eingeschätzt: Wirksame und widerrufbare Einwilligung'
+		);
+	});
+
+	it('needs a formal approval, and sends a decision to consult to the authority', () => {
+		expect(options({ ...signed, freigegeben_von: '' }, 'bewertet').abgeschlossen).toBe(false);
+		expect(options({ ...signed, beschluss: 'konsultation' }, 'bewertet').abgeschlossen).toBe(false);
+	});
+
+	it('needs the Art. 9(2) exception and the Art. 22 safeguards where they apply', () => {
+		const special = assess({ ...signed, besondere_kategorien: true });
+		expect(special.explanation.de).toContain('die Ausnahme nach Art. 9 Abs. 2');
+		expect(assess({ ...signed, besondere_kategorien: true, art9_ausnahme: 'lit. b' }).outcome).toBe(
+			'vertretbar'
+		);
+		expect(
+			assess({ ...signed, besondere_kategorien: true, rechtsgrundlagen: ['interesse', 'art9'] })
+				.outcome
+		).toBe('vertretbar');
+		expect(assess({ ...signed, automatisiert: true }).explanation.de).toContain('Art. 22');
+	});
+
+	it('weighs proportionality apart, and follows up the DPO and the data subjects', () => {
+		expect(notes({ ...signed, verhaeltnismaessigkeit: '' })).toContain('Verhältnismäßigkeit');
+		expect(notes({ ...signed, dsb_umsetzung: '' })).toContain('wie der Rat');
+		expect(notes({ ...signed, standpunkt: '' })).toContain('Art. 35 Abs. 9');
+		expect(notes({ ...signed, vertraulichkeit_rw: '4', vertraulichkeit_rs: '4' })).toContain(
+			'Die Entscheidung lautet auf Durchführung'
+		);
+	});
+
+	it('turns the action plan into a deadline and extends the opinion by six weeks', () => {
+		const plan = { ...complete, massnahmenplan: 'Vertrag schließen', massnahmen_bis: '2027-01-15' };
+		expect(engine.deadlines!(view(plan)).map((d) => d.kind)).toEqual([
+			'massnahmen',
+			'ueberpruefung'
+		]);
+		expect(engine.deadlines!(view({ ...plan, umgesetzt: true })).map((d) => d.kind)).toEqual([
+			'ueberpruefung'
+		]);
+		const extended = view(
+			{ ...complete, konsultation_am: '2026-10-14T08:00:00.000Z', frist_verlaengert: true },
+			'konsultation'
+		);
+		expect(engine.deadlines!(extended)[0]).toMatchObject({
+			kind: 'stellungnahme',
+			dueAt: '2027-01-20T08:00:00.000Z'
+		});
 	});
 });

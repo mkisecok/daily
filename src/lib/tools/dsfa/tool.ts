@@ -10,8 +10,8 @@ const manifest: ToolManifest = {
 	version: definition.version,
 	name: { de: 'Datenschutz-Folgenabschätzung', en: 'Data protection impact assessment' },
 	summary: {
-		de: 'Vollständige DSFA nach Art. 35 Abs. 7: Beschreibung, Notwendigkeit, fünf Risikoquellen vor und nach Abhilfemaßnahmen in der Risikomatrix, Rat des DSB, Freigabe oder vorherige Konsultation nach Art. 36 mit Frist für die Stellungnahme. Druckfassung als Bericht.',
-		en: 'Full DPIA under Art. 35(7): description, necessity, five risk sources before and after measures in a risk matrix, DPO advice, sign-off or prior consultation under Art. 36 with the deadline for the opinion. Print version as report.'
+		de: 'Vollständige DSFA nach Art. 35 Abs. 7 und der DSFA-Vorlage des EDPB: Beschreibung, Notwendigkeit und Verhältnismäßigkeit, Grundsätze und Betroffenenrechte, sieben Risiken je Gewährleistungsziel vor und nach Abhilfemaßnahmen in der Risikomatrix, Rat des DSB, Maßnahmenplan, Entscheidung mit Freigabe oder vorherige Konsultation nach Art. 36 mit Frist für die Stellungnahme. Druckfassung als Bericht.',
+		en: 'Full DPIA under Art. 35(7) and the EDPB DPIA template: description, necessity and proportionality, principles and data subject rights, seven risks per protection goal before and after measures in a risk matrix, DPO advice, action plan, decision with approval or prior consultation under Art. 36 with the deadline for the opinion. Print version as report.'
 	},
 	legalBasis: [
 		{ law: 'DSGVO', ref: 'Art. 35' },

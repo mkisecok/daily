@@ -551,7 +551,7 @@
 	"dsfa_tom_status_unbelegt": "Senkung nicht belegt",
 	"dsfa_tom_status_offen": "Offen",
 	"dsfa_signoff_title": "Vor der Freigabe",
-	"dsfa_signoff_intro": "Was DSK-Kurzpapier Nr. 5 verlangt, bevor die Verarbeitung beginnt.",
+	"dsfa_signoff_intro": "Was DSK-Kurzpapier Nr. 5 und die DSFA-Vorlage des EDPB verlangen, bevor die Verarbeitung beginnt.",
 	"dsfa_signoff_open": "Offene Punkte: {count}",
 	"dsfa_signoff_erfuellt": "Erfüllt",
 	"dsfa_signoff_offen": "Offen",

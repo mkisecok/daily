@@ -55,8 +55,13 @@ describe('DSFA: Excel workbook', () => {
 	it('lists what is still open before sign-off', () => {
 		const rows = values(overview.data);
 		const start = rows.findIndex((row) => row[0] === 'Vor der Freigabe');
-		expect(rows.slice(start + 1, start + 5).map((row) => [row[0], row[2], row[3]])).toEqual([
+		expect(rows.slice(start + 1, start + 6).map((row) => [row[0], row[2], row[3]])).toEqual([
 			['Rechtsgrundlagen festgehalten', 'Offen', 'Kurzpapier Nr. 5, Schritt 6 DSK'],
+			[
+				'Grundsätze und Betroffenenrechte umgesetzt oder Auflagen',
+				'Offen',
+				expect.stringMatching(/^Information der Betroffenen, .* · DSFA-Vorlage 2026, 2\.3 EDPB$/)
+			],
 			[
 				'Jede Senkung durch Maßnahmen belegt',
 				'Offen',

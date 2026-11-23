@@ -1,7 +1,13 @@
 import type { RecordView } from '../../records/types.js';
 import { isEmpty } from '../../records/validate.js';
 import type { LegalBasis, Localized } from '../types.js';
-import { assessRisks, measuresPending, unbackedReductions } from './definition.js';
+import {
+	assessRisks,
+	complianceBlocks,
+	complianceOpen,
+	measuresPending,
+	unbackedReductions
+} from './definition.js';
 
 const L = (de: string, en: string): Localized => ({ de, en });
 
@@ -9,7 +15,7 @@ const L = (de: string, en: string): Localized => ({ de, en });
 export type CheckStatus = 'erfuellt' | 'offen' | 'entfaellt';
 
 export type SignOffCheck = {
-	id: 'rechtsgrundlagen' | 'senkung' | 'restrisiko' | 'umsetzung';
+	id: 'rechtsgrundlagen' | 'einhaltung' | 'senkung' | 'restrisiko' | 'umsetzung';
 	label: Localized;
 	status: CheckStatus;
 	/** what is still open, e.g. the risks lowered without a measure */
@@ -21,11 +27,15 @@ const KP5 = (ref: string): LegalBasis => ({ law: 'DSK', ref: `Kurzpapier Nr. 5, 
 
 /**
  * what DSK Kurzpapier Nr. 5 asks before the processing may start: the legal
- * bases, measures behind every lowered risk, the residual risks with the
- * decision on them, and the measures in place and tested
+ * bases, the principles and rights assessed (EDPB template 2026, 2.3; open
+ * ones only with conditions), measures behind every lowered risk, the
+ * residual risks with the decision on them, and the measures in place and
+ * tested
  */
 export function signOffChecks(record: RecordView): SignOffCheck[] {
 	const unbacked = unbackedReductions(record);
+	const { unset, pending } = complianceOpen(record);
+	const open = [...unset, ...pending];
 	const named = assessRisks(record).some((risk) => !isEmpty(record.data[`${risk.id}_massnahmen`]));
 	return [
 		{
@@ -34,6 +44,19 @@ export function signOffChecks(record: RecordView): SignOffCheck[] {
 			status: isEmpty(record.data.rechtsgrundlagen) ? 'offen' : 'erfuellt',
 			detail: null,
 			cite: KP5('Schritt 6')
+		},
+		{
+			id: 'einhaltung',
+			label: L(
+				'Grundsätze und Betroffenenrechte umgesetzt oder Auflagen',
+				'Principles and data subject rights in place, or conditions'
+			),
+			status: complianceBlocks(record) ? 'offen' : 'erfuellt',
+			detail:
+				open.length > 0
+					? L(open.map((item) => item.de).join(', '), open.map((item) => item.en).join(', '))
+					: null,
+			cite: { law: 'EDPB', ref: 'DSFA-Vorlage 2026, 2.3' }
 		},
 		{
 			id: 'senkung',

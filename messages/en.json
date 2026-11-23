@@ -551,7 +551,7 @@
 	"dsfa_tom_status_unbelegt": "Reduction not backed",
 	"dsfa_tom_status_offen": "Open",
 	"dsfa_signoff_title": "Before sign-off",
-	"dsfa_signoff_intro": "What DSK Kurzpapier Nr. 5 requires before processing starts.",
+	"dsfa_signoff_intro": "What DSK Kurzpapier Nr. 5 and the EDPB DPIA template require before processing starts.",
 	"dsfa_signoff_open": "Open items: {count}",
 	"dsfa_signoff_erfuellt": "Done",
 	"dsfa_signoff_offen": "Open",

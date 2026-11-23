@@ -1,4 +1,9 @@
-import type { FieldSection, RecordToolDefinition, RecordView } from '../../records/types.js';
+import type {
+	FieldSection,
+	RecordData,
+	RecordToolDefinition,
+	RecordView
+} from '../../records/types.js';
 import type { Localized } from '../types.js';
 import { LEGAL_BASES } from '../vvt/definition.js';
 import { threatsFor, type SdmGoal } from './threats.js';
@@ -59,8 +64,8 @@ function risk(id: string, goal: SdmGoal, title: Localized, help: Localized): Ris
 				type: 'textarea',
 				label: L('Risiko im Einzelfall', 'Risk in this case'),
 				help: L(
-					'Welcher Schaden kann den Betroffenen entstehen, durch welches Ereignis und aus welcher Risikoquelle?',
-					'What harm can the data subjects suffer, through which event and from which source of risk?'
+					'Welcher Schaden kann den Betroffenen entstehen, durch welches Ereignis und aus welcher Risikoquelle? Auch Risiken, die entstehen, wenn alles wie geplant läuft, etwa Überwachungsdruck oder Profilbildung, nicht nur Fehler und Angriffe.',
+					'What harm can the data subjects suffer, through which event and from which source of risk? Include risks that arise when everything works as planned, such as pressure from monitoring or profiling, not only faults and attacks.'
 				)
 			},
 			{
@@ -174,6 +179,125 @@ export const RISKS: RiskSection[] = [
 	)
 ];
 
+/** how far a safeguard is in place, as the EDPB DPIA template (2026) grades it */
+const COMPLIANCE_STATUS = [
+	{ value: 'umgesetzt', label: L('Umgesetzt', 'Implemented') },
+	{ value: 'teilweise', label: L('Teilweise umgesetzt', 'Partly implemented') },
+	{ value: 'geplant', label: L('Geplant', 'Planned') },
+	{ value: 'entfaellt', label: L('Entfällt', 'Not applicable') }
+];
+
+const usesConsent = (data: RecordData) =>
+	Array.isArray(data.rechtsgrundlagen) && data.rechtsgrundlagen.includes('einwilligung');
+
+/**
+ * the safeguards for the principles and the rights of data subjects beside
+ * security, as WP 248 Annex 2 and the EDPB DPIA template (2026, 2.3) list
+ * them; consent only where it is a legal basis
+ */
+export const COMPLIANCE: {
+	id: string;
+	label: Localized;
+	cite: { law: 'DSGVO'; ref: string };
+	when?: (data: RecordData) => boolean;
+}[] = [
+	{
+		id: 'e_information',
+		label: L('Information der Betroffenen', 'Information of data subjects'),
+		cite: { law: 'DSGVO', ref: 'Art. 13, 14' }
+	},
+	{
+		id: 'e_rechte',
+		label: L(
+			'Auskunft, Berichtigung, Löschung, Widerspruch und die weiteren Betroffenenrechte',
+			'Access, rectification, erasure, objection and the other rights of data subjects'
+		),
+		cite: { law: 'DSGVO', ref: 'Art. 15–22' }
+	},
+	{
+		id: 'e_einwilligung',
+		label: L('Wirksame und widerrufbare Einwilligung', 'Valid consent that can be withdrawn'),
+		cite: { law: 'DSGVO', ref: 'Art. 7' },
+		when: usesConsent
+	},
+	{
+		id: 'e_auftragsverarbeitung',
+		label: L('Verträge mit Auftragsverarbeitern', 'Contracts with processors'),
+		cite: { law: 'DSGVO', ref: 'Art. 28' }
+	},
+	{
+		id: 'e_drittland',
+		label: L(
+			'Garantien für Übermittlungen in Drittländer',
+			'Safeguards for transfers to third countries'
+		),
+		cite: { law: 'DSGVO', ref: 'Art. 44–49' }
+	},
+	{
+		id: 'e_design',
+		label: L(
+			'Datenschutz durch Technikgestaltung und Voreinstellungen',
+			'Data protection by design and by default'
+		),
+		cite: { law: 'DSGVO', ref: 'Art. 25' }
+	},
+	{
+		id: 'e_loeschfristen',
+		label: L('Löschfristen festgelegt und umgesetzt', 'Retention periods set and applied'),
+		cite: { law: 'DSGVO', ref: 'Art. 5 Abs. 1 lit. e' }
+	}
+];
+
+const complianceSection: FieldSection = {
+	id: 'einhaltung',
+	title: L('Grundsätze und Betroffenenrechte', 'Principles and data subject rights'),
+	intro: L(
+		'Wie weit die Schutzvorkehrungen neben der Sicherheit umgesetzt sind. Die Sicherheit selbst belegt der verknüpfte Eintrag im TOM-Katalog.',
+		'How far the safeguards beside security are in place. Security itself is evidenced by the linked TOM catalogue entry.'
+	),
+	fields: [
+		...COMPLIANCE.map((item) => ({
+			id: item.id,
+			type: 'select' as const,
+			label: item.label,
+			options: COMPLIANCE_STATUS,
+			cite: item.cite,
+			...(item.when ? { when: item.when } : {})
+		})),
+		{
+			id: 'einhaltung_details',
+			type: 'textarea',
+			label: L('Einzelheiten', 'Details'),
+			help: L(
+				'Wie die Vorkehrungen umgesetzt sind, und was bei teilweise umgesetzten oder geplanten noch fehlt.',
+				'How the safeguards are implemented, and what is still missing for those partly implemented or planned.'
+			)
+		}
+	]
+};
+
+/**
+ * safeguards not yet assessed, and those assessed but not yet in place;
+ * a safeguard that does not apply to this record counts as neither
+ */
+export function complianceOpen(record: RecordView): { unset: Localized[]; pending: Localized[] } {
+	const unset: Localized[] = [];
+	const pending: Localized[] = [];
+	for (const item of COMPLIANCE) {
+		if (item.when && !item.when(record.data)) continue;
+		const value = record.data[item.id];
+		if (typeof value !== 'string' || !value) unset.push(item.label);
+		else if (value === 'teilweise' || value === 'geplant') pending.push(item.label);
+	}
+	return { unset, pending };
+}
+
+/** the sign-off fails the checklist: something unassessed, or open without conditions */
+export function complianceBlocks(record: RecordView): boolean {
+	const { unset, pending } = complianceOpen(record);
+	return unset.length > 0 || (pending.length > 0 && record.data.beschluss !== 'auflagen');
+}
+
 /** likelihood and severity, 1–4 each */
 export type Rating = { likelihood: number; severity: number };
 
@@ -244,6 +368,11 @@ export function unbackedReductions(record: RecordView): AssessedRisk[] {
 export const measuresPending = (record: RecordView) =>
 	record.data.umgesetzt !== true && assessRisks(record).some((r) => hasMeasures(record, r));
 
+const COMPLIANCE_BLOCKS = L(
+	'Erst alle Grundsätze und Betroffenenrechte einschätzen; sind noch welche offen, nur mit Auflagen freigeben (EDPB-Vorlage 2026, 2.3 und 6).',
+	'First assess all principles and data subject rights; while some are still open, sign off only with conditions (EDPB template 2026, 2.3 and 6).'
+);
+
 const PENDING = L(
 	'Vor der Freigabe die Abhilfemaßnahmen umsetzen und auf Wirksamkeit testen (DSK Kurzpapier Nr. 5, Schritte 11 und 12).',
 	'Implement the measures and test that they work before sign-off (DSK Kurzpapier Nr. 5, steps 11 and 12).'
@@ -252,7 +381,7 @@ const PENDING = L(
 /** a data protection impact assessment from draft to sign-off (Art. 35, 36) */
 export const definition: RecordToolDefinition = {
 	slug: 'dsfa',
-	version: 3,
+	version: 4,
 	intro: L(
 		'Eine Datenschutz-Folgenabschätzung je Verarbeitungsvorgang mit voraussichtlich hohem Risiko nach dem Ablauf des DSK-Kurzpapiers Nr. 5: Umfang, Beschreibung, Akteure, Notwendigkeit, Rechtsgrundlagen, Risiken je Gewährleistungsziel des Standard-Datenschutzmodells vor und nach Abhilfemaßnahmen, Entscheidung und gegebenenfalls Konsultation der Aufsichtsbehörde. Zu jedem Ziel lassen sich die Gefährdungen nach BSI-Standard 200-3 und datenschutzspezifische Ereignisse auswählen; die Bewertung folgt der Risikomatrix der DSK, die Druckfassung dient als Bericht.',
 		'One DPIA per processing operation likely to result in a high risk, following the steps of DSK Kurzpapier Nr. 5: scope, description, actors, necessity, legal bases, risks per protection goal of the Standard Data Protection Model before and after measures, decision and, where needed, consultation of the authority. For each goal the threats of BSI-Standard 200-3 and data protection events can be chosen; the rating follows the DSK risk matrix and the print version serves as the report.'
@@ -366,10 +495,20 @@ export const definition: RecordToolDefinition = {
 				{
 					id: 'notwendigkeit',
 					type: 'textarea',
-					label: L('Notwendigkeit und Verhältnismäßigkeit', 'Necessity and proportionality'),
+					label: L('Notwendigkeit', 'Necessity'),
 					help: L(
-						'Rechtsgrundlage, Zweckbindung, Datenminimierung, Speicherbegrenzung, Alternativen.',
-						'Legal basis, purpose limitation, data minimisation, storage limitation, alternatives.'
+						'Erreicht die Verarbeitung ihren Zweck, und ist sie das mildeste Mittel? Welche Alternativen wurden geprüft und warum reichen sie nicht? Zweckbindung, Datenminimierung, Speicherbegrenzung.',
+						'Does the processing achieve its purpose, and is it the least intrusive means? Which alternatives were considered and why are they not enough? Purpose limitation, data minimisation, storage limitation.'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 7 lit. b' }
+				},
+				{
+					id: 'verhaeltnismaessigkeit',
+					type: 'textarea',
+					label: L('Verhältnismäßigkeit', 'Proportionality'),
+					help: L(
+						'Überwiegt der Nutzen für den Verantwortlichen, die Betroffenen und die Allgemeinheit die Nachteile für die Rechte der Betroffenen? Die Risiken unten einbeziehen.',
+						'Do the benefits for the controller, the data subjects and society outweigh the disadvantages for the rights of the data subjects? Take the risks below into account.'
 					),
 					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 7 lit. b' }
 				},
@@ -395,9 +534,63 @@ export const definition: RecordToolDefinition = {
 					cite: { law: 'DSGVO', ref: 'Art. 6 Abs. 1' }
 				},
 				{
+					id: 'besondere_kategorien',
+					type: 'boolean',
+					label: L(
+						'Besondere Kategorien personenbezogener Daten oder Daten über Straftaten',
+						'Special categories of personal data or data on criminal offences'
+					),
+					help: L(
+						'Gesundheit, Herkunft, Religion, Gewerkschaft, Sexualleben, biometrische oder genetische Daten, Straftaten.',
+						'Health, origin, religion, trade union, sex life, biometric or genetic data, criminal offences.'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 9 Abs. 1, Art. 10' }
+				},
+				{
+					id: 'art9_ausnahme',
+					type: 'textarea',
+					label: L('Ausnahme vom Verarbeitungsverbot', 'Exception to the prohibition'),
+					help: L(
+						'Die Ausnahme nach Art. 9 Abs. 2, etwa Arbeitsrecht (lit. b) oder ausdrückliche Einwilligung (lit. a), und die Norm, auf die sie sich stützt.',
+						'The exception under Art. 9(2), e.g. employment law ((b)) or explicit consent ((a)), and the provision it relies on.'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 9 Abs. 2' },
+					when: (data) => data.besondere_kategorien === true
+				},
+				{
+					id: 'automatisiert',
+					type: 'boolean',
+					label: L(
+						'Automatisierte Entscheidung mit rechtlicher oder ähnlich erheblicher Wirkung',
+						'Automated decision with legal or similarly significant effect'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 22' }
+				},
+				{
+					id: 'art22_garantien',
+					type: 'textarea',
+					label: L('Ausnahme und Garantien', 'Exception and safeguards'),
+					help: L(
+						'Die Ausnahme nach Art. 22 Abs. 2 und die Garantien nach Abs. 3: Eingreifen einer Person, eigener Standpunkt, Anfechtung.',
+						'The exception under Art. 22(2) and the safeguards under (3): human intervention, own point of view, contesting the decision.'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 22 Abs. 2, 3' },
+					when: (data) => data.automatisiert === true
+				},
+				{
 					id: 'dsb',
 					type: 'textarea',
 					label: L('Rat des Datenschutzbeauftragten', 'Advice of the data protection officer'),
+					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 2' }
+				},
+				{
+					id: 'dsb_umsetzung',
+					type: 'textarea',
+					label: L('Umgang mit dem Rat', 'How the advice was followed'),
+					help: L(
+						'Was aus dem Rat übernommen wurde, und warum ein Teil nicht.',
+						'What was taken from the advice, and why part of it was not.'
+					),
 					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 2' }
 				},
 				{
@@ -407,10 +600,15 @@ export const definition: RecordToolDefinition = {
 						'Standpunkt der Betroffenen oder ihrer Vertreter',
 						'Views of data subjects or their representatives'
 					),
+					help: L(
+						'Etwa über den Betriebsrat. Wurden sie nicht beteiligt, kurz begründen, warum.',
+						'For example through the works council. If they were not involved, say briefly why.'
+					),
 					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 9' }
 				}
 			]
 		},
+		complianceSection,
 		...RISKS,
 		{
 			id: 'ergebnis',
@@ -437,19 +635,76 @@ export const definition: RecordToolDefinition = {
 					cite: { law: 'DSK', ref: 'Kurzpapier Nr. 5, Schritte 11 und 12' }
 				},
 				{
+					id: 'massnahmenplan',
+					type: 'textarea',
+					label: L('Maßnahmenplan', 'Action plan'),
+					help: L(
+						'Welche Maßnahmen noch umgesetzt werden, wer sie umsetzt und wie sie im Betrieb überwacht werden.',
+						'Which measures are still to be implemented, who implements them and how they are monitored in operation.'
+					),
+					cite: { law: 'EDPB', ref: 'DSFA-Vorlage 2026, 4.2.3' }
+				},
+				{
+					id: 'massnahmen_bis',
+					type: 'date',
+					label: L('Umsetzen bis', 'Implement by')
+				},
+				{
+					id: 'beschluss',
+					type: 'select',
+					label: L('Entscheidung des Verantwortlichen', 'Decision of the controller'),
+					options: [
+						{ value: 'durchfuehren', label: L('Wie geplant durchführen', 'Proceed as planned') },
+						{
+							value: 'auflagen',
+							label: L('Mit Auflagen durchführen', 'Proceed with conditions')
+						},
+						{
+							value: 'konsultation',
+							label: L('Aufsichtsbehörde konsultieren', 'Consult the authority')
+						},
+						{ value: 'abbruch', label: L('Nicht durchführen', 'Do not proceed') }
+					],
+					cite: { law: 'EDPB', ref: 'DSFA-Vorlage 2026, 6' }
+				},
+				{
 					id: 'entscheidung',
 					type: 'textarea',
-					label: L('Entscheidung des Verantwortlichen', 'Decision of the controller'),
+					label: L('Begründung und Auflagen', 'Reasons and conditions'),
 					help: L(
-						'Freigabe der Verarbeitung, Auflagen, verantwortliche Person, Datum.',
-						'Approval of the processing, conditions, responsible person, date.'
+						'Warum so entschieden wurde, und bei Auflagen, was vor Beginn der Verarbeitung erfüllt sein muss.',
+						'Why the decision was taken and, with conditions, what must be met before processing starts.'
 					)
+				},
+				{
+					id: 'freigegeben_von',
+					type: 'text',
+					label: L('Freigegeben von', 'Approved by'),
+					help: L(
+						'Die verantwortliche Person der Leitung, etwa die Geschäftsführung.',
+						'The responsible person in management, e.g. the managing director.'
+					)
+				},
+				{
+					id: 'freigegeben_am',
+					type: 'date',
+					label: L('Freigegeben am', 'Approved on')
 				},
 				{
 					id: 'konsultation_am',
 					type: 'datetime',
 					label: L('Aufsichtsbehörde konsultiert am', 'Authority consulted on'),
 					cite: { law: 'DSGVO', ref: 'Art. 36 Abs. 1' }
+				},
+				{
+					id: 'frist_verlaengert',
+					type: 'boolean',
+					label: L(
+						'Frist für die Stellungnahme um sechs Wochen verlängert',
+						'Deadline for the opinion extended by six weeks'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 36 Abs. 2' },
+					when: (data) => typeof data.konsultation_am === 'string' && data.konsultation_am !== ''
 				},
 				{
 					id: 'stellungnahme',
@@ -521,14 +776,16 @@ export const definition: RecordToolDefinition = {
 				from: 'bewertet',
 				to: 'abgeschlossen',
 				label: L('Freigeben', 'Sign off'),
-				requires: ['restrisiko', 'entscheidung'],
+				requires: ['restrisiko', 'beschluss', 'freigegeben_von', 'freigegeben_am'],
 				check: (record) => {
-					if (highResidual(record)) {
+					if (highResidual(record) || record.data.beschluss === 'konsultation') {
 						return L(
 							'Bei hohem Restrisiko vor Beginn der Verarbeitung die Aufsichtsbehörde konsultieren (Art. 36 Abs. 1).',
 							'With a high residual risk, consult the authority before processing starts (Art. 36(1)).'
 						);
 					}
+					if (record.data.beschluss === 'abbruch') return null;
+					if (complianceBlocks(record)) return COMPLIANCE_BLOCKS;
 					return measuresPending(record) ? PENDING : null;
 				}
 			},
@@ -536,8 +793,12 @@ export const definition: RecordToolDefinition = {
 				from: 'konsultation',
 				to: 'abgeschlossen',
 				label: L('Nach Stellungnahme freigeben', 'Sign off after the opinion'),
-				requires: ['stellungnahme', 'restrisiko', 'entscheidung'],
-				check: (record) => (measuresPending(record) ? PENDING : null)
+				requires: ['stellungnahme', 'restrisiko', 'beschluss', 'freigegeben_von', 'freigegeben_am'],
+				check: (record) => {
+					if (record.data.beschluss === 'abbruch') return null;
+					if (complianceBlocks(record)) return COMPLIANCE_BLOCKS;
+					return measuresPending(record) ? PENDING : null;
+				}
 			},
 			{ from: 'abgeschlossen', to: 'bewertet', label: L('Überarbeiten', 'Revise') }
 		]
@@ -558,7 +819,22 @@ export const definition: RecordToolDefinition = {
 		rechtsgrundlagen: ['interesse'],
 		rechtsgrundlagen_details:
 			'Art. 6 Abs. 1 lit. f DSGVO; Betriebsvereinbarung nach § 87 Abs. 1 Nr. 6 BetrVG.',
+		verhaeltnismaessigkeit:
+			'Die Aufzeichnung erfasst nur die Rampen, nicht Pausen- oder Sozialräume, und wird nur nach einem Vorfall angesehen. Dem Schutz von Waren und Beschäftigten vor falschem Verdacht steht ein begrenzter Eingriff gegenüber.',
+		besondere_kategorien: false,
+		automatisiert: false,
 		dsb: 'Speicherdauer auf 72 Stunden begrenzen, Zugriff nur im Vier-Augen-Prinzip, Hinweisschilder vor dem erfassten Bereich.',
+		dsb_umsetzung: 'Alle drei Empfehlungen sind übernommen.',
+		standpunkt:
+			'Der Betriebsrat war im DSFA-Team; die Betriebsvereinbarung schließt die Leistungs- und Verhaltenskontrolle aus.',
+		e_information: 'umgesetzt',
+		e_rechte: 'umgesetzt',
+		e_auftragsverarbeitung: 'teilweise',
+		e_drittland: 'entfaellt',
+		e_design: 'umgesetzt',
+		e_loeschfristen: 'umgesetzt',
+		einhaltung_details:
+			'Der Wartungsvertrag mit dem Errichter der Kameras ist noch um eine Vereinbarung nach Art. 28 zu ergänzen.',
 		vertraulichkeit_gefaehrdungen: ['G 0.14', 'G 0.19'],
 		vertraulichkeit_beschreibung: 'Unbefugte sehen Aufnahmen ein oder geben sie weiter.',
 		vertraulichkeit_w: '2',
@@ -587,6 +863,9 @@ export const definition: RecordToolDefinition = {
 		restrisiko:
 			'Nach den Maßnahmen bleibt kein hohes Risiko; eine Konsultation der Aufsichtsbehörde ist nicht nötig.',
 		umgesetzt: false,
+		massnahmenplan:
+			'Rekorder in den Technikraum verlegen (IT); Vereinbarung nach Art. 28 mit dem Errichter abschließen (Einkauf).',
+		massnahmen_bis: '2027-01-15',
 		ueberpruefung: '2027-11-01'
 	}
 };
