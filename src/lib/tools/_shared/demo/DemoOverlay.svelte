@@ -61,6 +61,21 @@
 		<!-- the page stays visible but out of reach while the demo plays it -->
 		{#if demo.phase === 'running'}<div class="shield" aria-hidden="true"></div>{/if}
 
+		<!-- the saved entry lies under the ring and the cursor, which point into it -->
+		{#if shown}
+			<section class="demo-result" aria-label={m.demo_result_title()}>
+				<div class="sheet">
+					<p class="eyebrow">{m.demo_result_title()}</p>
+					<h2>{shown.record.title}</h2>
+					{#if shown.assessment}
+						<Verdict result={shown.assessment} tool={shown.recordTool.manifest} />
+					{/if}
+					{#if shown.Dashboard}<shown.Dashboard record={shown.record} />{/if}
+					<RecordView definition={shown.recordTool.definition} record={shown.record} />
+				</div>
+			</section>
+		{/if}
+
 		{#if demo.ring}
 			<div
 				class="ring"
@@ -83,20 +98,6 @@
 			>
 				<path d="M4 2 L4 19 L8.5 14.8 L11.6 21.5 L14.4 20.2 L11.4 13.7 L17.5 13.4 Z" />
 			</svg>
-		{/if}
-
-		{#if shown}
-			<section class="demo-result" aria-label={m.demo_result_title()}>
-				<div class="sheet">
-					<p class="eyebrow">{m.demo_result_title()}</p>
-					<h2>{shown.record.title}</h2>
-					{#if shown.assessment}
-						<Verdict result={shown.assessment} tool={shown.recordTool.manifest} />
-					{/if}
-					{#if shown.Dashboard}<shown.Dashboard record={shown.record} />{/if}
-					<RecordView definition={shown.recordTool.definition} record={shown.record} />
-				</div>
-			</section>
 		{/if}
 
 		<div class="caption card" role="status" aria-live="polite">
