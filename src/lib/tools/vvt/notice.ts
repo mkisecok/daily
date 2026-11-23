@@ -82,18 +82,23 @@ const BASES: Record<string, Localized> = {
 	)
 };
 
+const NO_AUTOMATION = L(
+	'Eine automatisierte Entscheidung einschließlich Profiling findet nicht statt.',
+	'No automated decision-making including profiling takes place.'
+);
+
 const NO_TRANSFER = L(
 	'Eine Übermittlung in Drittländer ist nicht vorgesehen.',
 	'No transfer to third countries is intended.'
 );
 
 /**
- * the information of Art. 13 DSGVO for one processing, filled from its
- * entry in the record of processing activities and the organisation's
- * details. What the record does not hold (the legitimate interests, whether
- * the data must be provided, automated decisions) gets a line to fill in;
- * what the record should hold and does not stays empty for the caller to
- * mark. The rights come as fixed text, the right to object apart from the
+ * the information of Art. 13 DSGVO for one processing, or of Art. 14 when
+ * the data comes from others, filled from its entry in the record of
+ * processing activities and the organisation's details. Where the record
+ * leaves the interests, the obligation to provide, automated decisions or
+ * the source empty, a line to fill in stays; what the record should hold
+ * and does not stays empty for the caller to mark. The rights come as fixed text, the right to object apart from the
  * others where it applies (Art. 21 Abs. 4).
  */
 export function noticeParts(
@@ -134,6 +139,35 @@ export function noticeParts(
 				? text(NO_TRANSFER, locale)
 				: '';
 
+	/** Art. 14 for data from others; data partly from the person keeps Art. 13 and names the source */
+	const art14 = data.herkunft === 'dritte';
+	const interest = has(data, 'rechtsgrundlagen', 'interesse');
+	const interests = row(
+		art14 ? 'b' : 'd',
+		L('Berechtigte Interessen, die verfolgt werden', 'Legitimate interests pursued'),
+		value('interessen'),
+		true
+	);
+	const source = row(
+		art14 ? 'f' : '',
+		L('Quelle der Daten', 'Source of the data'),
+		value('quelle'),
+		true
+	);
+	const automated = row(
+		art14 ? 'g' : 'f',
+		L(
+			'Automatisierte Entscheidungen einschließlich Profiling',
+			'Automated decisions including profiling'
+		),
+		data.automatisiert === true
+			? value('automatisiert_logik')
+			: data.automatisiert === false
+				? text(NO_AUTOMATION, locale)
+				: '',
+		true
+	);
+
 	const first: PrintRow[] = [
 		row('a', L('Verantwortlicher und Kontakt', 'Controller and contact'), controller, true),
 		...(data.rolle === 'gemeinsam'
@@ -156,13 +190,13 @@ export function noticeParts(
 		),
 		row('c', L('Zwecke der Verarbeitung', 'Purposes of the processing'), value('zwecke')),
 		row('c', L('Rechtsgrundlagen', 'Legal bases'), bases),
-		...(has(data, 'rechtsgrundlagen', 'interesse')
+		...(interest && !art14 ? [interests] : []),
+		...(art14
 			? [
 					row(
 						'd',
-						L('Berechtigte Interessen, die verfolgt werden', 'Legitimate interests pursued'),
-						'',
-						true
+						L('Kategorien personenbezogener Daten', 'Categories of personal data'),
+						value('datenkategorien')
 					)
 				]
 			: []),
@@ -171,46 +205,55 @@ export function noticeParts(
 			'f',
 			L('Übermittlung in Drittländer und Garantien', 'Transfer to third countries and safeguards'),
 			transfer
-		)
+		),
+		...(data.herkunft === 'beides' ? [source] : [])
 	];
 
-	const objection =
-		has(data, 'rechtsgrundlagen', 'interesse') || has(data, 'rechtsgrundlagen', 'oeffentlich');
+	const objection = interest || has(data, 'rechtsgrundlagen', 'oeffentlich');
+	const consent = has(data, 'rechtsgrundlagen', 'einwilligung');
+	const [rights, withdrawal, complaint] = art14 ? ['c', 'd', 'e'] : ['b', 'c', 'd'];
+	const provision = [value('bereitstellung'), value('bereitstellung_folgen')]
+		.filter(Boolean)
+		.join('. ');
 	const second: PrintRow[] = [
 		row('a', L('Speicherdauer', 'Storage period'), value('loeschfristen')),
-		row('b', L('Ihre Rechte', 'Your rights'), text(RIGHTS, locale)),
+		...(interest && art14 ? [interests] : []),
+		row(rights, L('Ihre Rechte', 'Your rights'), text(RIGHTS, locale)),
 		...(objection
-			? [row('b', L('Widerspruchsrecht', 'Right to object'), text(OBJECTION, locale))]
+			? [row(rights, L('Widerspruchsrecht', 'Right to object'), text(OBJECTION, locale))]
 			: []),
-		...(has(data, 'rechtsgrundlagen', 'einwilligung')
-			? [row('c', L('Widerruf der Einwilligung', 'Withdrawing consent'), text(WITHDRAWAL, locale))]
+		...(consent
+			? [
+					row(
+						withdrawal,
+						L('Widerruf der Einwilligung', 'Withdrawing consent'),
+						text(WITHDRAWAL, locale)
+					)
+				]
 			: []),
-		row('d', L('Beschwerderecht', 'Right to complain'), text(COMPLAINT, locale)),
-		row(
-			'e',
-			L(
-				'Pflicht zur Bereitstellung und Folgen, wenn Sie die Daten nicht bereitstellen',
-				'Whether you must provide the data and what happens if you do not'
-			),
-			'',
-			true
-		),
-		row(
-			'f',
-			L(
-				'Automatisierte Entscheidungen einschließlich Profiling',
-				'Automated decisions including profiling'
-			),
-			'',
-			true
-		)
+		row(complaint, L('Beschwerderecht', 'Right to complain'), text(COMPLAINT, locale)),
+		...(art14
+			? [source]
+			: [
+					row(
+						'e',
+						L(
+							'Pflicht zur Bereitstellung und Folgen, wenn Sie die Daten nicht bereitstellen',
+							'Whether you must provide the data and what happens if you do not'
+						),
+						provision,
+						true
+					)
+				]),
+		automated
 	];
 
+	const article = art14 ? '14' : '13';
 	return [
 		{
 			id: 'abs1',
 			title: text(
-				L('Angaben nach Art. 13 Abs. 1 DSGVO', 'Information under Art. 13(1) GDPR'),
+				L(`Angaben nach Art. ${article} Abs. 1 DSGVO`, `Information under Art. ${article}(1) GDPR`),
 				locale
 			),
 			rows: first
@@ -218,7 +261,7 @@ export function noticeParts(
 		{
 			id: 'abs2',
 			title: text(
-				L('Angaben nach Art. 13 Abs. 2 DSGVO', 'Information under Art. 13(2) GDPR'),
+				L(`Angaben nach Art. ${article} Abs. 2 DSGVO`, `Information under Art. ${article}(2) GDPR`),
 				locale
 			),
 			rows: second
