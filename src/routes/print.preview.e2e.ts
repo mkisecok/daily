@@ -25,7 +25,8 @@ const REPORT_PAGES: Record<string, number> = { 'aims-gap': 4 };
  * report, the SDM cube its views
  */
 const ENTRY_PAGES: Record<string, number> = {
-	dsfa: 5,
+	// the EDPB template's safeguards, decision and approval, then the landscape risk picture
+	dsfa: 6,
 	// the example's notes on seven goals, what to fix first and the cube's two views
 	'sdm-wuerfel': 6,
 	// 23 checkpoints, and a Rechtsstand line naming five laws

@@ -9,6 +9,7 @@ describe('DSFA: checks before sign-off', () => {
 	it('leaves everything open on an empty entry, with nothing to implement', () => {
 		expect(status({})).toEqual({
 			rechtsgrundlagen: 'offen',
+			einhaltung: 'offen',
 			senkung: 'erfuellt',
 			restrisiko: 'offen',
 			umsetzung: 'entfaellt'
@@ -37,6 +38,7 @@ describe('DSFA: checks before sign-off', () => {
 		};
 		expect(status(named)).toEqual({
 			rechtsgrundlagen: 'erfuellt',
+			einhaltung: 'offen',
 			senkung: 'erfuellt',
 			restrisiko: 'erfuellt',
 			umsetzung: 'offen'

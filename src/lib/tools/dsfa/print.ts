@@ -6,7 +6,14 @@ import type { RecordView, StoredRecord } from '../../records/types.js';
 import { fieldById } from '../../records/validate.js';
 import { text } from '../i18n.js';
 import type { Localized } from '../types.js';
-import { SCALE, assessRisks, definition, type Rating, type RiskLevel } from './definition.js';
+import {
+	COMPLIANCE,
+	SCALE,
+	assessRisks,
+	definition,
+	type Rating,
+	type RiskLevel
+} from './definition.js';
 import { signOffChecks } from './signoff.js';
 import { threatById } from './threats.js';
 
@@ -139,7 +146,23 @@ export function dsfaParts(record: RecordView, locale: string, titles: Titles = {
 					'3. Necessity and proportionality (Art. 35(7)(b) GDPR)'
 				)
 			),
-			rows: [field('notwendigkeit'), field('rechtsgrundlagen'), field('rechtsgrundlagen_details')]
+			rows: [
+				field('notwendigkeit'),
+				field('verhaeltnismaessigkeit'),
+				field('rechtsgrundlagen'),
+				field('rechtsgrundlagen_details'),
+				...(data.besondere_kategorien === true ? [field('art9_ausnahme')] : []),
+				...(data.automatisiert === true ? [field('art22_garantien')] : []),
+				row(
+					L('Grundsätze und Betroffenenrechte', 'Principles and data subject rights'),
+					lines(
+						...COMPLIANCE.filter((item) => !item.when || item.when(data)).map(
+							(item): [Localized, string] => [item.label, value(item.id)]
+						)
+					)
+				),
+				field('einhaltung_details')
+			]
 		},
 		{
 			id: 'risiken',
@@ -182,13 +205,15 @@ export function dsfaParts(record: RecordView, locale: string, titles: Titles = {
 						)
 					)
 				),
-				field('tom')
+				field('tom'),
+				field('massnahmenplan'),
+				field('massnahmen_bis')
 			]
 		},
 		{
 			id: 'beteiligung',
 			title: t(L('6. Beteiligung', '6. Involvement')),
-			rows: [field('dsb'), field('standpunkt')]
+			rows: [field('dsb'), field('dsb_umsetzung'), field('standpunkt')]
 		},
 		{
 			id: 'ergebnis',
@@ -200,9 +225,14 @@ export function dsfaParts(record: RecordView, locale: string, titles: Titles = {
 					L('Vor der Freigabe (DSK Kurzpapier Nr. 5)', 'Before sign-off (DSK Kurzpapier Nr. 5)'),
 					checks
 				),
+				field('beschluss'),
 				field('entscheidung'),
+				row(
+					L('Freigabe', 'Approval'),
+					[value('freigegeben_von'), value('freigegeben_am')].filter(Boolean).join(', ')
+				),
 				...(value('konsultation_am') || value('stellungnahme')
-					? [field('konsultation_am'), field('stellungnahme')]
+					? [field('konsultation_am'), field('frist_verlaengert'), field('stellungnahme')]
 					: [
 							row(
 								L(

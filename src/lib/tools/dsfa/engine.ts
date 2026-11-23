@@ -4,6 +4,7 @@ import { isEmpty } from '../../records/validate.js';
 import type { LegalBasis, Localized, QuestionnaireResult, Reason } from '../types.js';
 import {
 	assessRisks,
+	complianceOpen,
 	definition,
 	measuresPending,
 	RISKS,
@@ -22,6 +23,10 @@ const LEVEL: Record<RiskLevel, Localized> = {
 
 /** Art. 36(2): the authority advises within eight weeks, extendable by six */
 const OPINION_WEEKS = 8;
+const EXTENSION_WEEKS = 6;
+
+const filled = (value: unknown) => typeof value === 'string' && value.trim() !== '';
+const names = (list: Localized[], lang: 'de' | 'en') => list.map((l) => l[lang]).join(', ');
 
 function deadlines(record: RecordView): DeadlineSpec[] {
 	const specs: DeadlineSpec[] = [];
@@ -34,8 +39,23 @@ function deadlines(record: RecordView): DeadlineSpec[] {
 		specs.push({
 			kind: 'stellungnahme',
 			label: L('Stellungnahme der Aufsichtsbehörde erwartet', 'Opinion of the authority expected'),
-			dueAt: addHours(consulted, OPINION_WEEKS * 7 * 24),
+			dueAt: addHours(
+				consulted,
+				(OPINION_WEEKS + (record.data.frist_verlaengert === true ? EXTENSION_WEEKS : 0)) * 7 * 24
+			),
 			cite: { law: 'DSGVO', ref: 'Art. 36 Abs. 2' }
+		});
+	}
+	if (
+		record.data.umgesetzt !== true &&
+		filled(record.data.massnahmenplan) &&
+		filled(record.data.massnahmen_bis)
+	) {
+		specs.push({
+			kind: 'massnahmen',
+			label: L('Abhilfemaßnahmen umsetzen', 'Implement the measures'),
+			dueAt: dayAt(record.data.massnahmen_bis as string),
+			cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 7 lit. d' }
 		});
 	}
 	if (typeof record.data.ueberpruefung === 'string') {
@@ -79,6 +99,21 @@ function assess(record: RecordView): QuestionnaireResult {
 			L('Notwendigkeit und Verhältnismäßigkeit (lit. b)', 'necessity and proportionality ((b))')
 		);
 	}
+	if (
+		record.data.besondere_kategorien === true &&
+		!filled(record.data.art9_ausnahme) &&
+		!(Array.isArray(record.data.rechtsgrundlagen) && record.data.rechtsgrundlagen.includes('art9'))
+	) {
+		missing.push(L('die Ausnahme nach Art. 9 Abs. 2', 'the exception under Art. 9(2)'));
+	}
+	if (record.data.automatisiert === true && !filled(record.data.art22_garantien)) {
+		missing.push(
+			L(
+				'Ausnahme und Garantien nach Art. 22 Abs. 2, 3',
+				'exception and safeguards under Art. 22(2), (3)'
+			)
+		);
+	}
 	const unrated = risks.filter((r) => r.before === null);
 	if (unrated.length > 0)
 		missing.push(L('Bewertung aller Risiken (lit. c)', 'rating of all risks ((c))'));
@@ -105,6 +140,31 @@ function assess(record: RecordView): QuestionnaireResult {
 			L(
 				'Die Rechtsgrundlagen der Verarbeitung festhalten (DSK Kurzpapier Nr. 5, Schritt 6).',
 				'Record the legal bases of the processing (DSK Kurzpapier Nr. 5, step 6).'
+			)
+		);
+	}
+	if (filled(record.data.notwendigkeit) && !filled(record.data.verhaeltnismaessigkeit)) {
+		notes.push(
+			L(
+				'Die Verhältnismäßigkeit eigens abwägen: Überwiegt der Nutzen die Nachteile für die Betroffenen? Die Notwendigkeit allein genügt nicht (Art. 35 Abs. 7 lit. b).',
+				'Weigh proportionality on its own: do the benefits outweigh the disadvantages for the data subjects? Necessity alone is not enough (Art. 35(7)(b)).'
+			)
+		);
+	}
+	const compliance = complianceOpen(record);
+	if (compliance.unset.length > 0) {
+		notes.push(
+			L(
+				`Noch nicht eingeschätzt: ${names(compliance.unset, 'de')} (Art. 35 Abs. 7 lit. d, EDPB-Vorlage 2026, 2.3).`,
+				`Not yet assessed: ${names(compliance.unset, 'en').toLowerCase()} (Art. 35(7)(d), EDPB template 2026, 2.3).`
+			)
+		);
+	}
+	if (compliance.pending.length > 0) {
+		notes.push(
+			L(
+				`Noch nicht vollständig umgesetzt: ${names(compliance.pending, 'de')}. Vor Beginn der Verarbeitung umsetzen oder nur mit Auflagen freigeben.`,
+				`Not yet fully implemented: ${names(compliance.pending, 'en').toLowerCase()}. Implement before processing starts, or sign off only with conditions.`
 			)
 		);
 	}
@@ -142,6 +202,21 @@ function assess(record: RecordView): QuestionnaireResult {
 				'Seek and record the advice of the data protection officer (Art. 35(2)).'
 			)
 		);
+	} else if (isEmpty(record.data.dsb_umsetzung)) {
+		notes.push(
+			L(
+				'Festhalten, wie der Rat des Datenschutzbeauftragten umgesetzt wurde.',
+				'Record how the advice of the data protection officer was followed.'
+			)
+		);
+	}
+	if (isEmpty(record.data.standpunkt)) {
+		notes.push(
+			L(
+				'Den Standpunkt der Betroffenen oder ihrer Vertreter einholen, oder festhalten, warum nicht (Art. 35 Abs. 9).',
+				'Seek the views of the data subjects or their representatives, or record why not (Art. 35(9)).'
+			)
+		);
 	}
 	if (!record.data.schwellwert) {
 		notes.push(
@@ -167,6 +242,16 @@ function assess(record: RecordView): QuestionnaireResult {
 			text: r.title,
 			cite: { law: 'DSGVO', ref: 'Art. 36 Abs. 1' }
 		}));
+
+	const proceeds = record.data.beschluss === 'durchfuehren' || record.data.beschluss === 'auflagen';
+	if (high.length > 0 && proceeds) {
+		notes.push(
+			L(
+				'Die Entscheidung lautet auf Durchführung, obwohl ein hohes Restrisiko bleibt; vorher ist die Aufsichtsbehörde zu konsultieren.',
+				'The decision is to proceed although a high residual risk remains; the authority must be consulted first.'
+			)
+		);
+	}
 
 	if (high.length > 0) {
 		citations.push({ law: 'DSGVO', ref: 'Art. 36' });

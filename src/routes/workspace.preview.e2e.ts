@@ -601,11 +601,18 @@ test('preview: a DPIA shows its risk picture before and after measures', async (
 	await expect(row.locator('.unbacked')).toHaveText('ohne Maßnahme');
 	await expect(dashboard.locator('tbody tr')).toHaveCount(7);
 	const signoff = dashboard.getByRole('region', { name: 'Vor der Freigabe' });
-	await expect(signoff).toContainText('Offene Punkte: 4');
-	await expect(signoff.locator('li .badge')).toHaveText(['Offen', 'Offen', 'Offen', 'Offen']);
-	await expect(signoff.locator('li[data-status="offen"] .detail')).toHaveText(
+	await expect(signoff).toContainText('Offene Punkte: 5');
+	await expect(signoff.locator('li .badge')).toHaveText([
+		'Offen',
+		'Offen',
+		'Offen',
+		'Offen',
+		'Offen'
+	]);
+	await expect(signoff.locator('li[data-status="offen"] .detail')).toHaveText([
+		/^Information der Betroffenen, /,
 		'Unbefugte Veränderung'
-	);
+	]);
 
 	const [download] = await Promise.all([
 		page.waitForEvent('download'),
