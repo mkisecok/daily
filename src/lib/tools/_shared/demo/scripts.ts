@@ -178,7 +178,81 @@ async function repoCheck(demo: Demo, tool: ToolManifest) {
 	await demo.point(await demo.find('.verdict h2'), m.demo_c_result(), 4000);
 }
 
-const UTILITIES: Record<string, (demo: Demo, tool: ToolManifest) => Promise<void>> = {
+/** presses a key on the focused element, as the keyboard would */
+function press(element: HTMLElement, key: string) {
+	element.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+}
+
+/**
+ * the SDM cube: the example rated goal by goal, then its result: what to fix
+ * first, the cube turned to a view, pulled apart, the gaps alone, and a
+ * slice pulled out with the rating in place
+ */
+async function sdmCube(demo: Demo, tool: ToolManifest) {
+	const { definition } = getRecordTool(tool.slug)!;
+	await open(demo, at(`${tool.slug}/eintraege?neu=1&beispiel=1`));
+	await demo.point(await demo.find('form.record-form .section'), m.demo_s_intro(), 2200);
+	const rating = (
+		document.getElementById('field-datenminimierung_e2-label') ??
+		document.getElementById('field-datenminimierung_e2')
+	)?.closest('.field');
+	if (rating) await demo.point(rating, m.demo_s_rate(), 2400);
+	await demo.point(
+		await demo.find('form.record-form button[type="submit"]'),
+		m.demo_r_save(),
+		1600
+	);
+
+	demo.show({ slug: tool.slug, data: definition.example! });
+	const sheet = await demo.find<HTMLElement>('.demo-result .sheet');
+	const inSheet = <T extends HTMLElement = HTMLElement>(selector: string) =>
+		demo.find<T>(`.demo-result .sheet ${selector}`);
+	await demo.point(await inSheet('.cube-dash .focus li'), m.demo_s_focus(), 3200);
+
+	const scene = await inSheet('.scene');
+	await demo.point(scene, m.demo_s_cube(), 2000);
+	// the controls change the cube, so the ring stays on the cube while they do
+	const views = sheet.querySelectorAll<HTMLElement>('.cube3d .controls .group button');
+	await demo.point(scene, m.demo_s_views(), 300);
+	views[1]?.click();
+	await demo.wait(1600);
+	views[0]?.click();
+	await demo.wait(900);
+
+	const apart = await inSheet<HTMLInputElement>('.cube3d .apart input');
+	const spread = (value: number) => {
+		apart.value = String(value);
+		apart.dispatchEvent(new Event('input', { bubbles: true }));
+	};
+	demo.say(m.demo_s_apart());
+	for (const value of [8, 16, 24]) {
+		spread(value);
+		await demo.wait(350);
+	}
+	await demo.wait(900);
+	const gaps = [...sheet.querySelectorAll<HTMLElement>('.cube3d .controls > .toggle')].at(-1);
+	if (gaps) {
+		demo.say(m.demo_s_gaps());
+		gaps.click();
+		await demo.wait(2400);
+		gaps.click();
+	}
+	spread(0);
+	await demo.wait(500);
+
+	// data minimisation on level 2: goal 4, the second row
+	scene.focus({ preventScroll: true });
+	for (const key of ['PageDown', 'PageDown', 'PageDown', 'ArrowDown']) press(scene, key);
+	await demo.wait(300);
+	press(scene, 'Enter');
+	await demo.point(await inSheet('.cube3d .slice h4'), m.demo_s_slice(), 2400);
+	await demo.point(await inSheet('.cube3d .slice .rate'), m.demo_s_rate_cube(), 2800);
+	await demo.point(await inSheet('.cube3d .slice .detail .label'), m.demo_s_detail(), 2200);
+}
+
+/** tools with a demo of their own */
+const OWN: Record<string, (demo: Demo, tool: ToolManifest) => Promise<void>> = {
+	'sdm-wuerfel': sdmCube,
 	pseudonymisierer,
 	'guardrail-test': guardrail,
 	'repo-check': repoCheck
@@ -187,9 +261,10 @@ const UTILITIES: Record<string, (demo: Demo, tool: ToolManifest) => Promise<void
 /** the demo of `tool`, or none for a tool without one */
 export function scriptFor(tool: ToolManifest): ((demo: Demo) => Promise<void>) | null {
 	if (tool.status === 'planned' || tool.status === 'retired') return null;
+	const own = OWN[tool.slug];
+	if (own) return (demo) => own(demo, tool);
 	if (getQuestionnaire(tool.slug)) return (demo) => questionnaire(demo, tool);
 	if (getRecordTool(tool.slug)) return (demo) => record(demo, tool);
 	if (getLesson(tool.slug)) return (demo) => lesson(demo, tool);
-	const utility = UTILITIES[tool.slug];
-	return utility ? (demo) => utility(demo, tool) : null;
+	return null;
 }

@@ -34,3 +34,26 @@ test('preview: a demo stops on Escape and leaves the page as it was', async ({ p
 	await page.waitForLoadState('networkidle');
 	await expect(page.getByLabel('Text', { exact: true })).toHaveValue('');
 });
+
+test('preview: the SDM cube demo turns the cube and pulls a slice out, in 40 seconds', async ({
+	page
+}) => {
+	test.setTimeout(90_000);
+	await page.goto('werkzeuge/sdm-wuerfel/', { waitUntil: 'networkidle' });
+	const before = await page.evaluate(storage);
+	const started = Date.now();
+	await page.getByRole('button', { name: "So funktioniert's" }).click();
+	const caption = page.locator('.demo-layer > .caption');
+	const sheet = page.locator('.demo-result .sheet');
+	await expect(sheet.locator('.cube-dash .focus')).toBeVisible({ timeout: 20_000 });
+	await expect(sheet.locator('.cube3d .slice h4')).toHaveText('Datenminimierung', {
+		timeout: 30_000
+	});
+	await expect(caption).toContainText('Tasten 1 bis 4');
+	await expect(caption).toContainText("Das war's", { timeout: 20_000 });
+	expect(Date.now() - started).toBeLessThan(45_000);
+	await page.getByRole('button', { name: 'Schließen' }).click();
+	await expect(page.locator('.demo-layer')).toHaveCount(0);
+	await page.waitForLoadState('networkidle');
+	expect(await page.evaluate(storage)).toBe(before);
+});
