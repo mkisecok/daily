@@ -10,8 +10,8 @@ const manifest: ToolManifest = {
 	version: definition.version,
 	name: { de: 'TOM-Katalog', en: 'Technical and organisational measures' },
 	summary: {
-		de: 'Maßnahmen je System nach den sieben Gewährleistungszielen des Standard-Datenschutzmodells, mit Schutzbedarf, Prüfung gegen Art. 32 Abs. 1 lit. a bis d und Wiedervorlage der Wirksamkeitsprüfung.',
-		en: 'Measures per system along the seven protection goals of the Standard Data Protection Model, with protection requirement, a check against Art. 32(1)(a) to (d) and review dates for effectiveness reviews.'
+		de: 'Maßnahmen je System nach den sieben Gewährleistungszielen des Standard-Datenschutzmodells, mit Schutzbedarf, organisatorischen und offenen Maßnahmen, Prüfung gegen Art. 32 Abs. 1 lit. a bis d und Wiedervorlage der Wirksamkeitsprüfung.',
+		en: 'Measures per system along the seven protection goals of the Standard Data Protection Model, with protection requirement, organisational and open measures, a check against Art. 32(1)(a) to (d) and review dates for effectiveness reviews.'
 	},
 	legalBasis: [
 		{ law: 'DSGVO', ref: 'Art. 32' },

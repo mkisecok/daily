@@ -42,7 +42,33 @@ export const GOALS = [
 			['rollen', L('Rollen- und Berechtigungskonzept', 'Role and permission concept')],
 			['transport', L('Verschlüsselung bei der Übertragung', 'Encryption in transit')],
 			['ruhe', L('Verschlüsselung gespeicherter Daten', 'Encryption at rest')],
-			['verpflichtung', L('Verpflichtung auf Vertraulichkeit', 'Confidentiality undertakings')]
+			['verpflichtung', L('Verpflichtung auf Vertraulichkeit', 'Confidentiality undertakings')],
+			[
+				'bildschirmsperre',
+				L('Bildschirmsperre und aufgeräumter Arbeitsplatz', 'Screen lock and clear desk')
+			],
+			['admin', L('Getrennte Administratorkonten', 'Separate administrator accounts')],
+			['netz', L('Netzsegmentierung und Firewall', 'Network segmentation and firewall')],
+			['fernzugriff', L('Gesicherter Fernzugriff (VPN)', 'Secured remote access (VPN)')],
+			[
+				'endgeraete',
+				L(
+					'Verwaltete Endgeräte mit Festplattenverschlüsselung',
+					'Managed devices with disk encryption'
+				)
+			],
+			[
+				'rechtepruefung',
+				L('Regelmäßige Überprüfung der Berechtigungen', 'Regular review of permissions')
+			],
+			['austritt', L('Entzug der Rechte beim Austritt', 'Access removed when people leave')],
+			[
+				'entsorgung',
+				L(
+					'Sichere Entsorgung von Datenträgern (DIN 66399)',
+					'Secure disposal of storage media (DIN 66399)'
+				)
+			]
 		]
 	),
 	goal(
@@ -54,7 +80,15 @@ export const GOALS = [
 			['pruefsummen', L('Prüfsummen oder Signaturen', 'Checksums or signatures')],
 			['vier_augen', L('Vier-Augen-Prinzip', 'Four-eyes principle')],
 			['schreibschutz', L('Schreibschutz und Versionierung', 'Write protection and versioning')],
-			['schadsoftware', L('Schutz vor Schadsoftware', 'Malware protection')]
+			['schadsoftware', L('Schutz vor Schadsoftware', 'Malware protection')],
+			['plausibilitaet', L('Plausibilitätsprüfung von Eingaben', 'Validation of input')],
+			[
+				'aenderungen',
+				L(
+					'Geregeltes Änderungsmanagement mit Tests vor dem Einsatz',
+					'Change management with tests before release'
+				)
+			]
 		]
 	),
 	goal(
@@ -66,7 +100,21 @@ export const GOALS = [
 			['wiederherstellung', L('Getestete Wiederherstellung', 'Tested restore')],
 			['redundanz', L('Redundante Systeme', 'Redundant systems')],
 			['notfall', L('Notfallplan', 'Contingency plan')],
-			['patches', L('Patch-Management', 'Patch management')]
+			['patches', L('Patch-Management', 'Patch management')],
+			[
+				'offline_backup',
+				L('Offline oder unveränderlich gespeicherte Sicherung', 'Offline or immutable backups')
+			],
+			[
+				'physisch',
+				L(
+					'Unterbrechungsfreie Stromversorgung, Brand- und Wasserschutz',
+					'Uninterruptible power supply, fire and water protection'
+				)
+			],
+			['monitoring', L('Überwachung mit Alarmierung', 'Monitoring with alerts')],
+			['kapazitaet', L('Kapazitätsplanung und Lasttests', 'Capacity planning and load tests')],
+			['ueberlast', L('Schutz vor Überlastung (DDoS)', 'Protection against overload (DDoS)')]
 		]
 	),
 	goal(
@@ -77,7 +125,8 @@ export const GOALS = [
 			['loeschroutinen', L('Automatische Löschroutinen', 'Automatic deletion routines')],
 			['voreinstellungen', L('Datensparsame Voreinstellungen', 'Privacy-friendly defaults')],
 			['pseudonymisierung', L('Pseudonymisierung', 'Pseudonymisation')],
-			['anonymisierung', L('Anonymisierung für Auswertungen', 'Anonymisation for analysis')]
+			['anonymisierung', L('Anonymisierung für Auswertungen', 'Anonymisation for analysis')],
+			['loeschkonzept', L('Dokumentiertes Löschkonzept', 'Documented deletion concept')]
 		]
 	),
 	goal(
@@ -115,6 +164,13 @@ export const GOALS = [
 			[
 				'informationen',
 				L('Datenschutzhinweise für Betroffene', 'Privacy notices for data subjects')
+			],
+			[
+				'auftragsverarbeiter',
+				L(
+					'Verträge mit Auftragsverarbeitern und deren Kontrolle',
+					'Contracts with processors and their review'
+				)
 			]
 		]
 	),
@@ -134,10 +190,56 @@ export const GOALS = [
 			[
 				'abschaltung',
 				L('Einzelne Funktionen abschaltbar', 'Individual functions can be switched off')
+			],
+			[
+				'export',
+				L('Datenexport in gängigem Format (Art. 20)', 'Data export in a common format (Art. 20)')
+			],
+			[
+				'einwilligung',
+				L('Einwilligungen verwaltbar und widerrufbar', 'Consents can be managed and withdrawn')
 			]
 		]
 	)
 ];
+
+/** measures for the whole organisation, beside the goals */
+export const ORGANISATION: FieldSection = {
+	id: 'organisation',
+	title: L('Organisation', 'Organisation'),
+	fields: [
+		{
+			id: 'organisation_massnahmen',
+			type: 'multiselect',
+			label: L('Umgesetzte Maßnahmen', 'Measures in place'),
+			options: [
+				{
+					value: 'schulung',
+					label: L(
+						'Schulung und Sensibilisierung der Beschäftigten',
+						'Training and awareness of staff'
+					)
+				},
+				{
+					value: 'richtlinien',
+					label: L(
+						'Verbindliche Richtlinien zu IT und Datenschutz',
+						'Binding IT and data protection policies'
+					)
+				},
+				{
+					value: 'datenpannen',
+					label: L(
+						'Prozess für Datenpannen (Art. 33, 34)',
+						'Process for data breaches (Art. 33, 34)'
+					)
+				}
+			],
+			cite: { law: 'DSGVO', ref: 'Art. 32 Abs. 4' }
+		},
+		{ id: 'organisation_details', type: 'textarea', label: L('Einzelheiten', 'Details') }
+	]
+};
 
 /**
  * technical and organisational measures per system or processing
@@ -146,10 +248,10 @@ export const GOALS = [
  */
 export const definition: RecordToolDefinition = {
 	slug: 'tom-katalog',
-	version: 2,
+	version: 3,
 	intro: L(
-		'Ein Eintrag je System oder Verarbeitungsumgebung. Die Maßnahmen folgen den sieben Gewährleistungszielen des Standard-Datenschutzmodells (SDM) der Aufsichtsbehörden und belegen die Sicherheit der Verarbeitung nach Art. 32 DSGVO. Die Beschreibung kann im Verzeichnis von Verarbeitungstätigkeiten in Bezug genommen werden.',
-		'One entry per system or processing environment. The measures follow the seven protection goals of the Standard Data Protection Model (SDM) of the German authorities and evidence the security of processing under Art. 32 GDPR. The record of processing activities can refer to the entry.'
+		'Ein Eintrag je System oder Verarbeitungsumgebung. Die Maßnahmen folgen den sieben Gewährleistungszielen des Standard-Datenschutzmodells (SDM) der Aufsichtsbehörden und belegen die Sicherheit der Verarbeitung nach Art. 32 DSGVO. Dazu kommen organisatorische Maßnahmen für das ganze Haus und offene Maßnahmen mit Frist. Die Beschreibung kann im Verzeichnis von Verarbeitungstätigkeiten in Bezug genommen werden.',
+		'One entry per system or processing environment. The measures follow the seven protection goals of the Standard Data Protection Model (SDM) of the German authorities and evidence the security of processing under Art. 32 GDPR. Organisational measures for the whole organisation and open measures with a due date come on top. The record of processing activities can refer to the entry.'
 	),
 	sources: [
 		{ law: 'DSGVO', ref: 'Art. 32' },
@@ -210,6 +312,27 @@ export const definition: RecordToolDefinition = {
 			]
 		},
 		...GOALS,
+		ORGANISATION,
+		{
+			id: 'offen',
+			title: L('Offene Maßnahmen', 'Open measures'),
+			fields: [
+				{
+					id: 'offene_massnahmen',
+					type: 'textarea',
+					label: L('Geplante Maßnahmen', 'Planned measures'),
+					help: L(
+						'Was noch fehlt und wer es umsetzt, eine Maßnahme je Zeile.',
+						'What is still missing and who implements it, one measure per line.'
+					)
+				},
+				{
+					id: 'offen_bis',
+					type: 'date',
+					label: L('Umsetzen bis', 'Implement by')
+				}
+			]
+		},
 		{
 			id: 'pruefung',
 			title: L('Überprüfung', 'Review'),
@@ -251,10 +374,14 @@ export const definition: RecordToolDefinition = {
 		vertraulichkeit_details:
 			'Anmeldung über das zentrale Verzeichnis mit zweitem Faktor; Rollen je Team.',
 		integritaet_massnahmen: ['protokoll'],
-		verfuegbarkeit_massnahmen: ['backup', 'patches'],
+		verfuegbarkeit_massnahmen: ['backup', 'patches', 'monitoring'],
 		verfuegbarkeit_details: 'Tägliche Sicherung; die Wiederherstellung wurde noch nie geprobt.',
 		datenminimierung_massnahmen: ['loeschroutinen'],
 		intervenierbarkeit_massnahmen: ['betroffenenprozess', 'korrektur'],
+		organisation_massnahmen: ['schulung', 'datenpannen'],
+		offene_massnahmen:
+			'Wiederherstellung aus der Sicherung proben (Leitung IT)\nDatenbank verschlüsseln (Dienstleister)',
+		offen_bis: '2027-01-31',
 		geprueft_am: '2026-05-20',
 		status: 'teilweise',
 		wiedervorlage: '2027-05-20'

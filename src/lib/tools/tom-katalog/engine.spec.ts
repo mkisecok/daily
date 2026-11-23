@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { RecordData } from '../../records/types.js';
 import { validateRecord } from '../../records/validate.js';
-import { definition, engine, GOALS } from './engine.js';
+import { definition, engine, GOALS, reviewOutdated } from './engine.js';
 
 function view(data: RecordData) {
 	return { state: null, data: validateRecord(definition, data).data };
@@ -16,12 +16,17 @@ const baseline: RecordData = {
 	verfuegbarkeit_massnahmen: ['backup', 'wiederherstellung'],
 	geprueft_am: '2026-09-01'
 };
+const organised: RecordData = {
+	verfuegbarkeit_massnahmen: ['backup', 'wiederherstellung', 'monitoring'],
+	organisation_massnahmen: ['schulung', 'datenpannen']
+};
 const complete: RecordData = {
 	...baseline,
 	datenminimierung_massnahmen: ['loeschroutinen'],
 	nichtverkettung_massnahmen: ['zwecktrennung'],
 	transparenz_massnahmen: ['dokumentation'],
-	intervenierbarkeit_massnahmen: ['betroffenenprozess']
+	intervenierbarkeit_massnahmen: ['betroffenenprozess'],
+	...organised
 };
 
 const assess = (data: RecordData) => engine.assess!(view(data))!;
@@ -31,6 +36,15 @@ const notes = (data: RecordData) =>
 		.join('\n');
 
 describe('TOM-Katalog', () => {
+	// the checks read the age of the last review against today
+	beforeAll(() => {
+		vi.useFakeTimers({ toFake: ['Date'] });
+		vi.setSystemTime(new Date('2026-11-23T12:00:00Z'));
+	});
+	afterAll(() => {
+		vi.useRealTimers();
+	});
+
 	it('structures the measures by the seven SDM protection goals', () => {
 		expect(GOALS.map((g) => g.id)).toEqual([
 			'vertraulichkeit',
@@ -88,5 +102,61 @@ describe('TOM-Katalog', () => {
 		expect(engine.deadlines!(view({ wiedervorlage: '2027-09-01' }))).toEqual([
 			expect.objectContaining({ kind: 'wiedervorlage', dueAt: '2027-09-01T07:00:00.000Z' })
 		]);
+	});
+
+	it('adds a review a year after the last one when no date is set', () => {
+		expect(engine.deadlines!(view({ geprueft_am: '2026-09-01' }))).toEqual([
+			expect.objectContaining({ kind: 'wiedervorlage', dueAt: '2027-09-01T07:00:00.000Z' })
+		]);
+	});
+
+	it('turns open measures with a date into a deadline', () => {
+		const open = { offene_massnahmen: 'Datenbank verschlüsseln', offen_bis: '2027-01-31' };
+		expect(engine.deadlines!(view(open))).toEqual([
+			expect.objectContaining({ kind: 'massnahme', dueAt: '2027-01-31T08:00:00.000Z' })
+		]);
+		expect(engine.deadlines!(view({ offen_bis: '2027-01-31' }))).toEqual([]);
+	});
+
+	it('flags a review older than twelve months', () => {
+		const old = { geprueft_am: '2025-11-01' };
+		expect(reviewOutdated(view(old))).toBe(true);
+		expect(reviewOutdated(view({ geprueft_am: '2025-11-24' }))).toBe(false);
+		const result = assess({ ...complete, ...old });
+		expect(result.outcome).toBe('luecken');
+		expect(result.reasons[0]?.text.de).toContain('mehr als zwölf Monate');
+	});
+
+	it('asks for resilience: a gap for a high protection requirement, a note otherwise', () => {
+		const without = { ...complete, verfuegbarkeit_massnahmen: ['backup', 'wiederherstellung'] };
+		expect(notes(without)).toContain('Belastbarkeit');
+		const high = assess({
+			...without,
+			schutzbedarf: 'hoch',
+			vertraulichkeit_massnahmen: ['authentisierung', 'mfa', 'ruhe']
+		});
+		expect(high.reasons.map((r) => r.questionId)).toEqual(['belastbarkeit']);
+	});
+
+	it('names what a very high protection requirement still lacks', () => {
+		const result = notes({
+			...complete,
+			schutzbedarf: 'sehr_hoch',
+			vertraulichkeit_massnahmen: ['authentisierung', 'mfa', 'ruhe']
+		});
+		expect(result).toContain('Pseudonymisierung, Notfallplan, Auswertung der Protokolle fehlt');
+	});
+
+	it('asks for staff training and a breach process', () => {
+		const result = notes({ ...complete, organisation_massnahmen: [] });
+		expect(result).toContain('Schulung');
+		expect(result).toContain('Datenpannen');
+	});
+
+	it('questions the status "Umgesetzt" while measures are open', () => {
+		expect(notes({ ...complete, offene_massnahmen: 'Datenbank verschlüsseln' })).toContain(
+			'„Umgesetzt“'
+		);
+		expect(notes({ ...complete, status: 'teilweise', offene_massnahmen: 'X' })).toBe('');
 	});
 });
