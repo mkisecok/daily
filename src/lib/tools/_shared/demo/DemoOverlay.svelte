@@ -116,7 +116,7 @@
 					<span class="meter" aria-hidden="true"
 						><span style:width="{demo.elapsed * 100}%"></span></span
 					>
-					<span class="time">{Math.round(demo.elapsed * seconds)} / {seconds} s</span>
+					<span class="time">{Math.round(demo.elapsed * seconds)}s / {seconds}s</span>
 					<button type="button" class="button quiet" onclick={() => demo.end()}
 						>{m.demo_stop()}</button
 					>

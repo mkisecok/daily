@@ -121,6 +121,19 @@
 		errors = {};
 		draft = null;
 		message = null;
+		// `?bearbeiten=<field>` opens the entry in the form at that field, e.g. from the SDM cube
+		const field = to?.url.searchParams.get('bearbeiten');
+		if (field && data.view === 'detail') {
+			editing = true;
+			void tick().then(() =>
+				(
+					document.getElementById(`field-${field}-label`) ??
+					document.getElementById(`field-${field}`)
+				)
+					?.closest('.field')
+					?.scrollIntoView({ block: 'center' })
+			);
+		}
 	});
 
 	function setQuery(change: Partial<typeof query>) {

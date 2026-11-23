@@ -183,6 +183,18 @@ export function buildCube(record: RecordView, axis: Axis, goal: string | null = 
 	};
 }
 
+/**
+ * the whole cube cell by cell, [goal][level][column]: what the 3D cube
+ * draws. A phase takes the worst status of its operations.
+ */
+export function cells(record: RecordView, axis: Axis): CellStatus[][][] {
+	const read = reader(record);
+	const cols = columns(axis);
+	return GOAL_IDS.map((g) =>
+		LEVELS.map((l) => cols.map((c) => worst(c.vorgaenge.map((v) => read.cell(v, l, g)))))
+	);
+}
+
 /** the default x axis: phases suffice for a normal risk, a high one needs all nine groups */
 export const defaultAxis = (record: RecordView): Axis =>
 	record.data.risikostufe === 'hoch' ? 'vorgaenge' : 'phasen';

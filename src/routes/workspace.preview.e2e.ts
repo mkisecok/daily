@@ -658,20 +658,24 @@ test('preview: the SDM cube shows its faces, slices and views', async ({ page })
 	const cube = page.getByRole('region', { name: 'SDM-Würfel', exact: true });
 	// 5 of 9 operations apply: 105 cells, 1 gap (Bt on level 2), 4 partly, 10 open
 	await expect(cube.locator('.figure strong')).toHaveText(['105', '1', '4', '10']);
-	const picture = cube.getByRole('img');
-	await expect(picture).toHaveAttribute('aria-label', /über alle Ziele\. Relevante Zellen: 105/);
-	// a normal risk starts with the four phases; the front has 4 × 3 cells
-	await expect(cube.locator('svg.cube rect.cell')).toHaveCount(12);
+	// a normal risk starts with the four phases: 4 × 3 × 7 blocks
+	await expect(
+		cube.getByRole('application', { name: /SDM-Würfel in 3D mit 84 Zellen/ })
+	).toBeVisible();
+	await expect(cube.locator('.block')).toHaveCount(84);
 	await cube.getByRole('button', { name: '9 Vorgangsgruppen' }).click();
-	await expect(cube.locator('svg.cube rect.cell')).toHaveCount(27);
+	await expect(cube.locator('.block')).toHaveCount(189);
 
-	await cube.getByRole('button', { name: /Transparenz/ }).click();
-	await expect(cube.getByRole('button', { name: /Transparenz/ })).toHaveAttribute(
-		'aria-pressed',
-		'true'
-	);
-	await expect(cube.locator('.front')).toHaveText('Vorderseite: Vorgänge × Ebenen für Transparenz');
-	await expect(cube.locator('svg.cube .chosen')).toHaveCount(2);
+	// to Bt (column 6), level 2, transparency (goal 6), then pull its slice out
+	await cube.getByRole('application').focus();
+	for (let i = 0; i < 5; i++) await page.keyboard.press('ArrowRight');
+	await page.keyboard.press('ArrowDown');
+	for (let i = 0; i < 5; i++) await page.keyboard.press('PageDown');
+	await page.keyboard.press('Enter');
+	const slice = cube.locator('.slice');
+	await expect(slice.getByRole('heading', { name: 'Transparenz' })).toBeVisible();
+	await expect(slice.locator('.detail .pill')).toHaveText('Lücke');
+	await expect(slice.locator('.detail')).toContainText('Lücke eingetragen bei Bereitstellen (Bt)');
 
 	const viewB = cube.getByRole('region', { name: /Sicht b/ });
 	await expect(viewB.getByRole('row', { name: /Transparenz/ }).locator('.pill')).toHaveText([

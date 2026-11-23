@@ -1,13 +1,11 @@
 <!--
 	@component
-	The result of an SDM cube entry: key figures, then the cube itself drawn
-	in projection. Its three visible faces are the three views of SDM V3.1a,
-	D2.6: operations × goals on top, levels × goals on the side and
-	operations × levels in front, each cell coloured by the worst status
-	behind it. Choosing a goal turns the front into that goal's slice; the x
-	axis switches between the four phases and the nine groups of operations.
-	Views a and b follow as tables, which also carry the picture in print and
-	for screen readers.
+	The result of an SDM cube entry: key figures, then the cube itself in 3D,
+	operations (or phases) × levels × goals of SDM V3.1a, D2.6, each block
+	coloured by its status; a slice pulls out beside it. The x axis switches
+	between the four phases and the nine groups of operations. Views a and b
+	follow as tables, which also carry the values in print and for screen
+	readers.
 -->
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
@@ -23,15 +21,14 @@
 		type Axis,
 		type CellStatus
 	} from './cube.js';
+	import Cube3D from './Cube3D.svelte';
 
-	let { record }: { record: RecordView } = $props();
+	let { record }: { record: RecordView & { id?: string } } = $props();
 
 	const uid = $props.id();
 	let chosenAxis = $state<Axis | null>(null);
-	let goal = $state<string | null>(null);
 	const axis = $derived(chosenAxis ?? defaultAxis(record));
-	const cube = $derived(buildCube(record, axis, goal));
-	const goalIndex = $derived(goal ? ZIELE.findIndex((z) => z.id === goal) : -1);
+	const cube = $derived(buildCube(record, axis));
 
 	const STATUS: Record<CellStatus, () => string> = {
 		umgesetzt: m.sdm_cube_status_umgesetzt,
@@ -44,61 +41,6 @@
 
 	const total = VORGAENGE.length * EBENEN.length * ZIELE.length;
 	const relevant = $derived(total - cube.counts.entfaellt);
-
-	/* the projection: the front face is W × H, each goal adds one step of depth */
-	const W = 360;
-	const H = 168;
-	const DX = 22;
-	const DY = -13;
-	const X0 = 132;
-	const Y0 = 126;
-	const XR = X0 + W;
-	const cw = $derived(W / cube.columns.length);
-	const ch = H / EBENEN.length;
-	const points = (corners: [number, number][]) =>
-		corners.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
-
-	const topCell = (k: number, i: number) =>
-		points([
-			[X0 + i * cw + k * DX, Y0 + k * DY],
-			[X0 + (i + 1) * cw + k * DX, Y0 + k * DY],
-			[X0 + (i + 1) * cw + (k + 1) * DX, Y0 + (k + 1) * DY],
-			[X0 + i * cw + (k + 1) * DX, Y0 + (k + 1) * DY]
-		]);
-	const sideCell = (k: number, j: number) =>
-		points([
-			[XR + k * DX, Y0 + j * ch + k * DY],
-			[XR + (k + 1) * DX, Y0 + j * ch + (k + 1) * DY],
-			[XR + (k + 1) * DX, Y0 + (j + 1) * ch + (k + 1) * DY],
-			[XR + k * DX, Y0 + (j + 1) * ch + k * DY]
-		]);
-	const topStrip = (k: number) =>
-		points([
-			[X0 + k * DX, Y0 + k * DY],
-			[XR + k * DX, Y0 + k * DY],
-			[XR + (k + 1) * DX, Y0 + (k + 1) * DY],
-			[X0 + (k + 1) * DX, Y0 + (k + 1) * DY]
-		]);
-	const sideStrip = (k: number) =>
-		points([
-			[XR + k * DX, Y0 + k * DY],
-			[XR + (k + 1) * DX, Y0 + (k + 1) * DY],
-			[XR + (k + 1) * DX, Y0 + H + (k + 1) * DY],
-			[XR + k * DX, Y0 + H + k * DY]
-		]);
-
-	const front = $derived(
-		goal ? m.sdm_cube_front_goal({ goal: text(ZIELE[goalIndex].title) }) : m.sdm_cube_front_all()
-	);
-	const label = $derived(
-		m.sdm_cube_label({
-			front,
-			relevant,
-			gaps: cube.counts.luecke,
-			partly: cube.counts.teilweise,
-			open: cube.counts.offen
-		})
-	);
 </script>
 
 <section class="cube-dash" aria-label={m.sdm_cube_title()}>
@@ -131,113 +73,17 @@
 	</div>
 
 	<section class="card cube-card">
-		<div class="controls no-print">
-			<div class="group" role="group" aria-label={m.sdm_cube_axis()}>
-				{#each [['phasen', m.sdm_cube_axis_phasen()], ['vorgaenge', m.sdm_cube_axis_vorgaenge()]] as const as [value, name] (value)}
-					<button
-						type="button"
-						class="toggle"
-						aria-pressed={axis === value}
-						onclick={() => (chosenAxis = value)}>{name}</button
-					>
-				{/each}
-			</div>
-			<div class="group goals" role="group" aria-label={m.sdm_cube_goal()}>
+		<div class="group no-print" role="group" aria-label={m.sdm_cube_axis()}>
+			{#each [['phasen', m.sdm_cube_axis_phasen()], ['vorgaenge', m.sdm_cube_axis_vorgaenge()]] as const as [value, name] (value)}
 				<button
 					type="button"
 					class="toggle"
-					aria-pressed={goal === null}
-					onclick={() => (goal = null)}>{m.sdm_cube_all_goals()}</button
+					aria-pressed={axis === value}
+					onclick={() => (chosenAxis = value)}>{name}</button
 				>
-				{#each ZIELE as ziel, k (ziel.id)}
-					<button
-						type="button"
-						class="toggle"
-						aria-pressed={goal === ziel.id}
-						onclick={() => (goal = goal === ziel.id ? null : ziel.id)}
-						><span class="n">{k + 1}</span>{text(ziel.title)}</button
-					>
-				{/each}
-			</div>
+			{/each}
 		</div>
-
-		<svg class="cube" viewBox="0 0 660 346" role="img" aria-label={label}>
-			<defs>
-				<pattern
-					id="{uid}-hatch"
-					width="6"
-					height="6"
-					patternUnits="userSpaceOnUse"
-					patternTransform="rotate(45)"
-				>
-					<rect width="6" height="6" class="hatch-bg" />
-					<line x1="0" y1="0" x2="0" y2="6" class="hatch-line" />
-				</pattern>
-			</defs>
-
-			{#each cube.top as row, k (k)}
-				{#each row as status, i (i)}
-					<polygon
-						class="cell top s-{status}"
-						points={topCell(k, i)}
-						style:fill={status === 'entfaellt' ? `url(#${uid}-hatch)` : null}
-					/>
-				{/each}
-			{/each}
-			{#each cube.side as row, k (k)}
-				{#each row as status, j (j)}
-					<polygon
-						class="cell side s-{status}"
-						points={sideCell(k, j)}
-						style:fill={status === 'entfaellt' ? `url(#${uid}-hatch)` : null}
-					/>
-				{/each}
-			{/each}
-			{#each cube.front as row, j (j)}
-				{#each row as status, i (i)}
-					<rect
-						class="cell s-{status}"
-						x={X0 + i * cw}
-						y={Y0 + j * ch}
-						width={cw}
-						height={ch}
-						style:fill={status === 'entfaellt' ? `url(#${uid}-hatch)` : null}
-					/>
-				{/each}
-			{/each}
-			{#if goalIndex >= 0}
-				<polygon class="chosen" points={topStrip(goalIndex)} />
-				<polygon class="chosen" points={sideStrip(goalIndex)} />
-			{/if}
-
-			{#each ZIELE as ziel, k (ziel.id)}
-				<text
-					class="goal-n"
-					class:active={k === goalIndex}
-					x={X0 + (k + 0.5) * DX - 6}
-					y={Y0 + (k + 0.5) * DY}
-					text-anchor="end"
-					dominant-baseline="central">{k + 1}</text
-				>
-			{/each}
-			{#each EBENEN as ebene, j (ebene.id)}
-				<text x={X0 - 8} y={Y0 + (j + 0.5) * ch} text-anchor="end" dominant-baseline="central"
-					>{ebene.n} {text(ebene.title)}</text
-				>
-			{/each}
-			{#each cube.columns as column, i (column.id)}
-				<text x={X0 + (i + 0.5) * cw} y={Y0 + H + 16} text-anchor="middle"
-					>{column.code ?? text(column.title)}</text
-				>
-			{/each}
-			<text class="axis" x={X0 + W / 2} y={Y0 + H + 38} text-anchor="middle">{m.sdm_cube_x()}</text>
-			<text class="axis" x={X0 - 8} y={Y0 + H + 38} text-anchor="end">{m.sdm_cube_y()}</text>
-			<text class="axis" x={XR + 7 * DX} y={Y0 + 7 * DY - 10} text-anchor="end"
-				>{m.sdm_cube_z()}</text
-			>
-		</svg>
-
-		<p class="front">{front}</p>
+		<Cube3D {record} {axis} status={STATUS} />
 		<p class="legend">
 			{#each ORDER as status (status)}
 				<span class="s-{status}">{STATUS[status]()}</span>
@@ -412,22 +258,11 @@
 	}
 
 	.cube-card {
+		display: grid;
+		gap: 0.75rem;
 		padding: var(--card-pad-compact);
 
-		& .front {
-			margin: 0.25rem 0 0;
-			font-size: 13px;
-			color: var(--ink2);
-			text-align: center;
-		}
-	}
-
-	.controls {
-		display: grid;
-		gap: 0.5rem;
-		margin-bottom: 0.75rem;
-
-		& .group {
+		& > .group {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 0.35rem;
@@ -450,68 +285,6 @@
 			background: var(--primary);
 			border-color: var(--primary);
 		}
-
-		& .n {
-			font-size: 11.5px;
-			font-weight: 600;
-			opacity: 0.75;
-		}
-	}
-
-	.cube {
-		display: block;
-		width: 100%;
-		max-width: 720px;
-		margin-inline: auto;
-
-		& text {
-			font-size: 12px;
-			fill: var(--ink2);
-		}
-
-		& .axis {
-			font-size: 11.5px;
-			fill: var(--ink3);
-		}
-
-		& .goal-n {
-			font-weight: 600;
-			fill: var(--ink3);
-
-			&.active {
-				fill: var(--primary);
-			}
-		}
-	}
-
-	.cell {
-		fill: var(--fill);
-		stroke: var(--canvas);
-		stroke-width: 1;
-
-		&.top {
-			fill-opacity: 0.85;
-		}
-
-		&.side {
-			fill-opacity: 0.7;
-		}
-
-		&.s-offen,
-		&.s-entfaellt {
-			stroke: var(--rule);
-			fill-opacity: 1;
-		}
-	}
-
-	.hatch-bg {
-		fill: var(--paper);
-	}
-
-	.hatch-line {
-		stroke: var(--ink3);
-		stroke-opacity: 0.35;
-		stroke-width: 1.5;
 	}
 
 	/* not relevant reads as hatched everywhere, so it never looks like open */
@@ -522,13 +295,6 @@
 			var(--paper) 0 3px,
 			color-mix(in srgb, var(--ink3) 35%, var(--paper)) 3px 4px
 		);
-	}
-
-	.chosen {
-		fill: none;
-		stroke: var(--primary);
-		stroke-width: 2;
-		stroke-linejoin: round;
 	}
 
 	.legend {
@@ -610,10 +376,6 @@
 				border: 0.3mm solid #ccc;
 				break-inside: avoid;
 			}
-		}
-
-		.cube {
-			max-height: 110mm;
 		}
 	}
 </style>
