@@ -33,7 +33,11 @@ const ENTRY_PAGES: Record<string, number> = {
 };
 
 /** at most this many pages for the handout of a training module */
-const HANDOUT_PAGES = 4;
+const HANDOUT_PAGES: Record<string, number> = {
+	// fifteen slides with the fundamental right and the deletion concept, and five questions
+	'schulung-grundlagen': 5
+};
+const HANDOUT_DEFAULT = 4;
 
 /** the text width of A4 with 18 mm margins, in CSS pixels */
 const A4_TEXT = Math.floor(((210 - 36) / 25.4) * 96);
@@ -130,7 +134,9 @@ for (const tool of tools.filter((t) => t.status !== 'planned' && !PENDING.has(t.
 		const pages = pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g)?.length ?? 0;
 		if (tool.shape === 'lesson') {
 			// the slides, then the review questions on a page of their own
-			expect(pages, 'pages of the handout').toBeLessThanOrEqual(HANDOUT_PAGES);
+			expect(pages, 'pages of the handout').toBeLessThanOrEqual(
+				HANDOUT_PAGES[tool.slug] ?? HANDOUT_DEFAULT
+			);
 		} else if (tool.shape === 'questionnaire') {
 			expect(pages, 'pages of the Prüfbericht').toBeLessThanOrEqual(REPORT_PAGES[tool.slug] ?? 2);
 		} else {

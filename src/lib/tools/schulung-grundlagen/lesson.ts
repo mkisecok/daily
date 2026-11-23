@@ -3,57 +3,76 @@ import type { LegalBasis, Lesson, Localized } from '../types.js';
 const L = (de: string, en: string): Localized => ({ de, en });
 const DSGVO = (ref: string): LegalBasis => ({ law: 'DSGVO', ref });
 const ORP3: LegalBasis = { law: 'BSI', ref: 'ORP.3 Sensibilisierung und Schulung' };
+const GRCH: LegalBasis = { law: 'GRCh', ref: 'Art. 8' };
+/** the census judgment that set out the right to informational self-determination */
+const CENSUS: LegalBasis = {
+	law: 'BVerfG',
+	ref: 'Urteil vom 15.12.1983, 1 BvR 209/83 (Volkszählung)'
+};
 
 /**
- * "Datenschutz-Grundlagen" for new colleagues, about 25 minutes: what
- * personal data is, the principles as they show in daily work, processing
- * only on instructions, the workplace, passwords, e-mail, phishing, and
- * where requests, breaches and questions go. The DSB contact and the
+ * "Datenschutz-Grundlagen" for new colleagues, under half an hour: data
+ * protection as a fundamental right (informational self-determination,
+ * Art. 8 of the Charter), what personal data is, the principles of
+ * Art. 5, deleting by the deletion concept, processing only on
+ * instructions, the workplace, passwords, e-mail, phishing, and where
+ * requests, breaches and questions go. The DSB contact and the
  * reporting channel come from the organisation's details.
  */
 export const lesson: Lesson = {
-	version: 1,
+	version: 2,
 	audience: L('Neue Kolleginnen und Kollegen', 'New colleagues'),
-	minutes: 25,
+	minutes: 28,
 	topic: 'grundlagen',
 	intro: L(
-		'Die Unterweisung für den ersten Arbeitstag oder die ersten Wochen: was personenbezogene Daten sind, wie die Grundsätze der DSGVO im Alltag aussehen, warum Daten nur im Rahmen der eigenen Aufgaben verarbeitet werden, was am Arbeitsplatz, bei Passwörtern und E-Mails zählt, wie man Phishing erkennt, und wohin Anfragen, Pannen und Fragen gehen. Sie belegt, dass Beschäftigte zu Beginn unterwiesen wurden.',
-		'The briefing for the first day or the first weeks: what personal data is, how the GDPR principles look in daily work, why data is processed only within one’s own tasks, what counts at the workplace, with passwords and e-mail, how to spot phishing, and where requests, breaches and questions go. It shows that staff were briefed at the start.'
+		'Die Unterweisung für den ersten Arbeitstag oder die ersten Wochen: warum Datenschutz ein Grundrecht ist, was personenbezogene Daten sind, wie die Grundsätze der DSGVO im Alltag aussehen, wie nach dem Löschkonzept gelöscht wird, warum Daten nur im Rahmen der eigenen Aufgaben verarbeitet werden, was am Arbeitsplatz, bei Passwörtern und E-Mails zählt, wie man Phishing erkennt, und wohin Anfragen, Pannen und Fragen gehen. Sie belegt, dass Beschäftigte zu Beginn unterwiesen wurden.',
+		'The briefing for the first day or the first weeks: why data protection is a fundamental right, what personal data is, how the GDPR principles look in daily work, how data is deleted by the deletion concept, why data is processed only within one’s own tasks, what counts at the workplace, with passwords and e-mail, how to spot phishing, and where requests, breaches and questions go. It shows that staff were briefed at the start.'
 	),
 	sources: [
+		GRCH,
+		CENSUS,
+		DSGVO('Art. 1 Abs. 2'),
 		DSGVO('Art. 4 Nr. 1'),
-		DSGVO('Art. 5 Abs. 1'),
+		DSGVO('Art. 5'),
 		DSGVO('Art. 9 Abs. 1'),
+		DSGVO('Art. 17 Abs. 1'),
+		{ law: 'HGB', ref: '§ 257' },
+		{ law: 'AO', ref: '§ 147' },
+		{ law: 'DIN', ref: '66398 Löschkonzept' },
 		DSGVO('Art. 29, Art. 32 Abs. 4'),
 		DSGVO('Art. 39 Abs. 1 lit. a, b'),
 		ORP3
 	],
 	slides: [
 		{
-			title: L('Warum Datenschutz uns alle betrifft', 'Why data protection concerns all of us'),
+			title: L('Datenschutz ist ein Grundrecht', 'Data protection is a fundamental right'),
 			points: [
 				L(
-					'Datenschutz schützt Menschen: Kundinnen, Bewerber, Kolleginnen, Patienten',
-					'Data protection protects people: customers, applicants, colleagues, patients'
+					'Jeder bestimmt selbst, wer was über ihn weiß: das Recht auf informationelle Selbstbestimmung',
+					'Everyone decides who knows what about them: the right to informational self-determination'
 				),
 				L(
-					'Fast jede Arbeit berührt personenbezogene Daten, oft ohne dass man es merkt',
-					'Almost every job touches personal data, often without noticing'
+					'In der EU ein eigenes Grundrecht; die DSGVO setzt es um',
+					'In the EU a fundamental right of its own; the GDPR puts it into practice'
 				),
 				L(
-					'Die meisten Fehler passieren im Alltag, nicht durch Hacker',
-					'Most mistakes happen in daily work, not through hackers'
+					'Geschützt werden Menschen, nicht Daten; die meisten Fehler passieren im Alltag',
+					'It protects people, not data; most mistakes happen in daily work'
 				),
 				L(
 					'Sie müssen kein Recht auswendig kennen, nur wissen, worauf Sie achten und wen Sie fragen',
 					'You need not know the law by heart, only what to watch for and whom to ask'
 				)
 			],
-			notes: L(
-				'Ziel der Einheit ist nicht Paragrafenwissen, sondern sicheres Verhalten und der Weg zur Datenschutzbeauftragten.',
-				'The aim is not legal knowledge but safe behaviour and knowing the way to the data protection officer.'
+			example: L(
+				'Wer nicht weiß, wer was über ihn gespeichert hat, hält sich zurück. Darum ist Datenschutz eine Frage der Freiheit.',
+				'Someone who does not know who has stored what about them holds back. That is why data protection is a matter of freedom.'
 			),
-			cite: [DSGVO('Art. 1 Abs. 2')]
+			notes: L(
+				'Das Bundesverfassungsgericht hat das Recht auf informationelle Selbstbestimmung 1983 im Volkszählungsurteil aus dem allgemeinen Persönlichkeitsrecht abgeleitet (Art. 2 Abs. 1 mit Art. 1 Abs. 1 GG): Wer nicht überblicken kann, wer was über ihn weiß, hält sich zurück, bei einer Beschwerde, einer Krankmeldung, einer Meinung. Die EU-Grundrechtecharta schützt personenbezogene Daten in Art. 8 eigens. Ziel der Einheit ist nicht Paragrafenwissen, sondern sicheres Verhalten und der Weg zur Datenschutzbeauftragten.',
+				'In its 1983 census judgment the Federal Constitutional Court derived the right to informational self-determination from the general right of personality (Art. 2(1) with Art. 1(1) Basic Law): someone who cannot see who knows what about them holds back, with a complaint, a sick note, an opinion. The EU Charter of Fundamental Rights protects personal data in Art. 8 of its own. The aim is not legal knowledge but safe behaviour and knowing the way to the data protection officer.'
+			),
+			cite: [CENSUS, GRCH, DSGVO('Art. 1 Abs. 2')]
 		},
 		{
 			title: L('Was sind personenbezogene Daten?', 'What is personal data?'),
@@ -108,22 +127,72 @@ export const lesson: Lesson = {
 			cite: [DSGVO('Art. 9 Abs. 1')]
 		},
 		{
-			title: L('Die Grundsätze im Arbeitsalltag', 'The principles in daily work'),
+			title: L('Die Grundsätze der DSGVO', 'The principles of the GDPR'),
 			points: [
-				L('Nur für einen festgelegten Zweck', 'Only for a defined purpose'),
-				L('Nur so viele Daten wie nötig', 'Only as much data as needed'),
-				L('Richtig und aktuell halten', 'Keep it accurate and up to date'),
 				L(
-					'Löschen, wenn sie nicht mehr gebraucht werden und keine Aufbewahrungsfrist läuft',
-					'Delete it when no longer needed and no retention period applies'
+					'Rechtmäßig, fair, transparent: nur mit Rechtsgrundlage und offen gegenüber der Person',
+					'Lawful, fair, transparent: only with a legal basis and open towards the person'
 				),
-				L('Vor Unbefugten schützen', 'Protect it from unauthorised persons')
+				L(
+					'Zweckbindung: nur für den festgelegten Zweck',
+					'Purpose limitation: only for the defined purpose'
+				),
+				L(
+					'Datenminimierung und Richtigkeit: so wenig wie nötig, richtig und aktuell',
+					'Data minimisation and accuracy: as little as needed, accurate and up to date'
+				),
+				L(
+					'Speicherbegrenzung: nur so lange wie nötig',
+					'Storage limitation: only as long as needed'
+				),
+				L(
+					'Integrität und Vertraulichkeit: vor Unbefugten und Verlust schützen, und all das nachweisen können',
+					'Integrity and confidentiality: protect from unauthorised persons and loss, and be able to show all of this'
+				)
+			],
+			notes: L(
+				'Die sechs Grundsätze stehen in Art. 5 Abs. 1 lit. a bis f, die Rechenschaftspflicht in Abs. 2. Beispiel zur Datenminimierung: Für den Versand einer Bestellung braucht es die Anschrift, nicht das Geburtsdatum. Für Beschäftigte heißt Rechenschaft vor allem: Abläufe einhalten und dokumentieren, wie es die Organisation vorgibt.',
+				'The six principles are in Art. 5(1)(a) to (f), accountability in Art. 5(2). An example of data minimisation: shipping an order needs the address, not the date of birth. For staff, accountability mainly means following and documenting procedures as the organisation sets them.'
+			),
+			cite: [DSGVO('Art. 5 Abs. 1, 2')]
+		},
+		{
+			title: L('Löschen nach Plan: das Löschkonzept', 'Deleting by plan: the deletion concept'),
+			points: [
+				L(
+					'Das Löschkonzept legt je Datenart fest, wann gelöscht wird',
+					'The deletion concept sets, per kind of data, when it is deleted'
+				),
+				L(
+					'Die Frist beginnt mit einem Ereignis, etwa dem Vertragsende',
+					'The period starts with an event, such as the end of a contract'
+				),
+				L(
+					'Aufbewahrungspflichten gehen vor: Buchungsbelege 8 Jahre, Jahresabschlüsse 10, Geschäftsbriefe 6',
+					'Retention duties come first: accounting vouchers 8 years, annual accounts 10, business letters 6'
+				),
+				L(
+					'Löschen heißt überall: auch Kopien in Postfach, Downloads und auf Papier',
+					'Deleting means everywhere: copies in the mailbox, in downloads and on paper too'
+				),
+				L(
+					'Nichts eigenmächtig löschen, was noch unter eine Frist fällt; im Zweifel fragen',
+					'Do not delete on your own what still falls under a period; ask when in doubt'
+				)
 			],
 			example: L(
-				'Für den Versand einer Bestellung braucht es die Anschrift, nicht das Geburtsdatum.',
-				'Shipping an order needs the address, not the date of birth.'
+				'Unterlagen abgelehnter Bewerber meist nach etwa sechs Monaten löschen, auch die Kopie im Postfach.',
+				'Delete documents of rejected applicants usually after about six months, the copy in your mailbox too.'
 			),
-			cite: [DSGVO('Art. 5 Abs. 1')]
+			notes: L(
+				'Die Löschpflicht folgt aus Art. 5 Abs. 1 lit. e und Art. 17 DSGVO. Die Aufbewahrungsfristen nach § 257 HGB und § 147 AO gelten seit 2025 mit 8 Jahren für Buchungsbelege; für Banken, Versicherungen und Wertpapierinstitute gelten Ausnahmen. Bewerbungsunterlagen: Ansprüche nach dem AGG sind binnen zwei Monaten geltend zu machen, die Klage binnen drei weiterer Monate; daher die übliche Frist von etwa sechs Monaten. Wie ein Löschkonzept aufgebaut ist, beschreibt DIN 66398; in Daily hilft das Werkzeug Löschkonzept.',
+				'The duty to delete follows from Art. 5(1)(e) and Art. 17 GDPR. Since 2025 the retention periods under § 257 HGB and § 147 AO are 8 years for accounting vouchers; banks, insurers and investment firms have exceptions. Applications: claims under the General Equal Treatment Act must be raised within two months and brought to court within three more; hence the usual period of about six months. DIN 66398 describes how a deletion concept is built; in Daily the Löschkonzept tool helps.'
+			),
+			cite: [
+				DSGVO('Art. 5 Abs. 1 lit. e, Art. 17'),
+				{ law: 'HGB', ref: '§ 257' },
+				{ law: 'AO', ref: '§ 147' }
+			]
 		},
 		{
 			title: L('Nur im Rahmen Ihrer Aufgaben', 'Only within your tasks'),
@@ -337,8 +406,8 @@ export const lesson: Lesson = {
 					'Almost anything pointing to a person is personal data'
 				),
 				L(
-					'Nur für Ihre Aufgabe, nur so viel wie nötig',
-					'Only for your task, only as much as needed'
+					'Nur für Ihre Aufgabe, nur so viel wie nötig, nur so lange wie nötig',
+					'Only for your task, only as much as needed, only as long as needed'
 				),
 				L(
 					'Bildschirm sperren, Passwort für sich behalten, Phishing melden',
@@ -353,6 +422,45 @@ export const lesson: Lesson = {
 		}
 	],
 	quiz: [
+		{
+			text: L(
+				'Die Bewerbungsunterlagen einer abgelehnten Bewerberin liegen seit zwei Jahren in Ihrem Postfach. Was tun Sie?',
+				'The application documents of a rejected applicant have been in your mailbox for two years. What do you do?'
+			),
+			options: [
+				{
+					text: L(
+						'Behalten, sie könnte für eine spätere Stelle passen',
+						'Keep them, she might fit a later position'
+					),
+					correct: false,
+					why: L(
+						'Ohne ihre Einwilligung ist der Zweck mit der Absage erledigt; die Daten dürfen nicht auf Vorrat bleiben.',
+						'Without her consent the purpose ended with the rejection; the data may not be kept just in case.'
+					)
+				},
+				{
+					text: L(
+						'Nach dem Löschkonzept löschen, auch Kopien und Ausdrucke',
+						'Delete them by the deletion concept, copies and printouts too'
+					),
+					correct: true,
+					why: L(
+						'Die Frist ist längst abgelaufen; gelöscht wird überall, wo die Unterlagen liegen.',
+						'The period ran out long ago; they are deleted wherever the documents are.'
+					)
+				},
+				{
+					text: L('In einen privaten Ordner verschieben', 'Move them to a private folder'),
+					correct: false,
+					why: L(
+						'Verschieben ist kein Löschen, und dienstliche Daten gehören nicht in private Ablagen.',
+						'Moving is not deleting, and work data does not belong in private storage.'
+					)
+				}
+			],
+			cite: DSGVO('Art. 5 Abs. 1 lit. e')
+		},
 		{
 			text: L('Welche Angabe ist personenbezogen?', 'Which information is personal data?'),
 			options: [

@@ -34,7 +34,12 @@ export type Law =
 	| 'HinSchG'
 	| 'KI-MIG'
 	| 'EU-Kommission'
-	| 'BSI';
+	| 'BSI'
+	| 'GRCh'
+	| 'BVerfG'
+	| 'HGB'
+	| 'AO'
+	| 'DIN';
 
 /** a citation such as { law: 'DSGVO', ref: 'Art. 35 Abs. 3 lit. a' } */
 export type LegalBasis = { law: Law; ref: string; title?: Localized };
