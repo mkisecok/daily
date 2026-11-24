@@ -32,6 +32,8 @@
 	border-bottom: 2px solid var(--tier);
 	border-radius: 3px;
 	cursor: pointer;
+	/* a mark over several lines keeps its padding and corners on each */
+	box-decoration-break: clone;
 
 	&[aria-pressed='false'] {
 		color: var(--ink3);

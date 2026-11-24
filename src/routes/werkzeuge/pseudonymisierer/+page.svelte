@@ -15,6 +15,7 @@
 	} from '#lib/tools/pseudonymisierer/rules.js';
 	import { PAGE_BREAK, pagesOf } from '#lib/tools/pseudonymisierer/pages.js';
 	import FindingReview from '#lib/tools/pseudonymisierer/ui/FindingReview.svelte';
+	import ModeNav from '#lib/tools/pseudonymisierer/ui/ModeNav.svelte';
 	import PageView from '#lib/tools/pseudonymisierer/ui/PageView.svelte';
 	import { SAMPLE } from '#lib/tools/pseudonymisierer/sample.js';
 	import {
@@ -312,6 +313,7 @@
 </svelte:head>
 
 <ToolHeader tool={data.tool} />
+<ModeNav current="text" />
 
 <section class="input card">
 	<p class="measure intro">{m.anon_intro()}</p>

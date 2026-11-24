@@ -1,13 +1,20 @@
 // ported from mkisecok/dataGuard (MIT)
-import { DETECT_ORDER, NAME_DICT, RULES, RULE_TYPE, isNameWord } from './rules.js';
-import type { Finding, Mapping, RuleKey, RunResult, Span, TokenType } from './types.js';
+import { DETECT_ORDER, NAME_DICT, RULES, RULE_TYPE, TOKEN_TYPES, isNameWord } from './rules.js';
+import type { Finding, Mapping, Place, RuleKey, RunResult, Span, TokenType } from './types.js';
 
 /**
  * placeholder format «TYPE_N». Models rarely reword guillemets and they survive
  * Markdown; the restore matcher also accepts `[TYPE N]` and case changes.
  */
-export function token(type: TokenType, n: number): string {
+export function token(type: string, n: number): string {
 	return `«${type}_${n}»`;
+}
+
+/** a mark's name as a type, or as an own label under `CUSTOM` */
+function typed(label: string): { type: TokenType; label?: string } {
+	return (TOKEN_TYPES as string[]).includes(label)
+		? { type: label as TokenType }
+		: { type: 'CUSTOM', label };
 }
 
 const WORD = /[\p{L}\p{N}]/u;
@@ -40,24 +47,39 @@ function allOccurrences(text: string, needle: string): number[] {
 
 /**
  * every piece of personal data in `text`, as character-offset spans. Pure: all
- * page state comes in as arguments.
+ * page state comes in as arguments. A manual mark is named by a type or an own
+ * label and counts wherever its value occurs; a place counts where it is, and
+ * wins over everything else.
  */
 export function detect(
 	text: string,
 	activeRules: ReadonlySet<RuleKey>,
-	manualMarks: ReadonlyMap<string, TokenType>,
-	mutedValues: ReadonlySet<string>
+	manualMarks: ReadonlyMap<string, string>,
+	mutedValues: ReadonlySet<string>,
+	places: readonly Place[] = []
 ): Span[] {
 	const raw: Omit<Span, 'id'>[] = [];
 
+	for (const place of places) {
+		raw.push({
+			start: place.start,
+			end: place.end,
+			value: text.slice(place.start, place.end),
+			...typed(place.label),
+			prio: -2,
+			manual: true,
+			muted: false
+		});
+	}
+
 	// the user has ruled on these, so no detector may override them
-	for (const [value, type] of manualMarks) {
+	for (const [value, label] of manualMarks) {
 		for (const i of allOccurrences(text, value)) {
 			raw.push({
 				start: i,
 				end: i + value.length,
 				value,
-				type,
+				...typed(label),
 				prio: -1,
 				manual: true,
 				muted: false
@@ -205,6 +227,7 @@ function findingFor(span: Span, replacement: string): Finding {
 		replacement,
 		type: span.type,
 		ruleKey: span.ruleKey,
+		label: span.label,
 		manual: span.manual,
 		muted: span.muted,
 		confident: span.confident !== false,
@@ -220,16 +243,17 @@ function findingFor(span: Span, replacement: string): Finding {
 export function buildRun(text: string, spans: Span[]): RunResult {
 	const live = spans.filter((span) => !span.muted);
 	const mapping: Mapping = Object.create(null);
-	const counters: Partial<Record<TokenType, number>> = {};
+	const counters = new Map<string, number>();
 	const byValue = new Map<string, Finding>();
 	const findings: Finding[] = [];
 
 	for (const span of live) {
 		let finding = byValue.get(span.value);
 		if (!finding) {
-			const n = (counters[span.type] ?? 0) + 1;
-			counters[span.type] = n;
-			finding = findingFor(span, token(span.type, n));
+			const name = span.label ?? span.type;
+			const n = (counters.get(name) ?? 0) + 1;
+			counters.set(name, n);
+			finding = findingFor(span, token(name, n));
 			mapping[span.value] = { replacement: finding.replacement, type: span.type };
 			byValue.set(span.value, finding);
 			findings.push(finding);
