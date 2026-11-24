@@ -1,5 +1,5 @@
 import { checkFields } from '../../records/checks.js';
-import type { FieldDef, RecordToolDefinition } from '../../records/types.js';
+import type { FieldDef, RecordData, RecordToolDefinition } from '../../records/types.js';
 import type { Localized } from '../types.js';
 
 const L = (de: string, en: string) => ({ de, en });
@@ -79,20 +79,34 @@ export const CLAUSES: (FieldDef & { type: 'check' })[] = [
 			'Nachweise und Überprüfungen einschließlich Inspektionen werden ermöglicht',
 			'Information and audits, including inspections, are made possible'
 		)
+	),
+	clause(
+		'hinweis',
+		'Art. 28 Abs. 3 UAbs. 2',
+		L(
+			'Unverzüglicher Hinweis, wenn eine Weisung gegen Datenschutzrecht verstößt',
+			'Immediate notice if an instruction infringes data protection law'
+		)
 	)
 ];
+
+/** sub-processors are allowed, with either kind of authorisation */
+const subProcessors = (data: RecordData) =>
+	data.genehmigung === 'einzeln' || data.genehmigung === 'allgemein';
 
 /** a processor contract: one record per processor and service */
 export const definition: RecordToolDefinition = {
 	slug: 'avv-pruefung',
-	version: 2,
+	version: 3,
 	intro: L(
-		'Ein Eintrag je Auftragsverarbeiter und Leistung. Die Prüfliste folgt Art. 28 Abs. 3 DSGVO; nicht erfüllte Punkte erscheinen mit ihrem Buchstaben im Ergebnis. Mit Wiedervorlage wird der Vertrag zur Frist.',
-		'One entry per processor and service. The checklist follows Art. 28(3) GDPR; clauses not met appear with their letter in the result. A review date turns the contract into a deadline.'
+		'Ein Eintrag je Auftragsverarbeiter und Leistung. Die Prüfliste folgt Art. 28 Abs. 3 DSGVO; nicht erfüllte Punkte erscheinen mit ihrem Buchstaben im Ergebnis. Mit Wiedervorlage wird der Vertrag zur Frist. Steuerberater, Rechtsanwälte, Banken und Postdienste entscheiden in der Regel selbst über die Daten und sind keine Auftragsverarbeiter; für sie ist kein AVV nötig (DSK-Kurzpapier Nr. 13).',
+		'One entry per processor and service. The checklist follows Art. 28(3) GDPR; clauses not met appear with their letter in the result. A review date turns the contract into a deadline. Tax advisers, lawyers, banks and postal services usually decide on the data themselves and are not processors; they need no processor contract (DSK Kurzpapier Nr. 13).'
 	),
 	sources: [
 		{ law: 'DSGVO', ref: 'Art. 28' },
-		{ law: 'EDPB', ref: 'Leitlinien 07/2020' }
+		{ law: 'EDPB', ref: 'Leitlinien 07/2020' },
+		{ law: 'EDPB', ref: 'Stellungnahme 22/2024' },
+		{ law: 'DSK', ref: 'Kurzpapier Nr. 13' }
 	],
 	titleField: 'dienstleister',
 	sections: [
@@ -169,7 +183,15 @@ export const definition: RecordToolDefinition = {
 						'Drittländer und Grundlage der Übermittlung',
 						'Third countries and transfer basis'
 					),
-					cite: { law: 'DSGVO', ref: 'Art. 44' }
+					cite: { law: 'DSGVO', ref: 'Art. 44' },
+					when: (data) => data.sitz === 'drittland'
+				},
+				{
+					id: 'transfer_check',
+					type: 'assessment',
+					tool: 'drittland-transfer',
+					label: L('Drittlandprüfung', 'Third-country transfer check'),
+					when: (data) => data.sitz === 'drittland'
 				},
 				{
 					id: 'besondere_kategorien',
@@ -226,12 +248,29 @@ export const definition: RecordToolDefinition = {
 						'Information über Änderungen und Einspruchsrecht vereinbart',
 						'Information on changes and right to object agreed'
 					),
-					cite: { law: 'DSGVO', ref: 'Art. 28 Abs. 2 Satz 2' }
+					cite: { law: 'DSGVO', ref: 'Art. 28 Abs. 2 Satz 2' },
+					when: (data) => data.genehmigung === 'allgemein'
+				},
+				{
+					id: 'gleiche_pflichten',
+					type: 'boolean',
+					label: L(
+						'Unterauftragsverarbeitern werden dieselben Pflichten auferlegt; der Auftragsverarbeiter haftet für sie',
+						'Sub-processors take on the same obligations; the processor remains liable for them'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 28 Abs. 4' },
+					when: subProcessors
 				},
 				{
 					id: 'unterauftragnehmer',
 					type: 'textarea',
-					label: L('Unterauftragsverarbeiter im Einzelnen', 'Sub-processors in detail')
+					label: L('Unterauftragsverarbeiter im Einzelnen', 'Sub-processors in detail'),
+					help: L(
+						'Name, Sitz und Leistung jedes Unterauftragsverarbeiters, auch weiter unten in der Kette.',
+						'Name, location and service of every sub-processor, including further down the chain.'
+					),
+					cite: { law: 'EDPB', ref: 'Stellungnahme 22/2024' },
+					when: subProcessors
 				}
 			]
 		},
@@ -265,6 +304,16 @@ export const definition: RecordToolDefinition = {
 					cite: { law: 'DSGVO', ref: 'Art. 28 Abs. 1, 5' }
 				},
 				{
+					id: 'nachweis_bis',
+					type: 'date',
+					label: L('Nachweis gültig bis', 'Evidence valid until'),
+					help: L(
+						'Zertifikate und Prüfberichte laufen ab; das Datum wird zur Frist.',
+						'Certificates and audit reports expire; the date becomes a deadline.'
+					),
+					when: (data) => data.garantien === 'zertifikat' || data.garantien === 'testat'
+				},
+				{
 					id: 'status',
 					type: 'select',
 					label: L('Status', 'Status'),
@@ -280,6 +329,17 @@ export const definition: RecordToolDefinition = {
 					required: true,
 					listColumn: true
 				},
+				{
+					id: 'loeschbestaetigung',
+					type: 'boolean',
+					label: L(
+						'Löschung oder Rückgabe der Daten bestätigt',
+						'Deletion or return of the data confirmed'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 28 Abs. 3 lit. g' },
+					when: (data) => data.status === 'beendet'
+				},
+				{ id: 'geprueft_am', type: 'date', label: L('Zuletzt geprüft', 'Last reviewed') },
 				{
 					id: 'wiedervorlage',
 					type: 'date',
@@ -307,11 +367,14 @@ export const definition: RecordToolDefinition = {
 		lit_d_notiz:
 			'Der Vertrag erlaubt Unterauftragnehmer pauschal, ohne Information über Änderungen.',
 		lit_g: 'ja',
+		hinweis: 'ja',
 		meldung_pannen: true,
 		genehmigung: 'allgemein',
 		einspruch: false,
+		gleiche_pflichten: true,
 		garantien: 'selbstauskunft',
 		status: 'nachbesserung',
+		geprueft_am: '2026-09-01',
 		wiedervorlage: '2026-12-15'
 	}
 };

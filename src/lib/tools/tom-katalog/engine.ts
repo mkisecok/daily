@@ -1,4 +1,4 @@
-import { dateAfterMonths, dayAt } from '../../records/deadlines.js';
+import { dateAfterMonths, dayAt, monthsPassed } from '../../records/deadlines.js';
 import type { DeadlineSpec, RecordEngine, RecordView } from '../../records/types.js';
 import type { LegalBasis, Localized, QuestionnaireResult, Reason } from '../types.js';
 import { definition, GOALS, ORGANISATION } from './definition.js';
@@ -38,7 +38,7 @@ function reviewDue(record: RecordView): string | null {
 export function reviewOutdated(record: RecordView, now = new Date()): boolean {
 	const last = text(record.data.geprueft_am);
 	if (!last) return false;
-	return now.getTime() >= Date.parse(dayAt(dateAfterMonths(last, REVIEW_MONTHS), '00:00'));
+	return monthsPassed(last, REVIEW_MONTHS, now);
 }
 
 function deadlines(record: RecordView): DeadlineSpec[] {

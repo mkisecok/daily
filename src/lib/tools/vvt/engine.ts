@@ -1,5 +1,5 @@
 import { fromBerlinInput } from '../../i18n/date.js';
-import { dateAfterMonths, dayAt } from '../../records/deadlines.js';
+import { dateAfterMonths, monthsPassed } from '../../records/deadlines.js';
 import type { DeadlineSpec, RecordData, RecordEngine, RecordView } from '../../records/types.js';
 import { fieldById, isEmpty } from '../../records/validate.js';
 import type { LegalBasis, Localized, QuestionnaireResult, Reason } from '../types.js';
@@ -21,7 +21,7 @@ const REVIEW_MONTHS = 12;
 export function reviewOutdated(record: RecordView, now = new Date()): boolean {
 	const last = text(record.data.geprueft_am);
 	if (!last) return false;
-	return now.getTime() >= Date.parse(dayAt(dateAfterMonths(last, REVIEW_MONTHS), '00:00'));
+	return monthsPassed(last, REVIEW_MONTHS, now);
 }
 
 /**

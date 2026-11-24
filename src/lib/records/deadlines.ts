@@ -37,6 +37,11 @@ export function dateAfterMonths(date: string, months: number): string {
 	return addMonths(`${date}T00:00:00.000Z`, months).slice(0, 10);
 }
 
+/** whether `months` have passed since the calendar day `date` on `now`, counted from German midnight */
+export function monthsPassed(date: string, months: number, now = new Date()): boolean {
+	return now.getTime() >= Date.parse(dayAt(dateAfterMonths(date, months), '00:00'));
+}
+
 /**
  * a period of months counted from the German calendar day of an event and
  * ending at the end of the corresponding day (23:59 German time), e.g.
