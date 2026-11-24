@@ -807,5 +807,19 @@
 	"demo_c_files": "Choose a folder or files; they stay in the browser.",
 	"demo_c_paste": "Or paste code, here a call to an AI API.",
 	"demo_c_run": "“Check” looks for AI services and personal data.",
-	"demo_c_result": "The result lists every finding with file and line."
+	"demo_c_result": "The result lists every finding with file and line.",
+	"flow_title": "Data flow",
+	"flow_intro": "How the data of this processing activity flows: from the record entry and the processor contract and TOM catalogue entries that refer to it.",
+	"flow_views": "View",
+	"flow_view_diagram": "Diagram",
+	"flow_view_list": "List",
+	"flow_export": "Download as SVG",
+	"flow_warnings": "Open in the data flow",
+	"flow_loading": "Loading the data flow …",
+	"flow_dsfa_none": "Once a record entry is linked, the DPIA shows its data flow here (EDPB template 2026, 1.2).",
+	"flow_label": "Data flow as a diagram with {count} stations; the list holds the same information.",
+	"flow_legend_sensitive": "Special categories",
+	"flow_legend_warn": "Open or missing",
+	"flow_legend_transfer": "Transfer to a third country",
+	"flow_to": "on to {targets}"
 }

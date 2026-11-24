@@ -807,5 +807,19 @@
 	"demo_c_files": "Einen Ordner oder Dateien wählen; sie bleiben im Browser.",
 	"demo_c_paste": "Oder Code einfügen, hier ein Aufruf einer KI-Schnittstelle.",
 	"demo_c_run": "„Prüfen“ sucht nach KI-Diensten und Personendaten.",
-	"demo_c_result": "Das Ergebnis nennt jeden Fund mit Datei und Zeile."
+	"demo_c_result": "Das Ergebnis nennt jeden Fund mit Datei und Zeile.",
+	"flow_title": "Datenfluss",
+	"flow_intro": "Wie die Daten dieser Verarbeitungstätigkeit laufen: aus dem VVT-Eintrag und den Einträgen der AVV-Prüfung und des TOM-Katalogs, die auf ihn verweisen.",
+	"flow_views": "Ansicht",
+	"flow_view_diagram": "Diagramm",
+	"flow_view_list": "Liste",
+	"flow_export": "Als SVG herunterladen",
+	"flow_warnings": "Offen im Datenfluss",
+	"flow_loading": "Datenfluss wird geladen …",
+	"flow_dsfa_none": "Ist ein VVT-Eintrag verknüpft, zeigt die DSFA hier dessen Datenfluss (EDPB-Vorlage 2026, 1.2).",
+	"flow_label": "Datenfluss als Diagramm mit {count} Stationen; dieselben Angaben stehen in der Liste.",
+	"flow_legend_sensitive": "Besondere Kategorien",
+	"flow_legend_warn": "Offen oder fehlend",
+	"flow_legend_transfer": "Übermittlung ins Drittland",
+	"flow_to": "weiter an {targets}"
 }

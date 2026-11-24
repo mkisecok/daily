@@ -4,13 +4,15 @@ import DsfaDashboard from './dsfa/DsfaDashboard.svelte';
 import RiskPyramid from './risikoklassifizierung/RiskPyramid.svelte';
 import SdmCube from './sdm-wuerfel/SdmCube.svelte';
 import MoveDashboard from './standortwechsel/MoveDashboard.svelte';
+import VvtFlow from './vvt/VvtFlow.svelte';
 import type { QuestionnaireResult } from './types.js';
 
 /** a picture of a record's state shown above its fields, by tool slug */
 export const recordDashboards: Partial<Record<string, Component<{ record: RecordView }>>> = {
 	dsfa: DsfaDashboard,
 	'sdm-wuerfel': SdmCube,
-	standortwechsel: MoveDashboard
+	standortwechsel: MoveDashboard,
+	vvt: VvtFlow
 };
 
 /** a picture of a questionnaire result shown beside its verdict, by tool slug */
