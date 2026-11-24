@@ -1,4 +1,4 @@
-import { addHours, dateAfterMonths, dayAt } from '../../records/deadlines.js';
+import { addHours, dateAfterMonths, dayAt, monthsPassed } from '../../records/deadlines.js';
 import type { DeadlineSpec, RecordData, RecordEngine, RecordView } from '../../records/types.js';
 import { isEmpty } from '../../records/validate.js';
 import type { LegalBasis, Localized, QuestionnaireResult, Reason } from '../types.js';
@@ -42,7 +42,7 @@ export function reassessmentDue(record: RecordView, now = new Date()): boolean {
 	if (!due) return false;
 	const review = record.data.ueberpruefung;
 	if (typeof review === 'string' && review > due) return false;
-	return now.getTime() >= Date.parse(dayAt(due, '00:00'));
+	return monthsPassed(record.data.freigegeben_am as string, REASSESS_MONTHS, now);
 }
 
 const filled = (value: unknown) => typeof value === 'string' && value.trim() !== '';
