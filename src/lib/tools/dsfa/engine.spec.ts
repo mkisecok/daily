@@ -5,7 +5,7 @@ import { validateRecord } from '../../records/validate.js';
 import { allowedTransitions } from '../../records/workflow.js';
 import { getQuestionnaire } from '../registry.js';
 import type { Answers } from '../types.js';
-import { definition, engine, RISKS, riskLevel } from './engine.js';
+import { definition, engine, reassessmentDue, RISKS, riskLevel } from './engine.js';
 
 function view(data: RecordData, state = 'entwurf') {
 	return { state, data: validateRecord(definition, data).data };
@@ -281,13 +281,10 @@ describe('DSFA: links and screening handoff', () => {
 				.flatMap((section) => section.questions)
 				.map((question) => [question.id, yes.includes(question.id) ? 'yes' : 'no'])
 		);
-	const twoCriteria = screening.catalog.sections
-		.flatMap((section) => section.questions)
-		.slice(-2)
-		.map((question) => question.id);
+	const twoCriteria = ['c8', 'c9'];
 
 	it('links the DSFA to its processing activity and the TOM catalogue', () => {
-		expect(definition.version).toBe(4);
+		expect(definition.version).toBe(5);
 		expect(referenceFields(definition).map((f) => [f.id, f.tool])).toEqual([
 			['vvt', 'vvt'],
 			['tom', 'tom-katalog']
@@ -401,5 +398,34 @@ describe('DSFA: EDPB template 2026', () => {
 			kind: 'stellungnahme',
 			dueAt: '2027-01-20T08:00:00.000Z'
 		});
+	});
+});
+
+describe('DSFA: WP 248 rev. 01', () => {
+	it('falls due for reassessment three years after the approval', () => {
+		const approved = view({ ...complete, ueberpruefung: '', freigegeben_am: '2026-10-20' });
+		expect(engine.deadlines!(approved)).toEqual([
+			expect.objectContaining({
+				kind: 'ueberpruefung',
+				label: { de: 'Erneute Bewertung der DSFA', en: 'Reassessment of the DPIA' },
+				dueAt: '2029-10-20T07:00:00.000Z'
+			})
+		]);
+		const old = { ...complete, freigegeben_am: '2023-01-10', ueberpruefung: '' };
+		expect(reassessmentDue(view(old), new Date('2026-11-24T12:00:00Z'))).toBe(true);
+		expect(reassessmentDue(view(old), new Date('2025-11-24T12:00:00Z'))).toBe(false);
+		// a later review date set by hand takes its place
+		expect(
+			reassessmentDue(
+				view({ ...old, ueberpruefung: '2027-06-01' }),
+				new Date('2026-11-24T12:00:00Z')
+			)
+		).toBe(false);
+	});
+
+	it('cites WP 248 and the EDPB template among its sources', () => {
+		expect(definition.sources?.map((s) => s.ref)).toEqual(
+			expect.arrayContaining(['WP 248 rev. 01', 'DSFA-Vorlage 2026'])
+		);
 	});
 });

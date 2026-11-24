@@ -1,4 +1,4 @@
-import { addHours, dayAt } from '../../records/deadlines.js';
+import { addHours, dateAfterMonths, dayAt } from '../../records/deadlines.js';
 import type { DeadlineSpec, RecordData, RecordEngine, RecordView } from '../../records/types.js';
 import { isEmpty } from '../../records/validate.js';
 import type { LegalBasis, Localized, QuestionnaireResult, Reason } from '../types.js';
@@ -24,6 +24,26 @@ const LEVEL: Record<RiskLevel, Localized> = {
 /** Art. 36(2): the authority advises within eight weeks, extendable by six */
 const OPINION_WEEKS = 8;
 const EXTENSION_WEEKS = 6;
+
+/** WP 248 rev. 01: reassess a DPIA at the latest three years after it was approved */
+const REASSESS_MONTHS = 36;
+
+/** the day a reassessment falls due, three years after the approval */
+function reassessDue(record: RecordView): string | null {
+	const approved = record.data.freigegeben_am;
+	return typeof approved === 'string' && approved
+		? dateAfterMonths(approved, REASSESS_MONTHS)
+		: null;
+}
+
+/** whether the approval is three years old or more on `now` and no later review is set */
+export function reassessmentDue(record: RecordView, now = new Date()): boolean {
+	const due = reassessDue(record);
+	if (!due) return false;
+	const review = record.data.ueberpruefung;
+	if (typeof review === 'string' && review > due) return false;
+	return now.getTime() >= Date.parse(dayAt(due, '00:00'));
+}
 
 const filled = (value: unknown) => typeof value === 'string' && value.trim() !== '';
 const names = (list: Localized[], lang: 'de' | 'en') => list.map((l) => l[lang]).join(', ');
@@ -65,6 +85,16 @@ function deadlines(record: RecordView): DeadlineSpec[] {
 			dueAt: dayAt(record.data.ueberpruefung),
 			cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 11' }
 		});
+	} else {
+		const due = reassessDue(record);
+		if (due) {
+			specs.push({
+				kind: 'ueberpruefung',
+				label: L('Erneute Bewertung der DSFA', 'Reassessment of the DPIA'),
+				dueAt: dayAt(due),
+				cite: { law: 'WP29', ref: 'WP 248 rev. 01' }
+			});
+		}
 	}
 	return specs;
 }
@@ -226,7 +256,15 @@ function assess(record: RecordView): QuestionnaireResult {
 			)
 		);
 	}
-	if (isEmpty(record.data.ueberpruefung)) {
+	if (reassessmentDue(record)) {
+		notes.push(
+			L(
+				'Die Freigabe liegt drei Jahre oder länger zurück: die DSFA erneut bewerten, auch wenn sich nichts erkennbar geändert hat (WP 248 rev. 01).',
+				'The approval is three years old or more: reassess the DPIA, even if nothing has visibly changed (WP 248 rev. 01).'
+			)
+		);
+	}
+	if (isEmpty(record.data.ueberpruefung) && isEmpty(record.data.freigegeben_am)) {
 		notes.push(
 			L(
 				'Einen Überprüfungstermin festlegen; bei Änderungen des Risikos ist die DSFA zu wiederholen (Art. 35 Abs. 11).',

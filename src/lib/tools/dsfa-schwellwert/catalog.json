@@ -1,20 +1,39 @@
 {
 	"slug": "dsfa-schwellwert",
-	"version": 1,
+	"version": 2,
 	"intro": {
 		"de": "Eine Datenschutz-Folgenabschätzung ist Pflicht, wenn eine Verarbeitung voraussichtlich ein hohes Risiko für die Rechte und Freiheiten natürlicher Personen zur Folge hat (Art. 35 Abs. 1 DSGVO). Diese Schwellwertanalyse prüft die gesetzlichen Regelbeispiele, die Muss-Liste der Datenschutzkonferenz und die neun Kriterien der Artikel-29-Gruppe (WP 248 rev. 01).",
 		"en": "A data protection impact assessment is mandatory where processing is likely to result in a high risk to the rights and freedoms of natural persons (Art. 35(1) GDPR). This screening checks the statutory examples, the German DSK must-list and the nine criteria of the Article 29 Working Party (WP 248 rev. 01)."
 	},
 	"sources": [
-		{ "law": "DSGVO", "ref": "Art. 35 Abs. 1, 3 und 4" },
-		{ "law": "WP29", "ref": "WP 248 rev. 01" },
-		{ "law": "DSK", "ref": "Kurzpapier Nr. 5" },
-		{ "law": "DSK", "ref": "Muss-Liste nach Art. 35 Abs. 4" }
+		{
+			"law": "DSGVO",
+			"ref": "Art. 35 Abs. 1, 3 und 4"
+		},
+		{
+			"law": "DSGVO",
+			"ref": "Art. 35 Abs. 10"
+		},
+		{
+			"law": "WP29",
+			"ref": "WP 248 rev. 01"
+		},
+		{
+			"law": "DSK",
+			"ref": "Kurzpapier Nr. 5"
+		},
+		{
+			"law": "DSK",
+			"ref": "Muss-Liste nach Art. 35 Abs. 4"
+		}
 	],
 	"sections": [
 		{
 			"id": "art35",
-			"title": { "de": "Gesetzliche Regelbeispiele", "en": "Statutory examples" },
+			"title": {
+				"de": "Gesetzliche Regelbeispiele",
+				"en": "Statutory examples"
+			},
 			"intro": {
 				"de": "Trifft einer dieser Fälle zu, ist die DSFA unmittelbar nach Art. 35 Abs. 3 DSGVO erforderlich.",
 				"en": "If any of these applies, the DPIA is required directly under Art. 35(3) GDPR."
@@ -31,7 +50,10 @@
 						"de": "Beispiele: Kreditscoring, automatisierte Bewerberauswahl, Bonitätsprüfung vor Vertragsschluss.",
 						"en": "Examples: credit scoring, automated applicant screening, creditworthiness checks before contracting."
 					},
-					"cite": { "law": "DSGVO", "ref": "Art. 35 Abs. 3 lit. a" }
+					"cite": {
+						"law": "DSGVO",
+						"ref": "Art. 35 Abs. 3 lit. a"
+					}
 				},
 				{
 					"id": "art35_b",
@@ -44,7 +66,10 @@
 						"de": "Gesundheits-, Religions-, Gewerkschafts-, biometrische oder genetische Daten, sexuelle Orientierung, politische Meinung. „Großer Umfang“ nach Zahl der Betroffenen, Datenmenge, Dauer und geografischer Reichweite.",
 						"en": "Health, religion, trade-union, biometric or genetic data, sexual orientation, political opinion. \"Large scale\" by number of data subjects, volume, duration and geographic reach."
 					},
-					"cite": { "law": "DSGVO", "ref": "Art. 35 Abs. 3 lit. b" }
+					"cite": {
+						"law": "DSGVO",
+						"ref": "Art. 35 Abs. 3 lit. b"
+					}
 				},
 				{
 					"id": "art35_c",
@@ -57,13 +82,19 @@
 						"de": "Videoüberwachung von Plätzen, Bahnhöfen, Einkaufszentren; Kennzeichenerfassung.",
 						"en": "Video surveillance of squares, stations, shopping centres; number-plate recognition."
 					},
-					"cite": { "law": "DSGVO", "ref": "Art. 35 Abs. 3 lit. c" }
+					"cite": {
+						"law": "DSGVO",
+						"ref": "Art. 35 Abs. 3 lit. c"
+					}
 				}
 			]
 		},
 		{
 			"id": "dsk",
-			"title": { "de": "Muss-Liste der Datenschutzkonferenz", "en": "DSK must-list" },
+			"title": {
+				"de": "Muss-Liste der Datenschutzkonferenz",
+				"en": "DSK must-list"
+			},
 			"intro": {
 				"de": "Die deutschen Aufsichtsbehörden haben nach Art. 35 Abs. 4 DSGVO eine Liste von Verarbeitungen veröffentlicht, für die eine DSFA durchzuführen ist.",
 				"en": "The German supervisory authorities have published a list under Art. 35(4) GDPR of operations for which a DPIA must be carried out."
@@ -80,13 +111,19 @@
 						"de": "Unter anderem: Beschäftigtenüberwachung mit Bewegungs- oder Kommunikationsdaten, zentrale Fraud-Prevention-Systeme, Verarbeitung von Standortdaten in großem Umfang, Zusammenführung von Datenbeständen aus unterschiedlichen Quellen, Anonymisierung von Art.-9-Daten, KI-gestützte Verarbeitung zur Steuerung der Interaktion mit Betroffenen, Telematik-Tarife, Whistleblowing-Systeme mit sensiblen Daten. Die aktuelle Liste liegt bei der DSK.",
 						"en": "Among others: employee monitoring using movement or communication data, central fraud-prevention systems, large-scale location data, merging data sets from different sources, anonymising Art. 9 data, AI-driven processing that steers interaction with data subjects, telematics tariffs, whistleblowing systems holding sensitive data. The current list is published by the DSK."
 					},
-					"cite": { "law": "DSK", "ref": "Muss-Liste nach Art. 35 Abs. 4" }
+					"cite": {
+						"law": "DSK",
+						"ref": "Muss-Liste nach Art. 35 Abs. 4"
+					}
 				}
 			]
 		},
 		{
 			"id": "wp248",
-			"title": { "de": "Neun Kriterien (WP 248)", "en": "Nine criteria (WP 248)" },
+			"title": {
+				"de": "Neun Kriterien (WP 248)",
+				"en": "Nine criteria (WP 248)"
+			},
 			"intro": {
 				"de": "Treffen zwei oder mehr Kriterien zu, ist in den meisten Fällen eine DSFA erforderlich. Bei einem Kriterium ist sie zu erwägen und die Entscheidung zu dokumentieren.",
 				"en": "Where two or more criteria apply, a DPIA is required in most cases. With one criterion it should be considered and the decision documented."
@@ -103,7 +140,10 @@
 						"de": "Arbeitsleistung, wirtschaftliche Lage, Gesundheit, Vorlieben, Zuverlässigkeit, Verhalten, Aufenthaltsort.",
 						"en": "Work performance, economic situation, health, preferences, reliability, behaviour, location."
 					},
-					"cite": { "law": "WP29", "ref": "WP 248, Kriterium 1" }
+					"cite": {
+						"law": "WP29",
+						"ref": "WP 248, Kriterium 1"
+					}
 				},
 				{
 					"id": "c2",
@@ -112,17 +152,26 @@
 						"de": "Automatisierte Entscheidungen mit Rechtswirkung oder ähnlich erheblicher Beeinträchtigung?",
 						"en": "Automated decision-making with legal or similarly significant effect?"
 					},
-					"cite": { "law": "WP29", "ref": "WP 248, Kriterium 2" }
+					"cite": {
+						"law": "WP29",
+						"ref": "WP 248, Kriterium 2"
+					}
 				},
 				{
 					"id": "c3",
 					"type": "yesno",
-					"text": { "de": "Systematische Überwachung?", "en": "Systematic monitoring?" },
+					"text": {
+						"de": "Systematische Überwachung?",
+						"en": "Systematic monitoring?"
+					},
 					"help": {
 						"de": "Beobachtung, Überwachung oder Kontrolle von Betroffenen, auch über Netzwerke oder in öffentlich zugänglichen Bereichen.",
 						"en": "Observing, monitoring or controlling data subjects, including via networks or in publicly accessible areas."
 					},
-					"cite": { "law": "WP29", "ref": "WP 248, Kriterium 3" }
+					"cite": {
+						"law": "WP29",
+						"ref": "WP 248, Kriterium 3"
+					}
 				},
 				{
 					"id": "c4",
@@ -135,7 +184,10 @@
 						"de": "Art.-9- und Art.-10-Daten, aber auch Finanzdaten, Standortdaten, elektronische Kommunikation, Dokumente aus dem Privatleben.",
 						"en": "Art. 9 and Art. 10 data, but also financial data, location data, electronic communications, documents from private life."
 					},
-					"cite": { "law": "WP29", "ref": "WP 248, Kriterium 4" }
+					"cite": {
+						"law": "WP29",
+						"ref": "WP 248, Kriterium 4"
+					}
 				},
 				{
 					"id": "c5",
@@ -148,7 +200,10 @@
 						"de": "Maßstäbe: Zahl der Betroffenen, Datenvolumen, Dauer oder Beständigkeit, geografische Reichweite.",
 						"en": "Yardsticks: number of data subjects, data volume, duration or permanence, geographic extent."
 					},
-					"cite": { "law": "WP29", "ref": "WP 248, Kriterium 5" }
+					"cite": {
+						"law": "WP29",
+						"ref": "WP 248, Kriterium 5"
+					}
 				},
 				{
 					"id": "c6",
@@ -161,7 +216,10 @@
 						"de": "Aus mindestens zwei Verarbeitungen mit unterschiedlichen Zwecken, in einer Weise, die Betroffene vernünftigerweise nicht erwarten.",
 						"en": "From at least two operations with different purposes, in a way data subjects would not reasonably expect."
 					},
-					"cite": { "law": "WP29", "ref": "WP 248, Kriterium 6" }
+					"cite": {
+						"law": "WP29",
+						"ref": "WP 248, Kriterium 6"
+					}
 				},
 				{
 					"id": "c7",
@@ -174,7 +232,10 @@
 						"de": "Beschäftigte, Kinder, Patienten, Geflüchtete, ältere Menschen – überall dort, wo ein Machtungleichgewicht besteht.",
 						"en": "Employees, children, patients, asylum seekers, the elderly – wherever there is an imbalance of power."
 					},
-					"cite": { "law": "WP29", "ref": "WP 248, Kriterium 7" }
+					"cite": {
+						"law": "WP29",
+						"ref": "WP 248, Kriterium 7"
+					}
 				},
 				{
 					"id": "c8",
@@ -187,7 +248,10 @@
 						"de": "Zum Beispiel KI-Systeme, Internet of Things, Fingerabdruck und Gesichtserkennung kombiniert.",
 						"en": "For example AI systems, Internet of Things, combined fingerprint and face recognition."
 					},
-					"cite": { "law": "WP29", "ref": "WP 248, Kriterium 8" }
+					"cite": {
+						"law": "WP29",
+						"ref": "WP 248, Kriterium 8"
+					}
 				},
 				{
 					"id": "c9",
@@ -200,7 +264,39 @@
 						"de": "Etwa eine Bonitätsprüfung, die über die Vergabe eines Darlehens entscheidet.",
 						"en": "For instance a credit check that decides whether a loan is granted."
 					},
-					"cite": { "law": "WP29", "ref": "WP 248, Kriterium 9" }
+					"cite": {
+						"law": "WP29",
+						"ref": "WP 248, Kriterium 9"
+					}
+				}
+			]
+		},
+		{
+			"id": "ausnahme",
+			"title": {
+				"de": "Ausnahme nach Art. 35 Abs. 10",
+				"en": "Exemption under Art. 35(10)"
+			},
+			"intro": {
+				"de": "Selten bei Unternehmen, häufiger bei Behörden: Wurde die Folgenabschätzung schon beim Erlass der Rechtsvorschrift durchgeführt, kann die eigene DSFA entfallen.",
+				"en": "Rare for companies, more common for public bodies: if the impact assessment was already carried out when the law was adopted, a DPIA of your own may not be needed."
+			},
+			"questions": [
+				{
+					"id": "art35_10",
+					"type": "yesno",
+					"text": {
+						"de": "Beruht die Verarbeitung auf einer rechtlichen Verpflichtung oder öffentlichen Aufgabe (Art. 6 Abs. 1 lit. c oder e), deren Rechtsvorschrift sie regelt, und wurde bei deren Erlass bereits eine Datenschutz-Folgenabschätzung durchgeführt?",
+						"en": "Is the processing based on a legal obligation or public task (Art. 6(1)(c) or (e)) whose law regulates it, and was a data protection impact assessment already carried out when that law was adopted?"
+					},
+					"help": {
+						"de": "Nur wenn die Folgenabschätzung im Gesetzgebungsverfahren genau diese Verarbeitung erfasst hat und das Landes- oder Bundesrecht keine eigene DSFA verlangt. Im Zweifel „Nein“.",
+						"en": "Only if the impact assessment in the legislative process covered this very processing and national law does not require a DPIA of your own. If in doubt, \"No\"."
+					},
+					"cite": {
+						"law": "DSGVO",
+						"ref": "Art. 35 Abs. 10"
+					}
 				}
 			]
 		}

@@ -3,6 +3,7 @@ import type { Answers, QuestionnaireCatalog, QuestionnaireResult, Reason } from 
 const ART35_IDS = ['art35_a', 'art35_b', 'art35_c'];
 const DSK_ID = 'dsk_list';
 const CRITERIA_IDS = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9'];
+const EXEMPTION_ID = 'art35_10';
 
 /**
  * decision rule, in order of precedence:
@@ -12,6 +13,8 @@ const CRITERIA_IDS = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9'];
  *   4. exactly one criterion                                 → consider and document
  *   5. none                                                  → not required
  * "unknown" answers never count as yes; the result says when they exist.
+ * A required DPIA may fall away under Art. 35(10) when the law behind the
+ * processing was itself assessed; that is to be checked and documented.
  */
 export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): QuestionnaireResult {
 	const questions = new Map(catalog.sections.flatMap((s) => s.questions).map((q) => [q.id, q]));
@@ -35,6 +38,27 @@ export function evaluate(catalog: QuestionnaireCatalog, answers: Answers): Quest
 				en: ` ${unknown} question(s) were answered "unclear"; resolve these before the final decision.`
 			}
 		: { de: '', en: '' };
+
+	const required = statutory.length > 0 || dsk.length > 0 || criteria.length >= 2;
+	if (required && yes(EXEMPTION_ID)) {
+		return {
+			verdict: 'conditional',
+			headline: {
+				de: 'DSFA kann nach Art. 35 Abs. 10 entfallen.',
+				en: 'The DPIA may fall away under Art. 35(10).'
+			},
+			explanation: {
+				de:
+					'Ohne die Ausnahme wäre eine DSFA erforderlich. Sie entfällt nur, wenn die Folgenabschätzung beim Erlass der Rechtsvorschrift genau diese Verarbeitung erfasst hat und kein Gesetz eine eigene DSFA verlangt; beides prüfen und mit Fundstelle dokumentieren.' +
+					unknownNote.de,
+				en:
+					'Without the exemption a DPIA would be required. It only falls away if the impact assessment when the law was adopted covered this very processing and no law requires a DPIA of your own; check both and document them with the reference.' +
+					unknownNote.en
+			},
+			reasons: [...statutory, ...dsk, ...criteria, reasonFor(EXEMPTION_ID)],
+			citations: catalog.sources
+		};
+	}
 
 	if (statutory.length > 0 || dsk.length > 0) {
 		return {

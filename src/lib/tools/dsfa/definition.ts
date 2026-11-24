@@ -381,7 +381,7 @@ const PENDING = L(
 /** a data protection impact assessment from draft to sign-off (Art. 35, 36) */
 export const definition: RecordToolDefinition = {
 	slug: 'dsfa',
-	version: 4,
+	version: 5,
 	intro: L(
 		'Eine Datenschutz-Folgenabschätzung je Verarbeitungsvorgang mit voraussichtlich hohem Risiko nach dem Ablauf des DSK-Kurzpapiers Nr. 5: Umfang, Beschreibung, Akteure, Notwendigkeit, Rechtsgrundlagen, Risiken je Gewährleistungsziel des Standard-Datenschutzmodells vor und nach Abhilfemaßnahmen, Entscheidung und gegebenenfalls Konsultation der Aufsichtsbehörde. Zu jedem Ziel lassen sich die Gefährdungen nach BSI-Standard 200-3 und datenschutzspezifische Ereignisse auswählen; die Bewertung folgt der Risikomatrix der DSK, die Druckfassung dient als Bericht.',
 		'One DPIA per processing operation likely to result in a high risk, following the steps of DSK Kurzpapier Nr. 5: scope, description, actors, necessity, legal bases, risks per protection goal of the Standard Data Protection Model before and after measures, decision and, where needed, consultation of the authority. For each goal the threats of BSI-Standard 200-3 and data protection events can be chosen; the rating follows the DSK risk matrix and the print version serves as the report.'
@@ -391,7 +391,9 @@ export const definition: RecordToolDefinition = {
 		{ law: 'DSGVO', ref: 'Art. 36' },
 		{ law: 'DSK', ref: 'Kurzpapier Nr. 5' },
 		{ law: 'DSK', ref: 'Kurzpapier Nr. 18' },
-		{ law: 'DSK', ref: 'Standard-Datenschutzmodell V3.1a, D3' }
+		{ law: 'DSK', ref: 'Standard-Datenschutzmodell V3.1a, D3' },
+		{ law: 'WP29', ref: 'WP 248 rev. 01' },
+		{ law: 'EDPB', ref: 'DSFA-Vorlage 2026' }
 	],
 	titleField: 'bezeichnung',
 	sections: [
@@ -445,8 +447,8 @@ export const definition: RecordToolDefinition = {
 						'Systematic description of the processing'
 					),
 					help: L(
-						'Daten, Betroffene, Systeme, Empfänger, Datenflüsse, Speicherdauer.',
-						'Data, data subjects, systems, recipients, data flows, retention.'
+						'Daten, Betroffene, Empfänger, Datenflüsse und Speicherdauer, dazu die eingesetzten Mittel: Systeme und Software, Netze, beteiligte Personen und Papierakten.',
+						'Data, data subjects, recipients, data flows and retention, and the assets used: systems and software, networks, people involved and paper records.'
 					),
 					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 7 lit. a' }
 				},
@@ -576,6 +578,16 @@ export const definition: RecordToolDefinition = {
 					),
 					cite: { law: 'DSGVO', ref: 'Art. 22 Abs. 2, 3' },
 					when: (data) => data.automatisiert === true
+				},
+				{
+					id: 'verhaltensregeln',
+					type: 'textarea',
+					label: L('Genehmigte Verhaltensregeln', 'Approved codes of conduct'),
+					help: L(
+						'Welche genehmigten Verhaltensregeln nach Art. 40 eingehalten werden und wie sie in die Bewertung eingehen. Leer lassen, wenn keine gelten.',
+						'Which approved codes of conduct under Art. 40 are complied with and how they enter the assessment. Leave empty if none apply.'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 8' }
 				},
 				{
 					id: 'dsb',

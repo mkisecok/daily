@@ -153,6 +153,7 @@ export function dsfaParts(record: RecordView, locale: string, titles: Titles = {
 				field('rechtsgrundlagen_details'),
 				...(data.besondere_kategorien === true ? [field('art9_ausnahme')] : []),
 				...(data.automatisiert === true ? [field('art22_garantien')] : []),
+				...(value('verhaltensregeln') ? [field('verhaltensregeln')] : []),
 				row(
 					L('Grundsätze und Betroffenenrechte', 'Principles and data subject rights'),
 					lines(

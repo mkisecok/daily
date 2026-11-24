@@ -13,7 +13,7 @@ function answers(yes: string[] = [], unknown: string[] = []): Answers {
 }
 
 describe('DSFA-Schwellwert engine', () => {
-	it('catalog has the three statutory examples, the DSK item and nine criteria', () => {
+	it('catalog has the three statutory examples, the DSK item, nine criteria and the Art. 35(10) exemption', () => {
 		expect(allIds).toEqual([
 			'art35_a',
 			'art35_b',
@@ -27,7 +27,8 @@ describe('DSFA-Schwellwert engine', () => {
 			'c6',
 			'c7',
 			'c8',
-			'c9'
+			'c9',
+			'art35_10'
 		]);
 	});
 
@@ -75,5 +76,15 @@ describe('DSFA-Schwellwert engine', () => {
 	it('lists statutory reasons before criteria', () => {
 		const result = evaluate(catalog, answers(['c9', 'art35_b']));
 		expect(result.reasons.map((r) => r.questionId)).toEqual(['art35_b', 'c9']);
+	});
+
+	it('lets a required DPIA fall away under Art. 35(10), to be checked and documented', () => {
+		const result = evaluate(catalog, answers(['art35_b', 'art35_10']));
+		expect(result.verdict).toBe('conditional');
+		expect(result.headline.de).toBe('DSFA kann nach Art. 35 Abs. 10 entfallen.');
+		expect(result.reasons.map((r) => r.questionId)).toEqual(['art35_b', 'art35_10']);
+		// the exemption changes nothing where no DPIA would be required
+		expect(evaluate(catalog, answers(['art35_10'])).verdict).toBe('negative');
+		expect(evaluate(catalog, answers(['c5', 'art35_10'])).headline.de).toBe('DSFA zu erwägen.');
 	});
 });

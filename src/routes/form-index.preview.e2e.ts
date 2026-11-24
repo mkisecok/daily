@@ -9,11 +9,11 @@ test('preview: a long form has a section index and a save bar that stays in view
 	const index = page.getByRole('navigation', { name: 'Abschnitte' });
 	const items = index.getByRole('button');
 	await expect(items).toHaveCount(10);
-	await expect(items.first()).toContainText('0/18');
+	await expect(items.first()).toContainText('0/19');
 	await expect(page.locator('.save-bar .required')).toHaveText('Pflichtangaben offen: 1');
 
 	await page.locator('form.record-form input[type=text]').first().fill('Bewerbervorauswahl');
-	await expect(items.first()).toContainText('1/18');
+	await expect(items.first()).toContainText('1/19');
 	await expect(items.first().locator('.mark')).toHaveAttribute('data-state', 'partial');
 	await expect(page.locator('.save-bar .required')).toBeHidden();
 
