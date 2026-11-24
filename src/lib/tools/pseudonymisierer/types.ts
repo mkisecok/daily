@@ -81,6 +81,8 @@ export type Span = {
 	type: TokenType;
 	/** absent for manual marks */
 	ruleKey?: RuleKey;
+	/** an own variable name such as `DIAGNOSE`, used in the placeholder instead of the type */
+	label?: string;
 	/** detector precedence, lower wins an overlap; manual marks use -1 */
 	prio: number;
 	manual: boolean;
@@ -99,12 +101,19 @@ export type Finding = {
 	replacement: string;
 	type: TokenType;
 	ruleKey?: RuleKey;
+	label?: string;
 	manual: boolean;
 	muted: boolean;
 	/** false when any of its spans failed the rule's check */
 	confident: boolean;
 	spanIds: number[];
 };
+
+/**
+ * a stretch the user boxed or selected in a document: replaced at this place
+ * only, not wherever its text occurs again
+ */
+export type Place = { start: number; end: number; label: string };
 
 /** original value → placeholder; stays in memory and never leaves the page */
 export type Mapping = Record<string, { replacement: string; type: TokenType }>;

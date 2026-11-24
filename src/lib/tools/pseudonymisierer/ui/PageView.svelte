@@ -19,7 +19,10 @@
 		pages,
 		page = $bindable(0),
 		element = $bindable(null),
-		ontoggle
+		ontoggle,
+		onrange,
+		boxing = false,
+		pending = null
 	}: {
 		text: string;
 		spans: Span[];
@@ -28,7 +31,89 @@
 		element?: HTMLElement | null;
 		/** switches a finding off, or on again, by its value */
 		ontoggle: (value: string) => void;
+		/** a stretch of the text the user selected or boxed */
+		onrange?: (start: number, end: number, via: 'selection' | 'box') => void;
+		/** a drag draws a box instead of selecting text */
+		boxing?: boolean;
+		pending?: { start: number; end: number } | null;
 	} = $props();
+
+	/** plain text in words, so a box and a selection can be told apart word by word */
+	const words = (value: string, start: number) =>
+		[...value.matchAll(/\S+\s*|\s+/g)].map((match) => ({
+			text: match[0],
+			at: start + match.index
+		}));
+	const waiting = (at: number, length: number) =>
+		pending !== null && at < pending.end && at + length > pending.start;
+
+	/** the box being drawn, relative to the text */
+	let box = $state<{ x0: number; y0: number; x1: number; y1: number } | null>(null);
+
+	function startBox(event: PointerEvent & { currentTarget: HTMLElement }) {
+		if (!boxing || event.button !== 0) return;
+		const frame = event.currentTarget.getBoundingClientRect();
+		const x = event.clientX - frame.left;
+		const y = event.clientY - frame.top;
+		box = { x0: x, y0: y, x1: x, y1: y };
+		event.currentTarget.setPointerCapture(event.pointerId);
+		event.preventDefault();
+	}
+
+	function drawBox(event: PointerEvent & { currentTarget: HTMLElement }) {
+		if (!box) return;
+		const frame = event.currentTarget.getBoundingClientRect();
+		box = { ...box, x1: event.clientX - frame.left, y1: event.clientY - frame.top };
+	}
+
+	/** every word the box touches, from the first to the last */
+	function endBox(event: PointerEvent & { currentTarget: HTMLElement }) {
+		if (!box) return;
+		const drawn = box;
+		box = null;
+		if (Math.abs(drawn.x1 - drawn.x0) < 4 && Math.abs(drawn.y1 - drawn.y0) < 4) return;
+		const frame = event.currentTarget.getBoundingClientRect();
+		const left = frame.left + Math.min(drawn.x0, drawn.x1);
+		const right = frame.left + Math.max(drawn.x0, drawn.x1);
+		const top = frame.top + Math.min(drawn.y0, drawn.y1);
+		const bottom = frame.top + Math.max(drawn.y0, drawn.y1);
+		let start = Infinity;
+		let end = -Infinity;
+		for (const word of event.currentTarget.querySelectorAll<HTMLElement>('[data-at]')) {
+			const hit = [...word.getClientRects()].some(
+				(rect) => rect.left < right && rect.right > left && rect.top < bottom && rect.bottom > top
+			);
+			if (!hit) continue;
+			const at = Number(word.dataset.at);
+			start = Math.min(start, at);
+			end = Math.max(end, at + (word.textContent ?? '').length);
+		}
+		if (end > start) onrange?.(start, end, 'box');
+	}
+
+	/** a text position in the document: the word's start plus the place in it */
+	function offsetOf(node: Node, offset: number): number | null {
+		const host = (
+			node.nodeType === Node.TEXT_NODE ? node.parentElement : (node as Element)
+		)?.closest<HTMLElement>('[data-at]');
+		if (!host) return null;
+		const at = Number(host.dataset.at);
+		return node.nodeType === Node.TEXT_NODE
+			? at + offset
+			: at + (offset > 0 ? (host.textContent ?? '').length : 0);
+	}
+
+	function takeSelection() {
+		if (!onrange || boxing || !element) return;
+		const selection = document.getSelection();
+		if (!selection || selection.isCollapsed || !selection.anchorNode || !selection.focusNode)
+			return;
+		if (!element.contains(selection.anchorNode) || !element.contains(selection.focusNode)) return;
+		const a = offsetOf(selection.anchorNode, selection.anchorOffset);
+		const b = offsetOf(selection.focusNode, selection.focusOffset);
+		if (a === null || b === null || a === b) return;
+		onrange(Math.min(a, b), Math.max(a, b), 'selection');
+	}
 
 	const current = $derived(Math.min(page, Math.max(0, pages.length - 1)));
 	const segments = $derived(pages[current] ? segmentsOf(text, spans, pages[current]) : []);
@@ -43,6 +128,8 @@
 		})
 	);
 </script>
+
+<svelte:document onkeyup={takeSelection} />
 
 <div class="page-view">
 	{#if pages.length > 1}
@@ -70,19 +157,52 @@
 		</nav>
 	{/if}
 
-	<p class="marked" bind:this={element}>
+	<!-- a box is drawn with the pointer; the keyboard marks by selecting text, read on key up -->
+	<p
+		class="marked"
+		class:boxing
+		bind:this={element}
+		onpointerdown={startBox}
+		onpointermove={drawBox}
+		onpointerup={(event) => {
+			endBox(event);
+			takeSelection();
+		}}
+	>
 		{#each segments as segment, index (index)}
 			{#if segment.span}
-				<button
-					type="button"
+				<!-- a span, not a button: a button is a box of its own, so a boxed passage would leave the line -->
+				<span
+					role="button"
+					tabindex="0"
 					class="anon-mark"
+					data-at={onrange ? segment.start : undefined}
+					data-pending={waiting(segment.start, segment.text.length) || undefined}
 					data-anon-tier={TOKEN_TIER[segment.span.type]}
 					aria-pressed={!segment.span.muted}
 					title={segment.span.muted ? undefined : segment.span.replacement}
-					onclick={() => ontoggle(segment.span!.value)}>{segment.text}</button
+					onclick={() => ontoggle(segment.span!.value)}
+					onkeydown={(event) => {
+						if (event.key !== 'Enter' && event.key !== ' ') return;
+						event.preventDefault();
+						ontoggle(segment.span!.value);
+					}}>{segment.text}</span
 				>
-			{:else}{segment.text}{/if}
+			{:else if onrange}{#each words(segment.text, segment.start) as word (word.at)}<span
+						data-at={word.at}
+						data-pending={waiting(word.at, word.text.length) || undefined}>{word.text}</span
+					>{/each}{:else}{segment.text}{/if}
 		{/each}
+		{#if box}
+			<span
+				class="box"
+				aria-hidden="true"
+				style:left="{Math.min(box.x0, box.x1)}px"
+				style:top="{Math.min(box.y0, box.y1)}px"
+				style:width="{Math.abs(box.x1 - box.x0)}px"
+				style:height="{Math.abs(box.y1 - box.y0)}px"
+			></span>
+		{/if}
 	</p>
 
 	{#if pages.length > 1}
@@ -127,11 +247,31 @@
 		}
 
 		& .marked {
+			position: relative;
 			margin: 0;
 			font-size: 14px;
 			line-height: 1.9;
 			white-space: pre-wrap;
 			overflow-wrap: anywhere;
+
+			&.boxing {
+				cursor: crosshair;
+				user-select: none;
+				touch-action: none;
+			}
+
+			& [data-pending] {
+				background: var(--primary-soft);
+				box-shadow: 0 2px 0 var(--primary);
+			}
+
+			& .box {
+				position: absolute;
+				background: color-mix(in srgb, var(--primary) 12%, transparent);
+				border: 2px solid var(--primary);
+				border-radius: 3px;
+				pointer-events: none;
+			}
 		}
 
 		/* one box per page, wrapping on long documents */

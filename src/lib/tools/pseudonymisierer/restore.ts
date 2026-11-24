@@ -26,6 +26,11 @@ const LEFTOVER_RE = new RegExp(
 	'gi'
 );
 
+/** placeholder-shaped strings left in a text: invented or mangled by the model */
+export function leftoverIn(text: string): string[] {
+	return [...new Set((text.match(LEFTOVER_RE) ?? []).map((s) => s.trim()))];
+}
+
 /**
  * writes the real values back into a reply, against the mapping of the text
  * that was actually copied out.
@@ -48,8 +53,5 @@ export function restoreFrom(aiText: string, mapping: Mapping): RestoreResult {
 		});
 	}
 
-	// whatever still looks like a placeholder was invented or mangled by the model
-	const leftover = [...new Set((text.match(LEFTOVER_RE) ?? []).map((s) => s.trim()))];
-
-	return { text, count, leftover, total: entries.length };
+	return { text, count, leftover: leftoverIn(text), total: entries.length };
 }

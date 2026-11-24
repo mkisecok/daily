@@ -50,8 +50,8 @@ export function pageAt(pages: Page[], offset: number): number {
 	return index === -1 ? Math.max(0, pages.length - 1) : index;
 }
 
-/** a piece of a page: plain text, or the part of a finding that falls on it */
-export type Segment = { text: string; span?: Span };
+/** a piece of a page: plain text, or the part of a finding that falls on it, and where it starts */
+export type Segment = { text: string; start: number; span?: Span };
 
 /** one page cut into plain text and findings; a finding across the page edge shows its part */
 export function segmentsOf(text: string, spans: Span[], page: Page): Segment[] {
@@ -61,14 +61,14 @@ export function segmentsOf(text: string, spans: Span[], page: Page): Segment[] {
 		if (span.end <= page.start || span.start >= page.end) continue;
 		const start = Math.max(span.start, page.start);
 		const end = Math.min(span.end, page.end);
-		if (start > cursor) out.push({ text: text.slice(cursor, start) });
-		out.push({ text: text.slice(start, end), span });
+		if (start > cursor) out.push({ text: text.slice(cursor, start), start: cursor });
+		out.push({ text: text.slice(start, end), start, span });
 		cursor = end;
 	}
-	if (cursor < page.end) out.push({ text: text.slice(cursor, page.end) });
+	if (cursor < page.end) out.push({ text: text.slice(cursor, page.end), start: cursor });
 	// the form feed of a PDF page break is not shown
 	return out.map((segment) =>
-		segment.span ? segment : { text: segment.text.replaceAll(PAGE_BREAK, '') }
+		segment.span ? segment : { ...segment, text: segment.text.replaceAll(PAGE_BREAK, '') }
 	);
 }
 
