@@ -54,16 +54,16 @@ test('preview: a questionnaire shows progress, keeps answers and finds the first
 }) => {
 	await page.goto('werkzeuge/dsfa-schwellwert/pruefen/', { waitUntil: 'networkidle' });
 	const progress = page.locator('.form-bar .progress');
-	await expect(progress).toHaveText('0 von 13 beantwortet');
+	await expect(progress).toHaveText('0 von 14 beantwortet');
 
 	const rows = page.locator('fieldset.row');
 	await rows.nth(0).getByText('Nein').click();
 	await rows.nth(1).getByText('Ja').click();
-	await expect(progress).toHaveText('2 von 13 beantwortet');
+	await expect(progress).toHaveText('2 von 14 beantwortet');
 
 	await page.reload({ waitUntil: 'networkidle' });
 	await expect(page.getByRole('status').filter({ hasText: 'Antworten vom' })).toBeVisible();
-	await expect(progress).toHaveText('2 von 13 beantwortet');
+	await expect(progress).toHaveText('2 von 14 beantwortet');
 	await expect(rows.nth(1).locator('input[value="yes"]')).toBeChecked();
 
 	await page.getByRole('button', { name: 'Zur ersten offenen Frage' }).click();
@@ -75,8 +75,8 @@ test('preview: a questionnaire shows progress, keeps answers and finds the first
 	await expect(page.locator('.form-bar')).toBeInViewport();
 
 	await page.getByRole('button', { name: 'Neu beginnen' }).click();
-	await expect(progress).toHaveText('0 von 13 beantwortet');
+	await expect(progress).toHaveText('0 von 14 beantwortet');
 	await expect(page.locator('input[type=radio]:checked')).toHaveCount(0);
 	await page.reload({ waitUntil: 'networkidle' });
-	await expect(progress).toHaveText('0 von 13 beantwortet');
+	await expect(progress).toHaveText('0 von 14 beantwortet');
 });
