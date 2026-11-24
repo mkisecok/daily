@@ -24,6 +24,7 @@
 		type Rating,
 		type RiskLevel
 	} from './definition.js';
+	import VvtFlow from '../vvt/VvtFlow.svelte';
 	import RiskMatrix from './RiskMatrix.svelte';
 	import { signOffChecks, type CheckStatus } from './signoff.js';
 	import { compareWithTom, type CoverageStatus } from './tom.js';
@@ -51,6 +52,9 @@
 		};
 	});
 	const comparison = $derived(tom ? compareWithTom(record, tom) : null);
+	const vvtId = $derived(
+		typeof record.data.vvt === 'string' && record.data.vvt ? record.data.vvt : undefined
+	);
 	const gaps = $derived(
 		comparison?.goals.filter((g) => g.status === 'luecke' || g.status === 'unbelegt').length ?? 0
 	);
@@ -319,6 +323,13 @@
 			</div>
 		{/if}
 	</section>
+
+	<!-- EDPB DPIA template 2026, 1.2: the data flow of the linked processing activity -->
+	{#if vvtId}
+		<VvtFlow {vvtId} />
+	{:else}
+		<p class="flow-none card no-print">{m.flow_dsfa_none()}</p>
+	{/if}
 </section>
 
 {#snippet level(value: RiskLevel | null)}
@@ -676,6 +687,12 @@
 	 * figures in a row, both matrices side by side, then the TOM comparison;
 	 * band colours kept
 	 */
+	.flow-none {
+		margin: 0;
+		font-size: 13.5px;
+		color: var(--ink2);
+	}
+
 	@media print {
 		/* an annex to the report, which goes out without the Daily footer */
 		@page dashboard {

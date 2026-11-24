@@ -30,7 +30,9 @@ const ENTRY_PAGES: Record<string, number> = {
 	// the example's notes on seven goals, what to fix first and the cube's two views
 	'sdm-wuerfel': 6,
 	// 23 checkpoints, and a Rechtsstand line naming five laws
-	bestandsaufnahme: 4
+	bestandsaufnahme: 4,
+	// the record, then its data flow on a landscape page of its own
+	vvt: 4
 };
 
 /** at most this many pages for the handout of a training module */
