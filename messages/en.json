@@ -484,7 +484,7 @@
 	"anon_doc_err_kind": "{name} is neither a Word file nor a PDF. Pseudonymise text in the “Text” view.",
 	"anon_doc_err_not_docx": "{name} is not a readable Word file (.docx).",
 	"anon_doc_err_password": "{name} is protected by a password. Remove the protection and upload the file again.",
-	"anon_doc_err_scan": "{name} has no text layer, probably a scan. The tool cannot read scanned pages yet.",
+	"anon_doc_err_scan": "{name} has no text layer, probably a scan. The tool does not read scanned pages; use a PDF with a text layer or the Word file.",
 	"anon_doc_err_not_pdf": "{name} is not a readable PDF.",
 	"anon_doc_sheet": "Page {n}: draw a box over the text you want to replace",
 	"anon_doc_pdf_rebuilt": "The PDF was rebuilt from pictures of its pages: what is marked is painted over and no longer in the file, not even invisibly. Metadata, links, form fields, attachments and bookmarks are gone. The text lies invisibly over the pages, with placeholders, so the file can be searched and read by an AI.",
