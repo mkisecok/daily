@@ -30,6 +30,8 @@ export type RegisterPrintProps = {
 	records: StoredRecord[];
 	engine?: RecordEngine;
 	organisation?: string | null;
+	/** the organisation's details, such as its address and the DPO's contact */
+	details?: Details;
 	titles?: Titles;
 };
 

@@ -61,7 +61,7 @@ export const LEGAL_BASES = [
  */
 export const definition: RecordToolDefinition = {
 	slug: 'vvt',
-	version: 2,
+	version: 3,
 	intro: L(
 		'Ein Eintrag je Verarbeitungstätigkeit. Das Verzeichnis enthält die Angaben nach Art. 30 Abs. 1 DSGVO (als Verantwortlicher) oder Abs. 2 (als Auftragsverarbeiter) und ist der Aufsichtsbehörde auf Anfrage vorzulegen. Name und Kontaktdaten des Verantwortlichen und des Datenschutzbeauftragten stehen im Kopf der Druckfassung.',
 		'One entry per processing activity. The record holds the information under Art. 30(1) GDPR (as controller) or Art. 30(2) (as processor) and must be made available to the supervisory authority on request. Name and contact details of the controller and the DPO head the print version.'
@@ -73,6 +73,8 @@ export const definition: RecordToolDefinition = {
 	titleField: 'bezeichnung',
 	example: {
 		bezeichnung: 'Lohn- und Gehaltsabrechnung',
+		beschreibung:
+			'Die Personalabteilung erfasst Stamm- und Zeitdaten im Personalsystem; ein Lohnbüro rechnet monatlich ab und meldet an Finanzamt und Sozialversicherung.',
 		rolle: 'verantwortlicher',
 		fachbereich: 'Personal',
 		ansprechpartner: 'Leitung Personal',
@@ -92,6 +94,8 @@ export const definition: RecordToolDefinition = {
 		automatisiert: false,
 		empfaenger: ['intern', 'auftragsverarbeiter', 'behoerden', 'banken'],
 		empfaenger_details: 'Lohnbüro als Auftragsverarbeiter, Finanzamt, Krankenkassen, Hausbank.',
+		schnittstellen:
+			'Personalsystem an das Lohnbüro (monatlicher Export); Meldungen über ELSTER und das SV-Meldeverfahren.',
 		drittland: false,
 		loeschfristen:
 			'Lohnkonto 6 Jahre (§ 41 EStG), Lohnabrechnungen als Buchungsbelege 8 Jahre (§ 147 AO), jeweils ab Ende des Kalenderjahres.',
@@ -114,6 +118,16 @@ export const definition: RecordToolDefinition = {
 					),
 					required: true,
 					listColumn: true
+				},
+				{
+					id: 'beschreibung',
+					type: 'textarea',
+					label: L('Kurzbeschreibung', 'Short description'),
+					help: L(
+						'Was bei der Verarbeitung geschieht, in zwei, drei Sätzen: womit, von wem, in welchem Ablauf. Die Zwecke stehen unten.',
+						'What happens in the processing, in two or three sentences: with what, by whom, in which process. The purposes follow below.'
+					),
+					cite: { law: 'BfDI', ref: 'Verzeichnis nach Art. 30 DSGVO, 2023' }
 				},
 				{
 					id: 'rolle',
@@ -407,6 +421,19 @@ export const definition: RecordToolDefinition = {
 						'Auftragsverarbeiter mit Hinweis auf den Vertrag nach Art. 28 Abs. 3.',
 						'Processors with reference to the Art. 28(3) contract.'
 					)
+				},
+				{
+					id: 'schnittstellen',
+					type: 'textarea',
+					label: L(
+						'Schnittstellen und automatisierte Abrufe',
+						'Interfaces and automated retrieval'
+					),
+					help: L(
+						'Zu welchen anderen Systemen Daten fließen, und welche Stellen Daten selbst abrufen, etwa über ein Portal oder eine Schnittstelle.',
+						'Which other systems data flows to, and which bodies retrieve data themselves, e.g. through a portal or an interface.'
+					),
+					cite: { law: 'BfDI', ref: 'Verzeichnis nach Art. 30 DSGVO, 2023' }
 				},
 				{
 					id: 'drittland',

@@ -137,9 +137,18 @@ export const load: PageLoad = async ({ params, data, url, depends }) => {
 		return { ...base, view: 'new' as const, choices, prefill, start };
 	}
 	const archived = url.searchParams.get('archiviert') === '1';
-	const [records, titles] = await Promise.all([
+	// a register printed as a document, such as the VVT, names the controller's address and DPO
+	const [records, titles, organisation] = await Promise.all([
 		store.list(tool.slug, { archived }),
-		links.titles(definition)
+		links.titles(definition),
+		loadDetails()
 	]);
-	return { ...base, view: 'list' as const, records, titles, archived };
+	return {
+		...base,
+		view: 'list' as const,
+		records,
+		titles,
+		archived,
+		details: organisation.details
+	};
 };
