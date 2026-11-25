@@ -4,7 +4,9 @@
 	under Art. 30 DSGVO: the controller's details (lit. a) with lines to fill
 	in where Daily does not know them, then one table per processing with
 	the letters of Art. 30(1), or of Art. 30(2) for a processor. A letter
-	left empty prints as "fehlt". Shown only on paper.
+	left empty prints as "fehlt". The address and the DPO come from the
+	organisation's details; the processors, systems and DPIAs that other
+	tools link to an entry are listed under it. Shown only on paper.
 -->
 <script lang="ts">
 	import { formatShortDate } from '#lib/i18n/date.js';
@@ -14,9 +16,41 @@
 	import type { RegisterPrintProps } from '#lib/tools/prints.js';
 	import { text } from '#lib/tools/i18n.js';
 	import PrintDocument from '#lib/ui/PrintDocument.svelte';
-	import { art30Rows } from './print.js';
+	import { getStore } from '../../records/store/index.js';
+	import { art30Links, art30Rows, type LinkedEntry } from './print.js';
 
-	let { tool, definition, records, organisation = null }: RegisterPrintProps = $props();
+	let {
+		tool,
+		definition,
+		records,
+		organisation = null,
+		details = {}
+	}: RegisterPrintProps = $props();
+
+	/** the entries of other tools, loaded once; until then an entry prints without them */
+	let linked = $state<Record<'avv' | 'tom' | 'dsfa', LinkedEntry[]> | null>(null);
+
+	$effect(() => {
+		let live = true;
+		(async () => {
+			const store = getStore();
+			const [avv, tom, dsfa] = await Promise.all(
+				['avv-pruefung', 'tom-katalog', 'dsfa'].map((slug) => store.list(slug))
+			);
+			if (live) linked = { avv, tom, dsfa };
+		})().catch(() => {});
+		return () => {
+			live = false;
+		};
+	});
+
+	const linksOf = (id: string) => {
+		const pick = (list: LinkedEntry[] = []) => list.filter((entry) => entry.data.vvt === id);
+		return art30Links(
+			{ avv: pick(linked?.avv), tom: pick(linked?.tom), dsfa: pick(linked?.dsfa) },
+			locale
+		);
+	};
 
 	const locale = getLocale();
 	/** role, department, contact and last change in one line under the title */
@@ -48,7 +82,7 @@
 		<tbody>
 			<tr>
 				<th scope="row">{m.print_vvt_controller_name()}</th>
-				<td>{organisation ?? ''}</td>
+				<td class="multi">{[organisation, details.anschrift].filter(Boolean).join('\n')}</td>
 			</tr>
 			<tr>
 				<th scope="row">{m.print_vvt_representative()}</th>
@@ -56,7 +90,7 @@
 			</tr>
 			<tr>
 				<th scope="row">{m.print_vvt_dpo()}</th>
-				<td></td>
+				<td>{details.dsb ?? ''}</td>
 			</tr>
 		</tbody>
 	</table>
@@ -67,7 +101,7 @@
 			<p class="meta">{meta(record)}</p>
 			<table class="print-table">
 				<tbody>
-					{#each art30Rows(record.data, locale) as row, rowIndex (rowIndex)}
+					{#each art30Rows(record.data, locale, linksOf(record.id)) as row, rowIndex (rowIndex)}
 						<tr>
 							<td class="letter">{row.letter ? `${row.letter})` : ''}</td>
 							<th scope="row">{row.label}</th>
@@ -85,6 +119,10 @@
 <style>
 	.vvt-print {
 		& .fill {
+			& .multi {
+				white-space: pre-line;
+			}
+
 			& th {
 				width: 70mm;
 				font-weight: 600;

@@ -115,3 +115,28 @@ test('preview: on a phone the data flow starts as a list without overflowing', a
 	await expect(flow.getByRole('button', { name: 'Liste' })).toHaveAttribute('aria-pressed', 'true');
 	expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(375);
 });
+
+test('preview: the printed register fills in the controller and lists what links to an entry', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await seed(page);
+	await page.goto('organisation/', { waitUntil: 'networkidle' });
+	await page.locator('#field-anschrift').fill('Musterstraße 1, 70173 Stuttgart');
+	await page.locator('#field-dsb').fill('Dr. Petra Schmidt, dsb@beispiel.de');
+	await page.getByRole('button', { name: 'Speichern' }).click();
+	await expect(page.locator('.notice')).toContainText('Gespeichert.');
+
+	await page.goto('werkzeuge/vvt/eintraege/', { waitUntil: 'networkidle' });
+	await page.emulateMedia({ media: 'print' });
+	const register = page.locator('.vvt-print');
+	await expect(register).toContainText('Musterstraße 1, 70173 Stuttgart');
+	await expect(register).toContainText('Dr. Petra Schmidt, dsb@beispiel.de');
+	await expect(register).toContainText(
+		'Auftragsverarbeiter (AVV-Prüfung): Lohnbüro Muster GmbH (EU/EWR)'
+	);
+	await expect(register).toContainText('Systeme im TOM-Katalog: Personalsystem');
+	await expect(register.locator('tr', { hasText: 'Datenschutz-Folgenabschätzung' })).toContainText(
+		'Lohnabrechnung'
+	);
+});

@@ -676,6 +676,7 @@
 			{engine}
 			titles={data.titles}
 			organisation={data.organisation?.name}
+			details={data.details}
 		/>
 	{/if}
 {/if}
