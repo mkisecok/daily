@@ -1,24 +1,27 @@
 <!--
 	@component
-	Makes the pseudonymised Word file and its key, locked with a password the
-	user chooses, and offers both for download as separate files. Says what
-	cleaning took out and what it left unchecked, and when the marks have
-	changed since the files were made.
+	Makes the pseudonymised Word or PDF file and its key, locked with a
+	password the user chooses, and offers both for download as separate
+	files. Says what cleaning took out and what it left unchecked, and when
+	the marks have changed since the files were made.
 -->
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
 	import type { CleanReport } from '../document/clean.js';
 	import { lockKey, MIN_PASSWORD } from '../document/key.js';
+	import { pseudonymisePdf } from '../document/pdf.js';
 	import { pseudonymiseDocx, scrubbedName } from '../document/run.js';
 	import type { Span } from '../types.js';
 	import { DOCX_TYPE, saveFile } from './save.js';
 
 	let {
+		kind,
 		name,
 		bytes,
 		spans,
 		values
 	}: {
+		kind: 'docx' | 'pdf';
 		/** the uploaded file's name */
 		name: string;
 		bytes: Uint8Array;
@@ -27,7 +30,9 @@
 		values: Record<string, string>;
 	} = $props();
 
-	const base = $derived(name.replace(/\.docx$/i, ''));
+	const ext = $derived(`.${kind}`);
+	const type = $derived(kind === 'pdf' ? 'application/pdf' : DOCX_TYPE);
+	const base = $derived(name.replace(/\.(docx|pdf)$/i, ''));
 	/** a suggestion the user may overwrite: the file name can name people too */
 	let outBase = $derived(`${scrubbedName(base, values)}-pseudonymisiert`);
 	let password = $state('');
@@ -39,7 +44,8 @@
 		key: string;
 		docName: string;
 		keyName: string;
-		cleaned: CleanReport;
+		/** Word only: what cleaning took out */
+		cleaned: CleanReport | null;
 		elsewhere: number;
 		count: number;
 		signature: string;
@@ -57,14 +63,17 @@
 		busy = true;
 		failed = false;
 		try {
-			const result = await pseudonymiseDocx(bytes, spans);
+			const result =
+				kind === 'pdf'
+					? { ...(await pseudonymisePdf(bytes, spans)), cleaned: null, elsewhere: 0 }
+					: await pseudonymiseDocx(bytes, spans);
 			const key = await lockKey(result.key, password);
-			const docName = `${outBase.trim() || 'dokument-pseudonymisiert'}.docx`;
+			const docBase = outBase.trim() || 'dokument-pseudonymisiert';
 			made = {
 				doc: result.bytes,
 				key,
-				docName,
-				keyName: docName.replace(/\.docx$/, '.schluessel.json'),
+				docName: `${docBase}${ext}`,
+				keyName: `${docBase}.schluessel.json`,
 				cleaned: result.cleaned,
 				elsewhere: result.elsewhere,
 				count: Object.keys(result.key.values).length,
@@ -80,7 +89,7 @@
 	}
 
 	const removed = $derived.by(() => {
-		if (!made) return [];
+		if (!made?.cleaned) return [];
 		const { cleaned, elsewhere } = made;
 		return [
 			cleaned.revisions > 0 && m.anon_doc_clean_revisions({ count: cleaned.revisions }),
@@ -103,7 +112,7 @@
 		<span class="daily-label field-label">{m.anon_doc_out_name()}</span>
 		<span class="name">
 			<input type="text" bind:value={outBase} aria-describedby="anon-doc-name-hint" />
-			<span class="ext">.docx</span>
+			<span class="ext">{ext}</span>
 		</span>
 	</label>
 	<p id="anon-doc-name-hint" class="hint">{m.anon_doc_out_name_hint()}</p>
@@ -147,10 +156,7 @@
 		{#if stale}<p class="notice">{m.anon_doc_stale()}</p>{/if}
 		<p>{m.anon_doc_made({ count: made.count })}</p>
 		<div class="downloads">
-			<button
-				type="button"
-				class="button"
-				onclick={() => saveFile(made!.doc, made!.docName, DOCX_TYPE)}
+			<button type="button" class="button" onclick={() => saveFile(made!.doc, made!.docName, type)}
 				>{m.anon_doc_download_doc()}</button
 			>
 			<button
@@ -161,13 +167,14 @@
 			>
 		</div>
 		<p class="hint">{m.anon_doc_keep_apart()}</p>
+		{#if kind === 'pdf'}<p class="hint">{m.anon_doc_pdf_rebuilt()}</p>{/if}
 		{#if removed.length > 0}
 			<h3>{m.anon_doc_cleaned()}</h3>
 			<ul>
 				{#each removed as line (line)}<li>{line}</li>{/each}
 			</ul>
 		{/if}
-		{#if made.cleaned.images + made.cleaned.embedded > 0}
+		{#if made.cleaned && made.cleaned.images + made.cleaned.embedded > 0}
 			<p class="notice">
 				{m.anon_doc_unchecked({ images: made.cleaned.images, embedded: made.cleaned.embedded })}
 			</p>

@@ -17,6 +17,21 @@ export type KeyContent = {
 	created: string;
 	/** placeholder → original value */
 	values: Record<string, string>;
+	/**
+	 * PDF only: each covered line, where it stood on its page (points from
+	 * the top left) and what it said, so a restore can write it back there
+	 */
+	regions?: {
+		/** the first line of a value; the lines up to the next first one belong to it */
+		first?: boolean;
+		page: number;
+		x: number;
+		y: number;
+		w: number;
+		h: number;
+		token: string;
+		text: string;
+	}[];
 };
 
 /** what the key file holds: nothing readable but the format and a note */

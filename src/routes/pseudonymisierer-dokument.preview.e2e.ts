@@ -5,6 +5,7 @@ import { strFromU8, unzipSync } from 'fflate';
 import { openDocx } from '../lib/tools/pseudonymisierer/document/docx.js';
 import { makeDocx, p } from '../lib/tools/pseudonymisierer/document/fixture.js';
 import { lockKey } from '../lib/tools/pseudonymisierer/document/key.js';
+import { boxOnPage, pdf } from './e2e-helpers.js';
 
 // the Word code reads XML with the browser's DOM; here in Node it gets xmldom
 Object.assign(globalThis, { DOMParser, XMLSerializer });
@@ -32,7 +33,7 @@ async function download(page: Page, button: string): Promise<Buffer> {
 test('preview: a Word file is boxed, pseudonymised and restored', async ({ page }) => {
 	await page.goto('werkzeuge/pseudonymisierer/dokument/', { waitUntil: 'networkidle' });
 	await page
-		.getByText('Word-Datei hochladen')
+		.getByText('Word- oder PDF-Datei hochladen')
 		.locator('input')
 		.setInputFiles({
 			name: 'Brief Katharina Brandt.docx',
@@ -87,7 +88,7 @@ test('preview: a Word file is boxed, pseudonymised and restored', async ({ page 
 	expect(key.toString('utf8')).not.toContain('Brandt');
 
 	// back again, from the two downloaded files and the password
-	await page.getByLabel('Pseudonymisierte Word-Datei').setInputFiles({
+	await page.getByLabel('Pseudonymisierte Datei (Word oder PDF)').setInputFiles({
 		name: 'brief.docx',
 		mimeType: DOCX,
 		buffer: pseudonymised
@@ -108,7 +109,7 @@ test('preview: a Word file is boxed, pseudonymised and restored', async ({ page 
 test('preview: the Dokument view refuses .doc files and a wrong password', async ({ page }) => {
 	await page.goto('werkzeuge/pseudonymisierer/dokument/', { waitUntil: 'networkidle' });
 	await page
-		.getByText('Word-Datei hochladen')
+		.getByText('Word- oder PDF-Datei hochladen')
 		.locator('input')
 		.setInputFiles({
 			name: 'alt.doc',
@@ -122,7 +123,7 @@ test('preview: the Dokument view refuses .doc files and a wrong password', async
 		PASSWORD,
 		1000
 	);
-	await page.getByLabel('Pseudonymisierte Word-Datei').setInputFiles({
+	await page.getByLabel('Pseudonymisierte Datei (Word oder PDF)').setInputFiles({
 		name: 'a.docx',
 		mimeType: DOCX,
 		buffer: Buffer.from(makeDocx({ body: p('Hallo «NAME_1»') }))
@@ -143,5 +144,94 @@ test('preview: the text and Dokument views link to each other', async ({ page })
 	await expect(modes.getByRole('link', { name: 'Text' })).toHaveAttribute('aria-current', 'page');
 	await modes.getByRole('link', { name: 'Dokument' }).click();
 	await expect(page).toHaveURL(/pseudonymisierer\/dokument\/?$/);
-	await expect(page.getByText('Word-Datei hochladen')).toBeVisible();
+	await expect(page.getByText('Word- oder PDF-Datei hochladen')).toBeVisible();
+});
+
+/** the text of a PDF as pdf.js reads it */
+async function pdfText(bytes: Buffer): Promise<string> {
+	const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
+	const doc = await pdfjs.getDocument({ data: new Uint8Array(bytes), useWorkerFetch: false })
+		.promise;
+	const out: string[] = [];
+	for (let n = 1; n <= doc.numPages; n++) {
+		const content = await (await doc.getPage(n)).getTextContent();
+		out.push(content.items.map((item) => ('str' in item ? item.str : '')).join(' '));
+	}
+	await doc.loadingTask.destroy();
+	return out.join('\n');
+}
+
+test('preview: a PDF is boxed on its page picture, rebuilt with placeholders and restored', async ({
+	page
+}) => {
+	await page.goto('werkzeuge/pseudonymisierer/dokument/', { waitUntil: 'networkidle' });
+	await page
+		.getByText('Word- oder PDF-Datei hochladen')
+		.locator('input')
+		.setInputFiles({
+			name: 'Brief.pdf',
+			mimeType: 'application/pdf',
+			buffer: pdf([
+				[
+					'Sehr geehrte Frau Katharina Brandt,',
+					'Notiz:',
+					'Sie wuenscht einen Rueckruf.',
+					'Mit freundlichen Gruessen'
+				],
+				'Seite zwei ohne Namen.'
+			])
+		});
+	await expect(page.getByText('Brief.pdf gelesen (Seiten: 2).')).toBeVisible();
+	const sheet = page.getByRole('group', { name: /^Seite 1: Ziehen Sie einen Kasten/ });
+	await expect(sheet.locator('.anon-mark').first()).toBeVisible();
+
+	// the third line: its baseline 32pt below 720 on a 792pt page, 12pt type
+	await boxOnPage(page, sheet, [60, 96], [560, 106]);
+
+	const pending = page.getByRole('form', { name: 'Neue Variable' });
+	await expect(pending.locator('blockquote')).toHaveText('Sie wuenscht einen Rueckruf.');
+	await pending.getByLabel('Name der Variablen').fill('Notiz');
+	await pending.getByRole('button', { name: 'Übernehmen' }).click();
+	await expect(page.locator('.variables')).toContainText('«NOTIZ_1»');
+
+	// the same text, word by word
+	await page.getByRole('button', { name: 'Text auswählen' }).click();
+	await expect(page.locator('.marked')).toContainText('Sehr geehrte Frau');
+	await page.getByRole('button', { name: 'Kasten ziehen' }).click();
+
+	await expect(page.getByLabel('Dateiname')).toHaveValue('Brief-pseudonymisiert');
+	const exporting = page.locator('form.export');
+	await exporting.getByLabel('Passwort für den Schlüssel').fill(PASSWORD);
+	await exporting.getByLabel('Passwort wiederholen').fill(PASSWORD);
+	await page.getByRole('button', { name: 'Dateien erstellen' }).click();
+	await expect(page.getByText('aus Bildern ihrer Seiten neu aufgebaut')).toBeVisible();
+
+	const pseudonymised = await download(page, 'Dokument herunterladen');
+	expect(pseudonymised.subarray(0, 5).toString()).toBe('%PDF-');
+	const out = await pdfText(pseudonymised);
+	expect(out).toContain('«NAME_1»');
+	expect(out).toContain('«NOTIZ_1»');
+	expect(out).toContain('Seite zwei ohne Namen.');
+	expect(out).not.toMatch(/Brandt|Rueckruf/);
+	expect(pseudonymised.includes('Brandt')).toBe(false);
+	const key = await download(page, 'Schlüssel herunterladen');
+
+	await page.getByLabel('Pseudonymisierte Datei (Word oder PDF)').setInputFiles({
+		name: 'Brief-pseudonymisiert.pdf',
+		mimeType: 'application/pdf',
+		buffer: pseudonymised
+	});
+	await page.getByLabel('Schlüsseldatei').setInputFiles({
+		name: 'Brief.schluessel.json',
+		mimeType: 'application/json',
+		buffer: key
+	});
+	await page.locator('.restore').getByLabel('Passwort für den Schlüssel').fill(PASSWORD);
+	await page.getByRole('button', { name: 'Wiederherstellen', exact: true }).click();
+	await expect(page.getByText('Eine lesbare Kopie')).toBeVisible();
+	await expect(page.getByText('bearbeitet oder gehört zu einem anderen Schlüssel')).toHaveCount(0);
+	const restored = await pdfText(await download(page, 'Wiederhergestellte Datei herunterladen'));
+	expect(restored).toContain('Katharina Brandt');
+	expect(restored).toContain('Sie wuenscht einen Rueckruf.');
+	expect(restored).not.toContain('«');
 });
