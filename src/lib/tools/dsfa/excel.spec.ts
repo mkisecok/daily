@@ -78,6 +78,7 @@ describe('DSFA: Excel workbook', () => {
 		expect(values(table.data)[0]).toEqual([
 			'#',
 			'Risiko',
+			'Risikoquellen',
 			'Gefährdungen',
 			'Risiko im Einzelfall',
 			'Eintrittswahrscheinlichkeit',
@@ -92,6 +93,7 @@ describe('DSFA: Excel workbook', () => {
 		expect(values(table.data)[1]).toEqual([
 			1,
 			'Unbefugte Offenlegung',
+			'—',
 			'G 0.14, G 0.23',
 			'—',
 			3,
@@ -115,6 +117,7 @@ describe('DSFA: Excel workbook', () => {
 			'—',
 			'—',
 			'—',
+			'—',
 			'—'
 		]);
 	});
@@ -126,8 +129,8 @@ describe('DSFA: Excel workbook', () => {
 		expect(rows[0].slice(-2)).toEqual(['Umgesetzte Maßnahmen (TOM)', 'Abgleich']);
 		expect(rows[1].slice(-2)).toEqual(['Mehr-Faktor-Authentisierung', 'Maßnahmen umgesetzt']);
 		expect(rows[5].slice(-2)).toEqual(['—', 'Senkung nicht belegt']);
-		expect(linked.columns).toHaveLength(14);
-		expect(values(table.data)[0]).toHaveLength(12);
+		expect(linked.columns).toHaveLength(15);
+		expect(values(table.data)[0]).toHaveLength(13);
 	});
 
 	it('names the consultation when a residual risk stays high', () => {

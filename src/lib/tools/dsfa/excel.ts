@@ -7,6 +7,7 @@ import {
 	assessRisks,
 	definition,
 	RISKS,
+	RISK_SOURCES,
 	riskLevel,
 	SCALE,
 	type Rating,
@@ -224,6 +225,7 @@ export function dsfaWorkbook(
 		[
 			head('#'),
 			head(m.dsfa_dash_col_risk()),
+			head(label('quellen')),
 			head(m.dsfa_dash_col_threats()),
 			head(label('beschreibung')),
 			head(label('w')),
@@ -239,6 +241,13 @@ export function dsfaWorkbook(
 		...risks.map((risk): Row => [
 			top(risk.n),
 			{ ...top(text(risk.title)), fontWeight: 'bold' },
+			top(
+				risk.sources
+					.map((value) => RISK_SOURCES.find((source) => source.value === value))
+					.filter((source) => source !== undefined)
+					.map((source) => text(source.label))
+					.join(', ') || '—'
+			),
 			top(risk.threats.join(', ') || '—'),
 			top(value(`${risk.id}_beschreibung`)),
 			top(risk.initial ? risk.initial.likelihood : '—'),
@@ -294,6 +303,7 @@ export function dsfaWorkbook(
 			columns: [
 				{ width: 4 },
 				{ width: 28 },
+				{ width: 22 },
 				{ width: 18 },
 				{ width: 34 },
 				{ width: 13 },

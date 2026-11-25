@@ -15,6 +15,7 @@ function view(data: RecordData, state = 'entwurf') {
 const rated: RecordData = Object.fromEntries(
 	RISKS.flatMap(({ id }) => [
 		[`${id}_gefaehrdungen`, ['G 0.18']],
+		[`${id}_quellen`, ['geplant']],
 		[`${id}_w`, '3'],
 		[`${id}_s`, '3'],
 		[`${id}_begruendung`, 'Begründung'],
@@ -26,6 +27,8 @@ const rated: RecordData = Object.fromEntries(
 const complete: RecordData = {
 	bezeichnung: 'Videoüberwachung Lager',
 	verarbeitung: 'Kameras im Lager, Speicherung 72 Stunden',
+	ausmass: '60 Beschäftigte, vier Rampen, Rekorder vor Ort',
+	grundrechte: ['art7', 'art8'],
 	zwecke: 'Schutz vor Diebstahl',
 	notwendigkeit: 'Mildere Mittel geprüft',
 	verhaeltnismaessigkeit: 'Nutzen überwiegt',
@@ -95,7 +98,7 @@ describe('DSFA: assessment', () => {
 		const result = assess({ bezeichnung: 'X', ...rated, zweck_massnahmen: '' });
 		expect(result.outcome).toBe('unvollstaendig');
 		expect(result.explanation.de).toBe(
-			'Nach Art. 35 Abs. 7 fehlen noch: Beschreibung und Zwecke (lit. a), Notwendigkeit und Verhältnismäßigkeit (lit. b), Abhilfemaßnahmen (lit. d).'
+			'Nach Art. 35 Abs. 7 fehlen noch: Beschreibung, Umfang, Umstände und Zwecke (lit. a), Notwendigkeit und Verhältnismäßigkeit (lit. b), die betroffenen Rechte und Freiheiten (lit. c), Abhilfemaßnahmen (lit. d).'
 		);
 		const notes = result.notes!.map((n) => n.de).join('\n');
 		expect(notes).toContain('Art. 35 Abs. 2');
@@ -136,12 +139,35 @@ describe('DSFA: protection goals and threats', () => {
 		);
 	});
 
-	it('notes rated goals whose sources of risk are not named', () => {
+	it('notes rated goals without threats', () => {
 		const result = assess({ ...complete, transparenz_gefaehrdungen: [] });
 		expect(result.outcome).toBe('vertretbar');
 		expect(result.notes!.map((n) => n.de)).toContain(
-			'Für Intransparente Verarbeitung sind keine Gefährdungen ausgewählt; die Risikoquellen sollten benannt sein (DSK Kurzpapier Nr. 5, Schritt 7).'
+			'Für Intransparente Verarbeitung sind keine Gefährdungen ausgewählt; sie helfen, die möglichen Ereignisse vollständig zu erfassen (DSK Kurzpapier Nr. 5, Schritt 7).'
 		);
+	});
+
+	it('needs the sources of every rated risk, the rights affected and the scale (BfDI)', () => {
+		const result = assess({ ...complete, zweck_quellen: [], grundrechte: [], ausmass: '' });
+		expect(result.outcome).toBe('unvollstaendig');
+		expect(result.explanation.de).toBe(
+			'Nach Art. 35 Abs. 7 fehlen noch: Beschreibung, Umfang, Umstände und Zwecke (lit. a), die betroffenen Rechte und Freiheiten (lit. c), Risikoquellen der bewerteten Risiken (lit. c).'
+		);
+	});
+
+	it('asks for the groups and what is new once vulnerable people or new technology are ticked', () => {
+		const open = assess({ ...complete, schutzbeduerftig: true, neue_technologien: true });
+		expect(open.explanation.de).toBe(
+			'Nach Art. 35 Abs. 7 fehlen noch: was an der Technologie neu ist, die schutzbedürftigen Gruppen.'
+		);
+		const done = assess({
+			...complete,
+			schutzbeduerftig: true,
+			schutzbeduerftige_gruppen: ['kinder'],
+			neue_technologien: true,
+			neue_technologien_details: 'Gesichtserkennung'
+		});
+		expect(done.outcome).toBe('vertretbar');
 	});
 
 	it('flags a lowered risk without measures and asks for the legal bases', () => {
@@ -284,7 +310,7 @@ describe('DSFA: links and screening handoff', () => {
 	const twoCriteria = ['c8', 'c9'];
 
 	it('links the DSFA to its processing activity and the TOM catalogue', () => {
-		expect(definition.version).toBe(5);
+		expect(definition.version).toBe(6);
 		expect(referenceFields(definition).map((f) => [f.id, f.tool])).toEqual([
 			['vvt', 'vvt'],
 			['tom', 'tom-katalog']

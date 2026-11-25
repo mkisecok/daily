@@ -8,6 +8,7 @@ import { text } from '../i18n.js';
 import type { Localized } from '../types.js';
 import {
 	COMPLIANCE,
+	RISK_SOURCES,
 	SCALE,
 	assessRisks,
 	definition,
@@ -94,6 +95,12 @@ export function dsfaParts(record: RecordView, locale: string, titles: Titles = {
 	const unrated = risks.filter((risk) => !risk.before);
 	const threats = (ids: string[]) =>
 		ids.map((id) => `${id} ${threatById(id) ? t(threatById(id)!.title) : ''}`.trim()).join('; ');
+	const sources = (values: string[]) =>
+		values
+			.map((value) => RISK_SOURCES.find((source) => source.value === value))
+			.filter((source) => source !== undefined)
+			.map((source) => t(source.label))
+			.join(', ');
 	const notRated: PrintRow[] =
 		unrated.length > 0
 			? [row(L('Nicht bewertet', 'Not rated'), unrated.map((risk) => t(risk.title)).join(', '))]
@@ -123,6 +130,7 @@ export function dsfaParts(record: RecordView, locale: string, titles: Titles = {
 			title: t(L('1. Gegenstand und Vorbereitung', '1. Subject and preparation')),
 			rows: [
 				field('vvt'),
+				field('fachbereich'),
 				field('umfang'),
 				field('team'),
 				row(L('Anlass der DSFA', 'Reason for the DPIA'), value('anlass') || screened)
@@ -136,7 +144,18 @@ export function dsfaParts(record: RecordView, locale: string, titles: Titles = {
 					'2. Systematic description (Art. 35(7)(a) GDPR)'
 				)
 			),
-			rows: [field('verarbeitung'), field('zwecke'), field('akteure')]
+			rows: [
+				field('verarbeitung'),
+				field('ausmass'),
+				field('zugriffe'),
+				field('neue_technologien'),
+				...(data.neue_technologien === true ? [field('neue_technologien_details')] : []),
+				field('zwecke'),
+				field('akteure'),
+				field('schutzbeduerftig'),
+				...(data.schutzbeduerftig === true ? [field('schutzbeduerftige_gruppen')] : []),
+				field('grundrechte')
+			]
 		},
 		{
 			id: 'notwendigkeit',
@@ -180,6 +199,7 @@ export function dsfaParts(record: RecordView, locale: string, titles: Titles = {
 						lines(
 							[L('Einstufung', 'Rating'), rating(risk.initial, risk.before)],
 							[L('Risiko im Einzelfall', 'Risk in this case'), value(`${risk.id}_beschreibung`)],
+							[L('Risikoquellen', 'Sources of risk'), sources(risk.sources)],
 							[L('Gefährdungen', 'Threats'), threats(risk.threats)],
 							[L('Begründung', 'Reasons'), value(`${risk.id}_begruendung`)]
 						)

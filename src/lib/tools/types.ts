@@ -18,6 +18,7 @@ export type Law =
 	| 'EDPB'
 	| 'DSK'
 	| 'WP29'
+	| 'BfDI'
 	| 'EuGH'
 	| 'BVerwG'
 	| 'StGB'
