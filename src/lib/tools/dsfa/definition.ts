@@ -35,6 +35,24 @@ export function riskLevel(likelihood: number, severity: number): RiskLevel {
 	return MATRIX[severity][likelihood - 1];
 }
 
+/**
+ * where a risk comes from, as the BfDI's method for risk assessment (annex
+ * to its DSFA template) and DSK Kurzpapier Nr. 18 name the sources: the
+ * processing as planned first, because it harms people too
+ */
+export const RISK_SOURCES = [
+	{ value: 'geplant', label: L('Geplante Verarbeitung', 'Processing as planned') },
+	{ value: 'bearbeitungsfehler', label: L('Bearbeitungsfehler', 'Handling errors') },
+	{
+		value: 'missbrauch',
+		label: L('Missbrauch durch Beschäftigte', 'Misuse by staff')
+	},
+	{ value: 'empfaenger', label: L('Fehler bei Empfängern', 'Errors at recipients') },
+	{ value: 'technik', label: L('Technische Fehler', 'Technical faults') },
+	{ value: 'angriff', label: L('Angriffe von außen', 'Attacks from outside') },
+	{ value: 'hoehere_gewalt', label: L('Höhere Gewalt', 'Force majeure') }
+];
+
 /** a risk section: one SDM protection goal and what can go wrong with it */
 export type RiskSection = FieldSection & { goal: SdmGoal };
 
@@ -60,12 +78,23 @@ function risk(id: string, goal: SdmGoal, title: Localized, help: Localized): Ris
 				cite: { law: 'DSK', ref: 'Kurzpapier Nr. 18' }
 			},
 			{
+				id: `${id}_quellen`,
+				type: 'multiselect',
+				label: L('Risikoquellen', 'Sources of risk'),
+				help: L(
+					'Woraus der Schaden entstehen kann. Auch die Verarbeitung, die wie geplant läuft, kann Betroffenen schaden.',
+					'What the harm can arise from. The processing running as planned can also harm data subjects.'
+				),
+				options: RISK_SOURCES,
+				cite: { law: 'BfDI', ref: 'Anlage zum Muster DSFA' }
+			},
+			{
 				id: `${id}_beschreibung`,
 				type: 'textarea',
 				label: L('Risiko im Einzelfall', 'Risk in this case'),
 				help: L(
-					'Welcher Schaden kann den Betroffenen entstehen, durch welches Ereignis und aus welcher Risikoquelle? Auch Risiken, die entstehen, wenn alles wie geplant läuft, etwa Überwachungsdruck oder Profilbildung, nicht nur Fehler und Angriffe.',
-					'What harm can the data subjects suffer, through which event and from which source of risk? Include risks that arise when everything works as planned, such as pressure from monitoring or profiling, not only faults and attacks.'
+					'Welcher Schaden kann den Betroffenen entstehen und durch welches Ereignis? Etwa Diskriminierung, Identitätsdiebstahl oder -betrug, finanzieller Verlust, Rufschädigung, wirtschaftliche oder gesellschaftliche Nachteile, erschwerte Ausübung von Rechten, Einschüchterung, die Menschen von der Wahrnehmung ihrer Rechte abhält, Profilbildung oder körperlicher Schaden durch falsche oder offengelegte Daten.',
+					'What harm can the data subjects suffer, and through which event? For example discrimination, identity theft or fraud, financial loss, damage to reputation, economic or social disadvantage, rights made harder to exercise, a chilling effect that keeps people from using their rights, profiling, or physical harm from wrong or disclosed data.'
 				)
 			},
 			{
@@ -80,8 +109,8 @@ function risk(id: string, goal: SdmGoal, title: Localized, help: Localized): Ris
 				type: 'textarea',
 				label: L('Begründung der Einstufung', 'Reasons for the rating'),
 				help: L(
-					'Die Einordnung in die Stufen ist zu begründen, nach Art, Umfang, Umständen und Zwecken der Verarbeitung.',
-					'The rating must be justified by the nature, scope, context and purposes of the processing.'
+					'Die Einordnung in die Stufen ist zu begründen, nach Art, Umfang, Umständen und Zwecken der Verarbeitung. Für die Schwere zählen, wie weit und wie heimlich in Rechte eingegriffen wird, und wie empfindlich Daten und Personen sind, etwa bei sensiblen Daten, Berufsgeheimnisträgern oder besonders geschützten Grundrechten.',
+					'The rating must be justified by the nature, scope, context and purposes of the processing. For severity, what counts is how widely and how covertly rights are affected, and how sensitive the data and the people are, e.g. sensitive data, holders of professional secrets or specially protected fundamental rights.'
 				),
 				cite: { law: 'DSK', ref: 'Kurzpapier Nr. 18' }
 			},
@@ -177,6 +206,89 @@ export const RISKS: RiskSection[] = [
 			'Intervenability: data subjects cannot exercise their rights or intervene, e.g. in automated decisions.'
 		)
 	)
+];
+
+/** the groups the BfDI's list under Art. 35(4) names as in need of protection */
+const VULNERABLE = [
+	{ value: 'kinder', label: L('Kinder', 'Children') },
+	{
+		value: 'beschaeftigte',
+		label: L(
+			'Beschäftigte, wenn der Arbeitgeber oder Dienstherr verarbeitet',
+			'Employees, where the employer processes'
+		)
+	},
+	{
+		value: 'schutzbedarf',
+		label: L(
+			'Menschen mit besonderem Schutzbedarf, etwa Patienten, psychisch Kranke, Ältere, Asylsuchende',
+			'People with special protection needs, e.g. patients, the mentally ill, older people, asylum seekers'
+		)
+	},
+	{
+		value: 'machtgefaelle',
+		label: L(
+			'Menschen in deutlich schwächerer Stellung gegenüber dem Verantwortlichen',
+			'People in a clearly weaker position than the controller'
+		)
+	}
+];
+
+/** the rights of the EU Charter a processing most often interferes with */
+const RIGHTS = [
+	{
+		value: 'art7',
+		label: L('Privat- und Familienleben (Art. 7 GRCh)', 'Private and family life (Art. 7 CFR)')
+	},
+	{
+		value: 'art8',
+		label: L(
+			'Schutz personenbezogener Daten (Art. 8 GRCh)',
+			'Protection of personal data (Art. 8 CFR)'
+		)
+	},
+	{
+		value: 'art10',
+		label: L(
+			'Gedanken-, Gewissens- und Religionsfreiheit (Art. 10 GRCh)',
+			'Freedom of thought, conscience and religion (Art. 10 CFR)'
+		)
+	},
+	{
+		value: 'art11',
+		label: L(
+			'Meinungs- und Informationsfreiheit (Art. 11 GRCh)',
+			'Freedom of expression and information (Art. 11 CFR)'
+		)
+	},
+	{
+		value: 'art12',
+		label: L(
+			'Versammlungs- und Vereinigungsfreiheit (Art. 12 GRCh)',
+			'Freedom of assembly and association (Art. 12 CFR)'
+		)
+	},
+	{
+		value: 'art15',
+		label: L('Berufsfreiheit (Art. 15 GRCh)', 'Freedom to choose an occupation (Art. 15 CFR)')
+	},
+	{
+		value: 'art21',
+		label: L('Nichtdiskriminierung (Art. 21 GRCh)', 'Non-discrimination (Art. 21 CFR)')
+	},
+	{
+		value: 'art24',
+		label: L('Rechte des Kindes (Art. 24 GRCh)', 'Rights of the child (Art. 24 CFR)')
+	},
+	{
+		value: 'art31',
+		label: L('Gerechte Arbeitsbedingungen (Art. 31 GRCh)', 'Fair working conditions (Art. 31 CFR)')
+	},
+	{ value: 'art35', label: L('Gesundheitsschutz (Art. 35 GRCh)', 'Health care (Art. 35 CFR)') },
+	{
+		value: 'art47',
+		label: L('Wirksamer Rechtsbehelf (Art. 47 GRCh)', 'Effective remedy (Art. 47 CFR)')
+	}
 ];
 
 /** how far a safeguard is in place, as the EDPB DPIA template (2026) grades it */
@@ -307,6 +419,8 @@ export type AssessedRisk = {
 	title: Localized;
 	/** ids of the threats chosen as relevant, e.g. `G 0.23` */
 	threats: string[];
+	/** where the risk comes from, values of `RISK_SOURCES` */
+	sources: string[];
 	/** the rating is explained, as DSK Kurzpapier Nr. 18 asks */
 	justified: boolean;
 	before: RiskLevel | null;
@@ -329,12 +443,14 @@ export function assessRisks(record: RecordView): AssessedRisk[] {
 		const rw = num(record, `${id}_rw`) ?? w;
 		const rs = num(record, `${id}_rs`) ?? s;
 		const threats = record.data[`${id}_gefaehrdungen`];
+		const sources = record.data[`${id}_quellen`];
 		const reasons = record.data[`${id}_begruendung`];
 		return {
 			id,
 			goal,
 			title,
 			threats: Array.isArray(threats) ? threats : [],
+			sources: Array.isArray(sources) ? sources : [],
 			justified: typeof reasons === 'string' && reasons.trim() !== '',
 			before: w && s ? riskLevel(w, s) : null,
 			after: rw && rs ? riskLevel(rw, rs) : null,
@@ -381,7 +497,7 @@ const PENDING = L(
 /** a data protection impact assessment from draft to sign-off (Art. 35, 36) */
 export const definition: RecordToolDefinition = {
 	slug: 'dsfa',
-	version: 5,
+	version: 6,
 	intro: L(
 		'Eine Datenschutz-Folgenabschätzung je Verarbeitungsvorgang mit voraussichtlich hohem Risiko nach dem Ablauf des DSK-Kurzpapiers Nr. 5: Umfang, Beschreibung, Akteure, Notwendigkeit, Rechtsgrundlagen, Risiken je Gewährleistungsziel des Standard-Datenschutzmodells vor und nach Abhilfemaßnahmen, Entscheidung und gegebenenfalls Konsultation der Aufsichtsbehörde. Zu jedem Ziel lassen sich die Gefährdungen nach BSI-Standard 200-3 und datenschutzspezifische Ereignisse auswählen; die Bewertung folgt der Risikomatrix der DSK, die Druckfassung dient als Bericht.',
 		'One DPIA per processing operation likely to result in a high risk, following the steps of DSK Kurzpapier Nr. 5: scope, description, actors, necessity, legal bases, risks per protection goal of the Standard Data Protection Model before and after measures, decision and, where needed, consultation of the authority. For each goal the threats of BSI-Standard 200-3 and data protection events can be chosen; the rating follows the DSK risk matrix and the print version serves as the report.'
@@ -393,7 +509,8 @@ export const definition: RecordToolDefinition = {
 		{ law: 'DSK', ref: 'Kurzpapier Nr. 18' },
 		{ law: 'DSK', ref: 'Standard-Datenschutzmodell V3.1a, D3' },
 		{ law: 'WP29', ref: 'WP 248 rev. 01' },
-		{ law: 'EDPB', ref: 'DSFA-Vorlage 2026' }
+		{ law: 'EDPB', ref: 'DSFA-Vorlage 2026' },
+		{ law: 'BfDI', ref: 'Muster mit Hinweisen DSFA und Anlage' }
 	],
 	titleField: 'bezeichnung',
 	sections: [
@@ -430,6 +547,16 @@ export const definition: RecordToolDefinition = {
 					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 7 lit. d' }
 				},
 				{
+					id: 'fachbereich',
+					type: 'text',
+					label: L('Verantwortlicher Fachbereich', 'Responsible unit'),
+					help: L(
+						'Die Stelle im Haus, der die Verarbeitung gehört und die für sie einsteht; nicht das DSFA-Team.',
+						'The unit in the organisation that owns the processing and answers for it; not the DPIA team.'
+					),
+					cite: { law: 'BfDI', ref: 'Muster DSFA, A.3' }
+				},
+				{
 					id: 'umfang',
 					type: 'textarea',
 					label: L('Beurteilungsumfang', 'Scope of the assessment'),
@@ -451,6 +578,48 @@ export const definition: RecordToolDefinition = {
 						'Data, data subjects, recipients, data flows and retention, and the assets used: systems and software, networks, people involved and paper records.'
 					),
 					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 7 lit. a' }
+				},
+				{
+					id: 'ausmass',
+					type: 'textarea',
+					label: L(
+						'Umfang und Umstände der Verarbeitung',
+						'Scale and circumstances of the processing'
+					),
+					help: L(
+						'Wie viele Personen und welcher Anteil der Gruppe erfasst werden, welche Datenmenge, welches räumliche Ausmaß. Dazu die Umstände: verdeckte Erhebung, Benachrichtigung der Betroffenen, Fernzugriff und mobiles Arbeiten, zentrale oder verteilte Speicherung, Such- und Verknüpfungsmöglichkeiten.',
+						'How many people and which share of the group are covered, how much data, what geographic reach. And the circumstances: covert collection, whether data subjects are notified, remote access and mobile work, central or distributed storage, ways to search and link the data.'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 1' }
+				},
+				{
+					id: 'zugriffe',
+					type: 'textarea',
+					label: L('Zugriffe und Schnittstellen', 'Access and interfaces'),
+					help: L(
+						'Wer im Haus worauf zugreifen darf, welche Stellen von außen abrufen, etwa automatisiert, und welche Schnittstellen zu anderen Systemen bestehen.',
+						'Who in the organisation may access what, which bodies retrieve data from outside, e.g. automatically, and which interfaces to other systems exist.'
+					),
+					cite: { law: 'BfDI', ref: 'Muster DSFA, B.11' }
+				},
+				{
+					id: 'neue_technologien',
+					type: 'boolean',
+					label: L(
+						'Neue Technologien oder organisatorische Lösungen',
+						'New technologies or organisational solutions'
+					),
+					help: L(
+						'Technik oder Organisation, die dem Stand der Technik voraus ist, sodass sich die Folgen für Betroffene und Gesellschaft schwer abschätzen lassen, etwa KI, Biometrie oder neue Datenmodelle.',
+						'Technology or organisation ahead of the state of the art, so the effects on data subjects and society are hard to assess, e.g. AI, biometrics or new data models.'
+					),
+					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 1' }
+				},
+				{
+					id: 'neue_technologien_details',
+					type: 'textarea',
+					label: L('Welche, und was daran neu ist', 'Which, and what is new about it'),
+					when: (data) => data.neue_technologien === true
 				},
 				{
 					id: 'zwecke',
@@ -477,6 +646,33 @@ export const definition: RecordToolDefinition = {
 						'Bodies involved, processors and recipients, the groups of data subjects and how they are involved, e.g. through the works council.'
 					),
 					cite: { law: 'DSK', ref: 'Kurzpapier Nr. 5, Schritt 4' }
+				},
+				{
+					id: 'schutzbeduerftig',
+					type: 'boolean',
+					label: L(
+						'Besonders schutzbedürftige Personen betroffen',
+						'Especially vulnerable people affected'
+					),
+					cite: { law: 'WP29', ref: 'WP 248 rev. 01, Kriterium 7' }
+				},
+				{
+					id: 'schutzbeduerftige_gruppen',
+					type: 'multiselect',
+					label: L('Welche Gruppen', 'Which groups'),
+					options: VULNERABLE,
+					when: (data) => data.schutzbeduerftig === true
+				},
+				{
+					id: 'grundrechte',
+					type: 'multiselect',
+					label: L('Betroffene Rechte und Freiheiten', 'Rights and freedoms affected'),
+					help: L(
+						'Die Grundrechte, in die die Verarbeitung eingreifen kann; ihre Risiken bewerten die Abschnitte unten.',
+						'The fundamental rights the processing can interfere with; the sections below assess the risks to them.'
+					),
+					options: RIGHTS,
+					cite: { law: 'DSGVO', ref: 'Art. 35 Abs. 7 lit. c' }
 				},
 				{
 					id: 'schwellwert',
@@ -821,10 +1017,19 @@ export const definition: RecordToolDefinition = {
 			'Vier Kameras an den Laderampen des Lagers, Aufzeichnung rund um die Uhr, Speicherung 72 Stunden.',
 		verarbeitung:
 			'Die Kameras zeichnen den Bereich vor den Rampen auf. Zugriff auf Aufnahmen nur nach einem Vorfall, durch die Lagerleitung gemeinsam mit dem Betriebsrat.',
+		fachbereich: 'Logistik, Lagerleitung',
+		ausmass:
+			'Rund 60 Beschäftigte im Lager und täglich etwa 40 Fahrer; erfasst werden nur die vier Rampen. Die Kameras sind sichtbar und angekündigt, die Aufnahmen liegen auf einem Rekorder vor Ort, ohne Fernzugriff und ohne Verknüpfung mit anderen Systemen.',
+		zugriffe:
+			'Lagerleitung und Betriebsrat gemeinsam, nur nach einem Vorfall; keine Abrufe von außen, keine Schnittstellen. Herausgabe an die Polizei nur bei einer Anzeige.',
+		neue_technologien: false,
 		zwecke:
 			'Aufklärung und Abschreckung von Diebstählen nach zwei Vorfällen im Jahr 2026; Wahrung des Hausrechts.',
 		team: 'Datenschutzbeauftragte, Lagerleitung, IT, Betriebsrat',
 		akteure: 'Beschäftigte im Lager, Fahrer von Speditionen, Besucher.',
+		schutzbeduerftig: true,
+		schutzbeduerftige_gruppen: ['beschaeftigte'],
+		grundrechte: ['art7', 'art8', 'art31'],
 		anlass: 'Systematische Überwachung von Beschäftigten an ihrem Arbeitsplatz.',
 		notwendigkeit:
 			'Mildere Mittel (bessere Beleuchtung, verschlossene Rampen außerhalb der Schichten) wurden geprüft und reichen allein nicht. Pausenbereiche und der Weg zu den Sozialräumen bleiben ausgenommen.',
@@ -848,6 +1053,7 @@ export const definition: RecordToolDefinition = {
 		einhaltung_details:
 			'Der Wartungsvertrag mit dem Errichter der Kameras ist noch um eine Vereinbarung nach Art. 28 zu ergänzen.',
 		vertraulichkeit_gefaehrdungen: ['G 0.14', 'G 0.19'],
+		vertraulichkeit_quellen: ['missbrauch', 'angriff'],
 		vertraulichkeit_beschreibung: 'Unbefugte sehen Aufnahmen ein oder geben sie weiter.',
 		vertraulichkeit_w: '2',
 		vertraulichkeit_s: '3',
@@ -856,6 +1062,7 @@ export const definition: RecordToolDefinition = {
 		vertraulichkeit_rw: '1',
 		vertraulichkeit_rs: '3',
 		zweck_gefaehrdungen: ['G 0.29', 'DS 5'],
+		zweck_quellen: ['geplant', 'missbrauch'],
 		zweck_beschreibung: 'Die Aufnahmen werden zur Leistungs- oder Verhaltenskontrolle genutzt.',
 		zweck_w: '3',
 		zweck_s: '3',
@@ -864,6 +1071,7 @@ export const definition: RecordToolDefinition = {
 		zweck_rw: '1',
 		zweck_rs: '3',
 		transparenz_gefaehrdungen: ['DS 1', 'DS 2'],
+		transparenz_quellen: ['geplant'],
 		transparenz_beschreibung:
 			'Fahrer und Besucher wissen nicht, dass und wie lange aufgezeichnet wird.',
 		transparenz_w: '3',

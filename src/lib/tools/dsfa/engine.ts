@@ -121,8 +121,23 @@ function assess(record: RecordView): QuestionnaireResult {
 		});
 
 	const missing: Localized[] = [];
-	if (isEmpty(record.data.verarbeitung) || isEmpty(record.data.zwecke)) {
-		missing.push(L('Beschreibung und Zwecke (lit. a)', 'description and purposes ((a))'));
+	if (
+		isEmpty(record.data.verarbeitung) ||
+		isEmpty(record.data.ausmass) ||
+		isEmpty(record.data.zwecke)
+	) {
+		missing.push(
+			L(
+				'Beschreibung, Umfang, Umstände und Zwecke (lit. a)',
+				'description, scale, circumstances and purposes ((a))'
+			)
+		);
+	}
+	if (record.data.neue_technologien === true && !filled(record.data.neue_technologien_details)) {
+		missing.push(L('was an der Technologie neu ist', 'what is new about the technology'));
+	}
+	if (record.data.schutzbeduerftig === true && isEmpty(record.data.schutzbeduerftige_gruppen)) {
+		missing.push(L('die schutzbedürftigen Gruppen', 'the vulnerable groups'));
 	}
 	if (isEmpty(record.data.notwendigkeit)) {
 		missing.push(
@@ -144,11 +159,21 @@ function assess(record: RecordView): QuestionnaireResult {
 			)
 		);
 	}
+	if (isEmpty(record.data.grundrechte)) {
+		missing.push(
+			L('die betroffenen Rechte und Freiheiten (lit. c)', 'the rights and freedoms affected ((c))')
+		);
+	}
 	const unrated = risks.filter((r) => r.before === null);
 	if (unrated.length > 0)
 		missing.push(L('Bewertung aller Risiken (lit. c)', 'rating of all risks ((c))'));
 	else if (risks.some((r) => !r.justified))
 		missing.push(L('Begründung der Einstufungen (lit. c)', 'reasons for the ratings ((c))'));
+	if (risks.some((r) => r.before && r.sources.length === 0)) {
+		missing.push(
+			L('Risikoquellen der bewerteten Risiken (lit. c)', 'sources of the rated risks ((c))')
+		);
+	}
 	const unaddressed = risks.filter(
 		(r) => r.before && r.before !== 'gering' && isEmpty(record.data[`${r.id}_massnahmen`])
 	);
@@ -207,13 +232,13 @@ function assess(record: RecordView): QuestionnaireResult {
 		);
 	}
 
-	const unsourced = risks.filter((r) => r.before && r.threats.length === 0);
-	if (unsourced.length > 0) {
-		const list = (lang: 'de' | 'en') => unsourced.map((r) => r.title[lang]).join(', ');
+	const threatless = risks.filter((r) => r.before && r.threats.length === 0);
+	if (threatless.length > 0) {
+		const list = (lang: 'de' | 'en') => threatless.map((r) => r.title[lang]).join(', ');
 		notes.push(
 			L(
-				`Für ${list('de')} sind keine Gefährdungen ausgewählt; die Risikoquellen sollten benannt sein (DSK Kurzpapier Nr. 5, Schritt 7).`,
-				`No threats are chosen for ${list('en')}; the sources of risk should be named (DSK Kurzpapier Nr. 5, step 7).`
+				`Für ${list('de')} sind keine Gefährdungen ausgewählt; sie helfen, die möglichen Ereignisse vollständig zu erfassen (DSK Kurzpapier Nr. 5, Schritt 7).`,
+				`No threats are chosen for ${list('en')}; they help to cover the possible events completely (DSK Kurzpapier Nr. 5, step 7).`
 			)
 		);
 	}
