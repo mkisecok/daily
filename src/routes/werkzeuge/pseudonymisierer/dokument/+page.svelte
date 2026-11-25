@@ -5,6 +5,7 @@
 	import { DocxError, openDocx } from '#lib/tools/pseudonymisierer/document/docx.js';
 	import type { CleanReport } from '#lib/tools/pseudonymisierer/document/clean.js';
 	import { openPdf, PdfError, type OpenedPdf } from '#lib/tools/pseudonymisierer/document/pdf.js';
+	import { SAMPLE_NAME, sampleDocx } from '#lib/tools/pseudonymisierer/document/sample.js';
 	import {
 		documentPages,
 		trimmed,
@@ -197,10 +198,15 @@
 			status = { text: m.anon_err_too_large({ name }), error: true };
 			return;
 		}
+		await open(name, kind, async () => new Uint8Array(await file.arrayBuffer()));
+	}
+
+	/** reads a file the user chose, or the sample */
+	async function open(name: string, kind: 'docx' | 'pdf', read: () => Promise<Uint8Array>) {
 		reading = true;
 		status = { text: m.anon_reading(), error: false };
 		try {
-			const bytes = new Uint8Array(await file.arrayBuffer());
+			const bytes = await read();
 			if (kind === 'pdf') {
 				const pdf = await openPdf(bytes);
 				doc = { kind, name, bytes, text: pdf.layout.text, pdf };
@@ -254,6 +260,14 @@
 			{m.anon_doc_upload()}
 			<input type="file" accept=".docx,.pdf" disabled={reading} onchange={load} />
 		</label>
+		<button
+			type="button"
+			class="quiet"
+			data-demo="sample"
+			disabled={reading}
+			onclick={() => open(SAMPLE_NAME, 'docx', async () => sampleDocx())}
+			>{m.anon_doc_sample()}</button
+		>
 		<span class="status" class:error={status?.error} aria-live="polite">{status?.text ?? ''}</span>
 	</div>
 	<p class="hint">

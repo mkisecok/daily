@@ -1,7 +1,7 @@
 <!--
 	@component
 	Switches the Pseudonymisierer between its two ways of working: text for an
-	AI chat, and a Word document that comes back as a pseudonymised file.
+	AI chat, and a Word or PDF document that comes back as a pseudonymised file.
 -->
 <script lang="ts">
 	import { localized } from '#lib/i18n/links.js';

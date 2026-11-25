@@ -8,6 +8,7 @@ import type { RuleKey } from '../types.js';
 import { openDocx } from './docx.js';
 import { makeDocx, p } from './fixture.js';
 import { fingerprint, KeyError, lockKey, unlockKey } from './key.js';
+import { sampleDocx } from './sample.js';
 import {
 	documentPages,
 	pseudonymiseDocx,
@@ -206,5 +207,22 @@ describe('names', () => {
 			'Gutachten_NAME_1'
 		);
 		expect(scrubbedName('Brief', { '«NAME_1»': 'Al' })).toBe('Brief');
+	});
+});
+
+describe('the sample letter', () => {
+	it('opens as two pages with a name, an address, an IBAN and an email to find', () => {
+		const opened = openDocx(sampleDocx(), { clean: true });
+		expect(documentPages(opened.text)).toHaveLength(2);
+		const spans = detect(opened.text, new Set<RuleKey>(RULE_KEYS), new Map(), new Set());
+		const found = buildRun(opened.text, spans).findings.map((finding) => finding.original);
+		expect(found).toEqual(
+			expect.arrayContaining([
+				'Lena Müller-Lüdenscheidt',
+				'DE89 3704 0044 0532 0130 00',
+				'lena.mueller@example.de'
+			])
+		);
+		expect(opened.text).toContain('wegen einer depressiven Episode');
 	});
 });

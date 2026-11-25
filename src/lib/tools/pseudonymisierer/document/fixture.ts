@@ -1,6 +1,6 @@
 import { strToU8, zipSync } from 'fflate';
 
-/** test helper: a small Word file put together from its parts */
+/** a small Word file put together from its parts, for the tests and the sample document */
 
 const NS =
 	'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"';

@@ -1,7 +1,8 @@
 <!--
 	@component
 	The layer of a running tool demo, above the page: a cursor and a ring
-	around what the demo points at, its caption with the time used, and at the
+	around what the demo points at, its caption with the step and the time
+	it has run, and at the
 	end of a record demo the entry as it would look once saved. While it runs,
 	clicks on the page do nothing and Escape ends it; at the end it offers to
 	try the tool or to close. Mounted once in the root layout.
@@ -15,7 +16,7 @@
 	import { text } from '../../i18n.js';
 	import { getRecordTool } from '../../registry.js';
 	import Verdict from '../Verdict.svelte';
-	import { demo, DEMO_MS } from './demo.svelte.js';
+	import { demo } from './demo.svelte.js';
 
 	/** the entry the demo would save, never stored */
 	const shown = $derived.by(() => {
@@ -44,7 +45,10 @@
 		};
 	});
 
-	const seconds = Math.round(DEMO_MS / 1000);
+	/** the time the demo has run, as 0:14 */
+	const clock = $derived(
+		`${Math.floor(demo.seconds / 60)}:${String(demo.seconds % 60).padStart(2, '0')}`
+	);
 
 	function onkeydown(event: KeyboardEvent) {
 		if (event.key === 'Escape' && demo.active) {
@@ -115,9 +119,11 @@
 				<p class="text">{demo.caption}</p>
 				<div class="foot">
 					<span class="meter" aria-hidden="true"
-						><span style:width="{demo.elapsed * 100}%"></span></span
+						><span style:width="{demo.total ? (demo.step / demo.total) * 100 : 0}%"></span></span
 					>
-					<span class="time">{Math.round(demo.elapsed * seconds)}s / {seconds}s</span>
+					<span class="time"
+						>{m.demo_progress({ step: demo.step, total: demo.total })} · {clock}</span
+					>
 					<button type="button" class="button quiet" onclick={() => demo.end()}
 						>{m.demo_stop()}</button
 					>

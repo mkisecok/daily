@@ -3,7 +3,13 @@ import type { RecordData } from '#lib/records/types.js';
 import type { ToolManifest } from '../../types.js';
 
 /** a demo never runs longer than this; past it every pause shrinks to a blink */
-export const DEMO_MS = 40_000;
+const DEMO_MS = 90_000;
+
+/**
+ * one step of a demo, mostly one caption. A step whose element never
+ * appears is left out, and the demo goes on with the next.
+ */
+export type Step = (demo: Demo) => Promise<void>;
 
 /** the end of a record demo: the entry as it would look once saved */
 export type DemoResult = { slug: string; data: RecordData };
@@ -39,8 +45,11 @@ class Demo {
 	tool = $state<ToolManifest | null>(null);
 	phase = $state<'idle' | 'running' | 'done'>('idle');
 	caption = $state('');
-	/** share of the time budget used, 0 to 1 */
-	elapsed = $state(0);
+	/** the step playing, from 1, of `total` */
+	step = $state(0);
+	total = $state(0);
+	/** seconds since the demo began */
+	seconds = $state(0);
 	cursor = $state<{ x: number; y: number } | null>(null);
 	ring = $state<Box | null>(null);
 	result = $state<DemoResult | null>(null);
@@ -58,8 +67,8 @@ class Demo {
 		return this.phase !== 'idle';
 	}
 
-	/** plays `script` from the page the user is on; `tryHref` is where to try it after */
-	async start(tool: ToolManifest, script: (demo: Demo) => Promise<void>, tryHref: string) {
+	/** plays `steps` from the page the user is on; `tryHref` is where to try it after */
+	async start(tool: ToolManifest, steps: Step[], tryHref: string) {
 		if (this.active) return;
 		this.tryHref = tryHref;
 		try {
@@ -74,22 +83,28 @@ class Demo {
 		this.result = null;
 		this.cursor = { x: innerWidth / 2, y: innerHeight / 2 };
 		this.#started = performance.now();
-		this.elapsed = 0;
+		this.seconds = 0;
+		this.step = 0;
+		this.total = steps.length;
 		this.#timer = setInterval(() => {
-			this.elapsed = Math.min(1, (performance.now() - this.#started) / DEMO_MS);
-		}, 200);
+			this.seconds = Math.floor((performance.now() - this.#started) / 1000);
+		}, 250);
 		const run = ++this.#run;
-		try {
-			await script(this);
-			if (run === this.#run) this.#finish();
-		} catch (error) {
-			if (!(error instanceof Stopped) && run === this.#run) this.#finish();
+		for (const step of steps) {
+			if (run !== this.#run) return;
+			this.step++;
+			try {
+				await step(this);
+			} catch (error) {
+				if (error instanceof Stopped) return;
+				console.warn(error);
+			}
 		}
+		if (run === this.#run) this.#finish();
 	}
 
 	#finish() {
 		clearInterval(this.#timer);
-		this.elapsed = 1;
 		this.phase = 'done';
 		this.#target = null;
 		this.ring = null;
@@ -138,14 +153,14 @@ class Demo {
 	}
 
 	/** the first element matching `selector`, waiting for it to appear */
-	async find<T extends Element = HTMLElement>(selector: string, timeout = 6000): Promise<T> {
+	async find<T extends Element = HTMLElement>(selector: string, timeout = 5000): Promise<T> {
 		const run = this.#run;
 		const until = performance.now() + timeout;
 		for (;;) {
 			this.#check(run);
 			const found = document.querySelector<T & Element>(selector);
 			if (found) return found;
-			// a page without the element ends the demo early, at its last step
+			// a page without the element skips the step
 			if (performance.now() > until) throw new Error(`demo: ${selector} not found`);
 			await new Promise((done) => setTimeout(done, 80));
 		}
@@ -210,8 +225,50 @@ class Demo {
 		}
 	}
 
+	/**
+	 * drags the pointer across `element` from one point to another, given as
+	 * shares of its size, as a person drawing a box would
+	 */
+	async drag(element: HTMLElement, from: [number, number], to: [number, number], ms = 900) {
+		const run = this.#run;
+		const at = ([x, y]: [number, number]) => {
+			const box = element.getBoundingClientRect();
+			return { x: box.left + box.width * x, y: box.top + box.height * y };
+		};
+		const fire = (type: string, point: { x: number; y: number }) =>
+			element.dispatchEvent(
+				new PointerEvent(type, {
+					bubbles: true,
+					pointerId: 1,
+					pointerType: 'mouse',
+					isPrimary: true,
+					button: 0,
+					buttons: type === 'pointerup' ? 0 : 1,
+					clientX: point.x,
+					clientY: point.y
+				})
+			);
+		const start = at(from);
+		this.cursor = start;
+		await this.wait(650);
+		fire('pointerdown', start);
+		const steps = 12;
+		for (let n = 1; n <= steps; n++) {
+			const point = at([
+				from[0] + ((to[0] - from[0]) * n) / steps,
+				from[1] + ((to[1] - from[1]) * n) / steps
+			]);
+			fire('pointermove', point);
+			this.cursor = point;
+			await new Promise((done) => setTimeout(done, ms / steps));
+			this.#check(run);
+		}
+		fire('pointerup', at(to));
+	}
+
 	async navigate(href: string) {
 		const run = this.#run;
+		this.result = null;
 		// eslint-disable-next-line svelte/no-navigation-without-resolve -- the scripts pass resolved paths
 		await goto(href);
 		this.#check(run);

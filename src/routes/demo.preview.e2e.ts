@@ -57,3 +57,38 @@ test('preview: the SDM cube demo turns the cube and pulls a slice out, in 40 sec
 	await page.waitForLoadState('networkidle');
 	expect(await page.evaluate(storage)).toBe(before);
 });
+
+test('preview: the Pseudonymisierer demo goes from text to a Word letter with a boxed passage', async ({
+	page
+}) => {
+	test.setTimeout(90_000);
+	await page.goto('werkzeuge/pseudonymisierer/', { waitUntil: 'networkidle' });
+	const before = await page.evaluate(storage);
+	await page.getByRole('button', { name: "So funktioniert's" }).click();
+	const caption = page.locator('.demo-layer > .caption');
+	await expect(caption).toContainText('Schritt 1 von 15');
+	await expect(page.locator('#anon-restored')).toHaveValue(/Lena Müller-Lüdenscheidt/, {
+		timeout: 25_000
+	});
+	await expect(page.locator('ul.variables')).toContainText('«BEFUND_1»', { timeout: 30_000 });
+	await expect(caption).toContainText('Schritt 15 von 15', { timeout: 20_000 });
+	await expect(caption).toContainText("Das war's", { timeout: 15_000 });
+	await page.getByRole('button', { name: 'Schließen' }).click();
+	await expect(page.locator('.demo-layer')).toHaveCount(0);
+	await page.waitForLoadState('networkidle');
+	expect(await page.evaluate(storage)).toBe(before);
+});
+
+test('preview: the DSFA demo walks through the risk picture and ends at the list', async ({
+	page
+}) => {
+	test.setTimeout(90_000);
+	await page.goto('werkzeuge/dsfa/', { waitUntil: 'networkidle' });
+	await page.getByRole('button', { name: "So funktioniert's" }).click();
+	const caption = page.locator('.demo-layer > .caption');
+	await expect(caption).toContainText('Risikomatrix', { timeout: 30_000 });
+	await expect(caption).toContainText('Excel', { timeout: 10_000 });
+	await expect(caption).toContainText('in der Liste', { timeout: 20_000 });
+	await expect(page).toHaveURL(/dsfa\/eintraege\/?$/);
+	await expect(caption).toContainText("Das war's", { timeout: 15_000 });
+});
