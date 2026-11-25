@@ -484,7 +484,7 @@
 	"anon_doc_err_kind": "{name} ist weder eine Word- noch eine PDF-Datei. Text pseudonymisieren Sie in der Ansicht „Text“.",
 	"anon_doc_err_not_docx": "{name} ist keine lesbare Word-Datei (.docx).",
 	"anon_doc_err_password": "{name} ist mit einem Passwort geschützt. Heben Sie den Schutz auf und laden Sie die Datei erneut hoch.",
-	"anon_doc_err_scan": "{name} hat keine Textebene, vermutlich ein Scan. Gescannte Seiten kann das Werkzeug noch nicht lesen.",
+	"anon_doc_err_scan": "{name} hat keine Textebene, vermutlich ein Scan. Gescannte Seiten liest das Werkzeug nicht; nutzen Sie eine PDF mit Textebene oder die Word-Datei.",
 	"anon_doc_err_not_pdf": "{name} ist keine lesbare PDF-Datei.",
 	"anon_doc_sheet": "Seite {n}: Ziehen Sie einen Kasten über den Text, den Sie ersetzen möchten",
 	"anon_doc_pdf_rebuilt": "Die PDF wurde aus Bildern ihrer Seiten neu aufgebaut: Markiertes ist übermalt und steht auch nicht mehr unsichtbar in der Datei. Metadaten, Links, Formularfelder, Anhänge und Lesezeichen sind entfallen. Der Text liegt unsichtbar über den Seiten, mit Platzhaltern, damit sich die Datei durchsuchen und von einer KI lesen lässt.",
