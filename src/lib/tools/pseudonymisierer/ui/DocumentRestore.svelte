@@ -1,15 +1,18 @@
 <!--
 	@component
-	Turns a pseudonymised Word file back: the file, its key file and the key's
-	password in, the file with the original values out. Works on a file that
-	was edited since, and names the placeholders the key does not know.
+	Turns a pseudonymised Word or PDF file back: the file, its key file and
+	the key's password in, the file with the original values out. A Word file
+	may have been edited since; a PDF comes back as a readable copy with the
+	values written where they stood. Names the placeholders the key does not
+	know.
 -->
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
 	import { DocxError } from '../document/docx.js';
 	import { KeyError, unlockKey } from '../document/key.js';
 	import { restoreDocx, type Restored } from '../document/run.js';
-	import { MAX_FILE_BYTES } from '../ingest/index.js';
+	import { PdfError, restorePdf } from '../document/pdf.js';
+	import { kindOf, MAX_FILE_BYTES } from '../ingest/index.js';
 	import { DOCX_TYPE, saveFile } from './save.js';
 
 	let doc = $state<File | null>(null);
@@ -17,7 +20,7 @@
 	let password = $state('');
 	let busy = $state(false);
 	let failure = $state<string | null>(null);
-	let result = $state<(Restored & { name: string }) | null>(null);
+	let result = $state<(Restored & { name: string; kind: 'docx' | 'pdf' }) | null>(null);
 
 	const pick = (event: Event & { currentTarget: HTMLInputElement }) =>
 		event.currentTarget.files?.[0] ?? null;
@@ -28,11 +31,16 @@
 		failure = null;
 		result = null;
 		try {
-			if (doc.size > MAX_FILE_BYTES) throw new DocxError('not-docx');
+			const kind = kindOf(doc);
+			if (doc.size > MAX_FILE_BYTES || (kind !== 'docx' && kind !== 'pdf')) {
+				throw new DocxError('not-docx');
+			}
 			const content = await unlockKey(await key.text(), password);
-			const restored = await restoreDocx(new Uint8Array(await doc.arrayBuffer()), content);
-			const base = doc.name.replace(/\.docx$/i, '').replace(/-pseudonymisiert$/, '');
-			result = { ...restored, name: `${base}-wiederhergestellt.docx` };
+			const bytes = new Uint8Array(await doc.arrayBuffer());
+			const restored =
+				kind === 'pdf' ? await restorePdf(bytes, content) : await restoreDocx(bytes, content);
+			const base = doc.name.replace(/\.(docx|pdf)$/i, '').replace(/-pseudonymisiert$/, '');
+			result = { ...restored, kind, name: `${base}-wiederhergestellt.${kind}` };
 			password = '';
 		} catch (error) {
 			failure =
@@ -40,8 +48,8 @@
 					? error.reason === 'password'
 						? m.anon_doc_restore_password()
 						: m.anon_doc_restore_no_key()
-					: error instanceof DocxError
-						? m.anon_doc_err_not_docx({ name: doc.name })
+					: error instanceof DocxError || error instanceof PdfError
+						? m.anon_doc_err_kind({ name: doc.name })
 						: m.anon_doc_restore_failed();
 		} finally {
 			busy = false;
@@ -65,7 +73,7 @@
 				<label class="button quiet file"
 					>{m.anon_doc_choose()}<input
 						type="file"
-						accept=".docx"
+						accept=".docx,.pdf"
 						aria-labelledby="anon-doc-restore-doc"
 						onchange={(event) => (doc = pick(event))}
 					/></label
@@ -106,11 +114,16 @@
 	<div class="done" role="status">
 		{#if result.changed}<p class="notice">{m.anon_doc_restore_changed()}</p>{/if}
 		<p>{m.anon_restored_count({ count: result.count, total: result.total })}</p>
+		{#if result.kind === 'pdf'}<p class="hint">{m.anon_doc_pdf_restored()}</p>{/if}
 		<button
 			type="button"
 			class="button"
-			onclick={() => saveFile(result!.bytes, result!.name, DOCX_TYPE)}
-			>{m.anon_doc_download_restored()}</button
+			onclick={() =>
+				saveFile(
+					result!.bytes,
+					result!.name,
+					result!.kind === 'pdf' ? 'application/pdf' : DOCX_TYPE
+				)}>{m.anon_doc_download_restored()}</button
 		>
 		{#if result.leftover.length > 0}
 			<div class="leftover">
@@ -186,6 +199,11 @@
 
 		& p {
 			margin: 0 0 0.75rem;
+		}
+
+		& .hint {
+			font-size: 13px;
+			color: var(--ink3);
 		}
 
 		& .notice {

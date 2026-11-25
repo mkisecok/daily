@@ -7,6 +7,7 @@
 	it off or on. `element` is the text, so a selection in it can be read.
 -->
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import { m } from '#lib/paraglide/messages.js';
 	import { segmentsOf, type Page } from '../pages.js';
 	import { TOKEN_TIER } from '../rules.js';
@@ -22,7 +23,8 @@
 		ontoggle,
 		onrange,
 		boxing = false,
-		pending = null
+		pending = null,
+		sheet
 	}: {
 		text: string;
 		spans: Span[];
@@ -36,6 +38,8 @@
 		/** a drag draws a box instead of selecting text */
 		boxing?: boolean;
 		pending?: { start: number; end: number } | null;
+		/** draws the page with this index instead of its text */
+		sheet?: Snippet<[number]>;
 	} = $props();
 
 	/** plain text in words, so a box and a selection can be told apart word by word */
@@ -157,53 +161,57 @@
 		</nav>
 	{/if}
 
-	<!-- a box is drawn with the pointer; the keyboard marks by selecting text, read on key up -->
-	<p
-		class="marked"
-		class:boxing
-		bind:this={element}
-		onpointerdown={startBox}
-		onpointermove={drawBox}
-		onpointerup={(event) => {
-			endBox(event);
-			takeSelection();
-		}}
-	>
-		{#each segments as segment, index (index)}
-			{#if segment.span}
-				<!-- a span, not a button: a button is a box of its own, so a boxed passage would leave the line -->
+	{#if sheet}
+		{@render sheet(current)}
+	{:else}
+		<!-- a box is drawn with the pointer; the keyboard marks by selecting text, read on key up -->
+		<p
+			class="marked"
+			class:boxing
+			bind:this={element}
+			onpointerdown={startBox}
+			onpointermove={drawBox}
+			onpointerup={(event) => {
+				endBox(event);
+				takeSelection();
+			}}
+		>
+			{#each segments as segment, index (index)}
+				{#if segment.span}
+					<!-- a span, not a button: a button is a box of its own, so a boxed passage would leave the line -->
+					<span
+						role="button"
+						tabindex="0"
+						class="anon-mark"
+						data-at={onrange ? segment.start : undefined}
+						data-pending={waiting(segment.start, segment.text.length) || undefined}
+						data-anon-tier={TOKEN_TIER[segment.span.type]}
+						aria-pressed={!segment.span.muted}
+						title={segment.span.muted ? undefined : segment.span.replacement}
+						onclick={() => ontoggle(segment.span!.value)}
+						onkeydown={(event) => {
+							if (event.key !== 'Enter' && event.key !== ' ') return;
+							event.preventDefault();
+							ontoggle(segment.span!.value);
+						}}>{segment.text}</span
+					>
+				{:else if onrange}{#each words(segment.text, segment.start) as word (word.at)}<span
+							data-at={word.at}
+							data-pending={waiting(word.at, word.text.length) || undefined}>{word.text}</span
+						>{/each}{:else}{segment.text}{/if}
+			{/each}
+			{#if box}
 				<span
-					role="button"
-					tabindex="0"
-					class="anon-mark"
-					data-at={onrange ? segment.start : undefined}
-					data-pending={waiting(segment.start, segment.text.length) || undefined}
-					data-anon-tier={TOKEN_TIER[segment.span.type]}
-					aria-pressed={!segment.span.muted}
-					title={segment.span.muted ? undefined : segment.span.replacement}
-					onclick={() => ontoggle(segment.span!.value)}
-					onkeydown={(event) => {
-						if (event.key !== 'Enter' && event.key !== ' ') return;
-						event.preventDefault();
-						ontoggle(segment.span!.value);
-					}}>{segment.text}</span
-				>
-			{:else if onrange}{#each words(segment.text, segment.start) as word (word.at)}<span
-						data-at={word.at}
-						data-pending={waiting(word.at, word.text.length) || undefined}>{word.text}</span
-					>{/each}{:else}{segment.text}{/if}
-		{/each}
-		{#if box}
-			<span
-				class="box"
-				aria-hidden="true"
-				style:left="{Math.min(box.x0, box.x1)}px"
-				style:top="{Math.min(box.y0, box.y1)}px"
-				style:width="{Math.abs(box.x1 - box.x0)}px"
-				style:height="{Math.abs(box.y1 - box.y0)}px"
-			></span>
-		{/if}
-	</p>
+					class="box"
+					aria-hidden="true"
+					style:left="{Math.min(box.x0, box.x1)}px"
+					style:top="{Math.min(box.y0, box.y1)}px"
+					style:width="{Math.abs(box.x1 - box.x0)}px"
+					style:height="{Math.abs(box.y1 - box.y0)}px"
+				></span>
+			{/if}
+		</p>
+	{/if}
 
 	{#if pages.length > 1}
 		<ol class="strip" aria-label={m.anon_page_strip()}>
@@ -257,7 +265,7 @@
 			&.boxing {
 				cursor: crosshair;
 				user-select: none;
-				touch-action: none;
+				touch-action: pinch-zoom;
 			}
 
 			& [data-pending] {

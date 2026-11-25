@@ -78,6 +78,7 @@
 		"mammoth": "^1.13.0",
 		"node-cron": "^4.6.0",
 		"openid-client": "^6.8.8",
+		"pdf-lib": "1.17.1",
 		"pdfjs-dist": "^6.4.299",
 		"rss-parser": "^3.13.0",
 		"write-excel-file": "4.1.1"

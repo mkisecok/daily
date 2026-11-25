@@ -4,6 +4,7 @@
 	import { buildRun, detect } from '#lib/tools/pseudonymisierer/detect.js';
 	import { DocxError, openDocx } from '#lib/tools/pseudonymisierer/document/docx.js';
 	import type { CleanReport } from '#lib/tools/pseudonymisierer/document/clean.js';
+	import { openPdf, PdfError, type OpenedPdf } from '#lib/tools/pseudonymisierer/document/pdf.js';
 	import {
 		documentPages,
 		trimmed,
@@ -23,6 +24,7 @@
 	import DocumentRestore from '#lib/tools/pseudonymisierer/ui/DocumentRestore.svelte';
 	import ModeNav from '#lib/tools/pseudonymisierer/ui/ModeNav.svelte';
 	import PageView from '#lib/tools/pseudonymisierer/ui/PageView.svelte';
+	import PdfSheet from '#lib/tools/pseudonymisierer/ui/PdfSheet.svelte';
 	import '#lib/tools/pseudonymisierer/ui/tiers.css';
 	import { localized } from '#lib/i18n/links.js';
 	import { text } from '#lib/tools/i18n.js';
@@ -42,9 +44,19 @@
 	const always = termList(terms.always);
 	const never = termList(terms.never);
 
-	let doc = $state<{ name: string; bytes: Uint8Array; text: string; cleaned: CleanReport } | null>(
-		null
+	type Opened = { name: string; bytes: Uint8Array; text: string } & (
+		{ kind: 'docx'; cleaned: CleanReport } | { kind: 'pdf'; pdf: OpenedPdf }
 	);
+	/** raw: pdf.js's document must not be wrapped in a reactive proxy */
+	let doc = $state.raw<Opened | null>(null);
+
+	// pdf.js keeps a worker and the pages in memory until the document is closed
+	$effect(() => {
+		const current = doc;
+		return () => {
+			if (current?.kind === 'pdf') void current.pdf.doc.loadingTask.destroy();
+		};
+	});
 	let status = $state<{ text: string; error: boolean } | null>(null);
 	let reading = $state(false);
 
@@ -69,9 +81,18 @@
 			Object.entries(run?.mapping ?? {}).map(([original, entry]) => [entry.replacement, original])
 		)
 	);
-	const pages = $derived(doc ? documentPages(doc.text) : []);
+	/** a PDF's own pages, empty ones too, so the page view and the picture count alike */
+	const pages = $derived(
+		doc ? (doc.kind === 'pdf' ? doc.pdf.layout.pages : documentPages(doc.text)) : []
+	);
 	let page = $state(0);
-	let boxing = $state(true);
+	/**
+	 * a touch screen starts with selecting text: there, dragging over the page
+	 * should scroll it, and selecting has the phone's own handles
+	 */
+	let boxing = $state(
+		!(typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches)
+	);
 
 	/** a stretch waiting for its name and for where it counts */
 	let pending = $state<{ start: number; end: number; label: string; here: boolean } | null>(null);
@@ -167,7 +188,8 @@
 			status = { text: m.anon_doc_err_doc({ name }), error: true };
 			return;
 		}
-		if (kindOf(file) !== 'docx') {
+		const kind = kindOf(file);
+		if (kind !== 'docx' && kind !== 'pdf') {
 			status = { text: m.anon_doc_err_kind({ name }), error: true };
 			return;
 		}
@@ -179,15 +201,20 @@
 		status = { text: m.anon_reading(), error: false };
 		try {
 			const bytes = new Uint8Array(await file.arrayBuffer());
-			const opened = openDocx(bytes, { clean: true });
-			doc = { name, bytes, text: opened.text, cleaned: opened.cleaned! };
+			if (kind === 'pdf') {
+				const pdf = await openPdf(bytes);
+				doc = { kind, name, bytes, text: pdf.layout.text, pdf };
+			} else {
+				const opened = openDocx(bytes, { clean: true });
+				doc = { kind, name, bytes, text: opened.text, cleaned: opened.cleaned! };
+			}
 			places = [];
 			manualMarks.clear();
 			mutedValues.clear();
 			pending = null;
 			page = 0;
 			status = {
-				text: m.anon_doc_loaded({ name, pages: documentPages(opened.text).length }),
+				text: m.anon_doc_loaded({ name, pages: pages.length }),
 				error: false
 			};
 		} catch (failure) {
@@ -195,7 +222,13 @@
 				text:
 					failure instanceof DocxError
 						? m.anon_doc_err_not_docx({ name })
-						: m.anon_err_failed({ name }),
+						: failure instanceof PdfError
+							? failure.reason === 'password'
+								? m.anon_doc_err_password({ name })
+								: failure.reason === 'no-text'
+									? m.anon_doc_err_scan({ name })
+									: m.anon_doc_err_not_pdf({ name })
+							: m.anon_err_failed({ name }),
 				error: true
 			};
 		} finally {
@@ -219,7 +252,7 @@
 	<div class="toolbar">
 		<label class="button file" aria-disabled={reading || undefined}>
 			{m.anon_doc_upload()}
-			<input type="file" accept=".docx" disabled={reading} onchange={load} />
+			<input type="file" accept=".docx,.pdf" disabled={reading} onchange={load} />
 		</label>
 		<span class="status" class:error={status?.error} aria-live="polite">{status?.text ?? ''}</span>
 	</div>
@@ -254,7 +287,23 @@
 				onrange={takeRange}
 				{boxing}
 				{pending}
+				sheet={doc.kind === 'pdf' && boxing ? pdfPage : undefined}
 			/>
+			{#snippet pdfPage(index: number)}
+				{#if doc?.kind === 'pdf'}
+					{@const size = doc.pdf.pages[index]!}
+					<PdfSheet
+						doc={doc.pdf.doc}
+						{index}
+						size={{ width: size.width, height: size.height }}
+						origins={doc.pdf.layout.origins}
+						{spans}
+						{pending}
+						onrange={takeRange}
+						ontoggle={toggle}
+					/>
+				{/if}
+			{/snippet}
 		</div>
 
 		{#if pending}
@@ -358,7 +407,7 @@
 		<h2 id="anon-doc-export">{m.anon_doc_export()}</h2>
 		<p class="hint">{m.anon_doc_export_hint()}</p>
 		{#key doc}
-			<DocumentExport name={doc.name} bytes={doc.bytes} {spans} {values} />
+			<DocumentExport kind={doc.kind} name={doc.name} bytes={doc.bytes} {spans} {values} />
 		{/key}
 	</section>
 {/if}
