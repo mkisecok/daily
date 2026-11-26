@@ -195,7 +195,7 @@
 
 	<div class="toolbar actions no-print">
 		<button type="button" data-demo="print" onclick={() => window.print()}>{m.run_print()}</button>
-		<button type="button" class="quiet" onclick={edit}>{m.check_edit()}</button>
+		<button type="button" class="quiet" data-demo="edit" onclick={edit}>{m.check_edit()}</button>
 		{#if PUBLIC_PREVIEW}
 			<!-- no accounts in the static preview -->
 		{:else if data.user}

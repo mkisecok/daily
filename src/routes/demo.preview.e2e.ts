@@ -92,3 +92,24 @@ test('preview: the DSFA demo walks through the risk picture and ends at the list
 	await expect(page).toHaveURL(/dsfa\/eintraege\/?$/);
 	await expect(caption).toContainText("Das war's", { timeout: 15_000 });
 });
+
+test('preview: a question tool demo answers a case and walks through the result', async ({
+	page
+}) => {
+	test.setTimeout(90_000);
+	await page.goto('werkzeuge/risikoklassifizierung/', { waitUntil: 'networkidle' });
+	const before = await page.evaluate(storage);
+	await page.getByRole('button', { name: "So funktioniert's" }).click();
+	const caption = page.locator('.demo-layer > .caption');
+	await expect(caption).toContainText('Bewerbungen vorsortiert');
+	await expect(caption).toContainText('Rechtsgrundlage, verlinkt', { timeout: 10_000 });
+	await expect(caption).toContainText('auf einen Blick', { timeout: 40_000 });
+	await expect(page.locator('.verdict h2')).toContainText('Hochrisiko');
+	await expect(caption).toContainText('Die Gründe', { timeout: 15_000 });
+	await expect(caption).toContainText('Antworten ändern', { timeout: 25_000 });
+	await expect(caption).toContainText("Das war's", { timeout: 15_000 });
+	await page.getByRole('button', { name: 'Schließen' }).click();
+	await expect(page.locator('.demo-layer')).toHaveCount(0);
+	await page.waitForLoadState('networkidle');
+	expect(await page.evaluate(storage)).toBe(before);
+});
