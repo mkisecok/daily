@@ -32,32 +32,79 @@ export function workHref(tool: ToolManifest): string {
 	return at(`${tool.slug}/`);
 }
 
-/** a questionnaire: answer, evaluate, read the result */
+/** a step that points at `selector` if the page has it, and is left out if not */
+const pointIf =
+	(selector: string, caption: () => string, hold: number): Step =>
+	async (demo) => {
+		const found = here(selector);
+		if (found) await demo.point(found, caption(), hold);
+	};
+
+/**
+ * the case a questionnaire demo answers, where answering every question
+ * with yes would lead nowhere: each named answer, and the answer otherwise
+ */
+const CASES: Record<
+	string,
+	{ about: () => string; answers: Record<string, string>; otherwise: string }
+> = {
+	// an AI that sorts job applications: high risk under Annex III no. 4
+	risikoklassifizierung: {
+		about: m.demo_q_case_recruiting,
+		answers: { s_ai: 'yes', h_employment: 'yes', x_profiling: 'yes', t_interaction: 'yes' },
+		otherwise: 'no'
+	}
+};
+
+/**
+ * a questionnaire: the questions with their legal basis, answering, the
+ * progress, then the result part by part, the answers and what to do with them
+ */
 function questionnaire(tool: ToolManifest): Step[] {
+	const unanswered = (form: HTMLFormElement) =>
+		[...form.querySelectorAll<HTMLElement>('fieldset.row')].find(
+			(candidate) => !candidate.querySelector('input:checked')
+		);
+	const known = CASES[tool.slug];
+	/** the answer the case gives to a question, or yes, or the first there is */
+	const choiceIn = (row: HTMLElement) => {
+		const want = known?.answers[row.id.replace(/^q-/, '')] ?? known?.otherwise ?? 'yes';
+		return (
+			row.querySelector<HTMLInputElement>(`input[value="${want}"]`) ??
+			row.querySelector<HTMLInputElement>('input[value="yes"]') ??
+			row.querySelector<HTMLInputElement>('input[type="radio"]')
+		);
+	};
+	const answer = async (demo: Demo, count: number, caption?: string) => {
+		const form = await demo.find<HTMLFormElement>('main form');
+		for (let n = 0; n < count; n++) {
+			const row = unanswered(form);
+			const choice = row && choiceIn(row);
+			if (!choice) return;
+			await demo.click(choice, n === 0 ? caption : undefined, 600);
+		}
+	};
 	return [
 		async (demo) => {
 			await open(demo, at(`${tool.slug}/pruefen`));
 			const form = await demo.find<HTMLFormElement>('main form');
-			await demo.point(form.querySelector('.section') ?? form, m.demo_q_intro(), 2200);
+			const intro = known ? `${m.demo_q_intro()} ${known.about()}` : m.demo_q_intro();
+			await demo.point(form.querySelector('.section') ?? form, intro, known ? 3200 : 2200);
 		},
+		pointIf('main form .cite .citation', m.demo_q_cite, 2400),
+		async (demo) => answer(demo, 3, m.demo_q_answer()),
+		pointIf('main form .form-bar .progress', m.demo_q_progress, 2600),
 		async (demo) => {
-			// the first questions one by one, the rest quickly; follow-up questions appear as they apply
+			// the rest quickly; follow-up questions appear as they apply
 			const form = await demo.find<HTMLFormElement>('main form');
+			demo.say(m.demo_q_rest());
 			for (let n = 0; n < 40; n++) {
-				const row = [...form.querySelectorAll<HTMLElement>('fieldset.row')].find(
-					(candidate) => !candidate.querySelector('input:checked')
-				);
-				if (!row) break;
-				const choice = row.querySelector<HTMLInputElement>('input[value="yes"]');
-				if (!choice) break;
-				if (n < 3) {
-					await demo.click(choice, n === 0 ? m.demo_q_answer() : undefined, 600);
-				} else {
-					if (n === 3) demo.say(m.demo_q_rest());
-					row.scrollIntoView({ block: 'center' });
-					choice.click();
-					await demo.wait(140);
-				}
+				const row = unanswered(form);
+				const choice = row && choiceIn(row);
+				if (!row || !choice) break;
+				row.scrollIntoView({ block: 'center' });
+				choice.click();
+				await demo.wait(140);
 			}
 		},
 		async (demo) =>
@@ -66,12 +113,15 @@ function questionnaire(tool: ToolManifest): Step[] {
 				m.demo_q_submit(),
 				900
 			),
-		async (demo) => demo.point(await demo.find('.verdict h2'), m.demo_q_result(), 3600),
-		async (demo) => {
-			const steps = here('main section.next');
-			if (steps) await demo.point(steps, m.demo_q_next(), 2600);
-		},
-		async (demo) => demo.point(await demo.find('[data-demo="print"]'), m.demo_q_print(), 2400)
+		async (demo) => demo.point(await demo.find('.verdict h2'), m.demo_q_result(), 3000),
+		pointIf('.result-pair > :first-child', m.demo_q_dashboard, 3000),
+		pointIf('.verdict .scale', m.demo_q_scale, 2400),
+		pointIf('.verdict .reasons', m.demo_q_reasons, 3000),
+		pointIf('.verdict .sources', m.demo_q_sources, 2600),
+		pointIf('main section.next', m.demo_q_next, 2600),
+		pointIf('main section.answers', m.demo_q_answers, 2600),
+		async (demo) => demo.point(await demo.find('[data-demo="print"]'), m.demo_q_print(), 2400),
+		pointIf('[data-demo="edit"]', m.demo_q_edit, 2400)
 	];
 }
 
