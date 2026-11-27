@@ -80,7 +80,8 @@
 		if (event.button !== 0 || (event.target as Element).closest('.anon-mark')) return;
 		const { x, y } = toPoints(event, event.currentTarget.getBoundingClientRect());
 		box = { x0: x, y0: y, x1: x, y1: y };
-		event.currentTarget.setPointerCapture(event.pointerId);
+		// a demo's drawn box has no real pointer to capture
+		if (event.isTrusted) event.currentTarget.setPointerCapture(event.pointerId);
 		event.preventDefault();
 	}
 

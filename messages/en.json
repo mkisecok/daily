@@ -479,6 +479,7 @@
 	"anon_mode_document": "Document",
 	"anon_doc_intro": "Upload a Word document or a PDF, mark what should be replaced, and get the file back pseudonymised in the same format. The placeholder mapping goes into a separate key file, encrypted with a password. Nothing leaves the browser.",
 	"anon_doc_sample": "Load sample letter",
+	"anon_doc_sample_file": "Sample letter.docx",
 	"anon_doc_upload": "Upload Word or PDF file",
 	"anon_doc_loaded": "{name} read (pages: {pages}).",
 	"anon_doc_err_doc": "{name} is in the old Word format (.doc). Save it as .docx in Word and upload it again.",

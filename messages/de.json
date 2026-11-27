@@ -479,6 +479,7 @@
 	"anon_mode_document": "Dokument",
 	"anon_doc_intro": "Laden Sie ein Word-Dokument oder eine PDF-Datei hoch, markieren Sie, was ersetzt werden soll, und erhalten Sie die Datei pseudonymisiert im selben Format zurück. Die Zuordnung der Platzhalter kommt in eine eigene, mit Passwort verschlüsselte Schlüsseldatei. Nichts verlässt den Browser.",
 	"anon_doc_sample": "Beispielbrief laden",
+	"anon_doc_sample_file": "Beispielbrief.docx",
 	"anon_doc_upload": "Word- oder PDF-Datei hochladen",
 	"anon_doc_loaded": "{name} gelesen (Seiten: {pages}).",
 	"anon_doc_err_doc": "{name} ist im alten Word-Format (.doc). Speichern Sie die Datei in Word als .docx und laden Sie sie erneut hoch.",

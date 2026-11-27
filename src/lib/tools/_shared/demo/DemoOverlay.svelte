@@ -122,7 +122,9 @@
 						><span style:width="{demo.total ? (demo.step / demo.total) * 100 : 0}%"></span></span
 					>
 					<span class="time"
-						>{m.demo_progress({ step: demo.step, total: demo.total })} · {clock}</span
+						>{m.demo_progress({ step: demo.step, total: demo.total })}<span aria-hidden="true">
+							· {clock}</span
+						></span
 					>
 					<button type="button" class="button quiet" onclick={() => demo.end()}
 						>{m.demo_stop()}</button

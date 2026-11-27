@@ -295,14 +295,16 @@ function pseudonymisierer(tool: ToolManifest): Step[] {
 		async (demo) => {
 			// the AI's answer uses a placeholder from the text it was given
 			const output = (await demo.find<HTMLTextAreaElement>('#anon-output')).value;
-			const token = /«NAME_\d+»/.exec(output)?.[0] ?? /«[^»]+»/.exec(output)?.[0] ?? '';
+			const token = /«NAME_\d+»/.exec(output)?.[0] ?? /«[^»]+»/.exec(output)?.[0];
+			// with nothing replaced there is nothing to restore
+			if (!token) return;
 			await demo.type(
 				await demo.find<HTMLTextAreaElement>('#anon-reply'),
 				m.demo_p_reply_text({ token }),
 				m.demo_p_reply()
 			);
 		},
-		async (demo) => demo.point(await demo.find('#anon-restored'), m.demo_p_restored(), 2800),
+		pointIf('#anon-restored', m.demo_p_restored, 2800),
 		async (demo) =>
 			demo.click(
 				await demo.find<HTMLElement>('nav.modes a:not([aria-current])'),
@@ -310,6 +312,8 @@ function pseudonymisierer(tool: ToolManifest): Step[] {
 				900
 			),
 		async (demo) => {
+			// the text page has a sample button too: wait until the document page is there
+			await demo.find('#anon-doc-restore');
 			await demo.click(await demo.find('[data-demo="sample"]'), m.demo_p_doc_load(), 1200);
 		},
 		async (demo) => demo.point(await demo.find('.sheet .marked'), m.demo_p_doc_pages(), 2600),

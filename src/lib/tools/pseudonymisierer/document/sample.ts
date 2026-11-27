@@ -1,7 +1,5 @@
 import { makeDocx, p } from './fixture.js';
 
-export const SAMPLE_NAME = 'Beispielbrief.docx';
-
 /**
  * a made-up letter over two pages to try the document mode on: a name, an
  * address, an IBAN and a passage about health. No value belongs to a real
