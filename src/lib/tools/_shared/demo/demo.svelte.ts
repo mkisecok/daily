@@ -61,6 +61,8 @@ class Demo {
 	#timer: ReturnType<typeof setInterval> | undefined;
 	#run = 0;
 	#snapshot: Snapshot | null = null;
+	/** the last step was left out: the next ones wait only briefly for their element */
+	#skipping = false;
 	#from = '';
 
 	get active() {
@@ -86,6 +88,7 @@ class Demo {
 		this.seconds = 0;
 		this.step = 0;
 		this.total = steps.length;
+		this.#skipping = false;
 		this.#timer = setInterval(() => {
 			this.seconds = Math.floor((performance.now() - this.#started) / 1000);
 		}, 250);
@@ -95,9 +98,15 @@ class Demo {
 			this.step++;
 			try {
 				await step(this);
+				this.#skipping = false;
 			} catch (error) {
 				if (error instanceof Stopped) return;
 				console.warn(error);
+				// what the left-out step would have shown goes with it
+				this.#skipping = true;
+				this.caption = '';
+				this.#target = null;
+				this.ring = null;
 			}
 		}
 		if (run === this.#run) this.#finish();
@@ -153,7 +162,10 @@ class Demo {
 	}
 
 	/** the first element matching `selector`, waiting for it to appear */
-	async find<T extends Element = HTMLElement>(selector: string, timeout = 5000): Promise<T> {
+	async find<T extends Element = HTMLElement>(
+		selector: string,
+		timeout = this.#skipping ? 800 : 5000
+	): Promise<T> {
 		const run = this.#run;
 		const until = performance.now() + timeout;
 		for (;;) {

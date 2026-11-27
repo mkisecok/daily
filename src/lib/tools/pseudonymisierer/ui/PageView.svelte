@@ -60,7 +60,8 @@
 		const x = event.clientX - frame.left;
 		const y = event.clientY - frame.top;
 		box = { x0: x, y0: y, x1: x, y1: y };
-		event.currentTarget.setPointerCapture(event.pointerId);
+		// a demo's drawn box has no real pointer to capture
+		if (event.isTrusted) event.currentTarget.setPointerCapture(event.pointerId);
 		event.preventDefault();
 	}
 

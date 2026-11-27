@@ -5,7 +5,7 @@
 	import { DocxError, openDocx } from '#lib/tools/pseudonymisierer/document/docx.js';
 	import type { CleanReport } from '#lib/tools/pseudonymisierer/document/clean.js';
 	import { openPdf, PdfError, type OpenedPdf } from '#lib/tools/pseudonymisierer/document/pdf.js';
-	import { SAMPLE_NAME, sampleDocx } from '#lib/tools/pseudonymisierer/document/sample.js';
+	import { sampleDocx } from '#lib/tools/pseudonymisierer/document/sample.js';
 	import {
 		documentPages,
 		trimmed,
@@ -265,7 +265,7 @@
 			class="quiet"
 			data-demo="sample"
 			disabled={reading}
-			onclick={() => open(SAMPLE_NAME, 'docx', async () => sampleDocx())}
+			onclick={() => open(m.anon_doc_sample_file(), 'docx', async () => sampleDocx())}
 			>{m.anon_doc_sample()}</button
 		>
 		<span class="status" class:error={status?.error} aria-live="polite">{status?.text ?? ''}</span>
